@@ -15,6 +15,15 @@ const nodes = Array.from({ length: 14 }, (_, index) => ({
   delay: index * 0.18,
 }))
 
+const bits = Array.from({ length: 20 }, (_, index) => ({
+  id: index,
+  left: `${(index * 17) % 100}%`,
+  top: `${(index * 29) % 100}%`,
+  value: index % 2 === 0 ? '0' : '1',
+  delay: (index % 7) * 0.8,
+  duration: 6 + (index % 4),
+}))
+
 export function SpaceBackground() {
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-orbit-background">
@@ -75,6 +84,26 @@ export function SpaceBackground() {
           animate={{ opacity: [0.15, 0.55, 0.18], scale: [1, 1.35, 1] }}
           transition={{ duration: 4, repeat: Infinity, delay: node.delay }}
         />
+      ))}
+
+      {bits.map((bit) => (
+        <motion.span
+          key={bit.id}
+          className="absolute font-mono text-[10px] font-bold text-orbit-accent/20"
+          style={{ left: bit.left, top: bit.top }}
+          animate={{
+            opacity: [0, 0.3, 0],
+            y: [0, -40, 0],
+          }}
+          transition={{
+            duration: bit.duration,
+            repeat: Infinity,
+            delay: bit.delay,
+            ease: 'linear',
+          }}
+        >
+          {bit.value}
+        </motion.span>
       ))}
     </div>
   )

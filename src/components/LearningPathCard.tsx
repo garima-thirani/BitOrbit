@@ -15,11 +15,16 @@ export function LearningPathCard({ path, progress }: LearningPathCardProps) {
   const moduleCount = path.modules.length
 
   return (
-    <motion.article whileHover={{ y: -4 }} transition={{ duration: 0.18 }}>
+    <motion.article
+      whileHover={{ y: -6, scale: 1.01 }}
+      transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+      className="relative"
+    >
       <Link
         to={pathRoute(path.id)}
-        className="glass-panel group block h-full rounded-lg p-5 transition-colors hover:border-orbit-primary/[0.45]"
+        className="glass-panel group block h-full overflow-hidden rounded-xl p-5 transition-all hover:border-orbit-primary/50 hover:shadow-orbit-primary/10"
       >
+        <div className="absolute inset-0 bits-grid opacity-0 group-hover:opacity-40 transition-opacity" />
         <div className="flex items-start justify-between gap-4">
           <IconBadge icon={path.icon} gradient={path.gradient} />
           <ArrowUpRight

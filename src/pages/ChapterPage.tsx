@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowLeft,
   ArrowRight,
@@ -9,6 +10,7 @@ import {
   Layers3,
   Library,
   Timer,
+  X,
 } from 'lucide-react'
 import type { Chapter } from '@/types'
 import { EmptyState } from '@/components/EmptyState'
@@ -18,6 +20,9 @@ import { useProgress } from '@/hooks/useProgress'
 import { useScrollProgress } from '@/hooks/useScrollProgress'
 import { getChapterMetaById, getModuleById, getPathById, loadChapter } from '@/utils/content'
 import { chapterRoute, moduleRoute, pathRoute } from '@/utils/routes'
+import { Flashcards } from '@/components/study/Flashcards'
+import { MindMap } from '@/components/study/MindMap'
+import { QuickRevision } from '@/components/study/QuickRevision'
 
 export function ChapterPage() {
   const { pathId, moduleId, chapterId } = useParams()
@@ -27,6 +32,7 @@ export function ChapterPage() {
   const { progress, toggleBookmark, toggleChapterComplete, recordReading } = useProgress()
   const scrollProgress = useScrollProgress()
   const [chapter, setChapter] = useState<Chapter | null>(null)
+  const [activeTool, setActiveTool] = useState<string | null>(null)
   const [failed, setFailed] = useState(false)
   const recordedChapterId = useRef<string | null>(null)
 
@@ -67,9 +73,9 @@ export function ChapterPage() {
 
   const actions = useMemo(
     () => [
-      { label: 'Quick Revision', icon: Layers3 },
-      { label: 'Flashcards', icon: Library },
-      { label: 'Mind Map', icon: GitFork },
+      { id: 'revision', label: 'Quick Revision', icon: Layers3 },
+      { id: 'flashcards', label: 'Flashcards', icon: Library },
+      { id: 'mindmap', label: 'Mind Map', icon: GitFork },
     ],
     [],
   )
@@ -169,6 +175,7 @@ export function ChapterPage() {
                 <button
                   key={action.label}
                   type="button"
+                  onClick={() => setActiveTool(action.id)}
                   className="flex w-full items-center gap-3 rounded-lg bg-white/[0.07] px-3 py-3 text-left text-sm font-medium text-orbit-text transition hover:bg-orbit-primary/[0.16]"
                 >
                   <action.icon size={17} className="text-orbit-accent" />
@@ -213,6 +220,54 @@ export function ChapterPage() {
           </div>
         </aside>
       </section>
+
+      <AnimatePresence>
+        {activeTool && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-orbit-background/80 p-4 backdrop-blur-md md:p-8"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="glass-panel relative w-full max-w-4xl overflow-hidden rounded-2xl p-6 md:p-10"
+            >
+              <button
+                onClick={() => setActiveTool(null)}
+                className="absolute right-4 top-4 rounded-full p-2 text-orbit-muted hover:bg-white/10 hover:text-orbit-text"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="mt-4">
+                {activeTool === 'revision' && <QuickRevision chapterTitle={meta.title} />}
+                {activeTool === 'flashcards' && (
+                  <Flashcards
+                    cards={[
+                      {
+                        question: `What is the core premise of ${meta.title}?`,
+                        answer: meta.summary,
+                      },
+                      {
+                        question: 'Is bitOrbit offline?',
+                        answer: 'Yes, it is designed as your personal offline engineering library.',
+                      },
+                      {
+                        question: 'Where should I store my notes?',
+                        answer: 'Store markdown files under the src/content directory.',
+                      },
+                    ]}
+                  />
+                )}
+                {activeTool === 'mindmap' && <MindMap title={meta.title} />}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

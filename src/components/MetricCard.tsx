@@ -16,8 +16,9 @@ const toneClasses = {
 
 export function MetricCard({ label, value, icon: Icon, tone = 'primary' }: MetricCardProps) {
   return (
-    <section className="glass-panel rounded-lg p-5">
-      <div className="flex items-center justify-between gap-4">
+    <section className="glass-panel relative overflow-hidden rounded-xl p-5 group transition-all hover:border-orbit-accent/30">
+      <div className="absolute inset-0 bits-grid opacity-20" />
+      <div className="relative flex items-center justify-between gap-4">
         <div>
           <p className="text-sm text-orbit-muted">{label}</p>
           <p className="mt-2 text-2xl font-semibold tracking-tight text-orbit-text">{value}</p>
