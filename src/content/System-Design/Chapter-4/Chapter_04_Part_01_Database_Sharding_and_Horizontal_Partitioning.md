@@ -124,9 +124,14 @@ Useful when different parts of a record have different access patterns.
 ------------------------------------------------------------------------
 
 # Basic Sharding Architecture
+``` text
+                Application
+                     │
+             Shard Router
+          ┌──────┼──────┐
+          ▼      ▼      ▼
+      Shard A Shard B Shard C
 
-```illustration
-sharding
 ```
 
 The router decides which shard stores or retrieves a row.

@@ -126,12 +126,16 @@ Good distributed systems are designed to survive it.
 
 # Visualizing CAP
 
-```illustration
-cap
+``` text
+             Partition
+             Tolerance
+                  ▲
+                  │
+        Consistency ───── Availability
+
+During a partition you must choose
+between C and A.
 ```
-
-During a partition you must choose between C and A.
-
 ------------------------------------------------------------------------
 
 # CP Systems
