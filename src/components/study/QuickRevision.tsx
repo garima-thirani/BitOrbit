@@ -38,8 +38,9 @@ export function QuickRevision({ points = [], chapterTitle }: QuickRevisionProps)
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="glass-panel group relative flex flex-col gap-2 rounded-xl p-5 hover:border-orbit-primary/40 transition-colors"
+            className="glass-panel group relative flex flex-col gap-2 rounded-xl p-5 hover:border-orbit-primary/40 transition-colors overflow-hidden"
           >
+            <div className="absolute inset-0 bits-grid opacity-5 group-hover:opacity-20 transition-opacity" />
             <div className="flex items-center justify-between">
               <h3 className="text-sm font-bold uppercase tracking-wider text-orbit-primary group-hover:text-orbit-accent transition-colors">
                 {point.title}

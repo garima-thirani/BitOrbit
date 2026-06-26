@@ -1,8 +1,9 @@
-import { BarChart3, Bookmark, BookOpen, Home, Search, Settings } from 'lucide-react'
+import { BarChart3, Bookmark, BookOpen, Brain, Home, Search, Settings } from 'lucide-react'
 
 export const sidebarItems = [
   { label: 'Home', href: '/', icon: Home },
   { label: 'Learning Paths', href: '/paths', icon: BookOpen },
+  { label: 'Study Tools', href: '/tools', icon: Brain },
   { label: 'Bookmarks', href: '/bookmarks', icon: Bookmark },
   { label: 'Search', href: '/search', icon: Search },
   { label: 'Progress', href: '/progress', icon: BarChart3 },

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { ArrowRight, BookOpenCheck, Clock3, Search, Sparkles, Trophy } from 'lucide-react'
+import { ArrowRight, BookOpenCheck, Brain, Clock3, Search, Sparkles, Trophy } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { LearningPathCard } from '@/components/LearningPathCard'
 import { MetricCard } from '@/components/MetricCard'
@@ -19,14 +19,26 @@ export function HomePage() {
   return (
     <div className="space-y-10">
       <section className="relative overflow-hidden rounded-lg border border-white/10 bg-orbit-surface/[0.72] p-6 shadow-glow md:p-9">
+        <div className="absolute inset-0 bits-grid opacity-20" />
+        <div className="absolute -right-20 -top-20 h-80 w-80 rounded-full bg-orbit-primary/10 blur-[100px]" />
+
         <div className="absolute right-8 top-8 hidden h-44 w-44 rounded-full border border-orbit-accent/20 md:block" />
         <div className="absolute right-16 top-16 hidden h-28 w-28 rounded-full border border-orbit-primary/20 md:block" />
+
         <motion.div
-          className="absolute right-28 top-8 hidden h-3 w-3 rounded-full bg-orbit-accent shadow-accent-glow md:block"
+          className="absolute right-[5.5rem] top-8 hidden h-3 w-3 rounded-full bg-orbit-accent shadow-accent-glow md:block"
           animate={{ rotate: 360 }}
           transition={{ duration: 16, repeat: Infinity, ease: 'linear' }}
           style={{ transformOrigin: '0 5.5rem' }}
         />
+
+        <div className="absolute bottom-0 right-0 p-8 opacity-10 md:opacity-20">
+          <div className="flex gap-1 font-mono text-4xl font-bold">
+            <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ duration: 2, repeat: Infinity }}>1</motion.span>
+            <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}>0</motion.span>
+            <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ duration: 2, repeat: Infinity, delay: 1 }}>1</motion.span>
+          </div>
+        </div>
 
         <div className="relative max-w-3xl">
           <div className="inline-flex items-center gap-2 rounded-full border border-orbit-accent/20 bg-orbit-accent/10 px-3 py-1 text-xs font-medium text-orbit-accent">
@@ -105,6 +117,52 @@ export function HomePage() {
           {learningPaths.map((path) => (
             <LearningPathCard key={path.id} path={path} progress={getPathProgress(path, progress)} />
           ))}
+        </div>
+      </section>
+
+      <section>
+        <div className="mb-5 flex items-end justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-orbit-accent">
+              Interactive Library
+            </p>
+            <h2 className="mt-2 text-2xl font-semibold text-orbit-text">Master with tools</h2>
+          </div>
+          <Link to="/tools" className="text-sm font-medium text-orbit-accent hover:text-orbit-text">
+            View all tools
+          </Link>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          <Link
+            to="/tools"
+            className="group glass-panel flex items-center gap-5 rounded-xl p-6 transition-all hover:border-orbit-accent/40"
+          >
+            <div className="grid h-12 w-12 place-items-center rounded-lg bg-orbit-accent/10 text-orbit-accent">
+              <Brain size={24} />
+            </div>
+            <div>
+              <h3 className="font-semibold text-orbit-text group-hover:text-orbit-accent">
+                Active Recall
+              </h3>
+              <p className="text-sm text-orbit-muted">Flashcards and Knowledge Quizzes</p>
+            </div>
+            <ArrowRight size={18} className="ml-auto text-orbit-muted group-hover:text-orbit-accent" />
+          </Link>
+          <Link
+            to="/tools"
+            className="group glass-panel flex items-center gap-5 rounded-xl p-6 transition-all hover:border-orbit-primary/40"
+          >
+            <div className="grid h-12 w-12 place-items-center rounded-lg bg-orbit-primary/10 text-orbit-primary">
+              <Sparkles size={24} />
+            </div>
+            <div>
+              <h3 className="font-semibold text-orbit-text group-hover:text-orbit-primary">
+                Intuition & Design
+              </h3>
+              <p className="text-sm text-orbit-muted">Mind Maps and Digital Snapshots</p>
+            </div>
+            <ArrowRight size={18} className="ml-auto text-orbit-muted group-hover:text-orbit-primary" />
+          </Link>
         </div>
       </section>
 
