@@ -15,6 +15,7 @@ const BookmarksPage = lazy(() => import('@/pages/BookmarksPage').then(asDefault(
 const SearchPage = lazy(() => import('@/pages/SearchPage').then(asDefault('SearchPage')))
 const ProgressPage = lazy(() => import('@/pages/ProgressPage').then(asDefault('ProgressPage')))
 const SettingsPage = lazy(() => import('@/pages/SettingsPage').then(asDefault('SettingsPage')))
+const ToolsPage = lazy(() => import('@/pages/ToolsPage').then(asDefault('ToolsPage')))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage').then(asDefault('NotFoundPage')))
 
 function asDefault<TModule extends Record<TKey, ComponentType>, TKey extends keyof TModule>(
@@ -51,6 +52,7 @@ export const router = createBrowserRouter([
       { path: 'search', element: routePage(SearchPage) },
       { path: 'progress', element: routePage(ProgressPage) },
       { path: 'settings', element: routePage(SettingsPage) },
+      { path: 'tools', element: routePage(ToolsPage) },
       { path: '*', element: routePage(NotFoundPage) },
     ],
   },

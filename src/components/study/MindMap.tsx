@@ -40,7 +40,17 @@ export function MindMap({ nodes = [], links = [], title }: MindMapProps) {
       </div>
 
       <div className="relative flex-1 cursor-grab active:cursor-grabbing">
-        <svg className="h-full w-full" viewBox="0 0 500 300">
+        <div className="absolute inset-0 bits-grid opacity-10" />
+        <svg className="h-full w-full relative z-10" viewBox="0 0 500 300">
+          <defs>
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
           {/* Links */}
           {defaultLinks.map((link, i) => {
             const source = defaultNodes.find(n => n.id === link.source)
@@ -77,8 +87,9 @@ export function MindMap({ nodes = [], links = [], title }: MindMapProps) {
                 cx={node.x}
                 cy={node.y}
                 r="35"
-                className={node.id === 'center' ? 'fill-orbit-primary/20 stroke-orbit-primary' : 'fill-bg-orbit-surface/80 stroke-orbit-accent/40'}
+                className={node.id === 'center' ? 'fill-orbit-primary/20 stroke-orbit-primary' : 'fill-black stroke-orbit-accent/40'}
                 strokeWidth="2"
+                filter="url(#glow)"
               />
               <text
                 x={node.x}

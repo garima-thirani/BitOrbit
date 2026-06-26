@@ -15,18 +15,45 @@ const nodes = Array.from({ length: 14 }, (_, index) => ({
   delay: index * 0.18,
 }))
 
-const bits = Array.from({ length: 20 }, (_, index) => ({
+const bits = Array.from({ length: 40 }, (_, index) => ({
   id: index,
-  left: `${(index * 17) % 100}%`,
-  top: `${(index * 29) % 100}%`,
-  value: index % 2 === 0 ? '0' : '1',
-  delay: (index % 7) * 0.8,
-  duration: 6 + (index % 4),
+  left: `${(index * 7) % 100}%`,
+  top: `${(index * 13) % 100}%`,
+  value: index % 3 === 0 ? '1' : '0',
+  delay: (index % 11) * 0.5,
+  duration: 8 + (index % 6),
+  fontSize: 8 + (index % 6),
+}))
+
+const binaryStreams = Array.from({ length: 8 }, (_, index) => ({
+  id: index,
+  left: `${10 + index * 12}%`,
+  delay: index * 1.2,
+  duration: 15 + (index % 5) * 2,
 }))
 
 export function SpaceBackground() {
   return (
     <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-orbit-background">
+      {binaryStreams.map((stream) => (
+        <motion.div
+          key={`stream-${stream.id}`}
+          className="absolute top-[-20%] flex flex-col gap-1 font-mono text-[10px] text-orbit-accent/10"
+          style={{ left: stream.left }}
+          animate={{ y: ['0%', '120%'] }}
+          transition={{
+            duration: stream.duration,
+            repeat: Infinity,
+            delay: stream.delay,
+            ease: 'linear',
+          }}
+        >
+          {Array.from({ length: 20 }).map((_, i) => (
+            <span key={i}>{Math.round(Math.random())}</span>
+          ))}
+        </motion.div>
+      ))}
+
       <motion.div
         className="absolute inset-0 opacity-[0.72]"
         animate={{ backgroundPosition: ['0% 0%', '100% 60%', '0% 0%'] }}
@@ -89,17 +116,18 @@ export function SpaceBackground() {
       {bits.map((bit) => (
         <motion.span
           key={bit.id}
-          className="absolute font-mono text-[10px] font-bold text-orbit-accent/20"
-          style={{ left: bit.left, top: bit.top }}
+          className="absolute font-mono font-bold text-orbit-accent/30 shadow-accent-glow"
+          style={{ left: bit.left, top: bit.top, fontSize: bit.fontSize }}
           animate={{
-            opacity: [0, 0.3, 0],
-            y: [0, -40, 0],
+            opacity: [0, 0.6, 0],
+            scale: [0.8, 1.2, 0.8],
+            filter: ['blur(0px)', 'blur(1px)', 'blur(0px)'],
           }}
           transition={{
             duration: bit.duration,
             repeat: Infinity,
             delay: bit.delay,
-            ease: 'linear',
+            ease: 'easeInOut',
           }}
         >
           {bit.value}

@@ -7,6 +7,7 @@ import {
   Bookmark,
   CheckCircle2,
   GitFork,
+  HelpCircle,
   Layers3,
   Library,
   Timer,
@@ -23,6 +24,7 @@ import { chapterRoute, moduleRoute, pathRoute } from '@/utils/routes'
 import { Flashcards } from '@/components/study/Flashcards'
 import { MindMap } from '@/components/study/MindMap'
 import { QuickRevision } from '@/components/study/QuickRevision'
+import { Quiz } from '@/components/study/Quiz'
 
 export function ChapterPage() {
   const { pathId, moduleId, chapterId } = useParams()
@@ -76,6 +78,7 @@ export function ChapterPage() {
       { id: 'revision', label: 'Quick Revision', icon: Layers3 },
       { id: 'flashcards', label: 'Flashcards', icon: Library },
       { id: 'mindmap', label: 'Mind Map', icon: GitFork },
+      { id: 'quiz', label: 'Knowledge Quiz', icon: HelpCircle },
     ],
     [],
   )
@@ -263,6 +266,31 @@ export function ChapterPage() {
                   />
                 )}
                 {activeTool === 'mindmap' && <MindMap title={meta.title} />}
+                {activeTool === 'quiz' && (
+                  <Quiz
+                    questions={[
+                      {
+                        id: 'q1',
+                        question: `Which architectural pattern is most relevant to ${meta.title}?`,
+                        options: ['Monolithic', 'Microservices', 'Event-driven', 'Serverless'],
+                        correctAnswer: 2,
+                        explanation: 'Event-driven architectures allow for high decoupling and scalability, which is a core focus of modern systems design.',
+                      },
+                      {
+                        id: 'q2',
+                        question: 'What is the primary benefit of using a Bits-themed UI?',
+                        options: [
+                          'Lower power consumption',
+                          'Higher visual focus and technical intuition',
+                          'Faster page loads',
+                          'Better SEO',
+                        ],
+                        correctAnswer: 1,
+                        explanation: 'The Bits theme is designed to provide high visual focus and technical intuition for engineering topics.',
+                      },
+                    ]}
+                  />
+                )}
               </div>
             </motion.div>
           </motion.div>

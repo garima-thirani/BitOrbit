@@ -42,11 +42,12 @@ export function Flashcards({ cards }: FlashcardsProps) {
           onClick={() => setIsFlipped(!isFlipped)}
         >
           {/* Front */}
-          <div className="glass-panel absolute inset-0 flex flex-col items-center justify-center rounded-2xl p-8 backface-hidden cursor-pointer hover:border-orbit-accent/40 transition-colors">
+          <div className="glass-panel absolute inset-0 flex flex-col items-center justify-center rounded-2xl p-8 backface-hidden cursor-pointer hover:border-orbit-accent/40 transition-colors group">
+            <div className="absolute inset-0 bits-grid opacity-10 group-hover:opacity-20 transition-opacity" />
             <div className="absolute top-4 left-4 text-[10px] font-bold uppercase tracking-widest text-orbit-accent/60">
               Question
             </div>
-            <p className="text-center text-xl font-medium leading-relaxed text-orbit-text">
+            <p className="relative z-10 text-center text-xl font-medium leading-relaxed text-orbit-text">
               {cards[currentIndex].question}
             </p>
             <div className="absolute bottom-4 flex items-center gap-2 text-xs text-orbit-muted">
@@ -57,13 +58,14 @@ export function Flashcards({ cards }: FlashcardsProps) {
 
           {/* Back */}
           <div
-            className="glass-panel absolute inset-0 flex flex-col items-center justify-center rounded-2xl p-8 backface-hidden cursor-pointer border-orbit-primary/40 bg-orbit-primary/5"
+            className="glass-panel absolute inset-0 flex flex-col items-center justify-center rounded-2xl p-8 backface-hidden cursor-pointer border-orbit-primary/40 bg-orbit-primary/5 overflow-hidden group"
             style={{ transform: 'rotateY(180deg)' }}
           >
+            <div className="absolute inset-0 bits-grid opacity-20" />
             <div className="absolute top-4 left-4 text-[10px] font-bold uppercase tracking-widest text-orbit-primary/60">
               Answer
             </div>
-            <p className="text-center text-lg leading-relaxed text-orbit-text">
+            <p className="relative z-10 text-center text-lg leading-relaxed text-orbit-text">
               {cards[currentIndex].answer}
             </p>
           </div>
