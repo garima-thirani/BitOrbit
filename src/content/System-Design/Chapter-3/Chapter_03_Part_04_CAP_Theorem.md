@@ -136,7 +136,6 @@ Good distributed systems are designed to survive it.
 During a partition you must choose
 between C and A.
 ```
-
 ------------------------------------------------------------------------
 
 # CP Systems
