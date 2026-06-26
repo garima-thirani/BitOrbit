@@ -25,6 +25,7 @@ import { Flashcards } from '@/components/study/Flashcards'
 import { MindMap } from '@/components/study/MindMap'
 import { QuickRevision } from '@/components/study/QuickRevision'
 import { Quiz } from '@/components/study/Quiz'
+import { getStudyToolsForChapter } from '@/data/studyTools'
 
 export function ChapterPage() {
   const { pathId, moduleId, chapterId } = useParams()
@@ -73,14 +74,16 @@ export function ChapterPage() {
   const isBookmarked = meta ? progress.bookmarkedChapters.includes(meta.id) : false
   const isCompleted = meta ? progress.completedChapters.includes(meta.id) : false
 
+  const studyTools = meta ? getStudyToolsForChapter(meta.title) : undefined
+
   const actions = useMemo(
     () => [
       { id: 'revision', label: 'Quick Revision', icon: Layers3 },
-      { id: 'flashcards', label: 'Flashcards', icon: Library },
-      { id: 'mindmap', label: 'Mind Map', icon: GitFork },
-      { id: 'quiz', label: 'Knowledge Quiz', icon: HelpCircle },
+      { id: 'flashcards', label: 'Flashcards', icon: Library, hidden: !studyTools?.flashcards },
+      { id: 'mindmap', label: 'Mind Map', icon: GitFork, hidden: !studyTools?.mindmap },
+      { id: 'quiz', label: 'Knowledge Quiz', icon: HelpCircle, hidden: !studyTools?.quiz },
     ],
-    [],
+    [studyTools],
   )
 
   if (!path || !module || !meta) return <Navigate to="/paths" replace />
@@ -174,17 +177,19 @@ export function ChapterPage() {
               Study Tools
             </h2>
             <div className="mt-4 space-y-2">
-              {actions.map((action) => (
-                <button
-                  key={action.label}
-                  type="button"
-                  onClick={() => setActiveTool(action.id)}
-                  className="flex w-full items-center gap-3 rounded-lg bg-white/[0.07] px-3 py-3 text-left text-sm font-medium text-orbit-text transition hover:bg-orbit-primary/[0.16]"
-                >
-                  <action.icon size={17} className="text-orbit-accent" />
-                  {action.label}
-                </button>
-              ))}
+              {actions
+                .filter((a) => !a.hidden)
+                .map((action) => (
+                  <button
+                    key={action.id}
+                    type="button"
+                    onClick={() => setActiveTool(action.id)}
+                    className="flex w-full items-center gap-3 rounded-lg bg-white/[0.07] px-3 py-3 text-left text-sm font-medium text-orbit-text transition hover:bg-orbit-primary/[0.16]"
+                  >
+                    <action.icon size={17} className="text-orbit-accent" />
+                    {action.label}
+                  </button>
+                ))}
             </div>
           </div>
 
@@ -247,50 +252,17 @@ export function ChapterPage() {
 
               <div className="mt-4">
                 {activeTool === 'revision' && <QuickRevision chapterTitle={meta.title} />}
-                {activeTool === 'flashcards' && (
-                  <Flashcards
-                    cards={[
-                      {
-                        question: `What is the core premise of ${meta.title}?`,
-                        answer: meta.summary,
-                      },
-                      {
-                        question: 'Is bitOrbit offline?',
-                        answer: 'Yes, it is designed as your personal offline engineering library.',
-                      },
-                      {
-                        question: 'Where should I store my notes?',
-                        answer: 'Store markdown files under the src/content directory.',
-                      },
-                    ]}
+                {activeTool === 'flashcards' && studyTools?.flashcards && (
+                  <Flashcards cards={studyTools.flashcards} />
+                )}
+                {activeTool === 'mindmap' && studyTools?.mindmap && (
+                  <MindMap
+                    title={meta.title}
+                    nodes={studyTools.mindmap.nodes}
+                    links={studyTools.mindmap.links}
                   />
                 )}
-                {activeTool === 'mindmap' && <MindMap title={meta.title} />}
-                {activeTool === 'quiz' && (
-                  <Quiz
-                    questions={[
-                      {
-                        id: 'q1',
-                        question: `Which architectural pattern is most relevant to ${meta.title}?`,
-                        options: ['Monolithic', 'Microservices', 'Event-driven', 'Serverless'],
-                        correctAnswer: 2,
-                        explanation: 'Event-driven architectures allow for high decoupling and scalability, which is a core focus of modern systems design.',
-                      },
-                      {
-                        id: 'q2',
-                        question: 'What is the primary benefit of using a Bits-themed UI?',
-                        options: [
-                          'Lower power consumption',
-                          'Higher visual focus and technical intuition',
-                          'Faster page loads',
-                          'Better SEO',
-                        ],
-                        correctAnswer: 1,
-                        explanation: 'The Bits theme is designed to provide high visual focus and technical intuition for engineering topics.',
-                      },
-                    ]}
-                  />
-                )}
+                {activeTool === 'quiz' && studyTools?.quiz && <Quiz questions={studyTools.quiz} />}
               </div>
             </motion.div>
           </motion.div>

@@ -1,8 +1,8 @@
 import { Fragment, type ReactElement } from 'react'
-import { LoadBalancerIllustration } from '@/components/illustrations/LoadBalancerIllustration'
-import { CachingIllustration } from '@/components/illustrations/CachingIllustration'
-import { ShardingIllustration } from '@/components/illustrations/ShardingIllustration'
-import { CAPIllustration } from '@/components/illustrations/CAPIllustration'
+import { LoadBalancerIllustration } from './illustrations/LoadBalancerIllustration'
+import { CachingIllustration } from './illustrations/CachingIllustration'
+import { ShardingIllustration } from './illustrations/ShardingIllustration'
+import { CAPIllustration } from './illustrations/CAPIllustration'
 
 interface MarkdownRendererProps {
   content: string
@@ -30,7 +30,6 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
   let listItems: string[] = []
   let codeLines: string[] = []
   let inCode = false
-  let codeLanguage = ''
 
   const flushList = () => {
     if (listItems.length) {
@@ -45,19 +44,20 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     }
   }
 
-  const flushCode = () => {
+  const flushCode = (lang?: string) => {
     if (codeLines.length) {
-      const codeContent = codeLines.join('\n').trim()
-
-      if (codeLanguage === 'illustration') {
-        if (codeContent === 'load-balancer') {
-          elements.push(<LoadBalancerIllustration key={`ill-${elements.length}`} />)
-        } else if (codeContent === 'caching') {
-          elements.push(<CachingIllustration key={`ill-${elements.length}`} />)
-        } else if (codeContent === 'sharding') {
-          elements.push(<ShardingIllustration key={`ill-${elements.length}`} />)
-        } else if (codeContent === 'cap') {
-          elements.push(<CAPIllustration key={`ill-${elements.length}`} />)
+      if (lang === 'illustration') {
+        const type = codeLines.join('\n').trim().toLowerCase()
+        if (type === 'loadbalancer') elements.push(<LoadBalancerIllustration key={elements.length} />)
+        else if (type === 'caching') elements.push(<CachingIllustration key={elements.length} />)
+        else if (type === 'sharding') elements.push(<ShardingIllustration key={elements.length} />)
+        else if (type === 'cap') elements.push(<CAPIllustration key={elements.length} />)
+        else {
+          elements.push(
+            <pre key={`pre-${elements.length}`}>
+              <code>{codeLines.join('\n')}</code>
+            </pre>,
+          )
         }
       } else {
         elements.push(
@@ -67,17 +67,18 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         )
       }
       codeLines = []
-      codeLanguage = ''
     }
   }
+
+  let currentLang = ''
 
   lines.forEach((line) => {
     if (line.startsWith('```')) {
       if (inCode) {
-        flushCode()
+        flushCode(currentLang)
       } else {
         flushList()
-        codeLanguage = line.slice(3).trim()
+        currentLang = line.slice(3).trim()
       }
       inCode = !inCode
       return
@@ -93,7 +94,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
       return
     }
 
-    if (line.startsWith('- ') || line.startsWith('• ')) {
+    if (line.startsWith('- ')) {
       listItems.push(line.slice(2))
       return
     }

@@ -1,99 +1,51 @@
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useState } from 'react'
 
 export function CAPIllustration() {
-  const [active, setActive] = useState<'C' | 'A' | 'P' | null>(null)
-
-  const nodes = [
-    { id: 'C', label: 'Consistency', description: 'Every read receives the most recent write or an error.', color: 'text-orbit-accent' },
-    { id: 'A', label: 'Availability', description: 'Every request receives a (non-error) response.', color: 'text-orbit-primary' },
-    { id: 'P', label: 'Partition Tolerance', description: 'The system continues to operate despite network failures.', color: 'text-orbit-success' },
-  ]
+  const [selected, setSelected] = useState<'CP' | 'AP' | 'CA' | null>(null)
 
   return (
-    <div className="glass-panel my-8 overflow-hidden rounded-2xl bg-orbit-background/40 p-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h4 className="text-sm font-bold uppercase tracking-[0.2em] text-orbit-accent">
-          CAP Theorem Interactive Triangle
-        </h4>
-        <span className="text-[10px] font-bold text-orbit-muted uppercase">Pick Two</span>
-      </div>
+    <div className="glass-panel my-8 p-6 flex flex-col items-center bg-orbit-background/40 rounded-xl">
+      <div className="text-xs font-semibold uppercase tracking-widest text-orbit-accent mb-10">The CAP Theorem Triangle</div>
 
-      <div className="relative flex h-80 flex-col items-center justify-center">
-        <svg viewBox="0 0 400 300" className="h-full w-full max-w-md">
-          {/* Triangle Lines */}
-          <motion.path
-            d="M 200 50 L 350 250 L 50 250 Z"
-            fill="none"
-            stroke="white"
-            strokeWidth="1"
-            className="opacity-10"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-          />
-
-          {/* Connection Glows */}
-          <AnimatePresence>
-            {active && (
-              <motion.circle
-                key="glow"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.2 }}
-                exit={{ opacity: 0 }}
-                cx={active === 'C' ? 200 : active === 'A' ? 350 : 50}
-                cy={active === 'C' ? 50 : active === 'A' ? 250 : 250}
-                r="60"
-                className="fill-orbit-accent blur-2xl"
-              />
-            )}
-          </AnimatePresence>
+      <div className="relative w-64 h-64 mb-8">
+        <svg viewBox="0 0 100 100" className="w-full h-full overflow-visible">
+          {/* Triangle */}
+          <path d="M 50 10 L 90 80 L 10 80 Z" fill="none" stroke="white" strokeWidth="0.5" opacity="0.3" />
 
           {/* Vertices */}
-          {nodes.map((node, i) => {
-            const x = node.id === 'C' ? 200 : node.id === 'A' ? 350 : 50
-            const y = node.id === 'C' ? 50 : node.id === 'A' ? 250 : 250
+          <circle cx="50" cy="10" r="3" className="fill-orbit-primary" />
+          <text x="50" y="2" textAnchor="middle" className="fill-orbit-text text-[5px] font-bold uppercase">Consistency</text>
 
-            return (
-              <motion.g
-                key={node.id}
-                onMouseEnter={() => setActive(node.id as any)}
-                onMouseLeave={() => setActive(null)}
-                className="cursor-help"
-              >
-                <circle cx={x} cy={y} r="40" className="fill-black stroke-white/10" />
-                <motion.circle
-                  animate={active === node.id ? { r: 45, strokeOpacity: 1 } : { r: 40, strokeOpacity: 0.2 }}
-                  cx={x} cy={y} className={`fill-none stroke-2 ${node.color}`}
-                />
-                <text x={x} y={y} textAnchor="middle" dominantBaseline="central" className="fill-orbit-text text-[12px] font-bold">
-                  {node.id}
-                </text>
-              </motion.g>
-            )
-          })}
+          <circle cx="90" cy="80" r="3" className="fill-orbit-secondary" />
+          <text x="96" y="82" className="fill-orbit-text text-[5px] font-bold uppercase">Availability</text>
+
+          <circle cx="10" cy="80" r="3" className="fill-orbit-accent" />
+          <text x="4" y="82" textAnchor="end" className="fill-orbit-text text-[5px] font-bold uppercase">Partition Tolerance</text>
+
+          {/* Selection Areas */}
+          <g className="cursor-pointer" onClick={() => setSelected('CP')}>
+            <circle cx="30" cy="45" r="8" className={`transition-colors ${selected === 'CP' ? 'fill-orbit-primary/40' : 'fill-white/5 hover:fill-white/10'}`} />
+            <text x="30" y="46" textAnchor="middle" className="fill-white text-[4px] font-bold pointer-events-none">CP</text>
+          </g>
+
+          <g className="cursor-pointer" onClick={() => setSelected('AP')}>
+            <circle cx="50" cy="80" r="8" className={`transition-colors ${selected === 'AP' ? 'fill-orbit-accent/40' : 'fill-white/5 hover:fill-white/10'}`} />
+            <text x="50" y="81" textAnchor="middle" className="fill-white text-[4px] font-bold pointer-events-none">AP</text>
+          </g>
+
+          <g className="cursor-pointer" onClick={() => setSelected('CA')}>
+            <circle cx="70" cy="45" r="8" className={`transition-colors ${selected === 'CA' ? 'fill-orbit-secondary/40' : 'fill-white/5 hover:fill-white/10'}`} />
+            <text x="70" y="46" textAnchor="middle" className="fill-white text-[4px] font-bold pointer-events-none">CA</text>
+          </g>
         </svg>
+      </div>
 
-        <div className="mt-4 min-h-[60px] text-center">
-          <AnimatePresence mode="wait">
-            {active ? (
-              <motion.div
-                key={active}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-              >
-                <h5 className={`text-sm font-bold ${nodes.find(n => n.id === active)?.color}`}>
-                  {nodes.find(n => n.id === active)?.label}
-                </h5>
-                <p className="mt-1 text-xs text-orbit-muted max-w-xs mx-auto">
-                  {nodes.find(n => n.id === active)?.description}
-                </p>
-              </motion.div>
-            ) : (
-              <p className="text-xs text-orbit-muted italic">Hover over a vertex to explore the theorem</p>
-            )}
-          </AnimatePresence>
-        </div>
+      <div className="h-16 text-center">
+        {selected === 'CP' && <p className="text-xs text-orbit-muted italic">"I'd rather return an error than stale data during a partition."</p>}
+        {selected === 'AP' && <p className="text-xs text-orbit-muted italic">"I will return whatever data I have, even if it might be old."</p>}
+        {selected === 'CA' && <p className="text-xs text-orbit-muted italic">"Theoretical system that only works when there are no network issues."</p>}
+        {!selected && <p className="text-xs text-orbit-muted uppercase tracking-widest opacity-50">Select a trade-off</p>}
       </div>
     </div>
   )

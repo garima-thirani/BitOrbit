@@ -124,6 +124,7 @@ Useful when different parts of a record have different access patterns.
 ------------------------------------------------------------------------
 
 # Basic Sharding Architecture
+
 ``` text
                 Application
                      │
@@ -131,7 +132,6 @@ Useful when different parts of a record have different access patterns.
           ┌──────┼──────┐
           ▼      ▼      ▼
       Shard A Shard B Shard C
-
 ```
 
 The router decides which shard stores or retrieves a row.

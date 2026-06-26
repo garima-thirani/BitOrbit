@@ -136,6 +136,7 @@ Good distributed systems are designed to survive it.
 During a partition you must choose
 between C and A.
 ```
+
 ------------------------------------------------------------------------
 
 # CP Systems
@@ -314,3 +315,11 @@ Topics:
 -   Latency vs consistency
 -   Real database classifications
 -   Interview decision framework
+
+## Interactive Illustration
+
+```illustration
+cap
+```
+
+Above is an interactive CAP theorem trade-off triangle.

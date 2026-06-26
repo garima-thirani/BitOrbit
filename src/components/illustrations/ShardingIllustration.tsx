@@ -1,75 +1,46 @@
 import { motion } from 'framer-motion'
-import { Database, HardDrive, Share2 } from 'lucide-react'
+import { useState } from 'react'
 
 export function ShardingIllustration() {
+  const [data, setData] = useState<{id: number, shard: number}[]>([])
+
+  const addData = () => {
+    const id = Math.floor(Math.random() * 1000)
+    const shard = id % 3
+    setData(prev => [...prev.slice(-5), { id, shard }])
+  }
+
   return (
-    <div className="glass-panel my-8 overflow-hidden rounded-2xl bg-orbit-background/40 p-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h4 className="text-sm font-bold uppercase tracking-[0.2em] text-orbit-accent">
-          Database Sharding Pattern
-        </h4>
-        <span className="rounded-full bg-orbit-primary/10 px-3 py-1 text-[10px] font-bold text-orbit-primary uppercase">
-          Horizontal Partitioning
-        </span>
-      </div>
+    <div className="glass-panel my-8 p-6 flex flex-col items-center bg-orbit-background/40 rounded-xl">
+      <div className="text-xs font-semibold uppercase tracking-widest text-orbit-accent mb-6">Horizontal Partitioning (Sharding)</div>
 
-      <div className="relative flex h-64 items-center justify-center gap-12">
-        {/* Shard Key Input */}
-        <div className="flex flex-col items-center gap-3">
-          <div className="rounded-xl bg-white/5 p-4 text-orbit-accent">
-            <Share2 size={32} />
-          </div>
-          <span className="text-[10px] font-bold text-orbit-muted uppercase tracking-widest">Shard Key</span>
+      <button
+        onClick={addData}
+        className="mb-8 px-6 py-2 bg-orbit-primary/20 border border-orbit-primary text-orbit-primary rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-orbit-primary/30 transition"
+      >
+        Write Random Data (ID % 3)
+      </button>
 
-          {/* Data Packets */}
-          {[0, 1, 2].map(i => (
-            <motion.div
-              key={i}
-              animate={{
-                x: [0, 150],
-                y: [0, (i - 1) * 80],
-                opacity: [0, 1, 0]
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                delay: i * 0.7,
-                ease: "easeInOut"
-              }}
-              className="absolute h-2 w-2 rounded-full bg-orbit-accent"
-            />
-          ))}
-        </div>
-
-        {/* Shards */}
-        <div className="flex flex-col gap-6">
-          {['Shard A (User 1-1M)', 'Shard B (User 1M-2M)', 'Shard C (User 2M+)'].map((label, i) => (
-            <motion.div
-              key={i}
-              whileHover={{ scale: 1.05 }}
-              className="flex items-center gap-4 rounded-xl border border-white/5 bg-white/5 p-3 pr-6"
-            >
-              <div className="rounded-lg bg-orbit-primary/10 p-2 text-orbit-primary">
-                <Database size={20} />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-[10px] font-bold text-orbit-text">{label}</span>
-                <div className="mt-1 h-1 w-24 overflow-hidden rounded-full bg-white/10">
+      <div className="grid grid-cols-3 gap-4 w-full">
+        {[0, 1, 2].map(s => (
+          <div key={s} className="flex flex-col items-center">
+            <div className="w-full h-32 bg-white/5 border border-white/10 rounded-lg p-2 flex flex-col gap-2 overflow-hidden">
+              <div className="text-[8px] font-bold text-orbit-muted uppercase text-center border-b border-white/5 pb-1">Shard {s}</div>
+              <div className="flex flex-col gap-1">
+                {data.filter(d => d.shard === s).map(d => (
                   <motion.div
-                    animate={{ width: ['30%', '70%', '45%'] }}
-                    transition={{ duration: 3, repeat: Infinity, delay: i * 0.5 }}
-                    className="h-full bg-orbit-primary"
-                  />
-                </div>
+                    key={d.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="bg-orbit-accent/20 border border-orbit-accent/40 rounded px-1 py-0.5 text-[8px] text-center"
+                  >
+                    ID: {d.id}
+                  </motion.div>
+                ))}
               </div>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-8 grid grid-cols-2 gap-4 border-t border-white/5 pt-6 text-[11px] text-orbit-muted">
-        <p>● Eliminates single point of failure for data.</p>
-        <p>● Increases write throughput linearly with nodes.</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )

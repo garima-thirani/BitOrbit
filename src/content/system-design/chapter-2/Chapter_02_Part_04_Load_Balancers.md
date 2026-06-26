@@ -347,3 +347,11 @@ Topics:
 -   Alternatives
 -   JWT vs Server Sessions
 -   Production Trade-offs
+
+## Interactive Illustration
+
+```illustration
+loadbalancer
+```
+
+Above is an interactive Round-Robin load balancer simulation.
