@@ -1,4 +1,8 @@
 import { Fragment, type ReactElement } from 'react'
+import { LoadBalancerIllustration } from '@/components/illustrations/LoadBalancerIllustration'
+import { CachingIllustration } from '@/components/illustrations/CachingIllustration'
+import { ShardingIllustration } from '@/components/illustrations/ShardingIllustration'
+import { CAPIllustration } from '@/components/illustrations/CAPIllustration'
 
 interface MarkdownRendererProps {
   content: string
@@ -26,6 +30,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
   let listItems: string[] = []
   let codeLines: string[] = []
   let inCode = false
+  let codeLanguage = ''
 
   const flushList = () => {
     if (listItems.length) {
@@ -42,12 +47,27 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
 
   const flushCode = () => {
     if (codeLines.length) {
-      elements.push(
-        <pre key={`pre-${elements.length}`}>
-          <code>{codeLines.join('\n')}</code>
-        </pre>,
-      )
+      const codeContent = codeLines.join('\n').trim()
+
+      if (codeLanguage === 'illustration') {
+        if (codeContent === 'load-balancer') {
+          elements.push(<LoadBalancerIllustration key={`ill-${elements.length}`} />)
+        } else if (codeContent === 'caching') {
+          elements.push(<CachingIllustration key={`ill-${elements.length}`} />)
+        } else if (codeContent === 'sharding') {
+          elements.push(<ShardingIllustration key={`ill-${elements.length}`} />)
+        } else if (codeContent === 'cap') {
+          elements.push(<CAPIllustration key={`ill-${elements.length}`} />)
+        }
+      } else {
+        elements.push(
+          <pre key={`pre-${elements.length}`}>
+            <code>{codeLines.join('\n')}</code>
+          </pre>,
+        )
+      }
       codeLines = []
+      codeLanguage = ''
     }
   }
 
@@ -57,6 +77,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         flushCode()
       } else {
         flushList()
+        codeLanguage = line.slice(3).trim()
       }
       inCode = !inCode
       return
@@ -72,7 +93,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
       return
     }
 
-    if (line.startsWith('- ')) {
+    if (line.startsWith('- ') || line.startsWith('• ')) {
       listItems.push(line.slice(2))
       return
     }
