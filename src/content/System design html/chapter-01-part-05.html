@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Contracts & Client-Server Architecture | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--p:#6366f1;--pl:#818cf8;--pd:#4f46e5;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;scroll-behavior:smooth;}
+body{font-family:Inter,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;}
+.hero{background:linear-gradient(135deg,#1a1050,#0f172a,#061025);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(99,102,241,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:960px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(99,102,241,.2);color:var(--pl);border:1px solid rgba(129,140,248,.4);border-radius:20px;padding:6px 18px;font-size:13px;font-weight:600;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#a5b4fc,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:720px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.defbox{background:rgba(99,102,241,.09);border-left:3px solid #6366f1;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0;font-size:.92rem;line-height:1.8;}
+.defbox strong{color:#818cf8;}
+.tag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:16px 0;}
+.tag-card{background:var(--bc2);border:1px solid var(--brd);border-radius:10px;padding:14px 16px;}
+.tag-card .tc{font-weight:700;font-size:.85rem;color:#fca5a5;margin-bottom:4px;}
+.tag-card .td{font-size:.82rem;color:var(--tm);}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(99,102,241,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.cmp-table .h{color:#fca5a5;font-weight:600;}
+.cmp-table .g{color:#6ee7b7;font-weight:600;}
+.fig{background:var(--bc2);border:1px solid var(--brd);border-radius:16px;padding:30px;margin:28px 0;}
+.fig-cap{text-align:center;color:var(--tm);font-size:.85rem;margin-top:16px;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.cm{color:#8b949e;font-style:italic;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+
+/* API Contract Viewer */
+.api-card{background:var(--bc2);border:1px solid var(--brd);border-radius:14px;padding:24px;margin:16px 0;}
+.api-card .api-method{display:inline-block;padding:3px 12px;border-radius:6px;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.api-method.get{background:rgba(16,185,129,.15);color:#6ee7b7;}
+.api-method.post{background:rgba(99,102,241,.15);color:#a5b4fc;}
+.api-method.put{background:rgba(245,158,11,.15);color:#fcd34d;}
+.api-method.delete{background:rgba(239,68,68,.15);color:#fca5a5;}
+.api-card .api-path{font-family:monospace;font-size:.95rem;color:var(--t);margin:8px 0;}
+.api-card .api-desc{font-size:.88rem;color:var(--tm);margin-bottom:12px;}
+.api-card .api-section{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--a);margin:12px 0 6px;}
+.api-card .api-json{background:var(--cbg);border:1px solid #30363d;border-radius:8px;padding:14px;font-family:monospace;font-size:.82rem;color:#a5f3fc;line-height:1.7;white-space:pre;overflow-x:auto;}
+.api-card .api-status{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;}
+.api-card .api-status span{padding:2px 10px;border-radius:6px;font-size:.78rem;}
+.api-status .s2xx{background:rgba(16,185,129,.1);color:#6ee7b7;}
+.api-status .s4xx{background:rgba(245,158,11,.1);color:#fcd34d;}
+.api-status .s5xx{background:rgba(239,68,68,.1);color:#fca5a5;}
+
+/* Client-Server Interactive */
+.cs-diagram{margin:24px 0;text-align:center;}
+.cs-diagram svg{max-width:100%;}
+
+/* HTTP method flashcards */
+.flash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:16px 0;}
+.flash-card{background:var(--bc2);border:1px solid var(--brd);border-radius:10px;padding:18px 14px;text-align:center;transition:.2s;}
+.flash-card:hover{transform:translateY(-3px);border-color:var(--pl);}
+.flash-card .fc-method{font-weight:800;font-size:1.2rem;margin-bottom:6px;}
+.flash-card .fc-desc{font-size:.78rem;color:var(--tm);}
+
+/* Interactive API Builder */
+.builder{background:linear-gradient(135deg,#1a1a3e,#162032);border:1px solid var(--brd);border-radius:16px;padding:30px;margin:28px 0;}
+.builder h4{color:#67e8f9;font-size:1.1rem;margin-bottom:16px;}
+.builder-row{display:flex;gap:12px;margin:10px 0;flex-wrap:wrap;align-items:center;}
+.builder-row label{min-width:120px;color:var(--tm);font-size:.88rem;}
+.builder-row select,.builder-row input{flex:1;min-width:120px;padding:10px 14px;background:var(--cbg);border:1px solid var(--brd);border-radius:8px;color:var(--t);font-family:monospace;font-size:.9rem;outline:none;transition:.2s;}
+.builder-row select:focus,.builder-row input:focus{border-color:var(--pl);}
+.builder-btn{padding:10px 24px;background:var(--p);color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:.2s;font-size:.9rem;}
+.builder-btn:hover{background:var(--pd);}
+.builder-output{background:var(--cbg);border:1px solid #30363d;border-radius:10px;padding:18px;margin-top:16px;font-family:monospace;font-size:.85rem;line-height:1.8;white-space:pre;overflow-x:auto;}
+
+/* Quiz */
+.quiz-card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:28px;margin:20px 0;}
+.quiz-q{font-size:1.05rem;font-weight:600;margin-bottom:16px;color:var(--t);}
+.quiz-opt{display:block;padding:12px 18px;margin:8px 0;background:var(--bc2);border:1px solid var(--brd);border-radius:10px;cursor:pointer;transition:.2s;color:var(--tm);font-size:.92rem;}
+.quiz-opt:hover{border-color:var(--pl);background:rgba(99,102,241,.08);}
+.quiz-opt.correct{background:rgba(16,185,129,.15);border-color:var(--s);color:#6ee7b7;}
+.quiz-opt.wrong{background:rgba(239,68,68,.15);border-color:var(--d);color:#fca5a5;}
+.quiz-feedback{margin-top:12px;padding:12px 16px;border-radius:8px;font-size:.9rem;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.correct{background:rgba(16,185,129,.1);color:#6ee7b7;border:1px solid rgba(16,185,129,.2);}
+.quiz-feedback.wrong{background:rgba(239,68,68,.1);color:#fca5a5;border:1px solid rgba(239,68,68,.2);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 1 · Part 5 · API Contracts & Client-Server</div>
+<h1>API Contracts &<br><span>Client-Server Architecture</span></h1>
+<p>APIs are promises between systems. A well-designed architecture starts with clear contracts before code is written. Learn to design RESTful APIs that scale.</p>
+<div class="stats">
+<div class="stat"><div class="sn">REST</div><div class="sl">Core Pattern</div></div>
+<div class="stat"><div class="sn">5</div><div class="sl">HTTP Methods</div></div>
+<div class="stat"><div class="sn">CRAFT</div><div class="sl">Design Framework</div></div>
+<div class="stat"><div class="sn">Idempotent</div><div class="sl">Key Principle</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — Ordering Food at a Restaurant</div>
+<div class="story">
+<div class="slabel">API as a Contract</div>
+<h3>The menu is the contract between customer and kitchen.</h3>
+<p>
+Imagine walking into a restaurant. You don't walk into the kitchen and tell the chef how to cook. Instead, you interact with the <strong>menu</strong>. The menu is a contract. It tells you what operations are available, what inputs are expected, and what outputs you will receive.
+<br><br>
+The kitchen can completely change how food is prepared without changing the menu. APIs work exactly the same way. The client only knows the contract — not the implementation. This is the foundation of <strong>loose coupling</strong>.
+</p>
+</div>
+
+<div class="sec">🧠 What Is an API Contract?</div>
+<div class="defbox">
+<strong>Formal Definition:</strong> An API is a well-defined interface that allows one software component to communicate with another through standardized requests and responses. The important word is <strong>interface</strong>. Interfaces reduce coupling.
+</div>
+
+<div class="card">
+<p style="color:var(--tm);margin-bottom:16px;">An API contract specifies:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📍 Endpoint</div><div class="td">The URL path where the resource lives</div></div>
+<div class="tag-card"><div class="tc">🔧 HTTP Method</div><div class="td">GET, POST, PUT, PATCH, or DELETE</div></div>
+<div class="tag-card"><div class="tc">📥 Request Parameters</div><div class="td">Headers, query params, body schema</div></div>
+<div class="tag-card"><div class="tc">🔐 Authentication</div><div class="td">How the client proves identity</div></div>
+<div class="tag-card"><div class="tc">✅ Validation Rules</div><div class="td">Required fields, data types, constraints</div></div>
+<div class="tag-card"><div class="tc">📤 Response Schema</div><div class="td">Shape of success responses</div></div>
+<div class="tag-card"><div class="tc">⚠ Error Codes</div><div class="td">Status codes and error messages</div></div>
+</div>
+</div>
+
+<div class="sec">🔌 REST API Contract Example</div>
+<div class="api-card">
+<div><span class="api-method post">POST</span></div>
+<div class="api-path">/v1/urls</div>
+<div class="api-desc">Create a shortened URL from a long URL</div>
+<div class="api-section">Request Body</div>
+<div class="api-json">{
+  "longUrl": "https://example.com/blog/system-design"
+}</div>
+<div class="api-section">Success Response (201)</div>
+<div class="api-json">{
+  "id": "ab12CD",
+  "shortUrl": "https://sho.rt/ab12CD",
+  "createdAt": "2026-01-07T12:00:00Z"
+}</div>
+<div class="api-section">Error Status Codes</div>
+<div class="api-status">
+<span class="s4xx">400 Bad Request</span>
+<span class="s4xx">401 Unauthorized</span>
+<span class="s4xx">409 Duplicate</span>
+<span class="s4xx">429 Rate Limited</span>
+<span class="s5xx">500 Internal Error</span>
+</div>
+</div>
+
+<div class="api-card">
+<div><span class="api-method get">GET</span></div>
+<div class="api-path">/v1/urls/{id}</div>
+<div class="api-desc">Retrieve the original URL for a short ID</div>
+<div class="api-section">Success Response (200)</div>
+<div class="api-json">{
+  "id": "ab12CD",
+  "longUrl": "https://example.com/blog/system-design",
+  "shortUrl": "https://sho.rt/ab12CD",
+  "clicks": 1542
+}</div>
+</div>
+
+<div class="sec">🎮 Interactive API Builder</div>
+<div class="builder">
+<h4>🛠 Design Your Own API Contract</h4>
+<p style="color:var(--tm);font-size:.9rem;margin-bottom:16px;">Select options and see the API contract generated in real-time.</p>
+<div class="builder-row">
+<label>HTTP Method</label>
+<select id="apiMethod" onchange="buildApi()">
+<option value="POST">POST</option>
+<option value="GET">GET</option>
+<option value="PUT">PUT</option>
+<option value="PATCH">PATCH</option>
+<option value="DELETE">DELETE</option>
+</select>
+</div>
+<div class="builder-row">
+<label>Resource</label>
+<select id="apiResource" onchange="buildApi()">
+<option value="users">users</option>
+<option value="orders">orders</option>
+<option value="products">products</option>
+<option value="payments">payments</option>
+</select>
+</div>
+<div class="builder-row">
+<label>Requires Auth?</label>
+<select id="apiAuth" onchange="buildApi()">
+<option value="true">Yes — Bearer Token</option>
+<option value="false">No — Public</option>
+</select>
+</div>
+<button class="builder-btn" onclick="buildApi()">Generate Contract</button>
+<div class="builder-output" id="apiOutput">Select options above and click Generate...</div>
+</div>
+
+<div class="sec">⚡ HTTP Methods Reference</div>
+<div class="flash-grid">
+<div class="flash-card"><div class="fc-method" style="color:#6ee7b7;">GET</div><div class="fc-desc">Read a resource. Idempotent. Safe.</div></div>
+<div class="flash-card"><div class="fc-method" style="color:#a5b4fc;">POST</div><div class="fc-desc">Create a new resource. Not idempotent.</div></div>
+<div class="flash-card"><div class="fc-method" style="color:#fcd34d;">PUT</div><div class="fc-desc">Replace a resource. Idempotent.</div></div>
+<div class="flash-card"><div class="fc-method" style="color:#fca5a5;">PATCH</div><div class="fc-desc">Partial update. May not be idempotent.</div></div>
+<div class="flash-card"><div class="fc-method" style="color:#ef4444;">DELETE</div><div class="fc-desc">Remove a resource. Idempotent.</div></div>
+</div>
+
+<div class="sec">🏛 Client-Server Architecture</div>
+<div class="fig">
+<svg viewBox="0 0 900 340" width="100%">
+<defs>
+<linearGradient id="g1"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<linearGradient id="g2"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="arr" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12" fill="#64748b"/></marker>
+</defs>
+<rect x="50" y="30" width="180" height="70" rx="12" fill="url(#g1)"/>
+<text x="140" y="73" fill="white" font-size="22" font-weight="700" text-anchor="middle">Client</text>
+<text x="140" y="120" fill="#94a3b8" font-size="14" text-anchor="middle">Browser / Mobile App</text>
+<line x1="140" y1="100" x2="140" y2="140" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+<text x="140" y="165" fill="#67e8f9" font-size="13" text-anchor="middle">Request</text>
+
+<rect x="340" y="110" width="220" height="80" rx="16" fill="url(#g2)"/>
+<text x="450" y="162" fill="white" font-size="22" font-weight="700" text-anchor="middle">Server</text>
+<line x1="550" y1="150" x2="650" y2="150" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+<rect x="660" y="100" width="180" height="100" rx="12" fill="#f59e0b"/>
+<text x="750" y="138" fill="white" font-size="18" font-weight="700" text-anchor="middle">Database</text>
+<text x="750" y="172" fill="#fde68a" font-size="14" text-anchor="middle">Business Logic</text>
+<path d="M450,195 L450,230 L140,230 L140,175" stroke="#64748b" stroke-width="3" fill="none" marker-end="url(#arr)" stroke-dasharray="6 3"/>
+<text x="300" y="245" fill="#94a3b8" font-size="13" text-anchor="middle">Response</text>
+</svg>
+<div class="fig-cap">Client requests → Server processes → Database persists → Response returned to client</div>
+</div>
+
+<div class="sec">📋 Responsibilities</div>
+<div class="g2">
+<div class="gc">
+<h4>📱 Client</h4>
+<p>
+• UI rendering & user interaction<br>
+• Basic input validation<br>
+• Managing local state<br>
+• Handling network requests<br>
+• Caching responses locally
+</p>
+</div>
+<div class="gc">
+<h4>🖥 Server</h4>
+<p>
+• Authentication & authorization<br>
+• Business logic & rules<br>
+• Data persistence<br>
+• Security enforcement<br>
+• Auditing & logging
+</p>
+</div>
+</div>
+
+<div class="ibox">
+<div class="lbl">⚠ Golden Rule</div>
+<p><strong>Never trust the client.</strong> Always validate on the server. Client-side validation is for user experience. Server-side validation is for correctness and security.</p>
+</div>
+
+<div class="sec">🎯 Principles of Good API Design</div>
+<div class="defbox">
+<strong>Remember CRAFT:</strong> Consistent naming · Resource oriented · Authentication · Failure handling · Typed responses
+</div>
+
+<div class="card">
+<div class="ts" style="display:flex;gap:14px;margin:10px 0;padding:14px 18px;background:var(--bc2);border-radius:10px;border-left:3px solid var(--s);">
+<div style="min-width:28px;height:28px;border-radius:50%;background:var(--s);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;">1</div>
+<div style="font-size:.9rem;color:var(--t);"><strong>Resource-Oriented URLs</strong><br><span style="color:var(--tm);font-size:.85rem;">Good: <code>GET /users/42</code> · Bad: <code>GET /getUser?id=42</code></span></div>
+</div>
+<div class="ts" style="display:flex;gap:14px;margin:10px 0;padding:14px 18px;background:var(--bc2);border-radius:10px;border-left:3px solid var(--a);">
+<div style="min-width:28px;height:28px;border-radius:50%;background:var(--a);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;">2</div>
+<div style="font-size:.9rem;color:var(--t);"><strong>Use Correct HTTP Methods</strong><br><span style="color:var(--tm);font-size:.85rem;">GET for read, POST for create, PUT for full update, PATCH for partial, DELETE for removal</span></div>
+</div>
+<div class="ts" style="display:flex;gap:14px;margin:10px 0;padding:14px 18px;background:var(--bc2);border-radius:10px;border-left:3px solid var(--w);">
+<div style="min-width:28px;height:28px;border-radius:50%;background:var(--w);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;">3</div>
+<div style="font-size:.9rem;color:var(--t);"><strong>Idempotency</strong><br><span style="color:var(--tm);font-size:.85rem;">Calling the same request multiple times should not create inconsistent state. PUT is idempotent, POST usually isn't. Use idempotency keys for payments.</span></div>
+</div>
+<div class="ts" style="display:flex;gap:14px;margin:10px 0;padding:14px 18px;background:var(--bc2);border-radius:10px;border-left:3px solid var(--d);">
+<div style="min-width:28px;height:28px;border-radius:50%;background:var(--d);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;">4</div>
+<div style="font-size:.9rem;color:var(--t);"><strong>Versioning</strong><br><span style="color:var(--tm);font-size:.85rem;">Never break existing clients. Use URL versioning: <code>/v1/users</code>, <code>/v2/users</code></span></div>
+</div>
+</div>
+
+<div class="sec">🏭 Production Example — Amazon Checkout</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>APIs Define Service Boundaries</h3>
+<p>
+During checkout at Amazon, multiple services interact through API contracts:
+<br><br>
+1. Client calls <strong>Payment API</strong> → validates request<br>
+2. <strong>Inventory Service</strong> → reserves stock<br>
+3. <strong>Order Service</strong> → creates the order<br>
+4. <strong>Notification Service</strong> → sends confirmation<br>
+<br>
+Each interaction is governed by API contracts. Without stable contracts, hundreds of teams cannot develop independently.
+</p>
+</div>
+
+<div class="sec">💡 Why API Design Comes Before Architecture</div>
+<div class="fig">
+<svg viewBox="0 0 900 200" width="100%">
+<defs>
+<linearGradient id="g3"><stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="arr2" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="20" y="60" width="180" height="80" rx="12" fill="url(#g3)"/>
+<text x="110" y="114" fill="white" font-size="20" font-weight="700" text-anchor="middle">Client</text>
+<line x1="200" y1="100" x2="280" y2="100" stroke="#64748b" stroke-width="4" marker-end="url(#arr2)"/>
+<rect x="290" y="60" width="180" height="80" rx="12" fill="#06b6d4"/>
+<text x="380" y="114" fill="white" font-size="20" font-weight="700" text-anchor="middle">URL Service</text>
+<line x1="470" y1="100" x2="550" y2="100" stroke="#64748b" stroke-width="4" marker-end="url(#arr2)"/>
+<rect x="560" y="60" width="180" height="80" rx="12" fill="#10b981"/>
+<text x="650" y="114" fill="white" font-size="20" font-weight="700" text-anchor="middle">Analytics</text>
+<line x1="740" y1="100" x2="800" y2="100" stroke="#64748b" stroke-width="4" marker-end="url(#arr2)"/>
+<rect x="810" y="60" width="80" height="80" rx="12" fill="#f59e0b"/>
+<text x="850" y="114" fill="white" font-size="20" font-weight="700" text-anchor="middle">DB</text>
+</svg>
+<div class="fig-cap">Services are discovered through responsibilities exposed by APIs. Contracts define service boundaries.</div>
+</div>
+
+<div class="sec">🚨 Common Mistakes</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Designing APIs Around Database Tables</div><div class="td">APIs should reflect business logic, not database schema.</div></div>
+<div class="tag-card"><div class="tc">❌ Ignoring Error Responses</div><div class="td">Every API must document what errors clients can expect.</div></div>
+<div class="tag-card"><div class="tc">❌ Using POST for Everything</div><div class="td">Use the correct HTTP method for each operation.</div></div>
+<div class="tag-card"><div class="tc">❌ Forgetting Authentication</div><div class="td">Never expose endpoints without proper auth checks.</div></div>
+<div class="tag-card"><div class="tc">❌ Breaking Backward Compatibility</div><div class="td">Version your APIs before making breaking changes.</div></div>
+</div>
+</div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card">
+<div class="quiz-q">1. Which HTTP method is naturally idempotent?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) POST</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) PUT — replacing the same resource multiple times results in the same state</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) PATCH</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) All methods are idempotent</div>
+<div class="quiz-feedback" id="quiz1">PUT is idempotent — calling PUT /users/42 with the same body always produces the same state. POST is NOT idempotent — it creates a new resource each time.</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">2. What is the best URL design for fetching a user with ID 42?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) /getUser?id=42</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) /v1/users/42 — resource-oriented with versioning</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) /fetchUser/42</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) /userData?userId=42</div>
+<div class="quiz-feedback" id="quiz2">Resource-oriented URLs reflect the entity (users) and use the ID as a path parameter. Versioning (/v1/) ensures backward compatibility.</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">3. True or False: Client-side validation is sufficient for security.</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) True — clients know the data best</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) False — always validate on the server; never trust the client</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) True — with HTTPS encryption</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) True — if using TypeScript</div>
+<div class="quiz-feedback" id="quiz3">Never trust the client. Client validation is for UX. Server validation is for correctness and security.</div>
+</div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story">
+<div class="slabel">Coming Up</div>
+<h3>Part 6: Trade-offs, CAP Thinking & Bitly HLD</h3>
+<p>
+Now that you understand API contracts, the final part of Chapter 1 teaches trade-off thinking, the CAP theorem, and a complete Bitly high-level design walkthrough.
+</p>
+</div>
+
+</div>
+
+<script>
+function buildApi() {
+  const method = document.getElementById('apiMethod').value;
+  const resource = document.getElementById('apiResource').value;
+  const auth = document.getElementById('apiAuth').value === 'true';
+  const methodColor = method === 'GET' ? '#6ee7b7' : method === 'POST' ? '#a5b4fc' : method === 'PUT' ? '#fcd34d' : method === 'PATCH' ? '#fca5a5' : '#ef4444';
+  
+  const output = document.getElementById('apiOutput');
+  output.innerHTML = `<span style="color:#8b949e;">// API Contract — ${method} /v1/${resource}</span>\n\n`;
+  output.innerHTML += `<span style="color:#c792ea;">${method}</span> /v1/${resource}\n`;
+  output.innerHTML += `Host: api.example.com\n`;
+  output.innerHTML += `Content-Type: application/json\n`;
+  if (auth) output.innerHTML += `Authorization: Bearer <token>\n`;
+  output.innerHTML += `\n<span style="color:#8b949e;">// Request Body</span>\n`;
+  output.innerHTML += `{\n`;
+  output.innerHTML += `  "id": "string",\n`;
+  output.innerHTML += `  "data": {}\n`;
+  output.innerHTML += `}\n\n`;
+  output.innerHTML += `<span style="color:#8b949e;">// Response (200 OK)</span>\n`;
+  output.innerHTML += `{\n`;
+  output.innerHTML += `  "success": true,\n`;
+  output.innerHTML += `  "data": { "id": "abc123" },\n`;
+  output.innerHTML += `  "timestamp": "2026-01-07T12:00:00Z"\n`;
+  output.innerHTML += `}\n\n`;
+  output.innerHTML += `<span style="color:#8b949e;">// Errors</span>\n`;
+  output.innerHTML += `400: Bad Request · 401: Unauthorized · 403: Forbidden · 429: Rate Limited · 500: Server Error`;
+}
+buildApi();
+
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

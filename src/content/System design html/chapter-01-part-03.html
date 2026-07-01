@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Capacity Estimation | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--p:#6366f1;--pl:#818cf8;--pd:#4f46e5;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;scroll-behavior:smooth;}
+body{font-family:Inter,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;}
+.hero{background:linear-gradient(135deg,#1a1050,#0f172a,#061025);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(99,102,241,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:960px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(99,102,241,.2);color:var(--pl);border:1px solid rgba(129,140,248,.4);border-radius:20px;padding:6px 18px;font-size:13px;font-weight:600;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#a5b4fc,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:720px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(99,102,241,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(99,102,241,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(99,102,241,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.defbox{background:rgba(99,102,241,.09);border-left:3px solid #6366f1;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0;font-size:.92rem;line-height:1.8;}
+.defbox strong{color:#818cf8;}
+.tag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:16px 0;}
+.tag-card{background:var(--bc2);border:1px solid var(--brd);border-radius:10px;padding:14px 16px;}
+.tag-card .tc{font-weight:700;font-size:.85rem;color:#fca5a5;margin-bottom:4px;}
+.tag-card .td{font-size:.82rem;color:var(--tm);}
+.cmp-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.88rem;}
+.cmp-table th{background:rgba(99,102,241,.15);color:#818cf8;padding:10px 14px;text-align:left;border-bottom:1px solid var(--brd);}
+.cmp-table td{padding:9px 14px;border-bottom:1px solid rgba(51,65,85,.5);color:var(--tm);}
+.cmp-table tr:hover td{background:rgba(99,102,241,.05);}
+.cmp-table .h{color:#fca5a5;font-weight:600;}
+.cmp-table .g{color:#6ee7b7;font-weight:600;}
+.cmp-table .y{color:#fcd34d;font-weight:600;}
+.step-list{counter-reset:step;list-style:none;padding:0;margin:14px 0;}
+.step-list li{counter-increment:step;display:flex;gap:14px;margin-bottom:14px;align-items:flex-start;}
+.step-list li::before{content:counter(step);min-width:28px;height:28px;background:var(--p);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;flex-shrink:0;margin-top:2px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.fig{background:var(--bc2);border:1px solid var(--brd);border-radius:16px;padding:30px;margin:28px 0;}
+.fig-cap{text-align:center;color:var(--tm);font-size:.85rem;margin-top:16px;}
+
+/* Interactive Calculator */
+.calc{background:linear-gradient(135deg,#1a1a3e,#162032);border:1px solid var(--brd);border-radius:16px;padding:30px;margin:28px 0;}
+.calc h4{color:#67e8f9;font-size:1.1rem;margin-bottom:16px;}
+.calc-row{display:flex;gap:16px;align-items:center;margin:12px 0;flex-wrap:wrap;}
+.calc-row label{min-width:180px;color:var(--tm);font-size:.9rem;}
+.calc-row input{flex:1;min-width:120px;padding:10px 14px;background:var(--cbg);border:1px solid var(--brd);border-radius:8px;color:var(--t);font-family:monospace;font-size:.9rem;outline:none;transition:.2s;}
+.calc-row input:focus{border-color:var(--pl);box-shadow:0 0 0 3px rgba(99,102,241,.2);}
+.calc-row .result{font-family:monospace;font-size:1.1rem;color:#6ee7b7;font-weight:700;min-width:100px;text-align:right;}
+.calc-row .unit{color:var(--tm);font-size:.85rem;min-width:60px;}
+.calc-btn{padding:10px 24px;background:var(--p);color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:.2s;font-size:.9rem;}
+.calc-btn:hover{background:var(--pd);transform:translateY(-1px);}
+.calc-note{font-size:.8rem;color:var(--tm);margin-top:12px;border-top:1px solid var(--brd);padding-top:12px;}
+
+/* Interactive QPS slider */
+.slider-container{margin:20px 0;}
+.slider-container input[type=range]{width:100%;-webkit-appearance:none;height:6px;border-radius:3px;background:var(--brd);outline:none;}
+.slider-container input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--pl);cursor:pointer;border:2px solid var(--bg);}
+.slider-val{font-family:monospace;font-size:1.3rem;color:#67e8f9;font-weight:700;text-align:center;margin:8px 0;}
+
+/* Progress bar animation */
+.prog-bar{height:8px;background:var(--brd);border-radius:4px;overflow:hidden;margin:12px 0;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--p),var(--a));border-radius:4px;transition:width .6s ease;}
+
+/* Interactive SVG animation */
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+@keyframes flow{0%{stroke-dashoffset:100;}100%{stroke-dashoffset:0;}}
+.flow-line{stroke-dasharray:8 4;animation:flow 1.5s linear infinite;}
+.pulse{animation:pulse 2s ease-in-out infinite;}
+
+/* Quiz */
+.quiz-card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:28px;margin:20px 0;}
+.quiz-q{font-size:1.05rem;font-weight:600;margin-bottom:16px;color:var(--t);}
+.quiz-opt{display:block;padding:12px 18px;margin:8px 0;background:var(--bc2);border:1px solid var(--brd);border-radius:10px;cursor:pointer;transition:.2s;color:var(--tm);font-size:.92rem;}
+.quiz-opt:hover{border-color:var(--pl);background:rgba(99,102,241,.08);}
+.quiz-opt.correct{background:rgba(16,185,129,.15);border-color:var(--s);color:#6ee7b7;}
+.quiz-opt.wrong{background:rgba(239,68,68,.15);border-color:var(--d);color:#fca5a5;}
+.quiz-feedback{margin-top:12px;padding:12px 16px;border-radius:8px;font-size:.9rem;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.correct{background:rgba(16,185,129,.1);color:#6ee7b7;border:1px solid rgba(16,185,129,.2);}
+.quiz-feedback.wrong{background:rgba(239,68,68,.1);color:#fca5a5;border:1px solid rgba(239,68,68,.2);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 1 · Part 3 · Capacity Estimation</div>
+<h1>Capacity Estimation &<br><span>Back-of-the-Envelope Calculations</span></h1>
+<p>Before designing any architecture, you must estimate the scale. Numbers drive every architectural decision — from database choice to caching strategy to server count.</p>
+<div class="stats">
+<div class="stat"><div class="sn">DAU</div><div class="sl">Daily Active Users</div></div>
+<div class="stat"><div class="sn">QPS</div><div class="sl">Queries Per Second</div></div>
+<div class="stat"><div class="sn">Storage</div><div class="sl">Data Growth</div></div>
+<div class="stat"><div class="sn">Bandwidth</div><div class="sl">Network Requirements</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — Designing Before Measuring</div>
+<div class="story">
+<div class="slabel">The Estimation Mindset</div>
+<h3>One number changes every architectural decision.</h3>
+<p>
+A junior engineer is asked to design Bitly. They immediately say: <em>"Let's use PostgreSQL, Redis, Kafka, Kubernetes..."</em>
+<br><br>
+A senior engineer asks one question: <strong>"How many URLs are we shortening every day?"</strong>
+<br><br>
+If the answer is <strong>100 URLs/day</strong>, a single VM is enough. If the answer is <strong>500 million URLs/day</strong>, you need distributed databases, caching, replication, and global traffic routing.
+<br><br>
+Capacity estimation is the bridge between requirements and architecture. Without it, you're guessing.
+</p>
+</div>
+
+<div class="sec">📐 Why Capacity Estimation Matters</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:16px;">Capacity estimation answers five critical questions before any architecture is drawn:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📊 Traffic</div><div class="td">How much traffic will the system receive daily?</div></div>
+<div class="tag-card"><div class="tc">💾 Storage</div><div class="td">How much data will we store over time?</div></div>
+<div class="tag-card"><div class="tc">🖥 Servers</div><div class="td">How many servers are required?</div></div>
+<div class="tag-card"><div class="tc">🌐 Bandwidth</div><div class="td">What are the network requirements?</div></div>
+<div class="tag-card"><div class="tc">💰 Cost</div><div class="td">What will the infrastructure cost?</div></div>
+</div>
+<div class="defbox"><strong>Rule of Thumb:</strong> Interview estimates do <em>not</em> need to be exact. Interviewers care about your <strong>assumptions</strong>, <strong>reasoning</strong>, <strong>math</strong>, and <strong>ability to communicate</strong>. Always state assumptions first.</div>
+</div>
+
+<div class="sec">📊 Interactive QPS Calculator</div>
+<div class="calc">
+<h4>🔢 Queries Per Second (QPS) Estimator</h4>
+<p style="color:var(--tm);font-size:.9rem;margin-bottom:16px;">Adjust the sliders to see how traffic translates to QPS in real-time.</p>
+<div class="slider-container">
+<label style="color:var(--tm);font-size:.9rem;">Daily Active Users (DAU): <span id="dauVal" class="slider-val">10M</span></label>
+<input type="range" id="dauSlider" min="100000" max="500000000" value="10000000" step="100000">
+</div>
+<div class="slider-container">
+<label style="color:var(--tm);font-size:.9rem;">Requests per User per Day: <span id="rpuVal" class="slider-val">5</span></label>
+<input type="range" id="rpuSlider" min="1" max="100" value="5" step="1">
+</div>
+<div class="slider-container">
+<label style="color:var(--tm);font-size:.9rem;">Peak Traffic Multiplier: <span id="peakVal" class="slider-val">3×</span></label>
+<input type="range" id="peakSlider" min="1" max="10" value="3" step="1">
+</div>
+<div style="background:var(--cbg);border-radius:12px;padding:20px;margin-top:16px;border:1px solid #30363d;">
+<div class="calc-row"><label>Total Requests / Day</label><span id="totalReq" class="result">50,000,000</span></div>
+<div class="prog-bar"><div class="prog-fill" id="reqBar" style="width:50%"></div></div>
+<div class="calc-row"><label>Average QPS</label><span id="avgQps" class="result">579</span><span class="unit">req/s</span></div>
+<div class="calc-row"><label>Peak QPS</label><span id="peakQps" class="result" style="color:#fcd34d;">1,736</span><span class="unit">req/s</span></div>
+<div class="calc-row"><label>Peak Bandwidth (2KB/response)</label><span id="peakBw" class="result" style="color:#fca5a5;">3.5</span><span class="unit">MB/s</span></div>
+</div>
+<div class="calc-note">💡 Peak QPS = Average QPS × Peak Multiplier. This is the number you design for.</div>
+</div>
+
+<div class="sec">📈 Key Metrics Explained</div>
+<table>
+<thead><tr><th>Metric</th><th>Meaning</th><th>Formula</th></tr></thead>
+<tbody>
+<tr><td class="h">DAU</td><td>Daily Active Users</td><td>Unique users active in one day</td></tr>
+<tr><td class="h">MAU</td><td>Monthly Active Users</td><td>Unique users active in one month</td></tr>
+<tr><td class="h">QPS</td><td>Queries Per Second</td><td>Total Requests / 86,400</td></tr>
+<tr><td class="h">Peak QPS</td><td>Maximum traffic load</td><td>Average QPS × 3–5</td></tr>
+<tr><td class="h">Storage</td><td>Total data retained</td><td>Records/day × bytes/record × days</td></tr>
+<tr><td class="h">Bandwidth</td><td>Data transferred per second</td><td>QPS × avg response size</td></tr>
+</tbody>
+</table>
+
+<div class="sec">💾 Interactive Storage Calculator</div>
+<div class="calc">
+<h4>📀 Storage Growth Estimator</h4>
+<p style="color:var(--tm);font-size:.9rem;margin-bottom:16px;">See how data accumulates over time based on your write volume.</p>
+<div class="calc-row"><label>New Records per Day</label><input type="number" id="recPerDay" value="20000000" min="1000" max="10000000000" step="100000"></div>
+<div class="calc-row"><label>Bytes per Record</label><input type="number" id="bytesPerRec" value="500" min="10" max="100000" step="10"></div>
+<div class="calc-row"><label>Retention Period (years)</label><input type="number" id="retention" value="5" min="1" max="20" step="1"></div>
+<button class="calc-btn" onclick="calcStorage()">Calculate Storage</button>
+<div style="background:var(--cbg);border-radius:12px;padding:20px;margin-top:16px;border:1px solid #30363d;">
+<div class="calc-row"><label>Daily Storage</label><span id="dailyStor" class="result">10.0</span><span class="unit">GB</span></div>
+<div class="calc-row"><label>Monthly Storage</label><span id="monthlyStor" class="result">300.0</span><span class="unit">GB</span></div>
+<div class="calc-row"><label>Yearly Storage</label><span id="yearlyStor" class="result">3.65</span><span class="unit">TB</span></div>
+<div class="calc-row"><label>Total (5 years)</label><span id="totalStor" class="result" style="color:#fcd34d;">18.25</span><span class="unit">TB</span></div>
+</div>
+<div class="calc-note">💡 This calculation helps determine if a single database is sufficient or if sharding is needed.</div>
+</div>
+
+<div class="sec">🧠 The Mental Model</div>
+<div class="fig">
+<svg viewBox="0 0 900 320" width="100%">
+<defs>
+<linearGradient id="g1"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="20" y="20" width="160" height="70" rx="12" fill="url(#g1)"/>
+<text x="100" y="63" fill="white" font-size="20" font-weight="700" text-anchor="middle">Users</text>
+<line x1="100" y1="90" x2="100" y2="130" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+<rect x="20" y="140" width="160" height="70" rx="12" fill="#06b6d4"/>
+<text x="100" y="183" fill="white" font-size="20" font-weight="700" text-anchor="middle">Traffic</text>
+<line x1="100" y1="210" x2="100" y2="250" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+<rect x="20" y="250" width="160" height="60" rx="12" fill="#10b981"/>
+<text x="100" y="288" fill="white" font-size="20" font-weight="700" text-anchor="middle">QPS</text>
+
+<line x1="180" y1="170" x2="280" y2="170" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+<rect x="290" y="130" width="160" height="70" rx="12" fill="#f97316"/>
+<text x="370" y="173" fill="white" font-size="20" font-weight="700" text-anchor="middle">Servers</text>
+<line x1="450" y1="170" x2="550" y2="170" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+<rect x="560" y="130" width="160" height="70" rx="12" fill="#f59e0b"/>
+<text x="640" y="173" fill="white" font-size="20" font-weight="700" text-anchor="middle">Storage</text>
+<line x1="720" y1="170" x2="800" y2="170" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+<rect x="810" y="130" width="80" height="70" rx="12" fill="#ef4444"/>
+<text x="850" y="173" fill="white" font-size="20" font-weight="700" text-anchor="middle">Cost</text>
+<text x="370" y="240" fill="#94a3b8" font-size="15" text-anchor="middle">Every architecture starts with numbers.</text>
+</svg>
+<div class="fig-cap">The estimation chain: Users → Traffic → QPS → Servers → Storage → Cost</div>
+</div>
+
+<div class="sec">🎯 Interview Walkthrough: URL Shortener</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:16px;">Let's walk through a complete capacity estimation for a URL shortener — a classic system design interview question.</p>
+
+<div class="ts"><div class="sn2">1</div><div class="sc"><strong>State Assumptions</strong><div class="mini">50M DAU · 2 URLs shortened/user/day · 500M redirects/day</div></div></div>
+<div class="ts"><div class="sn2">2</div><div class="sc"><strong>Calculate Writes</strong><div class="mini">50M × 2 = 100M writes/day</div></div></div>
+<div class="ts"><div class="sn2">3</div><div class="sc"><strong>Calculate Reads</strong><div class="mini">500M redirects/day → Read-heavy system (5:1 read:write ratio)</div></div></div>
+<div class="ts"><div class="sn2">4</div><div class="sc"><strong>Average QPS</strong><div class="mini">Writes: 100M / 86,400 ≈ 1,157 QPS · Reads: 500M / 86,400 ≈ 5,787 QPS</div></div></div>
+<div class="ts"><div class="sn2">5</div><div class="sc"><strong>Peak Traffic</strong><div class="mini">Peak read traffic ≈ 25,000–30,000 QPS (3–5× average)</div></div></div>
+<div class="ts"><div class="sn2">6</div><div class="sc"><strong>Architecture Emerges</strong><div class="mini">Read replicas · Redis cache · CDN · Load balancer · Auto-scaling</div></div></div>
+</div>
+
+<div class="sec">📝 Production Insight</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon & Netflix Begin with Numbers</h3>
+<p>
+At Amazon and Netflix, early design reviews often begin with traffic estimates before any component diagrams. Numbers justify architectural choices and prevent over-engineering or under-sizing.
+<br><br>
+<strong>Key insight:</strong> A system designed for 100 QPS looks very different from one designed for 100,000 QPS. The numbers dictate the architecture — not the other way around.
+</p>
+</div>
+
+<div class="sec">🚨 Common Mistakes</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Forgetting Assumptions</div><div class="td">Always state your assumptions before calculating.</div></div>
+<div class="tag-card"><div class="tc">❌ Designing Before Estimating</div><div class="td">Numbers first, architecture second.</div></div>
+<div class="tag-card"><div class="tc">❌ Using Average QPS</div><div class="td">Always design for peak traffic, not average.</div></div>
+<div class="tag-card"><div class="tc">❌ Ignoring Storage Growth</div><div class="td">Data accumulates. Plan for 3–5 years.</div></div>
+<div class="tag-card"><div class="tc">❌ Assuming Infinite Hardware</div><div class="td">Every server has limits. Know them.</div></div>
+</div>
+</div>
+
+<div class="sec">🧠 Memory Trick: Numbers → Architecture</div>
+<div class="defbox">
+<strong>Remember the chain:</strong> Requirements → <strong>Capacity</strong> → Architecture → Technology<br>
+<strong>Never reverse this order.</strong> Technology is the last decision, not the first.
+</div>
+
+<div class="sec">📋 Quick Reference Cheat Sheet</div>
+<div class="card">
+<table>
+<thead><tr><th>Concept</th><th>Formula</th></tr></thead>
+<tbody>
+<tr><td>DAU</td><td>Daily Active Users</td></tr>
+<tr><td>MAU</td><td>Monthly Active Users</td></tr>
+<tr><td>QPS</td><td>Requests/day ÷ 86,400</td></tr>
+<tr><td>Peak QPS</td><td>Average QPS × 3–5</td></tr>
+<tr><td>Daily Storage</td><td>Records/day × bytes/record</td></tr>
+<tr><td>Bandwidth</td><td>QPS × avg response size</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card">
+<div class="quiz-q">1. If a system receives 50 million requests per day, what is the approximate average QPS?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) 289 QPS</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) 579 QPS</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) 579 QPS (50,000,000 / 86,400 ≈ 579)</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) 1,157 QPS</div>
+<div class="quiz-feedback" id="quiz1">50,000,000 / 86,400 = 578.7 ≈ 579 QPS</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">2. What is the most important number to design for — average QPS or peak QPS?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Average QPS — it represents typical load</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Peak QPS — the system must handle maximum traffic</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Neither — just add more servers</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Minimum QPS — ensure baseline performance</div>
+<div class="quiz-feedback" id="quiz2">Always design for peak QPS (typically 3-5× average). The system must survive traffic spikes.</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">3. A URL shortener stores 500 bytes per record with 20M new URLs/day. What is the yearly storage requirement?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) 1.82 TB</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) 3.65 TB (20M × 500B = 10GB/day × 365 = 3.65TB)</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) 7.30 TB</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) 10.0 TB</div>
+<div class="quiz-feedback" id="quiz3">20M × 500 bytes = 10 GB/day. 10 GB × 365 = 3.65 TB/year.</div>
+</div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story">
+<div class="slabel">Coming Up</div>
+<h3>Part 4: Bottleneck Analysis</h3>
+<p>
+Now that you can estimate capacity, the next chapter teaches you how to identify where systems break first. You'll learn a structured framework for finding bottlenecks before they cause production incidents.
+</p>
+</div>
+
+</div>
+
+<script>
+// QPS Calculator
+const dauSlider = document.getElementById('dauSlider');
+const rpuSlider = document.getElementById('rpuSlider');
+const peakSlider = document.getElementById('peakSlider');
+const dauVal = document.getElementById('dauVal');
+const rpuVal = document.getElementById('rpuVal');
+const peakVal = document.getElementById('peakVal');
+const totalReq = document.getElementById('totalReq');
+const avgQps = document.getElementById('avgQps');
+const peakQps = document.getElementById('peakQps');
+const peakBw = document.getElementById('peakBw');
+const reqBar = document.getElementById('reqBar');
+
+function formatNum(n) {
+  if (n >= 1000000000) return (n/1000000000).toFixed(1) + 'B';
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+  return n.toString();
+}
+
+function updateQps() {
+  const dau = parseInt(dauSlider.value);
+  const rpu = parseInt(rpuSlider.value);
+  const peak = parseInt(peakSlider.value);
+  const total = dau * rpu;
+  const avg = total / 86400;
+  const peakQ = avg * peak;
+  const bw = (peakQ * 2048) / (1024 * 1024);
+  
+  dauVal.textContent = formatNum(dau);
+  rpuVal.textContent = rpu;
+  peakVal.textContent = peak + '×';
+  totalReq.textContent = formatNum(total);
+  avgQps.textContent = Math.round(avg);
+  peakQps.textContent = Math.round(peakQ);
+  peakBw.textContent = bw.toFixed(1);
+  
+  const pct = Math.min((total / 500000000) * 100, 100);
+  reqBar.style.width = pct + '%';
+}
+
+dauSlider.addEventListener('input', updateQps);
+rpuSlider.addEventListener('input', updateQps);
+peakSlider.addEventListener('input', updateQps);
+updateQps();
+
+// Storage Calculator
+function calcStorage() {
+  const recs = parseInt(document.getElementById('recPerDay').value);
+  const bytes = parseInt(document.getElementById('bytesPerRec').value);
+  const years = parseInt(document.getElementById('retention').value);
+  
+  const dailyBytes = recs * bytes;
+  const dailyGB = dailyBytes / (1024 * 1024 * 1024);
+  const monthlyGB = dailyGB * 30;
+  const yearlyTB = dailyGB * 365 / 1024;
+  const totalTB = yearlyTB * years;
+  
+  document.getElementById('dailyStor').textContent = dailyGB.toFixed(1);
+  document.getElementById('monthlyStor').textContent = monthlyGB.toFixed(1);
+  document.getElementById('yearlyStor').textContent = yearlyTB.toFixed(2);
+  document.getElementById('totalStor').textContent = totalTB.toFixed(2);
+}
+calcStorage();
+
+// Quiz
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => {
+    o.style.pointerEvents = 'none';
+    if (o === el && correct) o.classList.add('correct');
+    else if (o === el && !correct) o.classList.add('wrong');
+    else if (correct && o !== el) o.classList.add('correct');
+  });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

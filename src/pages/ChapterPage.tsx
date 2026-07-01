@@ -72,6 +72,7 @@ export function ChapterPage() {
 
   const isBookmarked = meta ? progress.bookmarkedChapters.includes(meta.id) : false
   const isCompleted = meta ? progress.completedChapters.includes(meta.id) : false
+  const isHtmlChapter = chapter?.contentType === 'html'
 
   const actions = useMemo(
     () => [
@@ -88,25 +89,60 @@ export function ChapterPage() {
   return (
     <div className="space-y-6">
       <div className="sticky top-0 z-20 -mx-4 border-b border-white/10 bg-orbit-background/[0.84] px-4 py-3 backdrop-blur-xl md:-mx-8 md:px-8 lg:top-0">
-        <ProgressBar value={scrollProgress} />
+        <div className="space-y-3">
+          <ProgressBar value={scrollProgress} />
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <nav className="flex flex-wrap items-center gap-2 text-sm text-orbit-muted">
+              <Link to={pathRoute(path.id)} className="hover:text-orbit-accent">
+                {path.title}
+              </Link>
+              <span>/</span>
+              <Link to={moduleRoute(module)} className="hover:text-orbit-accent">
+                {module.title}
+              </Link>
+              <span>/</span>
+              <span className="text-orbit-text">{meta.title}</span>
+            </nav>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-orbit-muted">
+                {chapter?.estimatedReadTime ?? 1} min read
+              </span>
+
+              <button
+                type="button"
+                onClick={() => toggleBookmark(meta.id)}
+                className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                  isBookmarked
+                    ? 'bg-orbit-warning/15 text-orbit-warning'
+                    : 'bg-white/[0.07] text-orbit-muted hover:text-orbit-text'
+                }`}
+              >
+                <Bookmark size={17} />
+                {isBookmarked ? 'Bookmarked' : 'Bookmark'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => toggleChapterComplete(meta.id)}
+                className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                  isCompleted
+                    ? 'bg-orbit-success/15 text-orbit-success'
+                    : 'bg-orbit-primary text-white hover:bg-orbit-secondary'
+                }`}
+              >
+                <CheckCircle2 size={17} />
+                {isCompleted ? 'Done' : 'Mark as done'}
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <nav className="flex flex-wrap items-center gap-2 text-sm text-orbit-muted">
-        <Link to={pathRoute(path.id)} className="hover:text-orbit-accent">
-          {path.title}
-        </Link>
-        <span>/</span>
-        <Link to={moduleRoute(module)} className="hover:text-orbit-accent">
-          {module.title}
-        </Link>
-        <span>/</span>
-        <span className="text-orbit-text">{meta.title}</span>
-      </nav>
-
-      <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]">
+      <section className={isHtmlChapter ? 'grid gap-6' : 'grid gap-6 xl:grid-cols-[minmax(0,1fr)_20rem]'}>
         <article className="glass-panel rounded-lg p-5 md:p-8">
-          <div className="flex flex-col gap-5 border-b border-white/10 pb-6 md:flex-row md:items-start md:justify-between">
-            <div>
+          {!isHtmlChapter && (
+            <div className="border-b border-white/10 pb-6">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-orbit-accent">
                 Chapter {meta.order}
               </p>
@@ -119,35 +155,9 @@ export function ChapterPage() {
                 {chapter?.estimatedReadTime ?? 1} min estimated read
               </p>
             </div>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => toggleBookmark(meta.id)}
-                className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition ${
-                  isBookmarked
-                    ? 'bg-orbit-warning/15 text-orbit-warning'
-                    : 'bg-white/[0.07] text-orbit-muted hover:text-orbit-text'
-                }`}
-              >
-                <Bookmark size={17} />
-                Bookmark
-              </button>
-              <button
-                type="button"
-                onClick={() => toggleChapterComplete(meta.id)}
-                className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition ${
-                  isCompleted
-                    ? 'bg-orbit-success/15 text-orbit-success'
-                    : 'bg-orbit-primary text-white hover:bg-orbit-secondary'
-                }`}
-              >
-                <CheckCircle2 size={17} />
-                {isCompleted ? 'Completed' : 'Mark done'}
-              </button>
-            </div>
-          </div>
+          )}
 
-          <div className="mt-8">
+          <div className={isHtmlChapter ? '' : 'mt-8'}>
             {failed && (
               <EmptyState
                 icon={Library}
@@ -156,7 +166,17 @@ export function ChapterPage() {
               />
             )}
 
-            {!failed && chapter?.hasContent && <MarkdownRenderer content={chapter.content} />}
+            {!failed && isHtmlChapter && chapter?.contentUrl && (
+              <div className="overflow-hidden rounded-lg border border-white/10 bg-orbit-background/70">
+                <iframe
+                  src={chapter.contentUrl}
+                  title={chapter.title}
+                  className="h-[86vh] w-full border-0"
+                />
+              </div>
+            )}
+
+            {!failed && !isHtmlChapter && chapter?.hasContent && <MarkdownRenderer content={chapter.content} />}
 
             {!failed && chapter && !chapter.hasContent && (
               <EmptyState
@@ -168,60 +188,28 @@ export function ChapterPage() {
           </div>
         </article>
 
-        <aside className="space-y-4">
-          <div className="glass-panel rounded-lg p-4">
-            <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-orbit-muted">
-              Study Tools
-            </h2>
-            <div className="mt-4 space-y-2">
-              {actions.map((action) => (
-                <button
-                  key={action.label}
-                  type="button"
-                  onClick={() => setActiveTool(action.id)}
-                  className="flex w-full items-center gap-3 rounded-lg bg-white/[0.07] px-3 py-3 text-left text-sm font-medium text-orbit-text transition hover:bg-orbit-primary/[0.16]"
-                >
-                  <action.icon size={17} className="text-orbit-accent" />
-                  {action.label}
-                </button>
-              ))}
+        {!isHtmlChapter && (
+          <aside className="space-y-4">
+            <div className="glass-panel rounded-lg p-4">
+              <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-orbit-muted">
+                Study Tools
+              </h2>
+              <div className="mt-4 space-y-2">
+                {actions.map((action) => (
+                  <button
+                    key={action.label}
+                    type="button"
+                    onClick={() => setActiveTool(action.id)}
+                    className="flex w-full items-center gap-3 rounded-lg bg-white/[0.07] px-3 py-3 text-left text-sm font-medium text-orbit-text transition hover:bg-orbit-primary/[0.16]"
+                  >
+                    <action.icon size={17} className="text-orbit-accent" />
+                    {action.label}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-
-          <div className="glass-panel rounded-lg p-4">
-            <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-orbit-muted">
-              Navigation
-            </h2>
-            <div className="mt-4 grid gap-2">
-              {previous ? (
-                <Link
-                  to={chapterRoute(previous)}
-                  className="flex items-center gap-2 rounded-lg bg-white/[0.07] px-3 py-3 text-sm text-orbit-muted hover:text-orbit-text"
-                >
-                  <ArrowLeft size={16} />
-                  {previous.title}
-                </Link>
-              ) : (
-                <span className="rounded-lg bg-white/5 px-3 py-3 text-sm text-orbit-muted">
-                  First chapter in module
-                </span>
-              )}
-              {next ? (
-                <Link
-                  to={chapterRoute(next)}
-                  className="flex items-center justify-between gap-2 rounded-lg bg-white/[0.07] px-3 py-3 text-sm text-orbit-muted hover:text-orbit-text"
-                >
-                  {next.title}
-                  <ArrowRight size={16} />
-                </Link>
-              ) : (
-                <span className="rounded-lg bg-white/5 px-3 py-3 text-sm text-orbit-muted">
-                  Last chapter in module
-                </span>
-              )}
-            </div>
-          </div>
-        </aside>
+          </aside>
+        )}
       </section>
 
       <AnimatePresence>
@@ -274,7 +262,8 @@ export function ChapterPage() {
                         question: `Which architectural pattern is most relevant to ${meta.title}?`,
                         options: ['Monolithic', 'Microservices', 'Event-driven', 'Serverless'],
                         correctAnswer: 2,
-                        explanation: 'Event-driven architectures allow for high decoupling and scalability, which is a core focus of modern systems design.',
+                        explanation:
+                          'Event-driven architectures allow for high decoupling and scalability, which is a core focus of modern systems design.',
                       },
                       {
                         id: 'q2',
@@ -286,7 +275,8 @@ export function ChapterPage() {
                           'Better SEO',
                         ],
                         correctAnswer: 1,
-                        explanation: 'The Bits theme is designed to provide high visual focus and technical intuition for engineering topics.',
+                        explanation:
+                          'The Bits theme is designed to provide high visual focus and technical intuition for engineering topics.',
                       },
                     ]}
                   />

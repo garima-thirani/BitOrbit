@@ -11,6 +11,8 @@ export interface ChapterMeta {
   summary: string
   order: number
   markdownPath: string
+  contentType?: 'markdown' | 'html'
+  contentUrl?: string
 }
 
 export interface Chapter extends ChapterMeta {
@@ -38,6 +40,7 @@ export interface LearningPath {
   difficulty: Difficulty
   estimatedHours: number
   modules: Module[]
+  landingUrl?: string
 }
 
 export interface UserProgress {

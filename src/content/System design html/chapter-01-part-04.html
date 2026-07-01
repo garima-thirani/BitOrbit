@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bottleneck Analysis | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--p:#6366f1;--pl:#818cf8;--pd:#4f46e5;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;scroll-behavior:smooth;}
+body{font-family:Inter,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;}
+.hero{background:linear-gradient(135deg,#1a1050,#0f172a,#061025);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(99,102,241,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:960px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(99,102,241,.2);color:var(--pl);border:1px solid rgba(129,140,248,.4);border-radius:20px;padding:6px 18px;font-size:13px;font-weight:600;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#a5b4fc,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:720px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.defbox{background:rgba(99,102,241,.09);border-left:3px solid #6366f1;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0;font-size:.92rem;line-height:1.8;}
+.defbox strong{color:#818cf8;}
+.tag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:16px 0;}
+.tag-card{background:var(--bc2);border:1px solid var(--brd);border-radius:10px;padding:14px 16px;}
+.tag-card .tc{font-weight:700;font-size:.85rem;color:#fca5a5;margin-bottom:4px;}
+.tag-card .td{font-size:.82rem;color:var(--tm);}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(99,102,241,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.cmp-table .h{color:#fca5a5;font-weight:600;}
+.fig{background:var(--bc2);border:1px solid var(--brd);border-radius:16px;padding:30px;margin:28px 0;}
+.fig-cap{text-align:center;color:var(--tm);font-size:.85rem;margin-top:16px;}
+.pipeline{display:flex;align-items:center;justify-content:center;gap:8px;margin:24px 0;flex-wrap:wrap;}
+.pipe-stage{background:var(--bc2);border:2px solid var(--brd);border-radius:12px;padding:16px 20px;text-align:center;min-width:100px;transition:.3s;}
+.pipe-stage .ps-label{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--tm);margin-bottom:4px;}
+.pipe-stage .ps-val{font-size:1.1rem;font-weight:700;font-family:monospace;}
+.pipe-stage.bottleneck{border-color:var(--d);background:rgba(239,68,68,.1);}
+.pipe-stage.bottleneck .ps-val{color:#fca5a5;}
+.pipe-arrow{font-size:1.5rem;color:var(--tm);}
+.pipe-controls{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:16px 0;}
+.pipe-btn{padding:8px 20px;border-radius:8px;border:1px solid var(--brd);background:var(--bc2);color:var(--t);cursor:pointer;transition:.2s;font-size:.85rem;}
+.pipe-btn:hover{background:var(--bc);border-color:var(--pl);}
+.pipe-btn.active{background:var(--p);border-color:var(--pl);color:white;}
+.bn-card{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;margin:12px 0;}
+.bn-card h4{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:1rem;}
+.bn-card .bn-sym{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0;}
+.bn-card .bn-sym span{padding:3px 10px;border-radius:6px;font-size:.78rem;background:rgba(99,102,241,.1);color:var(--pl);}
+.bn-card p{color:var(--tm);font-size:.88rem;line-height:1.7;}
+.finder{background:linear-gradient(135deg,#1a1a3e,#162032);border:1px solid var(--brd);border-radius:16px;padding:30px;margin:28px 0;}
+.finder h4{color:#67e8f9;font-size:1.1rem;margin-bottom:16px;}
+.finder-step{display:flex;gap:14px;margin:14px 0;padding:14px 18px;background:var(--bc2);border-radius:10px;border-left:3px solid var(--brd);cursor:pointer;transition:.2s;}
+.finder-step:hover{border-left-color:var(--pl);background:rgba(99,102,241,.05);}
+.finder-step.active{border-left-color:var(--s);background:rgba(16,185,129,.05);}
+.finder-step .fs-num{min-width:28px;height:28px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.finder-step .fs-content{font-size:.9rem;color:var(--tm);}
+.finder-step .fs-content strong{color:var(--t);}
+.finder-step .fs-detail{font-size:.82rem;color:var(--tm);margin-top:6px;display:none;}
+.finder-step.active .fs-detail{display:block;}
+.quiz-card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:28px;margin:20px 0;}
+.quiz-q{font-size:1.05rem;font-weight:600;margin-bottom:16px;color:var(--t);}
+.quiz-opt{display:block;padding:12px 18px;margin:8px 0;background:var(--bc2);border:1px solid var(--brd);border-radius:10px;cursor:pointer;transition:.2s;color:var(--tm);font-size:.92rem;}
+.quiz-opt:hover{border-color:var(--pl);background:rgba(99,102,241,.08);}
+.quiz-opt.correct{background:rgba(16,185,129,.15);border-color:var(--s);color:#6ee7b7;}
+.quiz-opt.wrong{background:rgba(239,68,68,.15);border-color:var(--d);color:#fca5a5;}
+.quiz-feedback{margin-top:12px;padding:12px 16px;border-radius:8px;font-size:.9rem;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.correct{background:rgba(16,185,129,.1);color:#6ee7b7;border:1px solid rgba(16,185,129,.2);}
+.quiz-feedback.wrong{background:rgba(239,68,68,.1);color:#fca5a5;border:1px solid rgba(239,68,68,.2);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.pulse{animation:pulse 2s ease-in-out infinite;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 1 · Part 4 · Bottleneck Analysis</div>
+<h1>Bottleneck Analysis &<br><span>Identifying System Constraints</span></h1>
+<p>Every scalable architecture begins by finding what will break first. Learn to identify, analyze, and resolve bottlenecks before they cause production incidents.</p>
+<div class="stats">
+<div class="stat"><div class="sn">PIPE</div><div class="sl">Framework</div></div>
+<div class="stat"><div class="sn">5</div><div class="sl">Bottleneck Types</div></div>
+<div class="stat"><div class="sn">6</div><div class="sl">Analysis Steps</div></div>
+<div class="stat"><div class="sn">FAANG</div><div class="sl">Interview Ready</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Fastest Highway in the World</div>
+<div class="story">
+<div class="slabel">The Bottleneck Mindset</div>
+<h3>The narrowest pipe determines the flow.</h3>
+<p>
+Imagine a six-lane highway that suddenly narrows into a single lane before a bridge. Even though six lanes of cars arrive every minute, only one lane can cross the bridge. The bridge becomes the <strong>bottleneck</strong>.
+<br><br>
+Adding more lanes before the bridge doesn't increase throughput. Adding faster cars doesn't help. Adding more fuel doesn't help. The only thing that improves traffic is increasing the bridge's capacity.
+<br><br>
+Software systems behave exactly the same way. The slowest component in the chain determines the maximum throughput of the entire system.
+</p>
+</div>
+
+<div class="sec">🔍 What Is a Bottleneck?</div>
+<div class="defbox">
+<strong>Formal Definition:</strong> A bottleneck is the component whose limited capacity restricts the maximum throughput or performance of the overall system. The fastest API server in the world is useless if every request waits on a slow database.
+</div>
+
+<div class="fig">
+<svg viewBox="0 0 900 200" width="100%">
+<defs>
+<linearGradient id="g1"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="20" y="50" width="140" height="70" rx="10" fill="#10b981"/>
+<text x="90" y="93" fill="white" font-size="18" font-weight="700" text-anchor="middle">Client</text>
+<text x="90" y="140" fill="#6ee7b7" font-size="14" text-anchor="middle">100 L/min</text>
+<line x1="160" y1="85" x2="220" y2="85" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+<rect x="230" y="50" width="140" height="70" rx="10" fill="#06b6d4"/>
+<text x="300" y="93" fill="white" font-size="18" font-weight="700" text-anchor="middle">Load Balancer</text>
+<text x="300" y="140" fill="#67e8f9" font-size="14" text-anchor="middle">80 L/min</text>
+<line x1="370" y1="85" x2="430" y2="85" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+<rect x="440" y="50" width="140" height="70" rx="10" fill="#ef4444" class="pulse"/>
+<text x="510" y="93" fill="white" font-size="18" font-weight="700" text-anchor="middle">Database</text>
+<text x="510" y="140" fill="#fca5a5" font-size="14" text-anchor="middle">25 L/min ⚠</text>
+<line x1="580" y1="85" x2="640" y2="85" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+<rect x="650" y="50" width="140" height="70" rx="10" fill="#f59e0b"/>
+<text x="720" y="93" fill="white" font-size="18" font-weight="700" text-anchor="middle">Response</text>
+<text x="720" y="140" fill="#fcd34d" font-size="14" text-anchor="middle">25 L/min</text>
+</svg>
+<div class="fig-cap">The database is the bottleneck — maximum system throughput is limited to 25 L/min (the slowest component)</div>
+</div>
+
+<div class="sec">🎮 Interactive Bottleneck Simulator</div>
+<div class="finder">
+<h4>🔧 Adjust Component Speeds to Find the Bottleneck</h4>
+<p style="color:var(--tm);font-size:.9rem;margin-bottom:16px;">Click buttons to simulate different bottleneck scenarios. Watch how the slowest component limits the entire system.</p>
+<div class="pipe-controls">
+<button class="pipe-btn active" onclick="setScenario('db')" id="scDb">🛢 Database Slow</button>
+<button class="pipe-btn" onclick="setScenario('cpu')" id="scCpu">⚙ CPU Bound</button>
+<button class="pipe-btn" onclick="setScenario('net')" id="scNet">🌐 Network Slow</button>
+<button class="pipe-btn" onclick="setScenario('mem')" id="scMem">💾 Memory Exhausted</button>
+</div>
+<div class="pipeline" id="pipeline">
+<div class="pipe-stage" id="ps1"><div class="ps-label">Client</div><div class="ps-val" id="pv1">10K</div></div>
+<div class="pipe-arrow">→</div>
+<div class="pipe-stage" id="ps2"><div class="ps-label">Load Balancer</div><div class="ps-val" id="pv2">10K</div></div>
+<div class="pipe-arrow">→</div>
+<div class="pipe-stage" id="ps3"><div class="ps-label">API Server</div><div class="ps-val" id="pv3">8K</div></div>
+<div class="pipe-arrow">→</div>
+<div class="pipe-stage" id="ps4"><div class="ps-label">Cache</div><div class="ps-val" id="pv4">50K</div></div>
+<div class="pipe-arrow">→</div>
+<div class="pipe-stage" id="ps5"><div class="ps-label">Database</div><div class="ps-val" id="pv5">1.5K</div></div>
+<div class="pipe-arrow">→</div>
+<div class="pipe-stage" id="ps6"><div class="ps-label">System Max</div><div class="ps-val" id="pv6" style="color:#fcd34d;">1.5K</div></div>
+</div>
+<div id="bottleneckInfo" style="background:var(--cbg);border-radius:10px;padding:16px;margin-top:12px;border:1px solid #30363d;">
+<p style="color:#fca5a5;font-size:.9rem;"><strong>🔴 Bottleneck: Database</strong> — The database can only handle 1,500 req/s. Even though other components can process more, the entire system is limited to 1,500 req/s. Solution: Add read replicas, implement caching, or optimize queries.</p>
+</div>
+</div>
+
+<div class="sec">📋 The 5 Bottleneck Types</div>
+
+<div class="bn-card">
+<h4>⚙ CPU</h4>
+<div class="bn-sym"><span>High CPU utilization</span><span>Long request latency</span><span>Thread starvation</span></div>
+<p><strong>Fixes:</strong> Better algorithms, horizontal scaling, background processing, async operations.</p>
+</div>
+
+<div class="bn-card">
+<h4>💾 Memory</h4>
+<div class="bn-sym"><span>OOM errors</span><span>GC pauses</span><span>Process crashes</span></div>
+<p><strong>Fixes:</strong> Reduce object allocations, streaming, careful caching, add memory.</p>
+</div>
+
+<div class="bn-card">
+<h4>💿 Disk</h4>
+<div class="bn-sym"><span>Slow writes</span><span>High I/O wait</span><span>Backup delays</span></div>
+<p><strong>Fixes:</strong> SSDs, better indexing, batch writes, connection pooling.</p>
+</div>
+
+<div class="bn-card">
+<h4>🌐 Network</h4>
+<div class="bn-sym"><span>High latency</span><span>Packet loss</span><span>Cross-region delays</span></div>
+<p><strong>Fixes:</strong> CDN, compression, regional deployments, connection reuse.</p>
+</div>
+
+<div class="bn-card">
+<h4>🛢 Database</h4>
+<div class="bn-sym"><span>Most common bottleneck</span><span>Lock contention</span><span>Index bloat</span></div>
+<p><strong>Fixes:</strong> Read replicas, sharding, Redis cache, connection pooling, query optimization.</p>
+</div>
+
+<div class="sec">🧠 The PIPE Framework</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:16px;">Use the <strong>PIPE</strong> memory trick to systematically identify and resolve bottlenecks:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">P — Pinpoint</div><div class="td">Find the slowest stage in the request flow</div></div>
+<div class="tag-card"><div class="tc">I — Inspect</div><div class="td">Analyze why it is slow (CPU? I/O? Locking?)</div></div>
+<div class="tag-card"><div class="tc">P — Prioritize</div><div class="td">Fix that stage first — it gives the biggest gain</div></div>
+<div class="tag-card"><div class="tc">E — Evaluate</div><div class="td">Measure the new bottleneck that emerges</div></div>
+</div>
+<div class="defbox"><strong>Key Insight:</strong> Removing one bottleneck always reveals the next one. Bottleneck analysis is an iterative process, not a one-time fix.</div>
+</div>
+
+<div class="sec">🔬 Interactive Bottleneck Analysis Walkthrough</div>
+<div class="finder">
+<h4>🔍 URL Shortener: Find the Bottleneck</h4>
+<p style="color:var(--tm);font-size:.9rem;margin-bottom:16px;">Click each step to trace the request flow and identify where the system breaks first.</p>
+<div class="finder-step active" onclick="toggleStep(this,0)">
+<div class="fs-num">1</div>
+<div class="fs-content">
+<strong>Where does the request start?</strong>
+<div class="fs-detail">The user's browser sends a GET request to the short URL (e.g., sho.rt/abc123). This enters through the load balancer which distributes traffic across API servers.</div>
+</div>
+</div>
+<div class="finder-step" onclick="toggleStep(this,1)">
+<div class="fs-num">2</div>
+<div class="fs-content">
+<strong>Which component receives it first?</strong>
+<div class="fs-detail">The load balancer receives the request and forwards it to an available API server. Load balancers are rarely the bottleneck — they typically handle 100K+ connections.</div>
+</div>
+</div>
+<div class="finder-step" onclick="toggleStep(this,2)">
+<div class="fs-num">3</div>
+<div class="fs-content">
+<strong>Does it access the database?</strong>
+<div class="fs-detail">The API server first checks Redis cache. On cache hit (90%+ of requests), the response is immediate. On cache miss, it queries the database — this is where latency spikes.</div>
+</div>
+</div>
+<div class="finder-step" onclick="toggleStep(this,3)">
+<div class="fs-num">4</div>
+<div class="fs-content">
+<strong>Which step becomes saturated first?</strong>
+<div class="fs-detail">Under heavy traffic, the database becomes the bottleneck. A single PostgreSQL instance handles ~1,500 writes/s or ~10,000 reads/s. At 25,000 peak QPS, the database will be overwhelmed.</div>
+</div>
+</div>
+<div class="finder-step" onclick="toggleStep(this,4)">
+<div class="fs-num">5</div>
+<div class="fs-content">
+<strong>What is the solution?</strong>
+<div class="fs-detail">Add Redis cache to absorb read traffic (reduces DB load by 90%). Add read replicas for remaining reads. If writes become the bottleneck, consider sharding or connection pooling.</div>
+</div>
+</div>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="story">
+<div class="slabel">Trade-off Thinking</div>
+<h3>"The database is slow. Should we immediately shard it?"</h3>
+<p>
+<strong>Good answer:</strong> "No. First identify whether the workload is read-heavy or write-heavy. Read-heavy systems may benefit from caching or replicas before introducing the operational complexity of sharding."
+<br><br>
+Interviewers love this answer because it demonstrates <strong>trade-off thinking</strong> — you don't jump to the most complex solution without considering simpler alternatives first.
+</p>
+</div>
+
+<div class="sec">📊 System Constraints Table</div>
+<table>
+<thead><tr><th>Constraint</th><th>Example</th><th>Impact on Architecture</th></tr></thead>
+<tbody>
+<tr><td class="h">Budget</td><td>Startup with $500/month</td><td>Single VM, managed services, no redundancy</td></tr>
+<tr><td class="h">Latency</td><td>Response < 100 ms</td><td>CDN, edge caching, regional deployment</td></tr>
+<tr><td class="h">Availability</td><td>99.99% uptime</td><td>Multi-region, failover, redundancy</td></tr>
+<tr><td class="h">Consistency</td><td>Banking system</td><td>Strong consistency, synchronous replication</td></tr>
+<tr><td class="h">Geography</td><td>Multi-region users</td><td>Global load balancer, data replication</td></tr>
+<tr><td class="h">Compliance</td><td>GDPR / HIPAA</td><td>Data residency, encryption, audit logs</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🚨 Common Mistakes</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Optimizing Without Measuring</div><div class="td">Always measure before optimizing. The bottleneck may not be where you think.</div></div>
+<div class="tag-card"><div class="tc">❌ Assuming Database is Always the Bottleneck</div><div class="td">Network, CPU, and memory can also be the limiting factor.</div></div>
+<div class="tag-card"><div class="tc">❌ Ignoring Network Latency</div><div class="td">Cross-region calls can add 100ms+ of latency.</div></div>
+<div class="tag-card"><div class="tc">❌ Scaling Everything</div><div class="td">Only scale the bottleneck component. Scaling everything is expensive and unnecessary.</div></div>
+<div class="tag-card"><div class="tc">❌ Confusing High Latency with Low Throughput</div><div class="td">They are different problems requiring different solutions.</div></div>
+</div>
+</div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card">
+<div class="quiz-q">1. A system has components with capacities: Client (10K), API (8K), DB (1.5K), Cache (50K). What is the maximum system throughput?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) 10,000 req/s</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) 8,000 req/s</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) 1,500 req/s — the database is the bottleneck</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) 50,000 req/s</div>
+<div class="quiz-feedback">The slowest component (Database at 1,500 req/s) determines the maximum throughput of the entire system.</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">2. What does the "P" in the PIPE framework stand for?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Process</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Performance</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Pinpoint — find the slowest stage</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Parallelize</div>
+<div class="quiz-feedback">PIPE = Pinpoint, Inspect, Prioritize, Evaluate. Start by pinpointing the slowest stage.</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">3. In a read-heavy URL shortener, what is the FIRST optimization you should try before sharding?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Shard the database immediately</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Add Redis cache to absorb read traffic</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Rewrite the application in Go</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Add more API servers</div>
+<div class="quiz-feedback">Caching is simpler and often more effective than sharding for read-heavy workloads. Sharding adds significant operational complexity.</div>
+</div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story">
+<div class="slabel">Coming Up</div>
+<h3>Part 5: API Contracts & Client-Server Architecture</h3>
+<p>
+Now that you can identify bottlenecks, the next chapter teaches you how to design clean API contracts and understand client-server communication — the foundation of every distributed system.
+</p>
+</div>
+
+</div>
+
+<script>
+const scenarios = {
+  db: { pv1:'10K', pv2:'10K', pv3:'8K', pv4:'50K', pv5:'1.5K', pv6:'1.5K', bottleneck: 'Database', detail: 'The database can only handle 1,500 req/s. Even though other components can process more, the entire system is limited to 1,500 req/s. Solution: Add read replicas, implement caching, or optimize queries.' },
+  cpu: { pv1:'10K', pv2:'10K', pv3:'800', pv4:'50K', pv5:'10K', pv6:'800', bottleneck: 'API Server (CPU)', detail: 'The API server is CPU-bound at 800 req/s due to heavy computation. The database and cache are underutilized. Solution: Optimize algorithms, add horizontal scaling, or move CPU-intensive work to background jobs.' },
+  net: { pv1:'10K', pv2:'10K', pv3:'10K', pv4:'50K', pv5:'10K', pv6:'2K', bottleneck: 'Network', detail: 'Network latency between regions limits throughput to 2,000 req/s. Components themselves are fast, but cross-region communication adds delay. Solution: Regional deployment, CDN, connection pooling.' },
+  mem: { pv1:'10K', pv2:'10K', pv3:'500', pv4:'50K', pv5:'10K', pv6:'500', bottleneck: 'Memory (Cache)', detail: 'The cache has exhausted its memory allocation, causing evictions and cache misses. Effective throughput drops to 500 req/s. Solution: Increase cache memory, optimize TTLs, or use a more memory-efficient data structure.' }
+};
+
+function setScenario(name) {
+  const s = scenarios[name];
+  document.querySelectorAll('.pipe-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sc' + name.charAt(0).toUpperCase() + name.slice(1)).classList.add('active');
+  ['pv1','pv2','pv3','pv4','pv5','pv6'].forEach((id, i) => { document.getElementById(id).textContent = s[id]; });
+  document.querySelectorAll('.pipe-stage').forEach(el => el.classList.remove('bottleneck'));
+  const bottleneckIdx = name === 'db' ? 4 : name === 'cpu' ? 2 : name === 'net' ? 5 : 3;
+  document.getElementById('ps' + (bottleneckIdx+1)).classList.add('bottleneck');
+  document.getElementById('bottleneckInfo').innerHTML = `<p style="color:#fca5a5;font-size:.9rem;"><strong>🔴 Bottleneck: ${s.bottleneck}</strong> — ${s.detail}</p>`;
+}
+
+function toggleStep(el, idx) {
+  const steps = el.parentElement.querySelectorAll('.finder-step');
+  steps.forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Requirements Engineering | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--p:#6366f1;--pl:#818cf8;--pd:#4f46e5;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;scroll-behavior:smooth;}
+body{font-family:Inter,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;}
+.hero{background:linear-gradient(135deg,#1a1050,#0f172a,#061025);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(99,102,241,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:960px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(99,102,241,.2);color:var(--pl);border:1px solid rgba(129,140,248,.4);border-radius:20px;padding:6px 18px;font-size:13px;font-weight:600;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#a5b4fc,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:720px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.defbox{background:rgba(99,102,241,.09);border-left:3px solid #6366f1;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0;font-size:.92rem;line-height:1.8;}
+.defbox strong{color:#818cf8;}
+.tag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:16px 0;}
+.tag-card{background:var(--bc2);border:1px solid var(--brd);border-radius:10px;padding:14px 16px;}
+.tag-card .tc{font-weight:700;font-size:.85rem;color:#fca5a5;margin-bottom:4px;}
+.tag-card .td{font-size:.82rem;color:var(--tm);}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(99,102,241,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.fig{background:var(--bc2);border:1px solid var(--brd);border-radius:16px;padding:30px;margin:28px 0;}
+.fig-cap{text-align:center;color:var(--tm);font-size:.85rem;margin-top:16px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(99,102,241,.08);padding:8px 12px;border-radius:6px;}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.quiz-card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:28px;margin:20px 0;}
+.quiz-q{font-size:1.05rem;font-weight:600;margin-bottom:16px;color:var(--t);}
+.quiz-opt{display:block;padding:12px 18px;margin:8px 0;background:var(--bc2);border:1px solid var(--brd);border-radius:10px;cursor:pointer;transition:.2s;color:var(--tm);font-size:.92rem;}
+.quiz-opt:hover{border-color:var(--pl);background:rgba(99,102,241,.08);}
+.quiz-opt.correct{background:rgba(16,185,129,.15);border-color:var(--s);color:#6ee7b7;}
+.quiz-opt.wrong{background:rgba(239,68,68,.15);border-color:var(--d);color:#fca5a5;}
+.quiz-feedback{margin-top:12px;padding:12px 16px;border-radius:8px;font-size:.9rem;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.correct{background:rgba(16,185,129,.1);color:#6ee7b7;border:1px solid rgba(16,185,129,.2);}
+.quiz-feedback.wrong{background:rgba(239,68,68,.1);color:#fca5a5;border:1px solid rgba(239,68,68,.2);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 1 · Part 2 · Requirements Engineering</div>
+<h1>Great Architects Don't Draw.<br><span>They Ask Questions.</span></h1>
+<p>Every successful software system begins with curiosity—not technology. Before choosing databases, caches, or microservices, experienced architects invest time in understanding what the business actually needs.</p>
+<div class="stats">
+<div class="stat"><div class="sn">PEDALS</div><div class="sl">Framework</div></div>
+<div class="stat"><div class="sn">RESHADED</div><div class="sl">Checklist</div></div>
+<div class="stat"><div class="sn">10</div><div class="sl">Clarifying Questions</div></div>
+<div class="stat"><div class="sn">2</div><div class="sl">Requirement Types</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Whiteboard That Should Never Have Been Drawn</div>
+<div class="story">
+<div class="slabel">The Requirements Mindset</div>
+<h3>Architecture is discovered, not invented.</h3>
+<p>
+Imagine walking into your first day as the lead architect at a startup. The CEO smiles and says, <strong>"We're building the next Uber."</strong> Immediately, one engineer rushes toward the whiteboard. Within minutes the board is filled with boxes: Redis, Kafka, Kubernetes, PostgreSQL, API Gateway, Load Balancer, CDN. Everything looks impressive. Except one thing. <strong>Nobody knows what they're building.</strong>
+<br><br>
+A second engineer quietly watches. Instead of opening a diagramming tool, they open a notebook. The first sentence they write isn't an architecture. It's a question: <em>"Who are our users?"</em> Then another: <em>"Which countries are we launching in?"</em> Then another: <em>"How many daily active users should we expect?"</em>
+<br><br>
+Within ten minutes the room changes. The conversation shifts away from technology and toward the business. Only now does architecture begin to emerge. That is the difference between drawing systems and designing them.
+</p>
+</div>
+
+<div class="sec">🧭 The Architect's Mental Model</div>
+<div class="fig">
+<svg viewBox="0 0 1050 400" width="100%">
+<defs>
+<linearGradient id="g1"><stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="380" y="20" width="290" height="60" rx="14" fill="url(#g1)"/>
+<text x="525" y="58" fill="white" font-size="22" font-weight="700" text-anchor="middle">🚀 Business Idea</text>
+<text x="525" y="100" fill="#94a3b8" font-size="16" text-anchor="middle">"We're building Uber."</text>
+<line x1="525" y1="115" x2="525" y2="150" stroke="#64748b" stroke-width="4" marker-end="url(#arr)"/>
+<rect x="280" y="160" width="490" height="100" rx="16" fill="#162032" stroke="#334155" stroke-width="2"/>
+<text x="525" y="192" fill="#67e8f9" font-size="22" font-weight="700" text-anchor="middle">Architect Questions</text>
+<text x="525" y="222" fill="#e2e8f0" font-size="16" text-anchor="middle">Who are the users?</text>
+<text x="525" y="245" fill="#e2e8f0" font-size="16" text-anchor="middle">How many requests per day?</text>
+<line x1="525" y1="265" x2="185" y2="320" stroke="#64748b" stroke-width="4" marker-end="url(#arr)"/>
+<line x1="525" y1="265" x2="525" y2="320" stroke="#64748b" stroke-width="4" marker-end="url(#arr)"/>
+<line x1="525" y1="265" x2="865" y2="320" stroke="#64748b" stroke-width="4" marker-end="url(#arr)"/>
+<rect x="60" y="330" width="250" height="60" rx="15" fill="#10312a" stroke="#10b981" stroke-width="2"/>
+<text x="185" y="358" fill="#6ee7b7" font-size="20" font-weight="700" text-anchor="middle">Functional</text>
+<text x="185" y="380" fill="#d1fae5" font-size="14" text-anchor="middle">Login · Book Ride · Pay</text>
+<rect x="400" y="330" width="250" height="60" rx="15" fill="#1d2445" stroke="#6366f1" stroke-width="2"/>
+<text x="525" y="358" fill="#a5b4fc" font-size="20" font-weight="700" text-anchor="middle">Constraints</text>
+<text x="525" y="380" fill="#c7d2fe" font-size="14" text-anchor="middle">Budget · Timeline · Compliance</text>
+<rect x="740" y="330" width="250" height="60" rx="15" fill="#2f2213" stroke="#f59e0b" stroke-width="2"/>
+<text x="865" y="358" fill="#fcd34d" font-size="20" font-weight="700" text-anchor="middle">Non-Functional</text>
+<text x="865" y="380" fill="#fde68a" font-size="14" text-anchor="middle">99.99% · <100ms Latency</text>
+</svg>
+<div class="fig-cap">A business idea is never translated directly into architecture. It first becomes questions, then requirements, then constraints, and only finally becomes software architecture.</div>
+</div>
+
+<div class="sec">🎯 Functional vs Non-Functional Requirements</div>
+<div class="g2">
+<div class="gc">
+<h4>✅ Functional Requirements</h4>
+<p><strong>WHAT</strong> the system must do — user-visible behavior and business capabilities.</p>
+<p style="margin-top:10px;color:#6ee7b7;font-size:.85rem;">• Users register and login<br>• Drivers accept rides<br>• URLs are shortened<br>• Videos can be uploaded<br>• Users receive notifications</p>
+</div>
+<div class="gc">
+<h4>📊 Non-Functional Requirements</h4>
+<p><strong>HOW WELL</strong> the system should perform — quality attributes.</p>
+<p style="margin-top:10px;color:#fcd34d;font-size:.85rem;">• Scalability — handles 10× growth<br>• Availability — 99.99% uptime<br>• Latency — <100ms response<br>• Durability — no data loss<br>• Security — encrypted at rest</p>
+</div>
+</div>
+
+<div class="defbox"><strong>Key Insight:</strong> A URL shortener for 1,000 employees and Bitly serving millions have identical features but radically different non-functional requirements. The features don't change — the performance goals do.</div>
+
+<div class="sec">📋 Interview Clarification Checklist</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:16px;">Always begin with these 10 questions before drawing any architecture:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">👥 Who are the users?</div><div class="td">Customers, admins, third-party systems?</div></div>
+<div class="tag-card"><div class="tc">🎯 Core use cases?</div><div class="td">What are the primary features?</div></div>
+<div class="tag-card"><div class="tc">📊 Daily active users?</div><div class="td">DAU determines scale requirements</div></div>
+<div class="tag-card"><div class="tc">⚡ Peak QPS?</div><div class="td">Design for peak, not average</div></div>
+<div class="tag-card"><div class="tc">📖 Read-heavy or write-heavy?</div><div class="td">Drives caching and replication strategy</div></div>
+<div class="tag-card"><div class="tc">⏱ Latency target?</div><div class="td">P99 response time requirement</div></div>
+<div class="tag-card"><div class="tc">🛡 Availability target?</div><div class="td">99.9% vs 99.99% changes everything</div></div>
+<div class="tag-card"><div class="tc">💾 Data retention?</div><div class="td">How long must data be stored?</div></div>
+<div class="tag-card"><div class="tc">💰 Budget constraints?</div><div class="td">Startup vs enterprise budget</div></div>
+<div class="tag-card"><div class="tc">🔒 Compliance?</div><div class="td">GDPR, HIPAA, SOC2 requirements</div></div>
+</div>
+</div>
+
+<div class="sec">🧠 The PEDALS Framework</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:16px;">A simple way to remember common non-functional concerns:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">P — Performance</div><div class="td">Response time, throughput, efficiency</div></div>
+<div class="tag-card"><div class="tc">E — Extensibility</div><div class="td">Can new features be added easily?</div></div>
+<div class="tag-card"><div class="tc">D — Durability</div><div class="td">Is data safe from loss or corruption?</div></div>
+<div class="tag-card"><div class="tc">A — Availability</div><div class="td">What percentage of uptime is required?</div></div>
+<div class="tag-card"><div class="tc">L — Latency</div><div class="td">How fast should responses be?</div></div>
+<div class="tag-card"><div class="tc">S — Security / Scalability</div><div class="td">Is data protected? Can it grow?</div></div>
+</div>
+</div>
+
+<div class="sec">📋 The RESHADED Framework</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:16px;">A comprehensive interview checklist to avoid missing architectural constraints:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">R — Reliability</div><div class="td">System works correctly under failure</div></div>
+<div class="tag-card"><div class="tc">E — Efficiency</div><div class="td">Optimal resource utilization</div></div>
+<div class="tag-card"><div class="tc">S — Scalability</div><div class="td">Handles growth in users/data</div></div>
+<div class="tag-card"><div class="tc">H — High Availability</div><div class="td">Minimal downtime</div></div>
+<div class="tag-card"><div class="tc">A — Auditability</div><div class="td">Track who did what and when</div></div>
+<div class="tag-card"><div class="tc">D — Durability</div><div class="td">No data loss on failure</div></div>
+<div class="tag-card"><div class="tc">E — Extensibility</div><div class="td">Easy to add/modify features</div></div>
+<div class="tag-card"><div class="tc">D — Disaster Recovery</div><div class="td">Recover from catastrophic failures</div></div>
+</div>
+</div>
+
+<div class="sec">🌍 Production Insight</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon's Design Reviews Begin with Assumptions</h3>
+<p>
+Amazon's design reviews frequently spend more time validating assumptions than discussing technology. Incorrect assumptions lead to expensive redesigns; correct requirements naturally narrow the architectural choices.
+<br><br>
+<strong>Key insight:</strong> A five-minute conversation can prevent months of expensive redesign. The best architects ask more questions than they answer.
+</p>
+</div>
+
+<div class="sec">🚨 Common Mistakes</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Starting with Technology</div><div class="td">Never begin with Redis, Kafka, or Kubernetes. Begin with the problem.</div></div>
+<div class="tag-card"><div class="tc">❌ Ignoring Non-Functional Requirements</div><div class="td">Features alone don't determine architecture. Scale, latency, and availability do.</div></div>
+<div class="tag-card"><div class="tc">❌ Not Asking Enough Questions</div><div class="td">Every unanswered question is a risk in the architecture.</div></div>
+<div class="tag-card"><div class="tc">❌ Confusing Business Goals with Requirements</div><div class="td">"Build Uber" is a goal. "Book a ride" is a requirement.</div></div>
+</div>
+</div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card">
+<div class="quiz-q">1. Which of the following is a non-functional requirement?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Users can upload profile photos</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Drivers can accept ride requests</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) The system must respond within 200ms at P99</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Users can reset their password</div>
+<div class="quiz-feedback" id="quiz1">Non-functional requirements describe HOW WELL the system performs. Response time is a quality attribute, not a feature.</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">2. What does the "A" in PEDALS stand for?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Authentication</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Availability — the percentage of uptime required</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Algorithms</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Automation</div>
+<div class="quiz-feedback" id="quiz2">PEDALS = Performance, Extensibility, Durability, Availability, Latency, Security/Scalability</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">3. True or False: A URL shortener for 100 employees has the same architecture as Bitly serving 100M users.</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) True — the features are identical</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) False — non-functional requirements (scale, latency, availability) radically change the architecture</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) True — both need a database</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) False — only the programming language changes</div>
+<div class="quiz-feedback" id="quiz3">Features may be identical, but the non-functional requirements (millions of QPS, 99.99% availability, global distribution) demand a completely different architecture.</div>
+</div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story">
+<div class="slabel">Coming Up</div>
+<h3>Part 3: Capacity Estimation</h3>
+<p>
+Now that you know how to gather requirements, the next chapter teaches you how to estimate DAU, MAU, QPS, storage, and bandwidth — the numbers that drive every architectural decision.
+</p>
+</div>
+
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

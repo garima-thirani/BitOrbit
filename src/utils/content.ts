@@ -1,6 +1,13 @@
 import type { Chapter, ChapterMeta, LearningPath, Module, SearchDocument } from '@/types'
 import { allChapterMeta, allModules, learningPaths } from '@/data/learningPaths'
 
+const normalizeSegment = (value: string | undefined) =>
+  (value ?? '')
+    .toLowerCase()
+    .replace(/%20/g, ' ')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/(^-|-$)/g, '')
+
 const markdownModules = import.meta.glob('/src/content/**/*.md', {
   query: '?raw',
   import: 'default',
@@ -12,12 +19,15 @@ export const estimateReadingTime = (content: string) => {
 }
 
 export const getPathById = (pathId: string | undefined): LearningPath | undefined =>
-  learningPaths.find((path) => path.id === pathId)
+  learningPaths.find((path) => normalizeSegment(path.id) === normalizeSegment(pathId))
 
 export const getModuleById = (
   pathId: string | undefined,
   moduleId: string | undefined,
-): Module | undefined => getPathById(pathId)?.modules.find((module) => module.id === moduleId)
+): Module | undefined =>
+  getPathById(pathId)?.modules.find(
+    (module) => normalizeSegment(module.id) === normalizeSegment(moduleId),
+  )
 
 export const getChapterMetaById = (
   pathId: string | undefined,
@@ -25,7 +35,9 @@ export const getChapterMetaById = (
   chapterId: string | undefined,
 ): ChapterMeta | undefined =>
   getModuleById(pathId, moduleId)?.chapters.find(
-    (chapter) => chapter.id === chapterId || chapter.slug === chapterId,
+    (chapter) =>
+      normalizeSegment(chapter.id) === normalizeSegment(chapterId) ||
+      normalizeSegment(chapter.slug) === normalizeSegment(chapterId),
   )
 
 export const loadChapter = async (
@@ -35,6 +47,15 @@ export const loadChapter = async (
 ): Promise<Chapter | undefined> => {
   const meta = getChapterMetaById(pathId, moduleId, chapterId)
   if (!meta) return undefined
+
+  if (meta.contentType === 'html') {
+    return {
+      ...meta,
+      content: '',
+      estimatedReadTime: 1,
+      hasContent: true,
+    }
+  }
 
   const loader = markdownModules[meta.markdownPath]
   if (!loader) {

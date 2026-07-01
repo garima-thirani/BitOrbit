@@ -1,0 +1,2348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>System Design Foundations | Interactive Handbook</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+
+--primary:#6366f1;
+--primary-light:#818cf8;
+--cyan:#06b6d4;
+--green:#10b981;
+--orange:#f97316;
+--yellow:#f59e0b;
+--red:#ef4444;
+
+--bg:#0f172a;
+--surface:#1e293b;
+--surface2:#162032;
+
+--text:#e2e8f0;
+--muted:#94a3b8;
+
+--border:#334155;
+
+--code:#0d1117;
+
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+scroll-behavior:smooth;
+}
+
+body{
+
+background:var(--bg);
+color:var(--text);
+font-family:Inter,sans-serif;
+line-height:1.8;
+
+}
+
+a{
+
+color:inherit;
+text-decoration:none;
+
+}
+
+img{
+
+max-width:100%;
+
+}
+
+.hero{
+
+position:relative;
+
+overflow:hidden;
+
+padding:80px 60px;
+
+background:
+linear-gradient(
+135deg,
+#23175d,
+#111827,
+#071120
+);
+
+border-bottom:1px solid var(--border);
+
+}
+
+.hero::before{
+
+content:"";
+
+position:absolute;
+
+inset:0;
+
+background:
+
+radial-gradient(circle at 25% 40%,rgba(99,102,241,.30),transparent 45%),
+
+radial-gradient(circle at 80% 20%,rgba(6,182,212,.20),transparent 40%),
+
+radial-gradient(circle at 60% 100%,rgba(16,185,129,.08),transparent 55%);
+
+}
+
+.hero-inner{
+
+position:relative;
+
+z-index:2;
+
+max-width:1200px;
+
+margin:auto;
+
+}
+
+.badge{
+
+display:inline-block;
+
+padding:8px 20px;
+
+border-radius:999px;
+
+background:rgba(99,102,241,.15);
+
+border:1px solid rgba(129,140,248,.4);
+
+color:#c7d2fe;
+
+font-size:14px;
+
+font-weight:600;
+
+margin-bottom:30px;
+
+}
+
+.hero h1{
+
+font-size:64px;
+
+font-weight:800;
+
+line-height:1.1;
+
+margin-bottom:24px;
+
+}
+
+.hero h1 span{
+
+background:
+linear-gradient(
+90deg,
+#a5b4fc,
+#67e8f9);
+
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+
+}
+
+.hero p{
+
+font-size:21px;
+
+color:var(--muted);
+
+max-width:780px;
+
+}
+
+.stats{
+
+display:flex;
+
+gap:60px;
+
+margin-top:55px;
+
+flex-wrap:wrap;
+
+}
+
+.stat{
+
+display:flex;
+
+flex-direction:column;
+
+}
+
+.stat-number{
+
+font-size:34px;
+
+font-weight:800;
+
+color:#a5b4fc;
+
+}
+
+.stat-label{
+
+font-size:13px;
+
+letter-spacing:1px;
+
+text-transform:uppercase;
+
+color:var(--muted);
+
+}
+
+.wrapper{
+
+max-width:1150px;
+
+margin:auto;
+
+padding:55px 28px;
+
+}
+
+.section-title{
+
+font-size:38px;
+
+font-weight:800;
+
+margin-bottom:25px;
+
+display:flex;
+
+align-items:center;
+
+gap:20px;
+
+}
+
+.section-title::after{
+
+content:"";
+
+flex:1;
+
+height:1px;
+
+background:var(--border);
+
+}
+
+.story{
+
+margin-top:50px;
+
+background:
+
+linear-gradient(
+135deg,
+rgba(249,115,22,.12),
+rgba(249,115,22,.03));
+
+border:1px solid rgba(249,115,22,.25);
+
+padding:40px;
+
+border-radius:18px;
+
+position:relative;
+
+overflow:hidden;
+
+}
+
+.story::before{
+
+content:"📖";
+
+position:absolute;
+
+right:25px;
+
+top:15px;
+
+font-size:64px;
+
+opacity:.08;
+
+}
+
+.story-label{
+
+font-size:12px;
+
+font-weight:700;
+
+letter-spacing:2px;
+
+text-transform:uppercase;
+
+color:#fb923c;
+
+margin-bottom:15px;
+
+}
+
+.story h2{
+
+font-size:34px;
+
+margin-bottom:20px;
+
+}
+
+.story p{
+
+font-size:18px;
+
+line-height:2;
+
+color:#fde68a;
+
+}
+
+.highlight{
+
+color:#fb923c;
+font-weight:700;
+
+}
+
+.grid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+
+gap:25px;
+
+margin-top:40px;
+
+}
+
+.card{
+
+background:var(--surface);
+
+border:1px solid var(--border);
+
+border-radius:16px;
+
+padding:28px;
+
+transition:.3s;
+
+}
+
+.card:hover{
+
+transform:translateY(-6px);
+
+border-color:var(--primary);
+
+box-shadow:0 15px 45px rgba(0,0,0,.25);
+
+}
+
+.card h3{
+
+margin-bottom:14px;
+
+font-size:22px;
+
+}
+
+.card p{
+
+color:var(--muted);
+
+}
+
+.roadmap{
+
+display:flex;
+
+justify-content:space-between;
+
+flex-wrap:wrap;
+
+gap:20px;
+
+margin-top:40px;
+
+}
+
+.step{
+
+flex:1;
+
+min-width:160px;
+
+background:var(--surface2);
+
+padding:24px;
+
+border-radius:14px;
+
+border:1px solid var(--border);
+
+text-align:center;
+
+position:relative;
+
+}
+
+.step-number{
+
+width:42px;
+
+height:42px;
+
+border-radius:50%;
+
+background:var(--primary);
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+margin:auto;
+
+margin-bottom:18px;
+
+font-weight:700;
+
+}
+
+.step h4{
+
+margin-bottom:10px;
+
+}
+
+.step p{
+
+font-size:14px;
+
+color:var(--muted);
+
+}
+
+.divider{
+
+height:90px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+font-size:30px;
+
+color:var(--primary-light);
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<section class="hero">
+
+<div class="hero-inner">
+
+<div class="badge">
+CHAPTER 1 • PART 1 • SYSTEM DESIGN FOUNDATIONS
+</div>
+
+<h1>
+
+Think Like a
+
+<span>System Architect</span>
+
+</h1>
+
+<p>
+
+Every successful software system starts long before code is written.
+
+Before choosing Redis, Kafka, Kubernetes, PostgreSQL, or Microservices,
+
+great architects first understand the problem they are solving.
+
+This chapter teaches the mindset behind designing software that can grow
+from hundreds of users to hundreds of millions.
+
+</p>
+
+<div class="stats">
+
+<div class="stat">
+
+<div class="stat-number">
+8+
+</div>
+
+<div class="stat-label">
+Core Concepts
+</div>
+
+</div>
+
+<div class="stat">
+
+<div class="stat-number">
+15+
+</div>
+
+<div class="stat-label">
+Interactive Diagrams
+</div>
+
+</div>
+
+<div class="stat">
+
+<div class="stat-number">
+FAANG
+</div>
+
+<div class="stat-label">
+Interview Ready
+</div>
+
+</div>
+
+<div class="stat">
+
+<div class="stat-number">
+100%
+</div>
+
+<div class="stat-label">
+Concept First
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="wrapper">
+
+<h2 class="section-title">
+
+🚀 Learning Journey
+
+</h2>
+
+<div class="roadmap">
+
+<div class="step">
+
+<div class="step-number">1</div>
+
+<h4>Understand the Problem</h4>
+
+<p>
+Every architecture begins by understanding what needs to be built.
+</p>
+
+</div>
+
+<div class="step">
+
+<div class="step-number">2</div>
+
+<h4>Gather Requirements</h4>
+
+<p>
+Collect functional and non-functional requirements before discussing technology.
+</p>
+
+</div>
+
+<div class="step">
+
+<div class="step-number">3</div>
+
+<h4>Estimate Scale</h4>
+
+<p>
+Numbers influence architecture more than programming languages.
+</p>
+
+</div>
+
+<div class="step">
+
+<div class="step-number">4</div>
+
+<h4>Design the Architecture</h4>
+
+<p>
+Only after understanding the problem should components be selected.
+</p>
+
+</div>
+
+</div>
+
+<div class="story">
+
+<div class="story-label">
+
+Opening Story
+
+</div>
+
+<h2>
+
+🏙️ Imagine Building an Entire Smart City
+
+</h2>
+
+<p>
+
+A government announces the construction of the world's smartest city.
+
+Thousands of engineers immediately begin building roads,
+bridges,
+airports,
+schools,
+hospitals,
+power stations,
+and apartment complexes.
+
+Six months later,
+a senior planner walks into the meeting room and asks a single question.
+
+<br><br>
+
+<span class="highlight">
+
+"How many people will actually live in this city?"
+
+</span>
+
+<br><br>
+
+The room becomes silent.
+
+Nobody knows.
+
+The transportation team assumed five million residents.
+
+The electricity department designed infrastructure for one million.
+
+The education team planned for young families.
+
+Healthcare planned for retirees.
+
+Each team built something impressive,
+but nobody built the **right** thing.
+
+Millions of dollars are lost,
+not because the engineers lacked technical skill,
+but because they started constructing before understanding the problem.
+
+Software systems fail for exactly the same reason.
+
+Many developers immediately begin discussing databases,
+microservices,
+Redis,
+Kafka,
+or Kubernetes.
+
+Experienced architects begin with questions.
+
+They understand that architecture is not driven by technology.
+
+Architecture is driven by **requirements**.
+
+</p>
+
+</div>
+
+<h2 class="section-title" style="margin-top:70px;">
+
+💡 Why System Design Exists
+
+</h2>
+
+<p style="font-size:18px;color:#cbd5e1;max-width:900px;">
+
+When software serves only a few users,
+almost any reasonable implementation works.
+
+As traffic grows,
+entirely new challenges emerge:
+
+</p>
+
+<div class="grid">
+
+<div class="card">
+
+<h3>🚀 Scale</h3>
+
+<p>
+
+Can the application handle millions of requests every day without slowing down?
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>⚡ Performance</h3>
+
+<p>
+
+Can users receive responses in milliseconds instead of seconds?
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>🛡 Reliability</h3>
+
+<p>
+
+What happens when a server crashes or an entire data center becomes unavailable?
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>💰 Cost</h3>
+
+<p>
+
+Can the company continue operating efficiently while traffic grows 100×?
+
+</p>
+
+</div>
+
+</div>
+
+<nav class="sidebar">
+
+<style>
+
+.sidebar{
+
+position:fixed;
+
+right:25px;
+
+top:120px;
+
+width:230px;
+
+background:rgba(22,32,50,.95);
+
+backdrop-filter:blur(12px);
+
+border:1px solid var(--border);
+
+border-radius:18px;
+
+padding:20px;
+
+z-index:100;
+
+}
+
+.sidebar h4{
+
+margin-bottom:15px;
+
+font-size:15px;
+
+color:#67e8f9;
+
+text-transform:uppercase;
+
+letter-spacing:1px;
+
+}
+
+.sidebar ul{
+
+list-style:none;
+
+}
+
+.sidebar li{
+
+margin:10px 0;
+
+}
+
+.sidebar a{
+
+font-size:14px;
+
+color:var(--muted);
+
+transition:.25s;
+
+}
+
+.sidebar a:hover{
+
+color:white;
+
+padding-left:8px;
+
+}
+
+@media(max-width:1200px){
+
+.sidebar{
+
+display:none;
+
+}
+
+}
+
+</style>
+
+<h4>
+
+Contents
+
+</h4>
+
+<ul>
+
+<li><a href="#definition">What is System Design?</a></li>
+
+<li><a href="#architect">Architect Mindset</a></li>
+
+<li><a href="#hld">High Level Design</a></li>
+
+<li><a href="#comparison">HLD vs LLD</a></li>
+
+<li><a href="#mistakes">Common Mistakes</a></li>
+
+</ul>
+
+</nav>
+
+<section id="definition" class="wrapper">
+
+<h2 class="section-title">
+
+🏗 What Exactly is System Design?
+
+</h2>
+
+<p style="font-size:18px;color:#cbd5e1;margin-bottom:30px;">
+
+Most people think System Design means choosing technologies.
+
+It doesn't.
+
+Technologies are merely tools.
+
+System Design is the process of deciding
+
+<b>how software should be organized</b>
+
+so that it satisfies business requirements while remaining scalable,
+
+reliable,
+
+maintainable,
+
+secure,
+
+and cost effective.
+
+</p>
+
+<div class="card" style="background:linear-gradient(135deg,#162032,#1e293b);">
+
+<h3>
+
+Formal Definition
+
+</h3>
+
+<p>
+
+System Design is the process of defining the architecture,
+
+major software components,
+
+communication paths,
+
+data storage,
+
+deployment strategy,
+
+and infrastructure required to build software capable of meeting both
+
+business goals and technical constraints.
+
+</p>
+
+</div>
+
+<div class="story" style="margin-top:40px;">
+
+<div class="story-label">
+
+Intuition
+
+</div>
+
+<h2>
+
+Think Like an Architect, Not a Programmer
+
+</h2>
+
+<p>
+
+A programmer usually thinks,
+
+<b>
+
+"What code should I write?"
+
+</b>
+
+<br><br>
+
+An architect thinks,
+
+<b>
+
+"What system should exist?"
+
+</b>
+
+<br><br>
+
+Notice the difference.
+
+Writing code solves today's problem.
+
+Designing systems solves tomorrow's problems.
+
+Architects care about failures,
+
+growth,
+
+cost,
+
+maintainability,
+
+security,
+
+and evolution over years—not just whether the program works today.
+
+</p>
+
+</div>
+
+</section>
+
+<section id="architect" class="wrapper">
+
+<h2 class="section-title">
+
+🧠 The Architect's Thinking Process
+
+</h2>
+
+<div class="roadmap">
+
+<div class="step">
+
+<div class="step-number">
+
+1
+
+</div>
+
+<h4>
+
+Understand
+
+</h4>
+
+<p>
+
+Who are the users?
+
+What problem are they trying to solve?
+
+</p>
+
+</div>
+
+<div class="step">
+
+<div class="step-number">
+
+2
+
+</div>
+
+<h4>
+
+Question
+
+</h4>
+
+<p>
+
+Traffic?
+
+Latency?
+
+Availability?
+
+Budget?
+
+Compliance?
+
+</p>
+
+</div>
+
+<div class="step">
+
+<div class="step-number">
+
+3
+
+</div>
+
+<h4>
+
+Evaluate
+
+</h4>
+
+<p>
+
+Explore trade-offs before selecting technologies.
+
+</p>
+
+</div>
+
+<div class="step">
+
+<div class="step-number">
+
+4
+
+</div>
+
+<h4>
+
+Design
+
+</h4>
+
+<p>
+
+Only now is architecture drawn.
+
+Technology comes last.
+
+</p>
+
+</div>
+
+</div>
+
+<div style="margin-top:50px;">
+
+<svg viewBox="0 0 980 180" width="100%">
+
+<defs>
+
+<linearGradient id="grad1">
+
+<stop offset="0%" stop-color="#6366f1"/>
+
+<stop offset="100%" stop-color="#06b6d4"/>
+
+</linearGradient>
+
+</defs>
+
+<line x1="90" y1="90" x2="900" y2="90"
+
+stroke="#334155"
+
+stroke-width="4"/>
+
+<circle cx="90" cy="90" r="28"
+
+fill="url(#grad1)"/>
+
+<circle cx="350" cy="90" r="28"
+
+fill="url(#grad1)"/>
+
+<circle cx="610" cy="90" r="28"
+
+fill="url(#grad1)"/>
+
+<circle cx="870" cy="90" r="28"
+
+fill="url(#grad1)"/>
+
+<text x="90"
+
+y="145"
+
+text-anchor="middle"
+
+fill="#e2e8f0"
+
+font-size="18">
+
+Problem
+
+</text>
+
+<text x="350"
+
+y="145"
+
+text-anchor="middle"
+
+fill="#e2e8f0"
+
+font-size="18">
+
+Requirements
+
+</text>
+
+<text x="610"
+
+y="145"
+
+text-anchor="middle"
+
+fill="#e2e8f0"
+
+font-size="18">
+
+Architecture
+
+</text>
+
+<text x="870"
+
+y="145"
+
+text-anchor="middle"
+
+fill="#e2e8f0"
+
+font-size="18">
+
+Technology
+
+</text>
+
+</svg>
+
+</div>
+
+</section>
+
+<section id="hld" class="wrapper">
+
+<h2 class="section-title">
+
+🏛 High-Level Design (HLD)
+
+</h2>
+
+<p style="font-size:18px;color:#cbd5e1;">
+
+High-Level Design focuses on the big picture.
+
+Instead of discussing classes,
+
+functions,
+
+or algorithms,
+
+it identifies the major components that make up a system and explains how they interact.
+
+</p>
+
+<div class="grid">
+
+<div class="card">
+
+<h3>
+
+🌐 Load Balancer
+
+</h3>
+
+<p>
+
+Receives incoming traffic and distributes requests across multiple servers.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+⚙ Services
+
+</h3>
+
+<p>
+
+Each service owns a specific business responsibility.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+🗄 Database
+
+</h3>
+
+<p>
+
+Stores persistent application data.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+⚡ Cache
+
+</h3>
+
+<p>
+
+Improves performance by reducing expensive database queries.
+
+</p>
+
+</div>
+
+</div>
+
+<div style="margin-top:60px;background:#162032;border-radius:18px;padding:35px;">
+
+<svg viewBox="0 0 1000 520" width="100%">
+
+<rect x="410" y="20"
+
+width="180"
+
+height="60"
+
+rx="10"
+
+fill="#4f46e5"/>
+
+<text x="500"
+
+y="58"
+
+fill="white"
+
+text-anchor="middle"
+
+font-size="22">
+
+Users
+
+</text>
+
+<line x1="500"
+
+y1="80"
+
+x2="500"
+
+y2="130"
+
+stroke="#64748b"
+
+stroke-width="4"/>
+
+<rect x="370"
+
+y="130"
+
+width="260"
+
+height="60"
+
+rx="10"
+
+fill="#06b6d4"/>
+
+<text x="500"
+
+y="168"
+
+fill="white"
+
+text-anchor="middle"
+
+font-size="22">
+
+Load Balancer
+
+</text>
+
+<line x1="500"
+
+y1="190"
+
+x2="250"
+
+y2="270"
+
+stroke="#64748b"
+
+stroke-width="4"/>
+
+<line x1="500"
+
+y1="190"
+
+x2="750"
+
+y2="270"
+
+stroke="#64748b"
+
+stroke-width="4"/>
+
+<rect x="120"
+
+y="270"
+
+width="250"
+
+height="70"
+
+rx="10"
+
+fill="#10b981"/>
+
+<text x="245"
+
+y="314"
+
+fill="white"
+
+text-anchor="middle"
+
+font-size="22">
+
+API Service
+
+</text>
+
+<rect x="630"
+
+y="270"
+
+width="250"
+
+height="70"
+
+rx="10"
+
+fill="#10b981"/>
+
+<text x="755"
+
+y="314"
+
+fill="white"
+
+text-anchor="middle"
+
+font-size="22">
+
+Upload Service
+
+</text>
+
+<line x1="245"
+
+y1="340"
+
+x2="500"
+
+y2="420"
+
+stroke="#64748b"
+
+stroke-width="4"/>
+
+<line x1="755"
+
+y1="340"
+
+x2="500"
+
+y2="420"
+
+stroke="#64748b"
+
+stroke-width="4"/>
+
+<rect x="360"
+
+y="420"
+
+width="280"
+
+height="70"
+
+rx="10"
+
+fill="#f97316"/>
+
+<text x="500"
+
+y="463"
+
+fill="white"
+
+text-anchor="middle"
+
+font-size="22">
+
+Database + Cache
+
+</text>
+
+</svg>
+
+</div>
+
+<section id="comparison" class="wrapper">
+
+<h2 class="section-title">
+
+⚖ High-Level Design vs Low-Level Design
+
+</h2>
+
+<style>
+
+.compare{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:30px;
+
+margin-top:40px;
+
+}
+
+.compare-card{
+
+background:var(--surface);
+
+padding:35px;
+
+border-radius:18px;
+
+border:1px solid var(--border);
+
+}
+
+.compare-card h3{
+
+margin-bottom:20px;
+
+font-size:28px;
+
+}
+
+.compare-card ul{
+
+padding-left:20px;
+
+}
+
+.compare-card li{
+
+margin:12px 0;
+
+color:#cbd5e1;
+
+}
+
+@media(max-width:850px){
+
+.compare{
+
+grid-template-columns:1fr;
+
+}
+
+}
+
+</style>
+
+<div class="compare">
+
+<div class="compare-card">
+
+<h3 style="color:#67e8f9;">
+
+High-Level Design
+
+</h3>
+
+<ul>
+
+<li>System architecture</li>
+
+<li>Services</li>
+
+<li>APIs</li>
+
+<li>Databases</li>
+
+<li>Caching</li>
+
+<li>Scalability</li>
+
+<li>Communication between components</li>
+
+<li>Deployment strategy</li>
+
+</ul>
+
+</div>
+
+<div class="compare-card">
+
+<h3 style="color:#10b981;">
+
+Low-Level Design
+
+</h3>
+
+<ul>
+
+<li>Classes</li>
+
+<li>Objects</li>
+
+<li>Interfaces</li>
+
+<li>Algorithms</li>
+
+<li>Methods</li>
+
+<li>Data structures</li>
+
+<li>Design patterns</li>
+
+<li>Implementation details</li>
+
+</ul>
+
+</div>
+
+</div>
+
+</section>
+
+<section id="mindset" class="wrapper">
+
+<h2 class="section-title">
+
+🧠 How Great Architects Think
+
+</h2>
+
+<p style="font-size:18px;color:#cbd5e1;margin-bottom:35px;">
+
+One of the biggest differences between junior developers and experienced architects
+is not technical knowledge.
+
+It is the sequence in which they think.
+
+Most beginners immediately ask,
+
+<strong>"Which database should we use?"</strong>
+
+Experienced architects don't.
+
+They first ask whether a database is even the bottleneck.
+
+Choosing technology before understanding the problem is like choosing
+the color of a bridge before knowing whether a bridge is needed.
+
+</p>
+
+<div class="grid">
+
+<div class="card">
+
+<h3>
+
+❌ Beginner Mindset
+
+</h3>
+
+<p>
+
+Redis.
+
+Kafka.
+
+Kubernetes.
+
+MongoDB.
+
+Docker.
+
+Microservices.
+
+Technology becomes the starting point instead of the solution.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+✅ Architect Mindset
+
+</h3>
+
+<p>
+
+Users.
+
+Business goals.
+
+Traffic.
+
+Failures.
+
+Constraints.
+
+Trade-offs.
+
+Technology becomes the final decision instead of the first one.
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="wrapper">
+
+<h2 class="section-title">
+
+🎯 Every Architecture Answers Five Questions
+
+</h2>
+
+<div class="roadmap">
+
+<div class="step">
+
+<div class="step-number">
+
+1
+
+</div>
+
+<h4>
+
+Who?
+
+</h4>
+
+<p>
+
+Who are the users?
+
+Customers?
+
+Admins?
+
+Third-party systems?
+
+</p>
+
+</div>
+
+<div class="step">
+
+<div class="step-number">
+
+2
+
+</div>
+
+<h4>
+
+What?
+
+</h4>
+
+<p>
+
+What business capability should the software provide?
+
+</p>
+
+</div>
+
+<div class="step">
+
+<div class="step-number">
+
+3
+
+</div>
+
+<h4>
+
+How Much?
+
+</h4>
+
+<p>
+
+Thousands?
+
+Millions?
+
+Billions?
+
+Scale changes architecture.
+
+</p>
+
+</div>
+
+<div class="step">
+
+<div class="step-number">
+
+4
+
+</div>
+
+<h4>
+
+Failures?
+
+</h4>
+
+<p>
+
+Which components can fail?
+
+How will the system recover?
+
+</p>
+
+</div>
+
+<div class="step">
+
+<div class="step-number">
+
+5
+
+</div>
+
+<h4>
+
+Cost?
+
+</h4>
+
+<p>
+
+Can the solution be maintained as traffic grows?
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="wrapper">
+
+<h2 class="section-title">
+
+🔄 Evolution of a Growing System
+
+</h2>
+
+<p style="font-size:18px;color:#cbd5e1;">
+
+Every famous internet company started with a simple architecture.
+
+As traffic increased,
+
+the architecture evolved.
+
+System Design is really the study of
+
+<strong>how software evolves.</strong>
+
+</p>
+
+<div style="margin-top:45px;background:#162032;padding:35px;border-radius:18px;">
+
+<svg viewBox="0 0 1080 240" width="100%">
+
+<defs>
+
+<marker id="arrow"
+
+markerWidth="12"
+
+markerHeight="12"
+
+refX="10"
+
+refY="6"
+
+orient="auto">
+
+<path d="M0,0 L12,6 L0,12 z"
+
+fill="#818cf8"/>
+
+</marker>
+
+</defs>
+
+<rect x="20" y="60"
+
+width="180"
+
+height="80"
+
+rx="12"
+
+fill="#4f46e5"/>
+
+<text x="110"
+
+y="108"
+
+text-anchor="middle"
+
+fill="white"
+
+font-size="20">
+
+Single Server
+
+</text>
+
+<line x1="200"
+
+y1="100"
+
+x2="310"
+
+y2="100"
+
+stroke="#818cf8"
+
+stroke-width="4"
+
+marker-end="url(#arrow)"/>
+
+<rect x="310"
+
+y="60"
+
+width="180"
+
+height="80"
+
+rx="12"
+
+fill="#06b6d4"/>
+
+<text x="400"
+
+y="108"
+
+text-anchor="middle"
+
+fill="white"
+
+font-size="20">
+
+Load Balancer
+
+</text>
+
+<line x1="490"
+
+y1="100"
+
+x2="600"
+
+y2="100"
+
+stroke="#818cf8"
+
+stroke-width="4"
+
+marker-end="url(#arrow)"/>
+
+<rect x="600"
+
+y="60"
+
+width="180"
+
+height="80"
+
+rx="12"
+
+fill="#10b981"/>
+
+<text x="690"
+
+y="108"
+
+text-anchor="middle"
+
+fill="white"
+
+font-size="20">
+
+Microservices
+
+</text>
+
+<line x1="780"
+
+y1="100"
+
+x2="900"
+
+y2="100"
+
+stroke="#818cf8"
+
+stroke-width="4"
+
+marker-end="url(#arrow)"/>
+
+<rect x="900"
+
+y="60"
+
+width="160"
+
+height="80"
+
+rx="12"
+
+fill="#f97316"/>
+
+<text x="980"
+
+y="108"
+
+text-anchor="middle"
+
+fill="white"
+
+font-size="20">
+
+Global Scale
+
+</text>
+
+<text
+
+x="110"
+
+y="175"
+
+text-anchor="middle"
+
+fill="#94a3b8"
+
+font-size="14">
+
+Startup
+
+</text>
+
+<text
+
+x="400"
+
+y="175"
+
+text-anchor="middle"
+
+fill="#94a3b8"
+
+font-size="14">
+
+Growing
+
+</text>
+
+<text
+
+x="690"
+
+y="175"
+
+text-anchor="middle"
+
+fill="#94a3b8"
+
+font-size="14">
+
+Millions of Users
+
+</text>
+
+<text
+
+x="980"
+
+y="175"
+
+text-anchor="middle"
+
+fill="#94a3b8"
+
+font-size="14">
+
+Planet Scale
+
+</text>
+
+</svg>
+
+</div>
+
+</section>
+
+<section class="wrapper">
+
+<h2 class="section-title">
+
+🌍 Production Insight
+
+</h2>
+
+<div class="story">
+
+<div class="story-label">
+
+Real World
+
+</div>
+
+<h2>
+
+Amazon Doesn't Start With Databases
+
+</h2>
+
+<p>
+
+One of the biggest surprises for many engineers is that design reviews
+inside large technology companies rarely begin by discussing technology.
+
+Instead,
+
+meetings usually begin with questions.
+
+Who is the customer?
+
+What problem are we solving?
+
+How will success be measured?
+
+What assumptions are we making?
+
+Only after those assumptions are validated do engineers begin discussing
+architecture.
+
+Incorrect assumptions create expensive redesigns.
+
+Correct assumptions naturally eliminate many architectural choices.
+
+This is why senior engineers often spend more time asking questions than
+drawing diagrams.
+
+</p>
+
+</div>
+
+</section>
+
+<section id="mistakes" class="wrapper">
+
+<h2 class="section-title">
+
+🚨 Common Beginner Mistakes
+
+</h2>
+
+<div class="grid">
+
+<div class="card">
+
+<h3>
+
+⚠ Choosing Technology First
+
+</h3>
+
+<p>
+
+Never begin with Redis,
+
+Kafka,
+
+or Kubernetes.
+
+Always begin with the problem.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+⚠ Ignoring Scale
+
+</h3>
+
+<p>
+
+Architecture for one thousand users is very different from architecture
+for one hundred million users.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+⚠ Drawing Before Asking
+
+</h3>
+
+<p>
+
+Great interviews begin with clarification,
+
+not diagrams.
+
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>
+
+⚠ Confusing HLD with Coding
+
+</h3>
+
+<p>
+
+High-Level Design discusses systems,
+
+not class hierarchies or algorithms.
+
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="wrapper">
+
+<h2 class="section-title">
+
+📝 Key Takeaways
+
+</h2>
+
+<div class="card">
+
+<ul style="padding-left:22px;line-height:2;color:#cbd5e1;">
+
+<li>System Design is decision making under constraints.</li>
+
+<li>Requirements always drive architecture.</li>
+
+<li>Technology is the last decision—not the first.</li>
+
+<li>High-Level Design focuses on services, databases, APIs and communication.</li>
+
+<li>Architects optimize trade-offs rather than searching for a perfect solution.</li>
+
+<li>Every scalable system evolves over time.</li>
+
+</ul>
+
+</div>
+
+</section>
+
+<section class="wrapper">
+
+<div class="story">
+
+<div class="story-label">
+
+Coming Next
+
+</div>
+
+<h2>
+
+➡ Chapter 1 · Part 2
+
+</h2>
+
+<p>
+
+Now that you've learned how architects think,
+
+the next chapter explores how they gather requirements.
+
+You'll learn Functional Requirements,
+
+Non-Functional Requirements,
+
+PEDALS,
+
+RESHADED,
+
+and the structured questioning techniques used in FAANG System Design interviews before a single architecture diagram is drawn.
+
+</p>
+
+</div>
+
+</section>
+
+<footer style="padding:60px 20px;text-align:center;color:#64748b;border-top:1px solid #334155;margin-top:60px;">
+
+<p>
+
+System Design Handbook • Chapter 1 • Part 1
+
+</p>
+
+<p style="margin-top:10px;">
+
+Built with an interactive learning approach inspired by modern developer documentation.
+
+</p>
+
+</footer>
+
+</body>
+
+</html>

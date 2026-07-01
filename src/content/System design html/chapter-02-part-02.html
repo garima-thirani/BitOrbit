@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vertical vs Horizontal Scaling | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--p:#6366f1;--pl:#818cf8;--pd:#4f46e5;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;scroll-behavior:smooth;}
+body{font-family:Inter,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;}
+.hero{background:linear-gradient(135deg,#1a1050,#0f172a,#061025);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(99,102,241,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:960px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(99,102,241,.2);color:var(--pl);border:1px solid rgba(129,140,248,.4);border-radius:20px;padding:6px 18px;font-size:13px;font-weight:600;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#a5b4fc,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:720px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.defbox{background:rgba(99,102,241,.09);border-left:3px solid #6366f1;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0;font-size:.92rem;line-height:1.8;}
+.defbox strong{color:#818cf8;}
+.tag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:16px 0;}
+.tag-card{background:var(--bc2);border:1px solid var(--brd);border-radius:10px;padding:14px 16px;}
+.tag-card .tc{font-weight:700;font-size:.85rem;color:#fca5a5;margin-bottom:4px;}
+.tag-card .td{font-size:.82rem;color:var(--tm);}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(99,102,241,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.fig{background:var(--bc2);border:1px solid var(--brd);border-radius:16px;padding:30px;margin:28px 0;}
+.fig-cap{text-align:center;color:var(--tm);font-size:.85rem;margin-top:16px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.quiz-card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:28px;margin:20px 0;}
+.quiz-q{font-size:1.05rem;font-weight:600;margin-bottom:16px;color:var(--t);}
+.quiz-opt{display:block;padding:12px 18px;margin:8px 0;background:var(--bc2);border:1px solid var(--brd);border-radius:10px;cursor:pointer;transition:.2s;color:var(--tm);font-size:.92rem;}
+.quiz-opt:hover{border-color:var(--pl);background:rgba(99,102,241,.08);}
+.quiz-opt.correct{background:rgba(16,185,129,.15);border-color:var(--s);color:#6ee7b7;}
+.quiz-opt.wrong{background:rgba(239,68,68,.15);border-color:var(--d);color:#fca5a5;}
+.quiz-feedback{margin-top:12px;padding:12px 16px;border-radius:8px;font-size:.9rem;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.correct{background:rgba(16,185,129,.1);color:#6ee7b7;border:1px solid rgba(16,185,129,.2);}
+.quiz-feedback.wrong{background:rgba(239,68,68,.1);color:#fca5a5;border:1px solid rgba(239,68,68,.2);}
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 2 · Part 2 · Vertical vs Horizontal Scaling</div>
+<h1>Scale Up or Scale Out<br><span>One Super Chef vs Many Chefs</span></h1>
+<p>There are only two fundamental ways to make a system handle more work: make one machine stronger, or use more machines. Learn when to choose each approach.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Scale Up</div><div class="sl">Bigger Box</div></div>
+<div class="stat"><div class="sn">Scale Out</div><div class="sl">More Boxes</div></div>
+<div class="stat"><div class="sn">Cost</div><div class="sl">Trade-off</div></div>
+<div class="stat"><div class="sn">6</div><div class="sl">Evolution Stages</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — One Super Chef vs Many Chefs</div>
+<div class="story">
+<div class="slabel">Scaling Approaches</div>
+<h3>A restaurant has two choices. So does software.</h3>
+<p>
+A restaurant starts with one excellent chef. As customers increase, the owner has two choices.
+<br><br>
+<strong>Option A — Upgrade the Chef (Vertical):</strong> Buy better ovens, larger kitchen equipment, hire assistants. The kitchen becomes more powerful. This is <strong>Vertical Scaling</strong>.
+<br><br>
+<strong>Option B — Open Multiple Kitchens (Horizontal):</strong> Instead of one giant kitchen, open five kitchens across the city. Orders are distributed between them. This is <strong>Horizontal Scaling</strong>.
+</p>
+</div>
+
+<div class="sec">🎯 Intuition</div>
+<div class="g2">
+<div class="gc">
+<h4>⬆ Vertical Scaling (Scale Up)</h4>
+<p>Think of a laptop. If your IDE becomes slow you upgrade RAM from 8GB to 32GB, upgrade CPU, buy a faster SSD. Still one computer — just more powerful.</p>
+<p style="margin-top:10px;color:#a5b4fc;font-size:.85rem;">Examples: More CPU, More RAM, Faster SSD, Better Network Card</p>
+</div>
+<div class="gc">
+<h4>➡ Horizontal Scaling (Scale Out)</h4>
+<p>Think of Google Search. No single computer can index the internet. Instead, Google uses hundreds of thousands of machines working together.</p>
+<p style="margin-top:10px;color:#6ee7b7;font-size:.85rem;">Examples: More web servers, More DB replicas, More Kafka brokers</p>
+</div>
+</div>
+
+<div class="sec">📊 Visual Comparison</div>
+<div class="g2">
+<div class="fig">
+<h4 style="color:#a5b4fc;margin-bottom:16px;">⬆ Vertical Scaling</h4>
+<svg viewBox="0 0 300 200" width="100%">
+<defs><linearGradient id="gv"><stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#6366f1"/></linearGradient></defs>
+<rect x="80" y="20" width="140" height="60" rx="10" fill="url(#gv)"/>
+<text x="150" y="58" fill="white" font-size="15" font-weight="700" text-anchor="middle">4 CPU · 8 GB RAM</text>
+<line x1="150" y1="80" x2="150" y2="100" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+<rect x="80" y="110" width="140" height="60" rx="10" fill="url(#gv)"/>
+<text x="150" y="148" fill="white" font-size="15" font-weight="700" text-anchor="middle">32 CPU · 128 GB RAM</text>
+<text x="150" y="175" fill="#94a3b8" font-size="13" text-anchor="middle">⬆ Upgrade</text>
+</svg>
+</div>
+<div class="fig">
+<h4 style="color:#6ee7b7;margin-bottom:16px;">➡ Horizontal Scaling</h4>
+<svg viewBox="0 0 300 200" width="100%">
+<defs><linearGradient id="gh"><stop offset="0%" stop-color="#06b6d4"/><stop offset="100%" stop-color="#22d3ee"/></linearGradient>
+<marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#64748b"/></marker></defs>
+<rect x="20" y="20" width="80" height="50" rx="8" fill="url(#gh)"/>
+<text x="60" y="50" fill="white" font-size="13" font-weight="700" text-anchor="middle">Server 1</text>
+<rect x="110" y="20" width="80" height="50" rx="8" fill="url(#gh)"/>
+<text x="150" y="50" fill="white" font-size="13" font-weight="700" text-anchor="middle">Server 2</text>
+<rect x="200" y="20" width="80" height="50" rx="8" fill="url(#gh)"/>
+<text x="240" y="50" fill="white" font-size="13" font-weight="700" text-anchor="middle">Server 3</text>
+<rect x="80" y="120" width="140" height="40" rx="8" fill="#f59e0b"/>
+<text x="150" y="146" fill="white" font-size="14" font-weight="700" text-anchor="middle">⚖ Load Balancer</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">⚖ Advantages & Disadvantages</div>
+<div class="g2">
+<div class="gc">
+<h4>✅ Vertical Scaling Pros</h4>
+<p>• Simple architecture<br>• No distributed systems complexity<br>• Easier debugging<br>• Strong consistency<br>• Few code changes needed</p>
+<p style="margin-top:10px;color:#a7f3d0;font-size:.85rem;"><strong>Perfect for:</strong> Internal tools, early-stage startups, small business apps</p>
+</div>
+<div class="gc">
+<h4>❌ Vertical Scaling Cons</h4>
+<p>• Every machine has a physical limit<br>• Expensive hardware<br>• Single point of failure<br>• Downtime during upgrades<br>• Limited maximum capacity</p>
+</div>
+<div class="gc">
+<h4>✅ Horizontal Scaling Pros</h4>
+<p>• Nearly unlimited growth<br>• Better fault tolerance<br>• Easier regional expansion<br>• Supports very high traffic<br>• Commodity hardware</p>
+<p style="margin-top:10px;color:#a7f3d0;font-size:.85rem;"><strong>Perfect for:</strong> Netflix, Amazon, Google — systems serving billions</p>
+</div>
+<div class="gc">
+<h4>❌ Horizontal Scaling Cons</h4>
+<p>• Load balancing needed<br>• Session management complexity<br>• Data consistency challenges<br>• Distributed caching required<br>• Service discovery overhead</p>
+</div>
+</div>
+
+<div class="sec">📈 Production Evolution Path</div>
+<div class="fig">
+<svg viewBox="0 0 600 280" width="100%">
+<defs><linearGradient id="ge"><stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="a2" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect x="220" y="10" width="160" height="35" rx="8" fill="url(#ge)"/><text x="300" y="34" fill="white" font-size="14" font-weight="700" text-anchor="middle">Single Server</text>
+<line x1="300" y1="45" x2="300" y2="60" stroke="#64748b" stroke-width="2" marker-end="url(#a2)"/>
+<rect x="220" y="65" width="160" height="35" rx="8" fill="#06b6d4"/><text x="300" y="89" fill="white" font-size="14" font-weight="700" text-anchor="middle">Larger Server</text>
+<line x1="300" y1="100" x2="300" y2="115" stroke="#64748b" stroke-width="2" marker-end="url(#a2)"/>
+<rect x="200" y="120" width="200" height="35" rx="8" fill="#10b981"/><text x="300" y="144" fill="white" font-size="14" font-weight="700" text-anchor="middle">Multiple Web Servers</text>
+<line x1="300" y1="155" x2="300" y2="170" stroke="#64748b" stroke-width="2" marker-end="url(#a2)"/>
+<rect x="200" y="175" width="200" height="35" rx="8" fill="#f59e0b"/><text x="300" y="199" fill="white" font-size="14" font-weight="700" text-anchor="middle">Load Balancer</text>
+<line x1="300" y1="210" x2="300" y2="225" stroke="#64748b" stroke-width="2" marker-end="url(#a2)"/>
+<rect x="200" y="230" width="200" height="35" rx="8" fill="#ef4444"/><text x="300" y="254" fill="white" font-size="14" font-weight="700" text-anchor="middle">Distributed Cache + DB Replicas</text>
+</svg>
+<div class="fig-cap">Horizontal scaling usually comes AFTER vertical scaling. Most successful products follow this path.</div>
+</div>
+
+<div class="sec">🎯 Interview Decision Framework</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Ask yourself these questions during interviews:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📊 Current Traffic?</div><div class="td">Can one server handle the workload?</div></div>
+<div class="tag-card"><div class="tc">📈 Expected Growth?</div><div class="td">Will traffic 10× in the next year?</div></div>
+<div class="tag-card"><div class="tc">💰 Budget?</div><div class="td">Can we afford enterprise hardware?</div></div>
+<div class="tag-card"><div class="tc">⏱ Downtime Acceptable?</div><div class="td">Can we take servers offline for upgrades?</div></div>
+<div class="tag-card"><div class="tc">👥 Team Experience?</div><div class="td">Does the team know distributed systems?</div></div>
+<div class="tag-card"><div class="tc">🔒 Regulatory?</div><div class="td">Data sovereignty requirements?</div></div>
+</div>
+</div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Scale Up → Bigger Box</strong> · <strong>Scale Out → More Boxes</strong></div>
+
+<div class="sec">🚨 Common Mistakes</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Choosing Horizontal Too Early</div><div class="td">Start with vertical scaling until you hit physical limits.</div></div>
+<div class="tag-card"><div class="tc">❌ Assuming Horizontal is Always Better</div><div class="td">Distributed complexity is expensive. Only use it when needed.</div></div>
+<div class="tag-card"><div class="tc">❌ Ignoring Operational Complexity</div><div class="td">More servers = more monitoring, deployment, and failure modes.</div></div>
+<div class="tag-card"><div class="tc">❌ Forgetting Databases Are Harder to Scale</div><div class="td">Stateless services scale easily. Databases require replication, sharding.</div></div>
+</div>
+</div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card">
+<div class="quiz-q">1. An internal HR portal serving 500 employees. What scaling approach is most appropriate?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Horizontal scaling with Kubernetes</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Vertical scaling — a single powerful server is sufficient</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Both — always use microservices</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) No scaling needed</div>
+<div class="quiz-feedback" id="quiz1">For 500 employees, a single server works fine. Avoid unnecessary distributed complexity.</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">2. What is the main limitation of vertical scaling?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) It's too expensive for small businesses</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) It requires Kubernetes</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Every machine has a physical maximum — you can't keep upgrading forever</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) It's slower than horizontal scaling</div>
+<div class="quiz-feedback" id="quiz2">There's a limit to how much CPU, RAM, and storage you can add to a single machine. Beyond that, you must scale horizontally.</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">3. Which company MUST use horizontal scaling?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) A local bakery's website</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) An internal company wiki</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Google Search — no single machine can index the internet</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) A school management system</div>
+<div class="quiz-feedback" id="quiz3">Google Search requires hundreds of thousands of machines because no single server can handle the scale of the internet.</div>
+</div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story">
+<div class="slabel">Coming Up</div>
+<h3>Part 3: Stateless Architecture</h3>
+<p>Learn why state prevents scaling, how sessions work, and how to design horizontally scalable services.</p>
+</div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

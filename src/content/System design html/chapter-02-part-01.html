@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introduction to Scalability | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--p:#6366f1;--pl:#818cf8;--pd:#4f46e5;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;scroll-behavior:smooth;}
+body{font-family:Inter,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;}
+.hero{background:linear-gradient(135deg,#1a1050,#0f172a,#061025);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(99,102,241,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:960px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(99,102,241,.2);color:var(--pl);border:1px solid rgba(129,140,248,.4);border-radius:20px;padding:6px 18px;font-size:13px;font-weight:600;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#a5b4fc,#67e8f9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:720px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.defbox{background:rgba(99,102,241,.09);border-left:3px solid #6366f1;padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0;font-size:.92rem;line-height:1.8;}
+.defbox strong{color:#818cf8;}
+.tag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:16px 0;}
+.tag-card{background:var(--bc2);border:1px solid var(--brd);border-radius:10px;padding:14px 16px;}
+.tag-card .tc{font-weight:700;font-size:.85rem;color:#fca5a5;margin-bottom:4px;}
+.tag-card .td{font-size:.82rem;color:var(--tm);}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(99,102,241,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.fig{background:var(--bc2);border:1px solid var(--brd);border-radius:16px;padding:30px;margin:28px 0;}
+.fig-cap{text-align:center;color:var(--tm);font-size:.85rem;margin-top:16px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.quiz-card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:28px;margin:20px 0;}
+.quiz-q{font-size:1.05rem;font-weight:600;margin-bottom:16px;color:var(--t);}
+.quiz-opt{display:block;padding:12px 18px;margin:8px 0;background:var(--bc2);border:1px solid var(--brd);border-radius:10px;cursor:pointer;transition:.2s;color:var(--tm);font-size:.92rem;}
+.quiz-opt:hover{border-color:var(--pl);background:rgba(99,102,241,.08);}
+.quiz-opt.correct{background:rgba(16,185,129,.15);border-color:var(--s);color:#6ee7b7;}
+.quiz-opt.wrong{background:rgba(239,68,68,.15);border-color:var(--d);color:#fca5a5;}
+.quiz-feedback{margin-top:12px;padding:12px 16px;border-radius:8px;font-size:.9rem;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.correct{background:rgba(16,185,129,.1);color:#6ee7b7;border:1px solid rgba(16,185,129,.2);}
+.quiz-feedback.wrong{background:rgba(239,68,68,.1);color:#fca5a5;border:1px solid rgba(239,68,68,.2);}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(99,102,241,.08);padding:8px 12px;border-radius:6px;}
+.step-list{counter-reset:step;list-style:none;padding:0;margin:14px 0;}
+.step-list li{counter-increment:step;display:flex;gap:14px;margin-bottom:14px;align-items:flex-start;}
+.step-list li::before{content:counter(step);min-width:28px;height:28px;background:var(--p);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;flex-shrink:0;margin-top:2px;}
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+@keyframes grow{0%{transform:scale(1);}50%{transform:scale(1.05);}100%{transform:scale(1);}}
+.pulse{animation:grow 2s ease-in-out infinite;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 2 · Part 1 · Introduction to Scalability</div>
+<h1>Why Systems Need to Scale<br><span>The Evolution of Scalability</span></h1>
+<p>Scalability is not about handling today's traffic. It is about surviving tomorrow's success. Learn why systems fail as they grow and how to think about scaling.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Scale</div><div class="sl">Follows Success</div></div>
+<div class="stat"><div class="sn">3</div><div class="sl">Enemies of Growth</div></div>
+<div class="stat"><div class="sn">6</div><div class="sl">Evolution Stages</div></div>
+<div class="stat"><div class="sn">Modular</div><div class="sl">Monolith First</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Coffee Shop That Became Starbucks</div>
+<div class="story">
+<div class="slabel">The Scaling Mindset</div>
+<h3>Success is the biggest threat to system performance.</h3>
+<p>
+Imagine opening a small coffee shop. On day one, ten customers arrive. One barista handles everything — taking orders, making coffee, cleaning tables, billing customers. Life is easy.
+<br><br>
+A year later your coffee shop becomes famous. Now 2,000 customers arrive every morning. The same barista is overwhelmed. Customers leave. Revenue drops.
+<br><br>
+Did the coffee recipe change? <strong>No.</strong> The business became successful faster than the system could grow. Software behaves exactly the same way.
+</p>
+</div>
+
+<div class="sec">🎯 What Does "Scaling" Actually Mean?</div>
+<div class="defbox">
+<strong>Scaling</strong> is the ability of a system to continue delivering <strong>acceptable performance</strong> as demand increases.<br><br>
+If your API responds in 50ms and still responds in 70ms when traffic grows 100×, your system scales well. If it jumps to 8 seconds, it does not.
+</div>
+
+<div class="sec">⚡ Scaling vs Performance</div>
+<div class="g2">
+<div class="gc">
+<h4>⚙ Performance</h4>
+<p>Answers: <strong>"How fast is my system right now?"</strong></p>
+<p style="margin-top:8px;color:#6ee7b7;font-size:.85rem;">• API latency<br>• Database query time<br>• CPU utilization</p>
+</div>
+<div class="gc">
+<h4>📈 Scalability</h4>
+<p>Answers: <strong>"What happens when demand doubles?"</strong></p>
+<p style="margin-top:8px;color:#fcd34d;font-size:.85rem;">• 2× traffic → 2× resources?<br>• 100× traffic → still works?<br>• Growth without redesign</p>
+</div>
+</div>
+
+<div class="defbox"><strong>Key Insight:</strong> A system can be <em>fast</em> today and still <em>fail</em> tomorrow. Performance and scalability are related but distinct properties.</div>
+
+<div class="sec">📈 The Growth Curve</div>
+<div class="fig">
+<svg viewBox="0 0 700 320" width="100%">
+<defs>
+<linearGradient id="g1"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="250" y="10" width="200" height="50" rx="10" fill="#4f46e5"/>
+<text x="350" y="42" fill="white" font-size="18" font-weight="700" text-anchor="middle">🚀 Prototype</text>
+<line x1="350" y1="60" x2="350" y2="85" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+<rect x="250" y="95" width="200" height="45" rx="10" fill="#06b6d4"/>
+<text x="350" y="124" fill="white" font-size="17" font-weight="700" text-anchor="middle">👥 Early Users</text>
+<line x1="350" y1="140" x2="350" y2="160" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+<rect x="230" y="170" width="240" height="45" rx="10" fill="#10b981"/>
+<text x="350" y="198" fill="white" font-size="17" font-weight="700" text-anchor="middle">🔥 Product-Market Fit</text>
+<line x1="350" y1="215" x2="350" y2="235" stroke="#64748b" stroke-width="3" marker-end="url(#arr)"/>
+<rect x="220" y="245" width="260" height="45" rx="10" fill="#f59e0b"/>
+<text x="350" y="274" fill="white" font-size="17" font-weight="700" text-anchor="middle">⚡ Traffic Explosion</text>
+</svg>
+<div class="fig-cap">Every successful application follows this journey. Most startups don't start with Kubernetes — they grow into it.</div>
+</div>
+
+<div class="sec">⚠ Why Premature Scaling Is Dangerous</div>
+<div class="story">
+<div class="slabel">The Trap</div>
+<h3>Don't optimize for millions before you have them.</h3>
+<p>
+Imagine spending <strong>$500,000</strong> building infrastructure capable of serving 500 million users when your application has only 50 users. You've wasted engineering time, money, and complexity.
+<br><br>
+A good architect designs for <strong>today's needs</strong> while leaving room for <strong>tomorrow</strong>. The right question isn't "How many servers should I buy?" but "How will I know when to add more?"
+</p>
+</div>
+
+<div class="sec">💥 The Three Enemies of Growth</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">🖥 Compute</div><div class="td">CPU and memory become saturated under high request volume. Need more processing power.</div></div>
+<div class="tag-card"><div class="tc">💾 Storage</div><div class="td">Database connections, disk I/O, and query throughput hit limits. Data needs distribution.</div></div>
+<div class="tag-card"><div class="tc">🌐 Network</div><div class="td">Bandwidth bottlenecks, connection limits, and cross-region latency degrade performance.</div></div>
+</div>
+</div>
+
+<div class="sec">🧠 Mental Model: City Expansion</div>
+<div class="fig">
+<svg viewBox="0 0 800 200" width="100%">
+<defs>
+<linearGradient id="g2"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="arr2" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="20" y="20" width="160" height="60" rx="10" fill="#6366f1"/>
+<text x="100" y="58" fill="white" font-size="18" font-weight="700" text-anchor="middle">More Citizens</text>
+<line x1="100" y1="80" x2="100" y2="100" stroke="#64748b" stroke-width="3" marker-end="url(#arr2)"/>
+<rect x="190" y="90" width="160" height="60" rx="10" fill="#06b6d4"/>
+<text x="270" y="128" fill="white" font-size="18" font-weight="700" text-anchor="middle">More Traffic</text>
+<line x1="350" y1="120" x2="390" y2="120" stroke="#64748b" stroke-width="3" marker-end="url(#arr2)"/>
+<rect x="400" y="90" width="160" height="60" rx="10" fill="#f59e0b"/>
+<text x="480" y="128" fill="white" font-size="18" font-weight="700" text-anchor="middle">Congestion</text>
+<line x1="560" y1="120" x2="600" y2="120" stroke="#64748b" stroke-width="3" marker-end="url(#arr2)"/>
+<rect x="610" y="90" width="170" height="60" rx="10" fill="#10b981"/>
+<text x="695" y="128" fill="white" font-size="18" font-weight="700" text-anchor="middle">More Roads 🏗</text>
+<text x="480" y="175" fill="#94a3b8" font-size="14" text-anchor="middle">In software: More Users → More Requests → Saturation → Better Architecture</text>
+</svg>
+<div class="fig-cap">Think of scalability like expanding a city. More citizens create more traffic, which creates congestion, which demands more roads.</div>
+</div>
+
+<div class="sec">🏭 Production Insight</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Netflix, Amazon, and Google Didn't Start Distributed</h3>
+<p>
+Netflix, Amazon, Uber, and Google did <strong>not</strong> begin with globally distributed architectures. They evolved as demand increased. One of the biggest mistakes in interviews is designing the architecture of a trillion-dollar company for a startup problem. <strong>Always scale according to the requirements.</strong>
+</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Would you design microservices for a company with 500 daily users?"</strong><br><span class="mini">Strong answer: "Probably not. I'd begin with a modular monolith and evolve toward microservices only when operational or organizational complexity justifies it."</span></div></div>
+</div>
+
+<div class="sec">🚨 Common Mistakes</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Confusing Performance with Scalability</div><div class="td">Fast today ≠ scales tomorrow. They are different properties.</div></div>
+<div class="tag-card"><div class="tc">❌ Assuming Every System Needs Distributed Architecture</div><div class="td">A monolith is fine until it isn't. Don't over-engineer.</div></div>
+<div class="tag-card"><div class="tc">❌ Over-engineering for Imaginary Traffic</div><div class="td">Design for today's needs + room to grow. Not for 100M users you don't have.</div></div>
+<div class="tag-card"><div class="tc">❌ Ignoring Future Growth Completely</div><div class="td">Don't paint yourself into a corner. Leave architectural escape hatches.</div></div>
+</div>
+</div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox">
+<strong>Scale follows Success. Success does not follow Scale.</strong><br>
+Don't optimize for millions of users before you have them.
+</div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card">
+<div class="quiz-q">1. What is the difference between performance and scalability?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) They are the same thing</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Performance = how fast now; Scalability = how it behaves under growth</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Performance = hardware; Scalability = software</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Performance = backend; Scalability = frontend</div>
+<div class="quiz-feedback" id="quiz1">Performance answers "How fast is it NOW?" Scalability answers "What happens when demand GROWS?"</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">2. What is the biggest risk of premature scaling?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) The system will be too fast</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Wasted engineering time, money, and unnecessary complexity</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Too many users will arrive</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) The database will be too small</div>
+<div class="quiz-feedback" id="quiz2">Premature scaling adds complexity and cost without justification. Design for today's needs with room for growth.</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">3. Which statement best describes how successful tech companies scaled?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) They designed global architectures from day one</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) They evolved their architecture as demand increased</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) They used Kubernetes from the beginning</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) They only used vertical scaling</div>
+<div class="quiz-feedback" id="quiz3">Netflix, Amazon, and Google all started simple and evolved. Architecture follows requirements, not the other way around.</div>
+</div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story">
+<div class="slabel">Coming Up</div>
+<h3>Part 2: Vertical vs Horizontal Scaling</h3>
+<p>
+Now that you understand why scaling matters, the next part explores the two fundamental approaches — making one machine stronger (vertical) versus using more machines (horizontal).
+</p>
+</div>
+
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,4 +1,5 @@
 import type { ChapterMeta, LearningPath, Module } from '@/types'
+import { dsaLearningPath } from '@/data/dsaCatalog'
 
 const chapter = (
   pathId: string,
@@ -40,6 +41,21 @@ const moduleOf = (
   title,
   description,
   chapters: chapters.map((item, index) => chapter(pathId, id, index + 1, item.title, item.summary, item.slug)),
+})
+
+const systemDesignHtmlUrl = (moduleOrder: number, chapterOrder: number) =>
+  encodeURI(
+    `/System design html/chapter-${String(moduleOrder).padStart(2, '0')}-part-${String(chapterOrder).padStart(2, '0')}.html`,
+  )
+
+const withSystemDesignHtml = (module: Module): Module => ({
+  ...module,
+  chapters: module.chapters.map((item) => ({
+    ...item,
+    markdownPath: '',
+    contentType: 'html',
+    contentUrl: systemDesignHtmlUrl(module.order, item.order),
+  })),
 })
 
 export const learningPaths: LearningPath[] = [
@@ -135,28 +151,13 @@ export const learningPaths: LearningPath[] = [
         { slug: 'Chapter_06_Part_07_Facebook_News_Feed_Case_Study', title: 'Case Study: Facebook', summary: 'Massive scale caching patterns.' },
         { slug: 'Chapter_06_Part_08_Revision', title: 'Advanced Revision', summary: 'Global delivery summary.' },
       ]),
-    ],
-  },
-  {
-    id: 'dsa',
-    title: 'DSA',
-    description: 'Pattern-oriented problem solving with data structures and algorithmic tradeoffs.',
-    icon: 'GitBranch',
-    gradient: 'from-orbit-secondary to-orbit-primary',
-    theme: 'secondary',
-    difficulty: 'intermediate',
-    estimatedHours: 64,
-    modules: [
-      moduleOf('dsa', 1, 'patterns', 'Problem Patterns', 'Reusable ways to identify and solve algorithmic problems.', [
-        { title: 'Two Pointers', summary: 'When sorted order or paired movement shrinks a search space.' },
-        { title: 'Sliding Window', summary: 'Maintain a live range while optimizing substring and subarray work.' },
+      moduleOf('System-Design', 7, 'Chapter-7', 'Distributed Communication', 'Synchronous and asynchronous communication across services.', [
+        { slug: 'chapter-07-part-01', title: 'Communication in Distributed Systems', summary: 'How services talk through sync, async, and event-driven patterns.' },
+        { slug: 'chapter-07-part-02', title: 'Synchronous Communication', summary: 'REST, gRPC, and request-response service interactions.' },
       ]),
-      moduleOf('dsa', 2, 'graphs', 'Graphs', 'Traversal, shortest paths, and dependency modeling.', [
-        { title: 'Graph Traversal', summary: 'Choose BFS or DFS based on the question the graph is asking.' },
-        { title: 'Topological Order', summary: 'Model prerequisites, builds, and dependency chains.' },
-      ]),
-    ],
+    ].map(withSystemDesignHtml),
   },
+  dsaLearningPath,
 ]
 
 export const allModules = learningPaths.flatMap((path) => path.modules)
