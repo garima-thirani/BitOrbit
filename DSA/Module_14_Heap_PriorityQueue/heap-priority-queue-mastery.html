@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Heap & Priority Queue — Module 14</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+/* ── expanded interview question styles ── */
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+/* ===== deep-dive intuition card ===== */
+.pat{background:linear-gradient(160deg,rgba(79,70,229,.08),rgba(15,23,42,.4));border:1px solid var(--brd);border-radius:18px;padding:30px 34px;margin:24px 0 40px;}
+.pat-lead{font-size:.95rem;color:var(--t);line-height:1.85;margin-bottom:6px;}
+.pat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+@media(max-width:760px){.pat-grid{grid-template-columns:1fr;}}
+.pat-cell{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:18px 22px;}
+.pat-cell h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.pat-cell.when h4{color:var(--w);}.pat-cell.state h4{color:var(--a);}
+.pat-cell.rec h4{color:var(--pl);}.pat-cell.base h4{color:var(--s);}
+.pat-cell p,.pat-cell li{font-size:.9rem;color:var(--tm);line-height:1.8;}
+.pat-cell ul{padding-left:18px;margin-top:6px;}.pat-cell li{margin:4px 0;}
+.formula{background:var(--cbg);border:1px solid #30363d;border-radius:10px;padding:16px 20px;margin:14px 0;font-family:'Fira Code','Courier New',monospace;font-size:.9rem;color:#a5b4fc;line-height:1.9;overflow-x:auto;}
+.formula .hl{color:#67e8f9;font-weight:700;}
+.keywords{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+.kwp{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:3px 14px;font-size:.8rem;font-weight:600;}
+.pitfall{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.03));border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.pitfall .pl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#fca5a5;font-weight:700;margin-bottom:6px;}
+.pitfall p{font-size:.88rem;color:#fecaca;line-height:1.8;}
+.real{background:linear-gradient(135deg,rgba(16,185,129,.09),rgba(16,185,129,.02));border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.real .rl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#6ee7b7;font-weight:700;margin-bottom:8px;}
+.real ul{padding-left:18px;margin:0;}.real li{font-size:.88rem;color:#a7f3d0;line-height:1.85;margin:5px 0;}
+.real li b{color:#d1fae5;}
+/* ===== animated SVG figure ===== */
+.fig{background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,.06),transparent 70%),var(--cbg);border:1px solid #30363d;border-radius:14px;padding:24px;margin:22px 0;overflow-x:auto;}
+.fig svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+.fig-cap{text-align:center;font-size:.82rem;color:var(--tm);margin-top:14px;font-style:italic;}
+.fig-cap b{color:var(--a);font-style:normal;}
+.fig-title{font-size:1.02rem;color:var(--t);margin:8px 0 10px;font-weight:700;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:16px;}
+.legend span{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--tm);}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;}
+.svg-t{fill:#e2e8f0;font-family:'Fira Code',monospace;}
+.svg-tm{fill:#94a3b8;font-family:'Segoe UI',sans-serif;}
+.svg-lbl{fill:#67e8f9;font-family:'Segoe UI',sans-serif;font-weight:700;}
+.svg-acc{fill:#fcd34d;font-family:'Fira Code',monospace;}
+.svg-s{fill:#6ee7b7;font-family:'Fira Code',monospace;}
+.svg-d{fill:#fca5a5;font-family:'Fira Code',monospace;}
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 14 · Heap & Priority Queue</div><h1>Always Get the Best<br><span>Element in O(1)</span></h1><p>Heaps give you the minimum or maximum in O(1), insert in O(log n), and power the most elegant interview solutions.</p><div class="stats"><div class="stat"><div class="sn">O(1)</div><div class="sl">peek min/max</div></div><div class="stat"><div class="sn">O(log n)</div><div class="sl">insert & extract</div></div><div class="stat"><div class="sn">Top-K & Scheduling</div><div class="sl">Primary Uses</div></div><div class="stat"><div class="sn">FAANG ⭐⭐</div><div class="sl">Frequency: Very High</div></div></div></div></div><div class="wrap">
+<div class="sec">🧠 The Story — The Hospital Emergency Room</div>
+<div class="story">
+  <div class="slabel">Real World Story — Triage System</div>
+  <h3>Patients arrive at the ER in random order. Each patient has a severity score. The most critical patient must always be treated first.</h3>
+  <p>
+    A regular queue is FIFO — the first to arrive is served first. But in the ER, a critical patient who just arrived must skip ahead of non-critical patients who've been waiting.<br><br>
+    <strong>Heap = Priority Queue = ER Triage System.</strong><br><br>
+    A min-heap guarantees: the patient with the LOWEST severity number (most critical) is always at the front. Insert a new patient: O(log n) (they bubble up if critical enough). Treat next patient: O(log n) (remove root, restructure).<br><br>
+    Python's <code>heapq</code> is a min-heap. For max-heap, negate values: push -val, pop and negate result.
+  </p>
+</div>
+
+<div class="ibox">
+  <div class="lbl">Heap Property: Every Parent ≤ Children (Min-Heap)</div>
+  <p>
+    The heap is stored as an array. For index i:<br>
+    — Parent: <code>(i-1)//2</code><br>
+    — Left child: <code>2*i+1</code><br>
+    — Right child: <code>2*i+2</code><br><br>
+    <strong>Heap ≠ Sorted Array.</strong> The heap only guarantees the top element is min/max. Siblings have no ordering relationship. This makes insert/extract O(log n) instead of O(n).
+  </p>
+</div>
+
+<div class="sec">💡 The Deep Intuition — Lazy Order Is Cheap Order</div>
+<div class="pat">
+  <p class="pat-lead">Here is the key bargain a heap strikes: <b>keeping a collection fully sorted is expensive; keeping only the champion on top is cheap.</b> Most of the time you don't need the whole ranking — you just need "give me the smallest, now give me the next smallest." A heap maintains the <em>weakest</em> possible promise that still answers that question: every parent beats its children. That single local rule, repeated everywhere, forces the global minimum to the very top — without ever sorting the rest. Think of it as a <b>tournament bracket</b> that you only patch along one root-to-leaf path whenever something changes.</p>
+  <div class="pat-grid">
+    <div class="pat-cell when">
+      <h4>🟡 When to reach for it</h4>
+      <p>Any time the phrase is "<em>top-K</em>", "<em>K-th largest/smallest</em>", "<em>merge K sorted things</em>", "<em>schedule by priority</em>", "<em>running median</em>", or "<em>repeatedly take the best option</em>" (Dijkstra, Prim, Huffman). If you keep wanting <code>min()</code> or <code>max()</code> on a changing collection, that's a heap.</p>
+    </div>
+    <div class="pat-cell state">
+      <h4>🔵 The array trick</h4>
+      <p>A heap is a <em>complete</em> binary tree, so it needs no pointers — it lives in a flat array. For index <code>i</code>: parent is <code>(i-1)//2</code>, children are <code>2i+1</code> and <code>2i+2</code>. "Complete" means no gaps, which keeps height at exactly ⌊log₂n⌋.</p>
+    </div>
+    <div class="pat-cell rec">
+      <h4>🟣 Two repair moves</h4>
+      <p><b>sift-up</b> (after insert): a new value lands at the end and swaps with its parent while it's smaller, climbing one path up. <b>sift-down</b> (after extract): the last value fills the empty root and sinks by swapping with its smaller child.</p>
+      <div class="formula">peek min&nbsp;&nbsp;= <span class="hl">O(1)</span><br>insert&nbsp;&nbsp;&nbsp;&nbsp;= O(log n) &nbsp;sift-up<br>extract min = O(log n) &nbsp;sift-down<br>heapify&nbsp;&nbsp;&nbsp;= <span class="hl">O(n)</span> bottom-up</div>
+    </div>
+    <div class="pat-cell base">
+      <h4>🟢 The counter-intuitive part</h4>
+      <p>To track the <b>K largest</b>, you keep a <em>min-heap of size K</em> (not a max-heap!). Its top is the weakest of your current champions; when a bigger value arrives, you evict that weakest. After one pass the heap holds exactly the top K, and its root is the K-th largest.</p>
+    </div>
+  </div>
+  <div class="keywords">
+    <span class="kwp">top-K</span><span class="kwp">kth largest</span><span class="kwp">merge K lists</span><span class="kwp">scheduling</span><span class="kwp">running median</span><span class="kwp">Dijkstra / Prim</span>
+  </div>
+  <div class="real">
+    <div class="rl">🌍 Heaps quietly running real systems</div>
+    <ul>
+      <li><b>Hospital ER triage:</b> the most critical patient is treated next regardless of arrival time — a priority queue keyed on severity.</li>
+      <li><b>Your OS task scheduler:</b> the CPU repeatedly picks the highest-priority ready thread from a heap, thousands of times a second.</li>
+      <li><b>Google Maps / GPS routing:</b> Dijkstra's algorithm pulls the closest-unvisited node from a min-heap on every step.</li>
+      <li><b>Event-driven simulations &amp; game engines:</b> a heap keyed on timestamp always returns the <em>next</em> event to process.</li>
+      <li><b>"Trending now" &amp; Top-10 dashboards:</b> a size-K min-heap streams over millions of items keeping only the K hottest — no full sort needed.</li>
+      <li><b>File compression (Huffman coding):</b> repeatedly merge the two least-frequent symbols, pulled from a min-heap.</li>
+    </ul>
+  </div>
+  <div class="pitfall">
+    <div class="pl">⚠️ Easy ways to get burned</div>
+    <p><b>1. No built-in max-heap in Python.</b> <code>heapq</code> is min-only; push <code>-value</code> (or a wrapper) to fake a max-heap, and remember to negate on the way out. <b>2. Comparing un-comparable payloads.</b> When you push tuples like <code>(priority, item)</code> and two priorities tie, Python compares the <em>items</em> next — which explodes if they're objects. Insert a unique tie-breaker: <code>(priority, count, item)</code>. <b>3. A heap is not sorted.</b> Iterating the underlying array does <em>not</em> give sorted order — only repeated <code>heappop</code> does.</p>
+  </div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · heapq — Complete API</div></div><pre><span class="kw">import</span> heapq
+
+<span class="cm"># Min-heap operations (Python default)</span>
+h = []
+heapq.heappush(h, 5)           <span class="cm"># insert: O(log n)</span>
+heapq.heappush(h, 2)
+heapq.heappush(h, 8)
+top = h[0]                     <span class="cm"># peek min: O(1)  → 2</span>
+val = heapq.heappop(h)         <span class="cm"># extract min: O(log n) → 2</span>
+
+<span class="cm"># Build heap from list: O(n) — faster than n inserts!</span>
+arr = [5, 2, 8, 1, 9, 3]
+heapq.heapify(arr)             <span class="cm"># transforms arr in-place to min-heap</span>
+
+<span class="cm"># Max-heap: negate values</span>
+max_heap = []
+heapq.heappush(max_heap, -5)   <span class="cm"># push -val</span>
+heapq.heappush(max_heap, -2)
+max_val = -heapq.heappop(max_heap)  <span class="cm"># negate on pop → 5</span>
+
+<span class="cm"># K largest elements: use min-heap of size k</span>
+<span class="kw">def</span> <span class="fn">k_largest</span>(nums, k):
+    <span class="kw">return</span> heapq.nlargest(k, nums)   <span class="cm"># built-in: O(n log k)</span>
+
+<span class="cm"># Custom objects: push tuples — first element is the key</span>
+tasks = [(3, "low"), (1, "critical"), (2, "medium")]
+heapq.heapify(tasks)
+priority, name = heapq.heappop(tasks)  <span class="cm"># → (1, "critical")</span>
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Insert 1 — sift UP: a newcomer climbs one path to its level</div>
+  <svg viewBox="0 0 600 300" width="600" role="img" aria-label="Animated heap insert sift up">
+    <text x="300" y="26" text-anchor="middle" class="svg-tm" font-size="13">min-heap [2, 5, 8] · push 1 · parent of i = (i−1)//2</text>
+    <g font-size="11" class="svg-tm" text-anchor="middle">
+      <text x="208" y="52">idx 0</text><text x="268" y="52">idx 1</text><text x="328" y="52">idx 2</text><text x="388" y="52">idx 3</text>
+    </g>
+    <!-- Row A: append 1 at idx3, compare with parent idx1 -->
+    <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.06;0.10;1" dur="10s" repeatCount="indefinite"/>
+      <text x="60" y="86" class="svg-tm" font-size="12">append</text>
+      <rect x="184" y="62" width="48" height="40" rx="7" fill="#162032" stroke="#475569"/><text x="208" y="89" text-anchor="middle" class="svg-t" font-size="18">2</text>
+      <rect x="244" y="62" width="48" height="40" rx="7" fill="#0e2a3a" stroke="#06b6d4" stroke-width="2.5"/><text x="268" y="89" text-anchor="middle" class="svg-lbl" font-size="18">5</text>
+      <rect x="304" y="62" width="48" height="40" rx="7" fill="#162032" stroke="#475569"/><text x="328" y="89" text-anchor="middle" class="svg-t" font-size="18">8</text>
+      <rect x="364" y="62" width="48" height="40" rx="7" fill="#0e2a3a" stroke="#06b6d4" stroke-width="2.5"/><text x="388" y="89" text-anchor="middle" class="svg-lbl" font-size="18">1</text>
+      <text x="470" y="86" class="svg-tm" font-size="12">1 &lt; parent 5 ?  yes → swap</text>
+    </g>
+    <!-- Row B: 1 at idx1, compare with parent idx0 -->
+    <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.34;0.38;1" dur="10s" repeatCount="indefinite"/>
+      <text x="60" y="156" class="svg-tm" font-size="12">swap</text>
+      <rect x="184" y="132" width="48" height="40" rx="7" fill="#0e2a3a" stroke="#06b6d4" stroke-width="2.5"/><text x="208" y="159" text-anchor="middle" class="svg-lbl" font-size="18">2</text>
+      <rect x="244" y="132" width="48" height="40" rx="7" fill="#0e2a3a" stroke="#06b6d4" stroke-width="2.5"/><text x="268" y="159" text-anchor="middle" class="svg-lbl" font-size="18">1</text>
+      <rect x="304" y="132" width="48" height="40" rx="7" fill="#162032" stroke="#475569"/><text x="328" y="159" text-anchor="middle" class="svg-t" font-size="18">8</text>
+      <rect x="364" y="132" width="48" height="40" rx="7" fill="#162032" stroke="#475569"/><text x="388" y="159" text-anchor="middle" class="svg-t" font-size="18">5</text>
+      <text x="470" y="156" class="svg-tm" font-size="12">1 &lt; parent 2 ?  yes → swap</text>
+    </g>
+    <!-- Row C: 1 at root, done -->
+    <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.62;0.66;1" dur="10s" repeatCount="indefinite"/>
+      <text x="60" y="226" class="svg-s" font-size="12">done</text>
+      <rect x="184" y="202" width="48" height="40" rx="7" fill="#0e2a1f" stroke="#10b981" stroke-width="2.5"/><text x="208" y="229" text-anchor="middle" class="svg-s" font-size="18">1</text>
+      <rect x="244" y="202" width="48" height="40" rx="7" fill="#162032" stroke="#475569"/><text x="268" y="229" text-anchor="middle" class="svg-t" font-size="18">2</text>
+      <rect x="304" y="202" width="48" height="40" rx="7" fill="#162032" stroke="#475569"/><text x="328" y="229" text-anchor="middle" class="svg-t" font-size="18">8</text>
+      <rect x="364" y="202" width="48" height="40" rx="7" fill="#162032" stroke="#475569"/><text x="388" y="229" text-anchor="middle" class="svg-t" font-size="18">5</text>
+      <text x="470" y="226" class="svg-s" font-size="12">1 is the new root, O(log n)</text>
+    </g>
+  </svg>
+  <div class="fig-cap"><b>Only one path moves.</b> The newcomer touches just its ancestors — at most ⌊log₂n⌋ swaps — and every other element stays put. That locality is why insertion is O(log n), not O(n). ▶ loops every 10s.</div>
+</div>
+
+<div class="fig">
+  <div class="fig-title">🎬 extract_min — sift DOWN: the last element fills the hole and sinks</div>
+  <svg viewBox="0 0 600 270" width="600" role="img" aria-label="Animated heap extract min sift down">
+    <text x="300" y="26" text-anchor="middle" class="svg-tm" font-size="13">min-heap [1, 2, 8, 5] · pop returns 1 · children of i = 2i+1, 2i+2</text>
+    <!-- Row A: remove 1, move last (5) to root, compare with children -->
+    <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.08;0.12;1" dur="9s" repeatCount="indefinite"/>
+      <text x="60" y="86" class="svg-d" font-size="12">pop 1</text>
+      <rect x="214" y="62" width="48" height="40" rx="7" fill="#3b1d1d" stroke="#f59e0b" stroke-width="2.5"/><text x="238" y="89" text-anchor="middle" class="svg-acc" font-size="18">5</text>
+      <rect x="274" y="62" width="48" height="40" rx="7" fill="#0e2a3a" stroke="#06b6d4" stroke-width="2.5"/><text x="298" y="89" text-anchor="middle" class="svg-lbl" font-size="18">2</text>
+      <rect x="334" y="62" width="48" height="40" rx="7" fill="#0e2a3a" stroke="#06b6d4" stroke-width="2.5"/><text x="358" y="89" text-anchor="middle" class="svg-lbl" font-size="18">8</text>
+      <text x="440" y="86" class="svg-tm" font-size="12">min child = 2; 5 &gt; 2 → swap</text>
+    </g>
+    <!-- Row B: 2 to root, 5 sinks to idx1, no children → done -->
+    <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.46;0.50;1" dur="9s" repeatCount="indefinite"/>
+      <text x="60" y="156" class="svg-s" font-size="12">done</text>
+      <rect x="214" y="132" width="48" height="40" rx="7" fill="#0e2a1f" stroke="#10b981" stroke-width="2.5"/><text x="238" y="159" text-anchor="middle" class="svg-s" font-size="18">2</text>
+      <rect x="274" y="132" width="48" height="40" rx="7" fill="#162032" stroke="#475569"/><text x="298" y="159" text-anchor="middle" class="svg-t" font-size="18">5</text>
+      <rect x="334" y="132" width="48" height="40" rx="7" fill="#162032" stroke="#475569"/><text x="358" y="159" text-anchor="middle" class="svg-t" font-size="18">8</text>
+      <text x="440" y="156" class="svg-tm" font-size="12">5 has no children → settled</text>
+    </g>
+    <rect x="214" y="200" width="120" height="38" rx="9" fill="#0e2a1f" stroke="#10b981" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.70;0.74;1" dur="9s" repeatCount="indefinite"/></rect>
+    <text x="274" y="224" text-anchor="middle" class="svg-s" font-size="14" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.70;0.74;1" dur="9s" repeatCount="indefinite"/>returned min = 1</text>
+  </svg>
+  <div class="fig-cap"><b>Extract is sift-up in reverse.</b> Take the root (the answer), drop the last leaf into the empty root, then let it sink by always swapping with its <em>smaller</em> child until both children are larger. Again, just one root-to-leaf path is touched — O(log n). ▶ loops every 9s.</div>
+  <div class="legend">
+    <span><i style="background:#f59e0b"></i>element being sifted</span>
+    <span><i style="background:#06b6d4"></i>children compared</span>
+    <span><i style="background:#10b981"></i>settled / result</span>
+  </div>
+</div>
+
+<div class="sec">🎬 Problem 1: Kth Largest Element</div>
+<div class="ts">
+  <div class="sn2">💡</div>
+  <div class="sc"><strong>Counter-intuitive trick:</strong> To find Kth LARGEST, use a min-heap of size K.
+  Why? The min of the top-K largest elements is the Kth largest.
+  Maintain heap size K: if new element > heap min, pop min and push new element.
+  <div class="mini">nums=[3,2,1,5,6,4], k=2. Find 2nd largest.
+min-heap of size 2: 
+push 3 → [3]
+push 2 → [2,3]  (size=2)
+push 1: 1&lt;heap_min(2) → skip
+push 5: 5>heap_min(2) → pop 2, push 5 → [3,5]
+push 6: 6>3 → pop 3, push 6 → [5,6]
+push 4: 4&lt;5 → skip
+Heap top = 5 → 2nd largest ✓</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Kth Largest — O(n log k)</div></div><pre><span class="kw">def</span> <span class="fn">find_kth_largest</span>(nums, k):
+    min_heap = nums[:k]
+    heapq.heapify(min_heap)              <span class="cm"># build initial heap of k elements: O(k)</span>
+
+    <span class="kw">for</span> num <span class="kw">in</span> nums[k:]:
+        <span class="kw">if</span> num > min_heap[0]:            <span class="cm"># larger than current kth: replace</span>
+            heapq.heapreplace(min_heap, num)  <span class="cm"># pop min + push in one O(log k)</span>
+
+    <span class="kw">return</span> min_heap[0]                   <span class="cm"># top of heap = kth largest</span>
+</pre></div>
+
+<div class="sec">🎬 Problem 2: Merge K Sorted Lists</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Merge K Sorted Lists — O(N log K)</div></div><pre><span class="kw">def</span> <span class="fn">merge_k_lists</span>(lists):
+    heap = []
+    dummy = ListNode(0)
+    cur = dummy
+
+    <span class="cm"># Initialize heap with first node of each list</span>
+    <span class="kw">for</span> i, node <span class="kw">in</span> enumerate(lists):
+        <span class="kw">if</span> node:
+            heapq.heappush(heap, (node.val, i, node))  <span class="cm"># (value, list_idx, node)</span>
+
+    <span class="kw">while</span> heap:
+        val, i, node = heapq.heappop(heap)    <span class="cm"># always get global minimum</span>
+        cur.next = node
+        cur = cur.next
+        <span class="kw">if</span> node.next:
+            heapq.heappush(heap, (node.next.val, i, node.next))  <span class="cm"># add next from same list</span>
+
+    <span class="kw">return</span> dummy.next
+
+<span class="cm"># Why O(N log K): N total nodes, each pushed/popped once from K-element heap.
+# The i index in tuple breaks ties between equal values (avoids comparing ListNode).</span>
+</pre></div>
+
+<div class="sec">🎬 Problem 3: Find Median from Data Stream</div>
+<div class="ts">
+  <div class="sn2">📊</div>
+  <div class="sc"><strong>Brilliant two-heap trick:</strong>
+  — <code>max_heap</code>: stores the LOWER half (negate values for max)
+  — <code>min_heap</code>: stores the UPPER half
+  — Invariant: all elements in lower half ≤ all elements in upper half
+  — Balance: sizes differ by at most 1
+  — Median: if equal sizes → average of both tops; else top of larger heap.
+  <div class="mini">Stream: 1, 2, 3, 4, 5
+After 1: lower=[-1], upper=[]  → median=1
+After 2: lower=[-1], upper=[2] → median=1.5
+After 3: lower=[-2,-1], upper=[3] → median=2 (lower top)
+After 4: lower=[-2,-1], upper=[3,4] → median=2.5
+After 5: lower=[-3,-2,-1], upper=[4,5] → median=3</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Median Finder — Two Heaps</div></div><pre><span class="kw">class</span> <span class="fn">MedianFinder</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.lo = []   <span class="cm"># max-heap (negated): lower half</span>
+        self.hi = []   <span class="cm"># min-heap:           upper half</span>
+
+    <span class="kw">def</span> <span class="fn">addNum</span>(self, num):
+        heapq.heappush(self.lo, -num)           <span class="cm"># push to lower half</span>
+        heapq.heappush(self.hi, -heapq.heappop(self.lo))  <span class="cm"># balance: move max of lower to upper</span>
+        <span class="kw">if</span> len(self.hi) > len(self.lo):         <span class="cm"># keep lower >= upper in size</span>
+            heapq.heappush(self.lo, -heapq.heappop(self.hi))
+
+    <span class="kw">def</span> <span class="fn">findMedian</span>(self):
+        <span class="kw">if</span> len(self.lo) > len(self.hi):
+            <span class="kw">return</span> -self.lo[0]                  <span class="cm"># odd: lower has extra</span>
+        <span class="kw">return</span> (-self.lo[0] + self.hi[0]) / 2  <span class="cm"># even: average of both tops</span>
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Two heaps guarding a wall — the median lives where they meet</div>
+  <svg viewBox="0 0 600 360" width="600" role="img" aria-label="Animated running median with two heaps">
+    <text x="300" y="24" text-anchor="middle" class="svg-tm" font-size="13">stream: 1, 2, 3, 4, 5 — split into a lower half and an upper half of equal size</text>
+    <!-- dividing wall -->
+    <line x1="300" y1="50" x2="300" y2="250" stroke="#475569" stroke-width="2" stroke-dasharray="6 5"/>
+    <text x="300" y="268" text-anchor="middle" class="svg-tm" font-size="11">the wall: every left ≤ every right</text>
+    <!-- LOWER half: max-heap, biggest on top (nearest wall) -->
+    <text x="150" y="66" text-anchor="middle" class="svg-acc" font-size="13">LOWER half · max-heap</text>
+    <g text-anchor="middle" font-size="18">
+      <rect x="206" y="86" width="70" height="38" rx="7" fill="#3b2d12" stroke="#f59e0b" stroke-width="2.5" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.50;0.54;1" dur="13s" repeatCount="indefinite"/></rect>
+      <text x="241" y="112" class="svg-acc" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.50;0.54;1" dur="13s" repeatCount="indefinite"/>3 ◂ top</text>
+      <rect x="156" y="132" width="60" height="36" rx="7" fill="#162032" stroke="#475569" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.54;0.58;1" dur="13s" repeatCount="indefinite"/></rect>
+      <text x="186" y="157" class="svg-t" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.54;0.58;1" dur="13s" repeatCount="indefinite"/>2</text>
+      <rect x="226" y="132" width="60" height="36" rx="7" fill="#162032" stroke="#475569" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.54;0.58;1" dur="13s" repeatCount="indefinite"/></rect>
+      <text x="256" y="157" class="svg-t" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.54;0.58;1" dur="13s" repeatCount="indefinite"/>1</text>
+    </g>
+    <!-- UPPER half: min-heap, smallest on top (nearest wall) -->
+    <text x="450" y="66" text-anchor="middle" class="svg-lbl" font-size="13">UPPER half · min-heap</text>
+    <g text-anchor="middle" font-size="18">
+      <rect x="324" y="86" width="70" height="38" rx="7" fill="#0e2a3a" stroke="#06b6d4" stroke-width="2.5" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.50;0.54;1" dur="13s" repeatCount="indefinite"/></rect>
+      <text x="359" y="112" class="svg-lbl" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.50;0.54;1" dur="13s" repeatCount="indefinite"/>top ▸ 4</text>
+      <rect x="384" y="132" width="60" height="36" rx="7" fill="#162032" stroke="#475569" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.54;0.58;1" dur="13s" repeatCount="indefinite"/></rect>
+      <text x="414" y="157" class="svg-t" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.54;0.58;1" dur="13s" repeatCount="indefinite"/>5</text>
+    </g>
+    <!-- running median ticker -->
+    <g font-family="'Fira Code',monospace" font-size="13" text-anchor="start">
+      <text x="70" y="300" class="svg-tm" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.06;0.10;0.17;0.19" dur="13s" repeatCount="indefinite"/>add 1 → lo=[1] hi=[]      median = 1</text>
+      <text x="70" y="300" class="svg-tm" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.19;0.22;0.29;0.31" dur="13s" repeatCount="indefinite"/>add 2 → lo=[1] hi=[2]     median = 1.5</text>
+      <text x="70" y="300" class="svg-tm" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.31;0.34;0.41;0.43" dur="13s" repeatCount="indefinite"/>add 3 → lo=[2,1] hi=[3]   median = 2</text>
+      <text x="70" y="300" class="svg-tm" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.43;0.46;0.49;0.51" dur="13s" repeatCount="indefinite"/>add 4 → lo=[2,1] hi=[3,4] median = 2.5</text>
+      <text x="70" y="300" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.51;0.55;1" dur="13s" repeatCount="indefinite"/>add 5 → lo=[3,2,1] hi=[4,5]  median = 3</text>
+    </g>
+    <!-- final median callout -->
+    <rect x="232" y="318" width="136" height="34" rx="9" fill="#0e2a1f" stroke="#10b981" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.70;1" dur="13s" repeatCount="indefinite"/></rect>
+    <text x="300" y="340" text-anchor="middle" class="svg-s" font-size="14" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.70;1" dur="13s" repeatCount="indefinite"/>median = lo.top = 3</text>
+  </svg>
+  <div class="fig-cap"><b>The median is always touching the wall.</b> Keep the smaller half in a max-heap and the larger half in a min-heap, balanced so their sizes differ by ≤ 1. Then the answer is O(1): if one side is bigger, its top <em>is</em> the median; if tied, average the two tops. Each insert is one push plus a rebalance — O(log n). ▶ loops every 13s.</div>
+  <div class="legend">
+    <span><i style="background:#f59e0b"></i>lower half (max on top)</span>
+    <span><i style="background:#06b6d4"></i>upper half (min on top)</span>
+    <span><i style="background:#10b981"></i>median</span>
+  </div>
+</div>
+
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">K Closest Points to Origin</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 973):</strong> Given a list of points, return the k closest to the origin (0,0). Distance = sqrt(x²+y²). You don't need to sort — just return ANY k closest.</div>
+    <div class="iq-approach"><strong>Max-heap of size k:</strong> Maintain a max-heap of the k smallest distances seen so far. For each new point: if it's closer than the heap's max (farthest in current k), evict max and insert new. Python's heapq is a min-heap, so negate distances. Final heap holds k closest.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">points=[(1,3),(-2,2),(5,8),(0,1)]  k=2
+
+Distances^2: (1,3)→10, (-2,2)→8, (5,8)→89, (0,1)→1
+
+Process with max-heap (using negated sq dist):
+  (1,3) d²=10:  heap=[(-10,(1,3))]
+  (-2,2) d²=8:  heap=[(-10,(1,3)),(-8,(-2,2))]  size=k
+  (5,8) d²=89:  89>10 (current max) → don't insert
+  (0,1) d²=1:   1<10 → pop (-10,(1,3)), push (-1,(0,1))
+    heap=[(-8,(-2,2)),(-1,(0,1))]
+
+Extract points from heap: [(-2,2),(0,1)] ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · K Closest Points (Max-Heap)</div></div><pre><span class="kw">import</span> heapq
+<span class="kw">def</span> <span class="fn">k_closest</span>(points, k):
+    max_heap = []
+    <span class="kw">for</span> x, y <span class="kw">in</span> points:
+        dist = x*x + y*y              <span class="cm"># no sqrt needed (monotone)</span>
+        heapq.heappush(max_heap, (-dist, x, y))    <span class="cm"># negate for max-heap</span>
+        <span class="kw">if</span> len(max_heap) > k:
+            heapq.heappop(max_heap)   <span class="cm"># evict farthest point</span>
+    <span class="kw">return</span> [[x, y] <span class="kw">for</span> _, x, y <span class="kw">in</span> max_heap]</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n log k)</span>
+      <span class="iq-pill s">Space: O(k)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Task Scheduler — Minimum Time</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 621):</strong> CPU executes tasks, same task must wait n intervals before re-execution (cooldown). Given list of tasks, find minimum time to finish all. E.g. ['A','A','A','B','B','B'] n=2 → 8.</div>
+    <div class="iq-approach"><strong>Math formula + Greedy insight:</strong> The task with highest frequency is the bottleneck. It creates 'frames' of (n+1) each. Fill frames with other tasks (or idle). Formula: max((max_freq-1)*(n+1)+count_of_max, len(tasks)). Heap approach: always pick highest-frequency available task.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">tasks=['A','A','A','B','B','B']  n=2
+
+freq: A=3, B=3, max_freq=3
+
+Frames of (n+1)=3:
+  Frame 1: A, B, _
+  Frame 2: A, B, _
+  Frame 3: A, B
+
+Formula: max((3-1)*(2+1)+2, 6) = max(8, 6) = 8 ✓
+
+Timeline: A→B→idle→A→B→idle→A→B (8 units)
+
+Greedy heap simulation:
+  heap: [(-3,A),(-3,B)]  time=0  cooldown_q=[]
+  tick 1: pop (-3,A)→A, schedule A again at t=3. time=1
+  tick 2: pop (-3,B)→B, schedule B at t=4. time=2
+  tick 3: heap empty, cooldown has (A,3) not ready → idle. time=3
+    release A from cooldown → push (-2,A)
+  tick 4: pop (-2,A)→A... → time=8 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Task Scheduler (Formula)</div></div><pre><span class="kw">from</span> collections <span class="kw">import</span> Counter
+<span class="kw">def</span> <span class="fn">least_interval</span>(tasks, n):
+    counts = Counter(tasks)
+    max_freq = max(counts.values())
+    <span class="cm"># How many tasks share the maximum frequency?</span>
+    count_max = sum(1 <span class="kw">for</span> v <span class="kw">in</span> counts.values() <span class="kw">if</span> v == max_freq)
+    <span class="cm"># Frames: (max_freq-1) full frames + partial last frame</span>
+    formula = (max_freq - 1) * (n + 1) + count_max
+    <span class="kw">return</span> max(formula, len(tasks))  <span class="cm"># can't do less than total tasks</span></pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">Sliding Window Maximum (Heap approach)</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 239):</strong> Max in each window of size k over array. Heap alternative: max-heap with lazy deletion — mark stale elements and skip them when they appear at top.</div>
+    <div class="iq-approach"><strong>Max-Heap with lazy deletion:</strong> Push (value, index). To find window max: peek at top; if its index is outside window, pop it (lazy deletion). O(n log n) vs deque's O(n) but heap is more intuitive. The deque is optimal but heap is acceptable if you can't recall deque.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums=[1,3,-1,-3,5,3,6,7]  k=3
+
+Max-heap (negate values for Python's min-heap):
+  i=0: push (-1,0). heap=[(-1,0)]
+  i=1: push (-3,1). heap=[(-3,1),(-1,0)]
+  i=2: push (1,2).  heap=[(-3,1),(-1,0),(1,2)]
+    Window [0,2]: peek=(-3,1), idx=1 in [0,2] → max=3 ✓
+
+  i=3: push (3,3). heap=[(-3,1),(-3,3),(-1,0),(1,2)]
+    Window [1,3]: peek=(-3,1), idx=1 in [1,3] → max=3 ✓
+
+  i=4: push (-5,4). heap=[(-5,4),...]
+    Window [2,4]: peek=(-5,4), idx=4 in [2,4] → max=5 ✓
+    (next peek would be (-3,1), idx=1 NOT in [2,4] → pop, lazy delete)</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Sliding Window Max (Max-Heap, lazy delete)</div></div><pre><span class="kw">import</span> heapq
+<span class="kw">def</span> <span class="fn">max_sliding_window_heap</span>(nums, k):
+    heap = []                          <span class="cm"># max-heap via negated values</span>
+    result = []
+    <span class="kw">for</span> i, n <span class="kw">in</span> enumerate(nums):
+        heapq.heappush(heap, (-n, i))
+        <span class="kw">if</span> i >= k - 1:
+            <span class="cm"># Lazy-delete entries outside window</span>
+            <span class="kw">while</span> heap[0][1] &lt; i - k + 1:
+                heapq.heappop(heap)
+            result.append(-heap[0][0])  <span class="cm"># top = current window max</span>
+    <span class="kw">return</span> result</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n log n)</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

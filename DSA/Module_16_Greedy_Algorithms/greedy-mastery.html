@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greedy Algorithms — Module 16</title>
+<style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+/* ── expanded interview question styles ── */
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+
+/* ===== deep-dive intuition card ===== */
+.pat{background:linear-gradient(160deg,rgba(79,70,229,.08),rgba(15,23,42,.4));border:1px solid var(--brd);border-radius:18px;padding:30px 34px;margin:24px 0 40px;}
+.pat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+@media(max-width:760px){.pat-grid{grid-template-columns:1fr;}}
+.pat-cell{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:18px 22px;}
+.pat-cell h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.pat-cell.when h4{color:var(--w);}.pat-cell.state h4{color:var(--a);}
+.pat-cell.rec h4{color:var(--pl);}.pat-cell.base h4{color:var(--s);}
+.pat-cell p,.pat-cell li{font-size:.9rem;color:var(--tm);line-height:1.8;}
+.pat-cell ul{padding-left:18px;margin-top:6px;}.pat-cell li{margin:4px 0;}
+.formula{background:var(--cbg);border:1px solid #30363d;border-radius:10px;padding:16px 20px;margin:14px 0;font-family:'Fira Code','Courier New',monospace;font-size:.9rem;color:#a5b4fc;line-height:1.9;overflow-x:auto;}
+.formula .hl{color:#67e8f9;font-weight:700;}
+.keywords{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+.kwp{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:3px 14px;font-size:.8rem;font-weight:600;}
+.pitfall{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.03));border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.pitfall .pl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#fca5a5;font-weight:700;margin-bottom:6px;}
+.pitfall p{font-size:.88rem;color:#fecaca;line-height:1.8;}
+/* ===== animated SVG figure ===== */
+.fig{background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,.06),transparent 70%),var(--cbg);border:1px solid #30363d;border-radius:14px;padding:24px;margin:22px 0;overflow-x:auto;}
+.fig svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+.fig-cap{text-align:center;font-size:.82rem;color:var(--tm);margin-top:14px;font-style:italic;}
+.fig-cap b{color:var(--a);font-style:normal;}
+.fig-title{font-size:1.02rem;color:var(--t);margin:8px 0 10px;font-weight:700;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:16px;}
+.legend span{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--tm);}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;}
+.svg-t{fill:#e2e8f0;font-family:'Fira Code',monospace;}
+.svg-tm{fill:#94a3b8;font-family:'Segoe UI',sans-serif;}
+.svg-lbl{fill:#67e8f9;font-family:'Segoe UI',sans-serif;font-weight:700;}
+.svg-acc{fill:#fcd34d;font-family:'Fira Code',monospace;}
+.svg-s{fill:#6ee7b7;font-family:'Fira Code',monospace;}
+.svg-d{fill:#fca5a5;font-family:'Fira Code',monospace;}
+
+</style>
+</head>
+<body>
+<div class="hero"><div class="hero-inner">
+<div class="badge">Module 16 · Greedy Algorithms</div>
+<h1>Make the Locally Best Choice,<br><span>Prove why short-sighted decisions sometimes produce globally optimal results — and when they catastrophically don't.</span></h1>
+<p>Every Single Time</p>
+<div class="stats"><div class="stat"><div class="sn">O(n log n)</div><div class="sl">Typical Complexity</div></div><div class="stat"><div class="sn">Proof Required</div><div class="sl">Greedy Correctness</div></div><div class="stat"><div class="sn">6 Patterns</div><div class="sl">Classic Problems</div></div><div class="stat"><div class="sn">FAANG ⭐⭐</div><div class="sl">Frequency: High</div></div></div>
+</div></div>
+<div class="wrap">
+
+<div class="sec">🧠 The Story — The Greedy Gamble</div>
+<p class="sub">Before writing any greedy algorithm, ask yourself one question: "Does grabbing the best thing now guarantee the best outcome overall?"</p>
+
+<div class="story">
+  <div class="slabel">Real World Story — The Movie Director</div>
+  <h3>You have a single filming studio. 8 movies want to use it today.</h3>
+  <p>
+    Each movie has a <strong>start time</strong> and <strong>end time</strong>. You want to film as many movies as possible (maximize utilization).<br><br>
+    <strong>Greedy attempt 1 — Start earliest:</strong> Pick the movie that starts first. Sounds reasonable. But what if the earliest-starting movie runs all day? You'd only film 1 movie.<br><br>
+    <strong>Greedy attempt 2 — Shortest first:</strong> Pick the shortest movie. Also reasonable. But a short movie might start right in the middle of the day, blocking two longer early-morning slots.<br><br>
+    <strong>Greedy attempt 3 — Finish earliest:</strong> Always pick the movie that <em>finishes soonest</em>. This is optimal! Why? Because a movie that ends early leaves the most future time available. <em>You are maximizing future flexibility.</em><br><br>
+    This is the Activity Selection Problem — the archetypal greedy algorithm — and the proof of correctness is the template for proving every greedy algorithm.
+  </p>
+</div>
+
+<div class="ibox">
+  <div class="lbl">The Greedy Correctness Test — Two Properties Needed</div>
+  <ul>
+    <li><strong>Greedy Choice Property:</strong> The locally optimal choice at each step can be part of a globally optimal solution. (Proof: Exchange argument — assume OPT differs from greedy, show swapping doesn't worsen it.)</li>
+    <li><strong>Optimal Substructure:</strong> After making the greedy choice, the remaining subproblem also has optimal substructure. The same logic applies recursively.</li>
+  </ul>
+  <p style="margin-top:12px;">If either property fails, greedy gives wrong answers. This is why coin change (US denominations work, arbitrary ones don't) and 0/1 Knapsack require DP instead.</p>
+</div>
+
+<div class="pat">
+  <div class="fig-title" style="font-size:1.15rem;margin-bottom:6px;">🧠 Intuition — the exchange argument, the heart of every greedy proof</div>
+  <p style="color:var(--tm);line-height:1.85;">
+    Greedy feels like cheating: you make the best-looking choice <em>right now</em> and never reconsider. Why would never looking ahead ever be optimal? The answer is the <strong>exchange argument</strong>. Suppose some optimal solution OPT disagrees with your first greedy pick. Take OPT and <em>swap</em> your greedy choice in for whatever OPT did. If you can show this swap never makes OPT worse, then a solution just as good as OPT exists that <em>agrees</em> with greedy on the first step. Repeat down the line and greedy matches OPT everywhere — so greedy is optimal. The whole skill is choosing the right "best" metric so that swap always holds: earliest <em>finish</em> time for scheduling, highest value-per-weight for fractional knapsack, furthest <em>reach</em> for jump game.
+  </p>
+  <div class="pat-grid">
+    <div class="pat-cell state"><h4>🔵 Greedy choice property</h4><p>A locally optimal pick can be extended to a global optimum. Proven by the exchange/swap argument — never by "it seems reasonable".</p></div>
+    <div class="pat-cell base"><h4>🟢 Optimal substructure</h4><p>After committing the greedy choice, what remains is a smaller instance of the <em>same</em> problem. The same rule applies recursively.</p></div>
+    <div class="pat-cell when"><h4>🟠 Pick the right metric</h4><p>The art is the sort key. Earliest finish, max ratio, furthest reach, smallest deadline — the metric must make the swap argument go through.</p></div>
+    <div class="pat-cell rec"><h4>🟣 When greedy lies</h4><p>0/1 Knapsack and arbitrary-denomination coin change break the greedy choice property — a locally best grab blocks a better whole. Use DP there.</p></div>
+  </div>
+  <div class="formula">greedy works  ⟺  <span class="hl">greedy-choice property</span>  +  <span class="hl">optimal substructure</span><br>proof template:  assume OPT ≠ greedy at step 1  →  swap greedy in  →  OPT not worse  →  induct</div>
+  <div class="pitfall"><div class="pl">⚠ The classic trap</div><p>"It passed my examples" is not a proof. Greedy that looks right can be subtly wrong (coin change with coins [1,3,4] for amount 6: greedy 4+1+1=3 coins, optimal 3+3=2 coins). Always justify with an exchange argument or fall back to DP.</p></div>
+</div>
+
+<div class="sec">🎬 Problem 1: Activity Selection — Maximum Non-Overlapping Events</div>
+<p class="sub">The foundation. Master this and you understand why "end-time first" is the right greedy choice.</p>
+
+<div class="ts">
+  <div class="sn2">💡</div>
+  <div class="sc">
+    <strong>Why sort by end time (not start time, not duration)?</strong><br>
+    Think of it this way: when you pick an activity, you're "consuming" studio time up to its end time. Choosing the activity with the earliest end time leaves the <em>maximum remaining time</em> for future activities. Any other choice can only leave less time. This is the exchange argument: if an optimal solution picks activity X over our greedy choice G (where G ends earlier), we can swap G in for X without losing any other activity — proving greedy is at least as good as OPT.
+    <div class="mini">Activities: [(1,3),(2,4),(3,5),(0,6),(5,7),(8,9),(5,9),(6,10),(8,11),(2,13),(12,14)]
+Sorted by end: [(1,3),(2,4),(3,5),(0,6),(5,7),(8,9),(5,9),(6,10),(8,11),(2,13),(12,14)]
+Greedy picks: (1,3) → (3,5) → (5,7) → (8,9) → (12,14)  =  5 activities ✓</div>
+  </div>
+</div>
+
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Activity Selection — O(n log n)</div></div><pre><span class="kw">def</span> <span class="fn">max_activities</span>(activities):
+    <span class="cm"># activities = [(start, end), ...]</span>
+    activities.sort(key=<span class="kw">lambda</span> x: x[1])   <span class="cm"># sort by END TIME</span>
+
+    selected = [activities[0]]             <span class="cm"># always take the first (ends soonest)</span>
+    last_end = activities[0][1]
+
+    <span class="kw">for</span> start, end <span class="kw">in</span> activities[1:]:
+        <span class="kw">if</span> start >= last_end:              <span class="cm"># no overlap with last selected</span>
+            selected.append((start, end))
+            last_end = end
+
+    <span class="kw">return</span> selected
+
+<span class="cm"># Interval Scheduling: Minimum Removals (LeetCode 435)</span>
+<span class="kw">def</span> <span class="fn">erase_overlap_intervals</span>(intervals):
+    intervals.sort(key=<span class="kw">lambda</span> x: x[1])
+    count = 0
+    last_end = intervals[0][1]
+    <span class="kw">for</span> start, end <span class="kw">in</span> intervals[1:]:
+        <span class="kw">if</span> start < last_end:               <span class="cm"># overlap! remove current (greedy: keep smaller end)</span>
+            count += 1
+        <span class="kw">else</span>:
+            last_end = end
+    <span class="kw">return</span> count
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">📅 Activity Selection — sort by END time, then greedily keep non-overlapping events</div>
+  <svg viewBox="0 0 640 300" width="640" role="img" aria-label="Animated activity selection timeline">
+    <!-- time axis -->
+    <line x1="70" y1="270" x2="610" y2="270" stroke="#475569" stroke-width="1.5"/>
+    <g font-size="11" text-anchor="middle" class="svg-tm">
+      <line x1="70" y1="266" x2="70" y2="274" stroke="#475569"/><text x="70" y="288">0</text>
+      <line x1="146" y1="266" x2="146" y2="274" stroke="#475569"/><text x="146" y="288">2</text>
+      <line x1="222" y1="266" x2="222" y2="274" stroke="#475569"/><text x="222" y="288">4</text>
+      <line x1="298" y1="266" x2="298" y2="274" stroke="#475569"/><text x="298" y="288">6</text>
+      <line x1="374" y1="266" x2="374" y2="274" stroke="#475569"/><text x="374" y="288">8</text>
+      <line x1="450" y1="266" x2="450" y2="274" stroke="#475569"/><text x="450" y="288">10</text>
+      <line x1="526" y1="266" x2="526" y2="274" stroke="#475569"/><text x="526" y="288">12</text>
+      <line x1="602" y1="266" x2="602" y2="274" stroke="#475569"/><text x="602" y="288">14</text>
+    </g>
+    <!-- last_end marker -->
+    <line y1="44" y2="258" stroke="#06b6d4" stroke-width="2" stroke-dasharray="5 4" opacity="0">
+      <animate attributeName="opacity" values="0;0;0.9;0.9" keyTimes="0;0.12;0.18;1" dur="11s" repeatCount="indefinite"/>
+      <animate attributeName="x1" values="184;184;260;336;412;602" keyTimes="0;0.16;0.36;0.56;0.68;1" calcMode="discrete" dur="11s" repeatCount="indefinite"/>
+      <animate attributeName="x2" values="184;184;260;336;412;602" keyTimes="0;0.16;0.36;0.56;0.68;1" calcMode="discrete" dur="11s" repeatCount="indefinite"/>
+    </line>
+    <text x="70" y="36" class="svg-lbl" font-size="11" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.14;0.2;1" dur="11s" repeatCount="indefinite"/>↑ last_end (free time starts here)</text>
+    <!-- bars: base + colored overlay -->
+    <!-- A(1,3) pick -->
+    <g><rect x="108" y="48" width="76" height="20" rx="5" fill="#1e293b" stroke="#334155"/><text x="146" y="62" text-anchor="middle" class="svg-tm" font-size="11">1–3</text>
+      <rect x="108" y="48" width="76" height="20" rx="5" fill="#10241c" stroke="#10b981" stroke-width="2.5" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.10;0.14;1" dur="11s" repeatCount="indefinite"/></rect></g>
+    <!-- B(2,4) skip -->
+    <g><rect x="146" y="76" width="76" height="20" rx="5" fill="#1e293b" stroke="#334155"/><text x="184" y="90" text-anchor="middle" class="svg-tm" font-size="11">2–4</text>
+      <rect x="146" y="76" width="76" height="20" rx="5" fill="#2a1414" stroke="#ef4444" stroke-width="2" opacity="0"><animate attributeName="opacity" values="0;0;0.7;0.7" keyTimes="0;0.20;0.24;1" dur="11s" repeatCount="indefinite"/></rect></g>
+    <!-- C(3,5) pick -->
+    <g><rect x="184" y="104" width="76" height="20" rx="5" fill="#1e293b" stroke="#334155"/><text x="222" y="118" text-anchor="middle" class="svg-tm" font-size="11">3–5</text>
+      <rect x="184" y="104" width="76" height="20" rx="5" fill="#10241c" stroke="#10b981" stroke-width="2.5" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.30;0.34;1" dur="11s" repeatCount="indefinite"/></rect></g>
+    <!-- D(0,6) skip -->
+    <g><rect x="70" y="132" width="228" height="20" rx="5" fill="#1e293b" stroke="#334155"/><text x="184" y="146" text-anchor="middle" class="svg-tm" font-size="11">0–6 (too long)</text>
+      <rect x="70" y="132" width="228" height="20" rx="5" fill="#2a1414" stroke="#ef4444" stroke-width="2" opacity="0"><animate attributeName="opacity" values="0;0;0.7;0.7" keyTimes="0;0.40;0.44;1" dur="11s" repeatCount="indefinite"/></rect></g>
+    <!-- E(5,7) pick -->
+    <g><rect x="260" y="160" width="76" height="20" rx="5" fill="#1e293b" stroke="#334155"/><text x="298" y="174" text-anchor="middle" class="svg-tm" font-size="11">5–7</text>
+      <rect x="260" y="160" width="76" height="20" rx="5" fill="#10241c" stroke="#10b981" stroke-width="2.5" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.50;0.54;1" dur="11s" repeatCount="indefinite"/></rect></g>
+    <!-- F(8,9) pick -->
+    <g><rect x="374" y="188" width="38" height="20" rx="5" fill="#1e293b" stroke="#334155"/><text x="393" y="202" text-anchor="middle" class="svg-tm" font-size="11">8–9</text>
+      <rect x="374" y="188" width="38" height="20" rx="5" fill="#10241c" stroke="#10b981" stroke-width="2.5" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.62;0.66;1" dur="11s" repeatCount="indefinite"/></rect></g>
+    <!-- G(12,14) pick -->
+    <g><rect x="526" y="216" width="76" height="20" rx="5" fill="#1e293b" stroke="#334155"/><text x="564" y="230" text-anchor="middle" class="svg-tm" font-size="11">12–14</text>
+      <rect x="526" y="216" width="76" height="20" rx="5" fill="#10241c" stroke="#10b981" stroke-width="2.5" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.76;0.80;1" dur="11s" repeatCount="indefinite"/></rect></g>
+    <!-- result -->
+    <text x="340" y="20" text-anchor="middle" class="svg-s" font-size="14" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.86;0.90;1" dur="11s" repeatCount="indefinite"/>5 activities selected — the maximum possible ✓</text>
+  </svg>
+  <div class="legend">
+    <span><i style="background:#10b981"></i>selected (start ≥ last_end)</span>
+    <span><i style="background:#ef4444"></i>rejected (overlaps)</span>
+    <span><i style="background:#06b6d4"></i>last_end boundary</span>
+  </div>
+  <div class="fig-cap">Scanning in <b>end-time order</b>, keep an event only if it starts at/after <b>last_end</b>. Earliest finishers free up the most future time — so this simple rule is provably optimal. ▶ loops every 11s.</div>
+</div>
+
+<div class="sec">🎬 Problem 2: Jump Game — Can You Reach the End?</div>
+<p class="sub">Array where each element = max jump length from that position. Classic greedy with a "furthest reach" tracker.</p>
+
+<div class="ts">
+  <div class="sn2">💡</div>
+  <div class="sc">
+    <strong>The Insight:</strong> Track the maximum index you can reach so far. At each position i, update max_reach = max(max_reach, i + arr[i]). If i ever exceeds max_reach, you're stuck — no path exists. This is greedy because we always maximize our reach without needing to backtrack.
+    <div class="mini">arr = [2,3,1,1,4]
+i=0: max_reach = max(0, 0+2) = 2
+i=1: max_reach = max(2, 1+3) = 4 → already past end (len=5-1=4) → True ✓
+
+arr = [3,2,1,0,4]
+i=0: max_reach = 3
+i=1: max_reach = max(3,1+2) = 3
+i=2: max_reach = max(3,2+1) = 3
+i=3: max_reach = max(3,3+0) = 3
+i=4: 4 > max_reach=3 → False ✓</div>
+  </div>
+</div>
+
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Jump Game I & II — O(n)</div></div><pre><span class="cm"># Jump Game I: Can you reach last index?</span>
+<span class="kw">def</span> <span class="fn">can_jump</span>(arr):
+    max_reach = 0
+    <span class="kw">for</span> i, jump <span class="kw">in</span> enumerate(arr):
+        <span class="kw">if</span> i > max_reach: <span class="kw">return</span> False    <span class="cm"># stuck — can't reach position i</span>
+        max_reach = max(max_reach, i + jump)
+        <span class="kw">if</span> max_reach >= len(arr) - 1: <span class="kw">return</span> True
+    <span class="kw">return</span> True
+
+<span class="cm"># Jump Game II: Minimum jumps to reach end</span>
+<span class="kw">def</span> <span class="fn">jump</span>(arr):
+    jumps = 0
+    curr_end = 0      <span class="cm"># end of current "jump level"</span>
+    farthest = 0      <span class="cm"># furthest reachable within current level</span>
+    <span class="kw">for</span> i <span class="kw">in</span> range(len(arr) - 1):
+        farthest = max(farthest, i + arr[i])
+        <span class="kw">if</span> i == curr_end:    <span class="cm"># must jump — level exhausted</span>
+            jumps += 1
+            curr_end = farthest
+    <span class="kw">return</span> jumps
+<span class="cm"># arr = [2,3,1,1,4]:  0→1(jump+1=1), 1→4(jump+1=2) → answer: 2 jumps ✓</span>
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🦘 Jump Game — track the furthest index reachable so far (arr = [2,3,1,1,4])</div>
+  <svg viewBox="0 0 640 250" width="640" role="img" aria-label="Animated jump game reach">
+    <!-- reach bar (grows) -->
+    <rect x="130" y="92" width="0" height="76" rx="8" fill="rgba(16,185,129,.18)" stroke="#10b981" stroke-width="1.5">
+      <animate attributeName="width" values="0;0;260;260;440;440" keyTimes="0;0.10;0.22;0.40;0.52;1" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <!-- cells -->
+    <g font-size="26" text-anchor="middle">
+      <rect x="130" y="96" width="80" height="68" rx="8" fill="#162032" stroke="#334155" stroke-width="2"/><text x="170" y="140" class="svg-t">2</text>
+      <rect x="220" y="96" width="80" height="68" rx="8" fill="#162032" stroke="#334155" stroke-width="2"/><text x="260" y="140" class="svg-t">3</text>
+      <rect x="310" y="96" width="80" height="68" rx="8" fill="#162032" stroke="#334155" stroke-width="2"/><text x="350" y="140" class="svg-t">1</text>
+      <rect x="400" y="96" width="80" height="68" rx="8" fill="#162032" stroke="#334155" stroke-width="2"/><text x="440" y="140" class="svg-t">1</text>
+      <rect x="490" y="96" width="80" height="68" rx="8" fill="#162032" stroke="#334155" stroke-width="2.5"/><text x="530" y="140" class="svg-t">4</text>
+    </g>
+    <!-- index labels -->
+    <g font-size="12" text-anchor="middle" class="svg-tm">
+      <text x="170" y="184">i=0</text><text x="260" y="184">i=1</text><text x="350" y="184">i=2</text><text x="400" y="184">i=3</text><text x="530" y="184">i=4 🏁</text>
+    </g>
+    <!-- probe arrow at current i -->
+    <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.08;0.12;1" dur="9s" repeatCount="indefinite"/>
+      <polygon points="0,-12 9,4 -9,4" fill="#06b6d4" transform="translate(170,74)">
+        <animate attributeName="transform" values="translate(170,74);translate(170,74);translate(260,74);translate(260,74)" keyTimes="0;0.10;0.35;1" calcMode="discrete" dur="9s" repeatCount="indefinite"/>
+      </polygon></g>
+    <!-- reach annotations -->
+    <text x="320" y="40" text-anchor="middle" class="svg-lbl" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.12;0.16;0.34;0.40" dur="9s" repeatCount="indefinite"/>i=0: reach = 0+2 = 2</text>
+    <text x="320" y="40" text-anchor="middle" class="svg-lbl" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.44;0.50;1" dur="9s" repeatCount="indefinite"/>i=1: reach = 1+3 = 4 ≥ last index → reachable</text>
+    <!-- success -->
+    <text x="350" y="220" text-anchor="middle" class="svg-s" font-size="15" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.62;0.68;1" dur="9s" repeatCount="indefinite"/>can_jump = True — the end is within reach ✓</text>
+  </svg>
+  <div class="legend">
+    <span><i style="background:#06b6d4"></i>current index i</span>
+    <span><i style="background:#10b981"></i>reachable region (max_reach)</span>
+  </div>
+  <div class="fig-cap">At each index extend <b>max_reach = max(max_reach, i + arr[i])</b>. As long as <b>i ≤ max_reach</b> you keep moving; the green region swallows the finish at i=1. (If <b>i</b> ever passes the green edge, you're stuck.) ▶ loops every 9s.</div>
+</div>
+
+<div class="sec">🎬 Problem 3: Fractional Knapsack — Greedy Works Here, 0/1 Does NOT</div>
+<p class="sub">Understanding this distinction is critical — it shows when greedy is provably optimal vs dangerously wrong.</p>
+
+<div class="story">
+  <div class="slabel">The Key Distinction</div>
+  <h3>Fractional Knapsack: You can take parts of items</h3>
+  <p>
+    Greedy by value-per-weight ratio is optimal here. Take as much of the highest ratio item as fits, then next, etc.<br><br>
+    <strong>0/1 Knapsack: You must take whole items or none.</strong> Greedy fails here! Example: capacity=10, items=[(weight=5,value=10),(weight=6,value=12),(weight=7,value=14)]. Greedy by ratio picks item 1 (ratio=2) + item 2 (ratio=2) = weight=11 &gt; 10, can't fit both. So picks item 1 only = value=10. But optimal is item 2+something = actually item 1+item 3 = weight=12 &gt; 10. Hmm, optimal is item 3 alone = 14 &gt; 10. Greedy missed it. <strong>Use DP for 0/1 Knapsack.</strong>
+  </p>
+</div>
+
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Fractional Knapsack — O(n log n)</div></div><pre><span class="kw">def</span> <span class="fn">fractional_knapsack</span>(items, capacity):
+    <span class="cm"># items = [(weight, value), ...]</span>
+    items.sort(key=<span class="kw">lambda</span> x: x[1] / x[0], reverse=True)  <span class="cm"># sort by value/weight DESC</span>
+
+    total_value = 0.0
+    <span class="kw">for</span> weight, value <span class="kw">in</span> items:
+        <span class="kw">if</span> capacity >= weight:
+            total_value += value
+            capacity -= weight
+        <span class="kw">else</span>:
+            <span class="cm"># take fraction of remaining capacity</span>
+            total_value += value * (capacity / weight)
+            <span class="kw">break</span>               <span class="cm"># knapsack full</span>
+
+    <span class="kw">return</span> total_value
+
+<span class="cm"># Trace: items=[(10,60),(20,100),(30,120)], capacity=50</span>
+<span class="cm"># Ratios: 6.0, 5.0, 4.0 → sorted: same order</span>
+<span class="cm"># Take item1: full (10), value=60, remaining=40</span>
+<span class="cm"># Take item2: full (20), value=100, remaining=20</span>
+<span class="cm"># Take item3: fraction 20/30, value=120*(20/30)=80</span>
+<span class="cm"># Total = 60 + 100 + 80 = 240.0 ✓</span>
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎒 Fractional Knapsack — fill by best value/weight ratio first (capacity = 50)</div>
+  <svg viewBox="0 0 640 270" width="640" role="img" aria-label="Animated fractional knapsack filling">
+    <defs>
+      <pattern id="frhatch" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#3a2a12"/><line x1="0" y1="0" x2="0" y2="8" stroke="#f59e0b" stroke-width="3"/></pattern>
+    </defs>
+    <!-- item ratio cards -->
+    <g font-size="12" text-anchor="middle">
+      <rect x="90" y="26" width="150" height="40" rx="8" fill="#10241c" stroke="#10b981"/><text x="165" y="44" class="svg-s" font-size="13">item1: w10 v60</text><text x="165" y="60" class="svg-s">ratio = 6.0 ★</text>
+      <rect x="248" y="26" width="150" height="40" rx="8" fill="#0e2a3a" stroke="#06b6d4"/><text x="323" y="44" class="svg-lbl" font-size="13">item2: w20 v100</text><text x="323" y="60" class="svg-lbl">ratio = 5.0</text>
+      <rect x="406" y="26" width="150" height="40" rx="8" fill="#3a2a12" stroke="#f59e0b"/><text x="481" y="44" class="svg-acc" font-size="13">item3: w30 v120</text><text x="481" y="60" class="svg-acc">ratio = 4.0</text>
+    </g>
+    <!-- capacity frame -->
+    <rect x="90" y="120" width="480" height="54" rx="8" fill="#0d1117" stroke="#475569" stroke-width="2"/>
+    <!-- axis ticks -->
+    <g font-size="11" text-anchor="middle" class="svg-tm">
+      <text x="90" y="195">0</text><text x="186" y="195">10</text><text x="282" y="195">20</text><text x="378" y="195">30</text><text x="474" y="195">40</text><text x="570" y="195">50</text>
+    </g>
+    <!-- segment 1 (item1 full) -->
+    <rect x="90" y="120" width="0" height="54" rx="6" fill="#10241c" stroke="#10b981" stroke-width="2"><animate attributeName="width" values="0;0;96;96" keyTimes="0;0.10;0.20;1" dur="10s" repeatCount="indefinite"/></rect>
+    <text x="138" y="152" text-anchor="middle" class="svg-s" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.18;0.22;1" dur="10s" repeatCount="indefinite"/>+60</text>
+    <!-- segment 2 (item2 full) -->
+    <rect x="186" y="120" width="0" height="54" rx="6" fill="#0e2a3a" stroke="#06b6d4" stroke-width="2"><animate attributeName="width" values="0;0;192;192" keyTimes="0;0.32;0.44;1" dur="10s" repeatCount="indefinite"/></rect>
+    <text x="282" y="152" text-anchor="middle" class="svg-lbl" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.42;0.46;1" dur="10s" repeatCount="indefinite"/>+100</text>
+    <!-- segment 3 (item3 fraction 20/30) -->
+    <rect x="378" y="120" width="0" height="54" rx="6" fill="url(#frhatch)" stroke="#f59e0b" stroke-width="2"><animate attributeName="width" values="0;0;192;192" keyTimes="0;0.54;0.68;1" dur="10s" repeatCount="indefinite"/></rect>
+    <text x="474" y="148" text-anchor="middle" class="svg-acc" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.70;1" dur="10s" repeatCount="indefinite"/>⅔ × 120</text>
+    <text x="474" y="163" text-anchor="middle" class="svg-acc" font-size="11" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.70;1" dur="10s" repeatCount="indefinite"/>= +80</text>
+    <!-- total -->
+    <text x="330" y="230" text-anchor="middle" class="svg-s" font-size="17" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.78;0.82;1" dur="10s" repeatCount="indefinite"/>knapsack full → max value = 60 + 100 + 80 = 240.0 ✓</text>
+    <text x="330" y="252" text-anchor="middle" class="svg-d" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.82;0.86;1" dur="10s" repeatCount="indefinite"/>(0/1 knapsack can't split item3 — greedy would fail there)</text>
+  </svg>
+  <div class="legend">
+    <span><i style="background:#10b981"></i>highest ratio (taken first)</span>
+    <span><i style="background:#06b6d4"></i>next ratio</span>
+    <span><i style="background:#f59e0b"></i>fractional fill of remainder</span>
+  </div>
+  <div class="fig-cap">Sort by <b>value/weight</b> descending, then pour items in until the bag is full — splitting only the last one. Because value scales linearly with the fraction taken, grabbing the densest value first is provably optimal. ▶ loops every 10s.</div>
+</div>
+
+<div class="sec">🎬 Problem 4: Gas Station — Circular Tour</div>
+<p class="sub">Find the starting gas station from which you can complete a full circular trip. The greedy insight here is beautiful.</p>
+
+<div class="ts">
+  <div class="sn2">💡</div>
+  <div class="sc">
+    <strong>Two observations that make this greedy:</strong><br>
+    1. If total gas ≥ total cost, a solution always exists (single global feasibility condition).<br>
+    2. If you run out of gas starting from station i, you also run out starting from any station between i and the failure point. So restart from the failure point + 1.<br>
+    <strong>Why restart at failure+1?</strong> All stations between start and failure have already proven they can't be the starting point (they all accumulated negative surplus). The next untested station is failure+1.
+    <div class="mini">gas=[1,2,3,4,5], cost=[3,4,5,1,2]
+net = [-2,-2,-2,3,3] (gas[i]-cost[i])
+cumsum: -2,-4,-6,-3,0  ← dip below 0 at i=2
+Restart from i=3: cumsum=0,3 → valid → answer: start=3 ✓</div>
+  </div>
+</div>
+
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Gas Station — O(n)</div></div><pre><span class="kw">def</span> <span class="fn">can_complete_circuit</span>(gas, cost):
+    <span class="kw">if</span> sum(gas) < sum(cost): <span class="kw">return</span> -1   <span class="cm"># total deficit → no solution</span>
+
+    start = 0
+    tank = 0
+    <span class="kw">for</span> i <span class="kw">in</span> range(len(gas)):
+        tank += gas[i] - cost[i]
+        <span class="kw">if</span> tank < 0:                     <span class="cm"># ran out starting from current 'start'</span>
+            start = i + 1              <span class="cm"># greedy: new candidate start</span>
+            tank = 0
+    <span class="kw">return</span> start
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">⛽ Gas Station — when the tank goes negative, restart at the next station</div>
+  <svg viewBox="0 0 640 250" width="640" role="img" aria-label="Animated gas station tank">
+    <!-- zero baseline -->
+    <line x1="90" y1="150" x2="590" y2="150" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <text x="600" y="154" class="svg-tm" font-size="11">0</text>
+    <!-- station labels -->
+    <g font-size="11" text-anchor="middle" class="svg-tm">
+      <text x="140" y="210">s0</text><text x="240" y="210">s1</text><text x="340" y="210">s2</text><text x="440" y="210">s3</text><text x="540" y="210">s4</text>
+      <text x="140" y="226">net −2</text><text x="240" y="226">net −2</text><text x="340" y="226">net −2</text><text x="440" y="226" class="svg-s">net +3</text><text x="540" y="226" class="svg-s">net +3</text>
+    </g>
+    <!-- Phase A: start=0, tank goes negative (red bars below zero) -->
+    <rect x="116" y="150" width="48" height="24" fill="#2a1414" stroke="#ef4444" stroke-width="2" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.08;0.12;1" dur="11s" repeatCount="indefinite"/></rect>
+    <rect x="216" y="150" width="48" height="48" fill="#2a1414" stroke="#ef4444" stroke-width="2" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.18;0.22;1" dur="11s" repeatCount="indefinite"/></rect>
+    <rect x="316" y="150" width="48" height="72" fill="#2a1414" stroke="#ef4444" stroke-width="2" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.28;0.32;1" dur="11s" repeatCount="indefinite"/></rect>
+    <text x="340" y="240" text-anchor="middle" class="svg-d" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.30;0.34;0.46;0.52" dur="11s" repeatCount="indefinite"/>tank = −6 &lt; 0 ✗ ran out</text>
+    <!-- restart marker -->
+    <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.40;0.46;1" dur="11s" repeatCount="indefinite"/>
+      <text x="440" y="60" text-anchor="middle" class="svg-acc" font-size="13">↻ restart here</text>
+      <line x1="390" y1="70" x2="390" y2="230" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5 4"/></g>
+    <!-- Phase B: start=3, tank positive (green bars above zero) -->
+    <rect x="416" y="114" width="48" height="36" fill="#10241c" stroke="#10b981" stroke-width="2" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.52;0.56;1" dur="11s" repeatCount="indefinite"/></rect>
+    <text x="440" y="106" text-anchor="middle" class="svg-s" font-size="11" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.54;0.58;1" dur="11s" repeatCount="indefinite"/>+3</text>
+    <rect x="516" y="78" width="48" height="72" fill="#10241c" stroke="#10b981" stroke-width="2" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.64;0.68;1" dur="11s" repeatCount="indefinite"/></rect>
+    <text x="540" y="70" text-anchor="middle" class="svg-s" font-size="11" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.70;1" dur="11s" repeatCount="indefinite"/>+6</text>
+    <!-- result -->
+    <text x="320" y="28" text-anchor="middle" class="svg-s" font-size="16" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.78;0.82;1" dur="11s" repeatCount="indefinite"/>start = 3 → completes the loop ✓</text>
+  </svg>
+  <div class="legend">
+    <span><i style="background:#ef4444"></i>tank negative (start fails)</span>
+    <span><i style="background:#f59e0b"></i>restart at failure + 1</span>
+    <span><i style="background:#10b981"></i>tank stays ≥ 0 (valid start)</span>
+  </div>
+  <div class="fig-cap">Every station from an old start that dipped negative is disqualified at once, so jump straight to <b>failure + 1</b>. One left-to-right pass finds the answer — and if total gas ≥ total cost, a valid start is guaranteed to exist. ▶ loops every 11s.</div>
+</div>
+
+<div class="sec">⚡ Greedy vs DP — The Decision</div>
+<div class="card">
+  <table>
+    <thead><tr><th>Problem</th><th>Greedy?</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Activity Selection</td><td style="color:var(--s)">✓ Yes</td><td>Exchange argument: picking earliest-end never worse</td></tr>
+      <tr><td>Fractional Knapsack</td><td style="color:var(--s)">✓ Yes</td><td>Can take fractions, ratio-optimal always works</td></tr>
+      <tr><td>0/1 Knapsack</td><td style="color:var(--d)">✗ No</td><td>Can't take fractions; subproblems interact</td></tr>
+      <tr><td>Coin Change (any denominations)</td><td style="color:var(--d)">✗ No</td><td>Greedy fails for [1,3,4] with target 6</td></tr>
+      <tr><td>Minimum Spanning Tree</td><td style="color:var(--s)">✓ Yes</td><td>Cut property: always safe to take min-weight crossing edge</td></tr>
+      <tr><td>Dijkstra (non-negative weights)</td><td style="color:var(--s)">✓ Yes</td><td>Nearest-unvisited is always finalized</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Meeting Rooms II — Minimum Rooms</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 253):</strong> Given n meeting time intervals [start, end], find the minimum number of conference rooms required.</div>
+    <div class="iq-approach"><strong>Greedy + Min-Heap of end times:</strong> Sort by start. Use a min-heap tracking end times of ongoing meetings. For each new meeting: if the earliest-ending meeting is done (end ≤ current start), reuse its room (pop from heap). Either way, push current meeting's end time. Heap size at the end = max rooms used.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">intervals=[(0,30),(5,10),(15,20)]
+Sort by start: [(0,30),(5,10),(15,20)]
+
+heap=[]
+Process (0,30):  heap empty → new room. heap=[30]       rooms=1
+Process (5,10):  heap[0]=30 > 5 → new room. heap=[10,30] rooms=2
+Process (15,20): heap[0]=10 ≤ 15 → reuse! pop 10, push 20.
+                 heap=[20,30]                            rooms=2
+
+max_rooms = max heap size = 2 ✓
+
+Overlap timeline:
+  0──────────────────────────────30
+     5─────10
+               15──20
+  t=0: 1 room | t=5: 2 rooms | t=10: 1 room</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Meeting Rooms II</div></div><pre><span class="kw">import</span> heapq
+<span class="kw">def</span> <span class="fn">min_meeting_rooms</span>(intervals):
+    <span class="kw">if not</span> intervals: <span class="kw">return</span> 0
+    intervals.sort(key=<span class="kw">lambda</span> x: x[0])  <span class="cm"># sort by start</span>
+    heap = []  <span class="cm"># min-heap of end times</span>
+
+    <span class="kw">for</span> start, end <span class="kw">in</span> intervals:
+        <span class="kw">if</span> heap <span class="kw">and</span> heap[0] &lt;= start:
+            heapq.heapreplace(heap, end)  <span class="cm"># reuse earliest-ending room</span>
+        <span class="kw">else</span>:
+            heapq.heappush(heap, end)     <span class="cm"># need a new room</span>
+    <span class="kw">return</span> len(heap)  <span class="cm"># = max concurrent meetings</span></pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n log n)</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Task Scheduler — Formula Approach</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 621):</strong> Arrange CPU tasks with cooldown n. Minimum total time. Tasks labeled A-Z, same task must wait n intervals between executions.</div>
+    <div class="iq-approach"><strong>Greedy insight:</strong> The most frequent task determines the floor. It creates (max_freq-1) complete frames of (n+1) slots plus a final partial frame. Fill gaps with other tasks or idle. If we have enough tasks to fill all gaps, answer is just len(tasks). Otherwise, it's the frame formula.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">tasks=['A','A','A','A','B','B','C']  n=2
+freq: A=4, B=2, C=1
+max_freq=4, count_of_max=1 (only A)
+
+Frames of width (n+1)=3:
+  [A,B,C] [A,B,_] [A,_,_] [A]
+   ^frame1  ^frame2  ^frame3  ^last
+
+formula = (4-1)*(2+1)+1 = 9+1 = 10
+
+len(tasks)=7 < 10, so answer=10
+
+Proof: we have 3 complete frames needing 3 slots each:
+  slots needed = (max_freq-1)*(n+1) = 9
+  last frame = 1 slot (just A)
+  total = 10  (3 idle slots filled = A,B,C + A,B,idle + A,idle,idle + A)
+
+When len(tasks) > formula (dense): answer=len(tasks) (no idle needed)</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Task Scheduler</div></div><pre><span class="kw">from</span> collections <span class="kw">import</span> Counter
+<span class="kw">def</span> <span class="fn">least_interval</span>(tasks, n):
+    freq = Counter(tasks)
+    max_freq = max(freq.values())
+    max_count = sum(1 <span class="kw">for</span> f <span class="kw">in</span> freq.values() <span class="kw">if</span> f == max_freq)
+    <span class="kw">return</span> max((max_freq-1)*(n+1) + max_count, len(tasks))</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">Partition Labels</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 763):</strong> String s. Partition it into as many parts as possible so each letter appears in at most one part. E.g. 'ababcbacadefegdehijhklij' → [9,7,8].</div>
+    <div class="iq-approach"><strong>Greedy — extend until self-contained:</strong> Pre-compute last[c] = last index where char c appears. Scan left-right. Track current partition's rightmost boundary (max of last[c] for all c seen). When index i reaches boundary → close partition, start new.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">s = "ababcbacadefegde"
+last = {a:8, b:5, c:7, d:14, e:15, f:11, g:13}
+
+Scan:
+  i=0 'a': boundary=max(0,last[a]=8)=8
+  i=1 'b': boundary=max(8,last[b]=5)=8
+  i=2 'a': boundary=max(8,8)=8
+  i=3 'b': boundary=max(8,5)=8
+  i=4 'c': boundary=max(8,last[c]=7)=8
+  i=5 'b': boundary stays 8
+  i=6 'a': boundary stays 8
+  i=7 'c': boundary stays 8
+  i=8: i==boundary → PARTITION! size=9 (0..8)
+       Reset: start=9, boundary=8
+
+  i=9  'd': boundary=max(9,last[d]=14)=14
+  i=10 'e': boundary=max(14,last[e]=15)=15
+  ...
+  i=15: i==boundary → PARTITION! size=7
+
+Result: [9,7,...] ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Partition Labels</div></div><pre><span class="kw">def</span> <span class="fn">partition_labels</span>(s):
+    last = {c: i <span class="kw">for</span> i, c <span class="kw">in</span> enumerate(s)}  <span class="cm"># last occurrence of each char</span>
+    sizes = []
+    start = boundary = 0
+
+    <span class="kw">for</span> i, c <span class="kw">in</span> enumerate(s):
+        boundary = max(boundary, last[c])   <span class="cm"># extend partition if needed</span>
+        <span class="kw">if</span> i == boundary:
+            sizes.append(i - start + 1)     <span class="cm"># partition complete</span>
+            start = i + 1
+    <span class="kw">return</span> sizes</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(1) — 26 char alphabet</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">4</div><div class="iqt">Minimum Number of Arrows to Burst Balloons</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 452):</strong> Balloons are horizontal ranges [x_start, x_end]. An arrow shot at x pops all balloons where x_start ≤ x ≤ x_end. Find minimum arrows to pop all.</div>
+    <div class="iq-approach"><strong>Greedy — shoot at the end of the first balloon:</strong> Sort by end coordinate. Shoot an arrow at the first balloon's end. This arrow pops all other balloons that overlap at that end. Skip all popped balloons, repeat for next unpopped balloon.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">balloons=[(10,16),(2,8),(1,6),(7,12)]
+Sort by end: [(1,6),(2,8),(7,12),(10,16)]
+
+Arrow 1 at x=6:  pops (1,6)✓ and (2,8)? 2<=6<=8 ✓ BOTH popped
+  arrows=1, next unpopped=(7,12)
+
+Arrow 2 at x=12: pops (7,12)✓ and (10,16)? 10<=12<=16 ✓ BOTH popped
+  arrows=2, done
+
+Total arrows = 2 ✓
+
+Why shoot at END (not start)? Shooting at end maximizes overlap:
+  it's the rightmost point that MUST be within the interval,
+  and any balloon with start <= end is also popped.</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Minimum Arrows</div></div><pre><span class="kw">def</span> <span class="fn">find_min_arrow_shots</span>(points):
+    <span class="kw">if not</span> points: <span class="kw">return</span> 0
+    points.sort(key=<span class="kw">lambda</span> x: x[1])   <span class="cm"># sort by end</span>
+    arrows = 1
+    arrow_pos = points[0][1]               <span class="cm"># shoot at first balloon's end</span>
+
+    <span class="kw">for</span> start, end <span class="kw">in</span> points[1:]:
+        <span class="kw">if</span> start > arrow_pos:             <span class="cm"># not popped by last arrow</span>
+            arrows += 1
+            arrow_pos = end               <span class="cm"># shoot at this balloon's end</span>
+    <span class="kw">return</span> arrows</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n log n)</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">5</div><div class="iqt">Candy Distribution</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 135):</strong> n children in a line with ratings. Rules: (1) Each child gets ≥1 candy. (2) Children with higher rating than adjacent neighbors must get more candy. Minimize total candies.</div>
+    <div class="iq-approach"><strong>Two-pass greedy:</strong> Pass 1 (left-to-right): if rating[i] > rating[i-1], give one more than left. Pass 2 (right-to-left): if rating[i] > rating[i+1], candy[i] must be > candy[i+1] — take max. Both passes together satisfy both neighbor constraints.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">ratings = [1, 0, 2]
+
+Pass 1 (left→right): satisfy 'higher than left neighbor'
+  candies = [1,1,1]
+  i=1: 0 < 1, no change. candies=[1,1,1]
+  i=2: 2 > 0, candies[2]=candies[1]+1=2. candies=[1,1,2]
+
+Pass 2 (right→left): satisfy 'higher than right neighbor'
+  i=1: 0 < 2, no change. candies=[1,1,2]
+  i=0: 1 > 0, candies[0]=max(1,candies[1]+1)=max(1,2)=2
+       candies=[2,1,2]
+
+Total = 2+1+2 = 5 ✓
+
+ratings = [1,2,2]:
+  P1: [1,2,1]  P2: [1,2,1] → sum=4
+  Middle child has same rating as right, so no increase needed ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Candy Distribution</div></div><pre><span class="kw">def</span> <span class="fn">candy</span>(ratings):
+    n = len(ratings)
+    candies = [1] * n
+
+    <span class="cm"># Pass 1: left → right</span>
+    <span class="kw">for</span> i <span class="kw">in</span> range(1, n):
+        <span class="kw">if</span> ratings[i] > ratings[i-1]:
+            candies[i] = candies[i-1] + 1
+
+    <span class="cm"># Pass 2: right → left (take max to satisfy both directions)</span>
+    <span class="kw">for</span> i <span class="kw">in</span> range(n-2, -1, -1):
+        <span class="kw">if</span> ratings[i] > ratings[i+1]:
+            candies[i] = max(candies[i], candies[i+1] + 1)
+
+    <span class="kw">return</span> sum(candies)</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

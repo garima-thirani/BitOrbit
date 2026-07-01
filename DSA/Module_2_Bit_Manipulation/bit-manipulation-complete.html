@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Bit Manipulation — Module 2</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+/* ── expanded interview question styles ── */
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 2 · Bit Manipulation</div><h1>The Language of Computers:<br><span>Bits, Shifts & Masks</span></h1><p>Bits are the atoms of computation. Mastering bitwise operations unlocks O(1) tricks that look like magic in interviews.</p><div class="stats"><div class="stat"><div class="sn">O(1)</div><div class="sl">All bit operations</div></div><div class="stat"><div class="sn">32 bits</div><div class="sl">int width (Python: unlimited)</div></div><div class="stat"><div class="sn">Space saver</div><div class="sl">Sets as bitmasks</div></div><div class="stat"><div class="sn">FAANG ⭐</div><div class="sl">Frequency: Medium</div></div></div></div></div><div class="wrap">
+<div class="sec">🧠 The Story — The Inventory System</div>
+<div class="story">
+  <div class="slabel">Real World Story — Flags and Switches</div>
+  <h3>You manage a system with 32 on/off features. You could use 32 separate boolean variables — or 1 integer.</h3>
+  <p>
+    Each bit in a 32-bit integer represents one feature flag. Bit 0 = feature_A, bit 1 = feature_B, etc.<br><br>
+    <strong>Check if feature N is on:</strong> <code>(flags &gt;&gt; N) &amp; 1</code><br>
+    <strong>Turn feature N on:</strong> <code>flags | (1 &lt;&lt; N)</code><br>
+    <strong>Turn feature N off:</strong> <code>flags &amp; ~(1 &lt;&lt; N)</code><br>
+    <strong>Toggle feature N:</strong> <code>flags ^ (1 &lt;&lt; N)</code><br><br>
+    This "bitmask as set" pattern powers algorithms: dynamic programming on subsets (bitmask DP), graph state compression, and many elegant interview solutions.
+  </p>
+</div>
+
+<div class="ibox">
+  <div class="lbl">The Essential Bit Tricks</div>
+  <div style="font-family:monospace;background:#0d1117;padding:12px;border-radius:8px;color:#e6edf3;font-size:13px;line-height:1.8">
+    n &amp; (n-1)     → clear lowest set bit  (used: is power of 2? count set bits)<br>
+    n &amp; (-n)      → isolate lowest set bit (used: Fenwick Tree navigation)<br>
+    n ^ n = 0       → XOR self = 0            (used: find single number)<br>
+    a ^ b ^ a = b   → XOR twice = identity    (used: swap without temp)<br>
+    ~n + 1 = -n     → two's complement negation<br>
+    n &gt;&gt; 1       → divide by 2 (floor)<br>
+    n &lt;&lt; 1       → multiply by 2
+  </div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Core Bit Operations</div></div><pre><span class="cm"># --- Check if power of 2 ---</span>
+<span class="kw">def</span> <span class="fn">is_power_of_2</span>(n): <span class="kw">return</span> n > 0 <span class="kw">and</span> (n & n-1) == 0
+<span class="cm"># Explanation: powers of 2 have exactly one set bit: 100...0
+# n-1 flips all bits up to that bit: 011...1
+# AND of them = 0 iff n is a power of 2</span>
+
+<span class="cm"># --- Count set bits (Brian Kernighan's algorithm) ---</span>
+<span class="kw">def</span> <span class="fn">count_bits</span>(n):
+    count = 0
+    <span class="kw">while</span> n:
+        n &= n - 1    <span class="cm"># clear lowest set bit each iteration</span>
+        count += 1
+    <span class="kw">return</span> count  <span class="cm"># O(number of set bits) — faster than O(log n) for sparse</span>
+
+<span class="cm"># --- Single Number: XOR all elements ---</span>
+<span class="kw">from</span> functools <span class="kw">import</span> reduce
+<span class="kw">from</span> operator <span class="kw">import</span> xor
+<span class="kw">def</span> <span class="fn">single_number</span>(nums): <span class="kw">return</span> reduce(xor, nums)
+<span class="cm"># All pairs cancel (a^a=0). Only unpaired number remains. O(n) time, O(1) space.</span>
+
+<span class="cm"># --- Find two single numbers (appears exactly once each) ---</span>
+<span class="kw">def</span> <span class="fn">two_singles</span>(nums):
+    xor_all = reduce(xor, nums)           <span class="cm"># xor of the two unique numbers</span>
+    bit = xor_all & (-xor_all)            <span class="cm"># isolate any differing bit</span>
+    a = b = 0
+    <span class="kw">for</span> n <span class="kw">in</span> nums:
+        <span class="kw">if</span> n & bit: a ^= n              <span class="cm"># group by differing bit</span>
+        <span class="kw">else</span>:       b ^= n
+    <span class="kw">return</span> [a, b]
+
+<span class="cm"># --- Reverse bits (32-bit integer) ---</span>
+<span class="kw">def</span> <span class="fn">reverse_bits</span>(n):
+    result = 0
+    <span class="kw">for</span> _ <span class="kw">in</span> range(32):
+        result = (result &lt;&lt; 1) | (n & 1)  <span class="cm"># shift result left, add LSB of n</span>
+        n &gt;&gt;= 1                           <span class="cm"># remove LSB from n</span>
+    <span class="kw">return</span> result
+</pre></div>
+
+<div class="sec">🎬 Bitmask DP — Subsets as State</div>
+<div class="ts">
+  <div class="sn2">🗝️</div>
+  <div class="sc"><strong>Bitmask DP Story:</strong> You have n tasks. State = which tasks are done. Each state is a bitmask where bit i = 1 means task i is done. Total states = 2^n.
+  <br><strong>Enumerate subsets of mask:</strong> <code>sub = mask; while sub: use sub; sub = (sub-1)&amp;mask</code>
+  <div class="mini">Traveling Salesman (small n): visit all cities exactly once.
+State: dp[mask][city] = min cost to visit cities in mask, ending at city.
+mask=001(city0 visited), mask=011(city0+1), etc.
+Transition: dp[mask|(1<<j)][j] = min(dp[mask][i] + dist[i][j])
+Final: min(dp[(1<<n)-1][j] + dist[j][0]) for all j</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Counting Bits DP and Subset Sum</div></div><pre><span class="cm"># --- Counting Bits: for i in [0,n], count set bits --- O(n)</span>
+<span class="kw">def</span> <span class="fn">count_bits_all</span>(n):
+    dp = [0] * (n + 1)
+    <span class="kw">for</span> i <span class="kw">in</span> range(1, n+1):
+        dp[i] = dp[i >> 1] + (i & 1)  <span class="cm"># dp[i] = dp[i//2] + (i is odd)</span>
+    <span class="kw">return</span> dp
+
+<span class="cm"># --- Sum of All XOR Subsets: enumerate all 2^n subsets --- O(2^n)</span>
+<span class="kw">def</span> <span class="fn">subset_xor_sum</span>(nums):
+    n, total = len(nums), 0
+    <span class="kw">for</span> mask <span class="kw">in</span> range(1 &lt;&lt; n):   <span class="cm"># iterate all 2^n subsets</span>
+        xor_val = 0
+        <span class="kw">for</span> i <span class="kw">in</span> range(n):
+            <span class="kw">if</span> mask & (1 &lt;&lt; i):    <span class="cm"># bit i is set: include nums[i]</span>
+                xor_val ^= nums[i]
+        total += xor_val
+    <span class="kw">return</span> total
+</pre></div>
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Missing Number</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 268):</strong> Array contains n distinct numbers taken from 0 to n. Find the missing number. E.g. [3,0,1] → 2.</div>
+    <div class="iq-approach"><strong>XOR trick:</strong> XOR all numbers from 0 to n, then XOR all array elements. Every number that appears in BOTH cancels out (a^a=0). Only the missing number remains, since it's only in the range [0,n] but not in the array.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums = [3, 0, 1]   n=3
+
+Method 1 — XOR:
+  XOR(0..n) = 0^1^2^3 = 0
+  XOR(nums) = 3^0^1 = 2
+  
+  Combined: 0^1^2^3 ^ 3^0^1 = (0^0)^(1^1)^(3^3)^2 = 2 ✓
+  (each paired number cancels, only 2 is unpaired)
+
+Method 2 — Math:
+  expected_sum = n*(n+1)/2 = 3*4/2 = 6
+  actual_sum   = 3+0+1 = 4
+  missing = 6-4 = 2 ✓
+
+XOR is better: no overflow risk, equally O(n) time, O(1) space</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Missing Number</div></div><pre><span class="kw">def</span> <span class="fn">missing_number</span>(nums):
+    result = len(nums)                <span class="cm"># start with n</span>
+    <span class="kw">for</span> i, n <span class="kw">in</span> enumerate(nums):
+        result ^= i ^ n              <span class="cm"># XOR with both index and value</span>
+    <span class="kw">return</span> result
+    <span class="cm"># result = (0^0)^(1^1)^...^(missing^n)^... = missing</span></pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Number of 1 Bits (Hamming Weight)</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 191):</strong> Count the number of set bits (1s) in the binary representation of an integer. E.g. n=00000000000000000000000000001011 → 3.</div>
+    <div class="iq-approach"><strong>Brian Kernighan's algorithm:</strong> n & (n-1) clears the LOWEST set bit of n. Count how many times you can do this before n reaches 0. This is O(k) where k=number of set bits, faster than O(32) for sparse integers.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">n = 1011 (binary)  = 11 (decimal)
+
+n=1011: 1011 & 1010 = 1010  count=1  (cleared lowest '1' at position 0)
+n=1010: 1010 & 1001 = 1000  count=2  (cleared '1' at position 1)
+n=1000: 1000 & 0111 = 0000  count=3  (cleared '1' at position 3)
+n=0000: stop
+
+Answer = 3 ✓
+
+Why n & (n-1) clears lowest bit:
+  n   = ...1000 (some bits)...1(target)000...0
+  n-1 = ...1000 (same bits)...0      111...1
+  AND = ...1000 (same bits)...0      000...0
+  → lowest '1' and all bits below it cleared</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Number of 1 Bits</div></div><pre><span class="kw">def</span> <span class="fn">hamming_weight</span>(n):
+    count = 0
+    <span class="kw">while</span> n:
+        n &amp;= n - 1     <span class="cm"># clear lowest set bit</span>
+        count += 1
+    <span class="kw">return</span> count
+
+<span class="cm"># Counting Bits variant (LeetCode 338): all counts 0 to n in O(n)</span>
+<span class="kw">def</span> <span class="fn">count_bits</span>(n):
+    dp = [0] * (n+1)
+    <span class="kw">for</span> i <span class="kw">in</span> range(1, n+1):
+        dp[i] = dp[i >> 1] + (i &amp; 1)  <span class="cm"># right shift + check last bit</span>
+    <span class="kw">return</span> dp</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(k) — k set bits</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">Add Two Integers Without + or -</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 371):</strong> Add two integers a and b without using + or - operators. Must handle negative numbers.</div>
+    <div class="iq-approach"><strong>Bit addition simulation:</strong> a^b gives the bits where they differ (sum without carry). a&b gives carry positions. Left-shift carry by 1 (carry propagates left). Repeat until no carry. Python requires 32-bit mask for negative numbers.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">a=2 (0010)  b=3 (0011)
+
+Round 1:
+  sum_bits = a^b = 0010^0011 = 0001
+  carry    = a&b = 0010&0011 = 0010, shift left = 0100 (=4)
+  a=0001, b=0100
+
+Round 2:
+  sum_bits = 0001^0100 = 0101 (=5)
+  carry    = 0001&0100 = 0000, shift left = 0000
+  a=0101, b=0000
+
+b=0 → no more carry → return a=0101=5 ✓
+
+Example with carry chain: a=7(0111) b=1(0001)
+  sum=0110, carry=0001<<1=0010
+  sum=0100, carry=0010<<1=0100
+  sum=0000, carry=0100<<1=1000
+  sum=1000=8 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Add Without Plus</div></div><pre><span class="kw">def</span> <span class="fn">get_sum</span>(a, b):
+    MASK = 0xFFFFFFFF
+    MAX  = 0x7FFFFFFF
+    <span class="kw">while</span> b != 0:
+        carry = (a &amp; b) &amp; MASK             <span class="cm"># carry positions (masked)</span>
+        a     = (a ^ b) &amp; MASK             <span class="cm"># sum without carry (masked)</span>
+        b     = (carry &lt;&lt; 1) &amp; MASK        <span class="cm"># shift carry left</span>
+    <span class="cm"># Handle negative numbers (Python's arbitrary int)</span>
+    <span class="kw">return</span> a <span class="kw">if</span> a &lt;= MAX <span class="kw">else</span> ~(a ^ MASK)</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(log max_val) — carry propagation</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Hashing — Module 8</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+/* ── expanded interview question styles ── */
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+/* ===== deep-dive intuition card ===== */
+.pat{background:linear-gradient(160deg,rgba(79,70,229,.08),rgba(15,23,42,.4));border:1px solid var(--brd);border-radius:18px;padding:30px 34px;margin:24px 0 40px;}
+.pat-lead{font-size:.95rem;color:var(--t);line-height:1.85;margin-bottom:6px;}
+.pat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+@media(max-width:760px){.pat-grid{grid-template-columns:1fr;}}
+.pat-cell{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:18px 22px;}
+.pat-cell h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.pat-cell.when h4{color:var(--w);}.pat-cell.state h4{color:var(--a);}
+.pat-cell.rec h4{color:var(--pl);}.pat-cell.base h4{color:var(--s);}
+.pat-cell p,.pat-cell li{font-size:.9rem;color:var(--tm);line-height:1.8;}
+.pat-cell ul{padding-left:18px;margin-top:6px;}.pat-cell li{margin:4px 0;}
+.formula{background:var(--cbg);border:1px solid #30363d;border-radius:10px;padding:16px 20px;margin:14px 0;font-family:'Fira Code','Courier New',monospace;font-size:.9rem;color:#a5b4fc;line-height:1.9;overflow-x:auto;}
+.formula .hl{color:#67e8f9;font-weight:700;}
+.keywords{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+.kwp{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:3px 14px;font-size:.8rem;font-weight:600;}
+.pitfall{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.03));border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.pitfall .pl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#fca5a5;font-weight:700;margin-bottom:6px;}
+.pitfall p{font-size:.88rem;color:#fecaca;line-height:1.8;}
+.real{background:linear-gradient(135deg,rgba(16,185,129,.09),rgba(16,185,129,.02));border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.real .rl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#6ee7b7;font-weight:700;margin-bottom:8px;}
+.real ul{padding-left:18px;margin:0;}.real li{font-size:.88rem;color:#a7f3d0;line-height:1.85;margin:5px 0;}
+.real li b{color:#d1fae5;}
+/* ===== animated SVG figure ===== */
+.fig{background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,.06),transparent 70%),var(--cbg);border:1px solid #30363d;border-radius:14px;padding:24px;margin:22px 0;overflow-x:auto;}
+.fig svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+.fig-cap{text-align:center;font-size:.82rem;color:var(--tm);margin-top:14px;font-style:italic;}
+.fig-cap b{color:var(--a);font-style:normal;}
+.fig-title{font-size:1.02rem;color:var(--t);margin:8px 0 10px;font-weight:700;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:16px;}
+.legend span{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--tm);}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;}
+.svg-t{fill:#e2e8f0;font-family:'Fira Code',monospace;}
+.svg-tm{fill:#94a3b8;font-family:'Segoe UI',sans-serif;}
+.svg-lbl{fill:#67e8f9;font-family:'Segoe UI',sans-serif;font-weight:700;}
+.svg-acc{fill:#fcd34d;font-family:'Fira Code',monospace;}
+.svg-s{fill:#6ee7b7;font-family:'Fira Code',monospace;}
+.svg-d{fill:#fca5a5;font-family:'Fira Code',monospace;}
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 8 · Hashing</div><h1>O(1) Everything:<br><span>The Constant-Time Superpower</span></h1><p>Hash maps and sets reduce almost every frequency/lookup problem from O(n2) to O(n). Learn to wield them surgically.</p><div class="stats"><div class="stat"><div class="sn">O(1) avg</div><div class="sl">lookup/insert/delete</div></div><div class="stat"><div class="sn">O(n)</div><div class="sl">Space cost</div></div><div class="stat"><div class="sn">Frequency/Count</div><div class="sl">Primary use case</div></div><div class="stat"><div class="sn">FAANG ⭐⭐⭐</div><div class="sl">Most used in solutions</div></div></div></div></div><div class="wrap">
+<div class="sec">🧠 The Story — The Hotel Registration Desk</div>
+<div class="story">
+  <div class="slabel">Real World Story — Check-in System</div>
+  <h3>A hotel with 10,000 rooms. Guest "Smith" checks in. You need to find their room instantly.</h3>
+  <p>
+    The hotel uses a key card system. Guest name &#x2192; hash function &#x2192; room number. O(1) lookup regardless of how many guests.<br><br>
+    <strong>Hash Function:</strong> Maps a key (name) to an index (room). Good hash functions distribute evenly. Collisions (two names hashing to same room) are resolved with chaining (list at each slot) or open addressing (next free slot).<br><br>
+    Python's <code>dict</code> and <code>set</code> are hash tables. Every time you do <code>x in my_dict</code>, Python computes hash(x) and does a table lookup in O(1). That's why the pattern "create a freq map, then query it" turns O(n^2) into O(n).
+  </p>
+</div>
+
+<div class="ibox">
+  <div class="lbl">When to Reach for a Hash Map</div>
+  <ul>
+    <li><strong>"Two Sum" pattern:</strong> For each element, look up (target - element) in a hash map. O(n) instead of O(n^2).</li>
+    <li><strong>Frequency counting:</strong> Count occurrences. Group anagrams, top K frequent, etc.</li>
+    <li><strong>Seen before:</strong> Track visited states, deduplicate elements.</li>
+    <li><strong>O(1) lookup for prefix info:</strong> Prefix sums combined with hash map for subarray problems.</li>
+  </ul>
+</div>
+
+<div class="pat">
+  <p class="pat-lead">A hash map is a <strong>time machine for lookups</strong>. Instead of scanning the array again to answer a question, you record the answer <em>as you go</em> so any future element can retrieve it in O(1). Two Sum doesn't search for a complement — it checks whether the complement was <em>already seen</em>. Subarray-sum-equals-k doesn't scan all sub-windows — it asks "have I seen a prefix sum that would make the current window work?" The trick is always the same: <b>store what you know, look up what you need</b>.</p>
+  <div class="pat-grid">
+    <div class="pat-cell when">
+      <h4>🔍 Two Sum / complement lookup</h4>
+      <p>For each element <code>x</code>, ask: does <code>target − x</code> exist in the map? If yes, done. If no, record <code>x</code>. One pass, O(n).</p>
+    </div>
+    <div class="pat-cell state">
+      <h4>∑ Prefix sum + frequency map</h4>
+      <p>Running prefix <code>s</code>. We want <code>s − prev_s = k</code>, so look up <code>s − k</code>. Record each prefix in a frequency map as you produce it.</p>
+    </div>
+    <div class="pat-cell rec">
+      <h4>📆 LRU cache</h4>
+      <p>HashMap gives O(1) key lookup; doubly-linked list gives O(1) "move to front" and "evict tail". Together: O(1) <code>get</code> and <code>put</code>. Python's <code>OrderedDict</code> is the same idea built-in.</p>
+    </div>
+    <div class="pat-cell base">
+      <h4>📊 Frequency / grouping</h4>
+      <p>Sort key (e.g. <code>sorted(word)</code>) maps anagrams to the same bucket. Character frequency tuple maps anagrams to the same key. Group by any canonical form.</p>
+    </div>
+  </div>
+  <div class="formula"><span class="hl">two_sum</span>: for x: if (target-x) in map → found. else map[x]=i<br><span class="hl">subarray_sum_k</span>: freq={0:1}; prefix+=num; count+=freq[prefix-k]; freq[prefix]++<br><span class="hl">LRU</span>: HashMap[key]→node + doubly linked list; get/put both O(1)</div>
+  <div class="keywords">
+    <span class="kwp">complement lookup</span><span class="kwp">prefix + hashmap</span><span class="kwp">frequency count</span><span class="kwp">group by key</span><span class="kwp">O(1) get/put</span>
+  </div>
+  <div class="real">
+    <div class="rl">🌍 Where this lives in the real world</div>
+    <ul>
+      <li><b>Database indexes:</b> a hash index answers exact-match queries in O(1) — the engine's in-memory hash map for primary keys.</li>
+      <li><b>DNS cache:</b> hostname → IP is a hash map; LRU eviction drops least-recently-queried entries when the cache fills.</li>
+      <li><b>Browser cache / CDN:</b> URL hashed to a bucket; LRU eviction policy to stay within memory limits.</li>
+      <li><b>Anagram detection / spell checker:</b> sort + group — or character frequency tuple — to cluster words that are rearrangements.</li>
+      <li><b>Sliding window analytics:</b> "how many sessions in the last hour had at least k events?" maps directly to subarray-sum-k over a time series.</li>
+      <li><b>Rabin-Karp string search:</b> hash the pattern; slide a rolling hash over the text — O(n+m) average instead of O(n·m).</li>
+    </ul>
+  </div>
+  <div class="pitfall">
+    <div class="pl">⚠️ The traps</div>
+    <p><b>Initialise prefix freq with {0:1}:</b> forgetting this misses subarrays that start at index 0, because you'd never record that a zero-length prefix has sum 0. <b>Hash collisions:</b> Python dicts don't collide, but custom hash functions in other languages do — use a good hash. <b>LRU with OrderedDict:</b> <code>move_to_end</code> on access, <code>popitem(last=False)</code> on eviction — if you forget to move on <code>put</code> of an existing key, you update the value but leave it in the wrong position.</p>
+  </div>
+</div>
+
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Hash Map and Counter — Essential Patterns</div></div><pre><span class="kw">from</span> collections <span class="kw">import</span> defaultdict, Counter
+
+<span class="cm"># --- Two Sum: O(n) with hash map ---</span>
+<span class="kw">def</span> <span class="fn">two_sum</span>(nums, target):
+    seen = {}                              <span class="cm"># val → index</span>
+    <span class="kw">for</span> i, num <span class="kw">in</span> enumerate(nums):
+        complement = target - num
+        <span class="kw">if</span> complement <span class="kw">in</span> seen:
+            <span class="kw">return</span> [seen[complement], i]
+        seen[num] = i
+    <span class="kw">return</span> []
+
+<span class="cm"># --- Frequency Map: Counter ---</span>
+freq = Counter("leetcode")               <span class="cm"># Counter({'e': 3, 'l': 1, ...})</span>
+most_common = freq.most_common(3)        <span class="cm"># top 3 most frequent chars</span>
+
+<span class="cm"># --- Group Anagrams: sort key ---</span>
+<span class="kw">def</span> <span class="fn">group_anagrams</span>(strs):
+    groups = defaultdict(list)
+    <span class="kw">for</span> word <span class="kw">in</span> strs:
+        key = tuple(sorted(word))        <span class="cm"># anagrams share same sorted key</span>
+        groups[key].append(word)
+    <span class="kw">return</span> list(groups.values())
+
+<span class="cm"># --- Subarray Sum Equals K (prefix sum + hash map) ---</span>
+<span class="kw">def</span> <span class="fn">subarray_sum</span>(nums, k):
+    count, prefix = 0, 0
+    freq = {0: 1}                        <span class="cm"># empty subarray has sum 0</span>
+    <span class="kw">for</span> num <span class="kw">in</span> nums:
+        prefix += num
+        count += freq.get(prefix - k, 0)
+        freq[prefix] = freq.get(prefix, 0) + 1
+    <span class="kw">return</span> count
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Two Sum — look up the complement you already recorded</div>
+  <svg viewBox="0 0 620 230" width="620" role="img" aria-label="Animated two-sum hash-map lookup">
+    <text x="310" y="22" text-anchor="middle" class="svg-tm" font-size="13">nums = [2, 7, 11, 15] · target = 9 · complement = target − num</text>
+    <g text-anchor="middle" font-size="17">
+      <rect x="80" y="46" width="76" height="46" rx="8" fill="#162032" stroke="#475569"/><text x="118" y="74" class="svg-t">2</text>
+      <rect x="164" y="46" width="76" height="46" rx="8" fill="#162032" stroke="#475569"/><text x="202" y="74" class="svg-t">7</text>
+      <rect x="248" y="46" width="76" height="46" rx="8" fill="#162032" stroke="#475569"/><text x="286" y="74" class="svg-t">11</text>
+      <rect x="332" y="46" width="76" height="46" rx="8" fill="#162032" stroke="#475569"/><text x="370" y="74" class="svg-t">15</text>
+    </g>
+    <!-- phase 1: process 2 -->
+    <rect x="80" y="46" width="76" height="46" rx="8" fill="none" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.08;0.12;0.30;0.33" dur="11s" repeatCount="indefinite"/></rect>
+    <text x="310" y="128" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.08;0.12;0.30;0.33" dur="11s" repeatCount="indefinite"/>need 9−2=7 → not in map → store {2:0}</text>
+    <!-- phase 2: process 7 -->
+    <rect x="164" y="46" width="76" height="46" rx="8" fill="none" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.33;0.37;0.60;0.63" dur="11s" repeatCount="indefinite"/></rect>
+    <text x="310" y="128" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.33;0.37;0.60;0.63" dur="11s" repeatCount="indefinite"/>need 9−7=2 → 2 IS in map at index 0!</text>
+    <!-- highlight match pair -->
+    <rect x="80" y="46" width="76" height="46" rx="8" fill="rgba(16,185,129,.25)" stroke="#10b981" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.63;0.67;1" dur="11s" repeatCount="indefinite"/></rect>
+    <rect x="164" y="46" width="76" height="46" rx="8" fill="rgba(16,185,129,.25)" stroke="#10b981" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.63;0.67;1" dur="11s" repeatCount="indefinite"/></rect>
+    <text x="310" y="164" text-anchor="middle" class="svg-s" font-size="15" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.67;0.71;1" dur="11s" repeatCount="indefinite"/>return [0, 1]  (indices of 2 and 7) ✓</text>
+    <text x="310" y="196" text-anchor="middle" class="svg-tm" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.75;0.79;1" dur="11s" repeatCount="indefinite"/>O(n): one pass — every element either finds its partner or registers itself for the next one</text>
+  </svg>
+  <div class="fig-cap"><b>Store first, search later — the hash map answers any future "have you seen X?" in O(1).</b> The complement check is a question about the past; you answer it by consulting the map you've already built, not by scanning back through the array. ▶ loops every 11s.</div>
+  <div class="legend">
+    <span><i style="background:#06b6d4"></i>current element</span>
+    <span><i style="background:#10b981"></i>matched pair</span>
+  </div>
+</div>
+
+<div class="sec">🎬 Subarray Sum = K — The Hash+Prefix Pattern</div>
+<div class="ts">
+  <div class="sn2">💡</div>
+  <div class="sc"><strong>The genius insight:</strong> If prefix[j] - prefix[i] = k, then subarray (i,j] sums to k.
+  We want count of pairs (i,j) where prefix[j] - k = prefix[i].
+  For each j, look up prefix[j]-k in the frequency map of past prefix sums.
+  <div class="mini">nums=[1,1,1], k=2
+prefix=0, freq={0:1}
+num=1: prefix=1. look for 1-2=-1 → 0. freq={0:1,1:1}
+num=1: prefix=2. look for 2-2=0 → 1. count=1.
+num=1: prefix=3. look for 3-2=1 → 1. count=2.
+Result=2 (subarrays [1,1] at index 0 and 1) ✓</div></div>
+</div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Subarray sum = k — track prefix sums, look up the gap you need</div>
+  <svg viewBox="0 0 620 250" width="620" role="img" aria-label="Animated subarray sum equals k prefix hashmap">
+    <text x="310" y="22" text-anchor="middle" class="svg-tm" font-size="13">nums = [1, 1, 1] · k = 2 · freq = {0:1} at start</text>
+    <g text-anchor="middle" font-size="17">
+      <rect x="170" y="44" width="84" height="46" rx="8" fill="#162032" stroke="#475569"/><text x="212" y="72" class="svg-t">1</text>
+      <rect x="262" y="44" width="84" height="46" rx="8" fill="#162032" stroke="#475569"/><text x="304" y="72" class="svg-t">1</text>
+      <rect x="354" y="44" width="84" height="46" rx="8" fill="#162032" stroke="#475569"/><text x="396" y="72" class="svg-t">1</text>
+    </g>
+    <!-- step labels -->
+    <text x="310" y="120" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.10;0.14;0.30;0.33" dur="12s" repeatCount="indefinite"/>prefix=1 · need 1−2=−1 in freq? No · store freq[1]=1 · count=0</text>
+    <text x="310" y="120" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.33;0.37;0.56;0.59" dur="12s" repeatCount="indefinite"/>prefix=2 · need 2−2=0 in freq? YES (=1) · count=1 · store freq[2]=1</text>
+    <text x="310" y="120" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.59;0.63;1" dur="12s" repeatCount="indefinite"/>prefix=3 · need 3−2=1 in freq? YES (=1) · count=2 ✓</text>
+    <!-- highlight windows -->
+    <rect x="170" y="44" width="176" height="46" rx="8" fill="rgba(16,185,129,.18)" stroke="#10b981" stroke-width="2" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.33;0.37;1" dur="12s" repeatCount="indefinite"/></rect>
+    <rect x="262" y="44" width="176" height="46" rx="8" fill="rgba(245,158,11,.15)" stroke="#f59e0b" stroke-width="2" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.59;0.63;1" dur="12s" repeatCount="indefinite"/></rect>
+    <!-- freq table -->
+    <text x="310" y="162" text-anchor="middle" class="svg-lbl" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.64;0.68;1" dur="12s" repeatCount="indefinite"/>freq = {0:1, 1:1, 2:1, 3:1}</text>
+    <text x="310" y="192" text-anchor="middle" class="svg-s" font-size="15" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.70;0.74;1" dur="12s" repeatCount="indefinite"/>count = 2  ([1,1] starting at idx 0 and 1)</text>
+    <text x="310" y="222" text-anchor="middle" class="svg-tm" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.78;0.82;1" dur="12s" repeatCount="indefinite"/>key: freq MUST start with {0:1} — it's the empty-prefix sentinel</text>
+  </svg>
+  <div class="fig-cap"><b>Prefix subtraction collapses any subarray into a constant-time question.</b> The map keeps a running tally of every prefix sum seen. When you arrive at prefix <code>s</code> and ask "how many old prefixes equal <code>s−k</code>?", each match is a window from <em>there</em> to <em>here</em> that sums to exactly <code>k</code>. ▶ loops every 12s.</div>
+  <div class="legend">
+    <span><i style="background:#10b981"></i>window [0,1] = 2</span>
+    <span><i style="background:#f59e0b"></i>window [1,2] = 2</span>
+  </div>
+</div>
+
+<div class="sec">🎬 LRU Cache — Hash Map + Doubly Linked List</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · LRU Cache — O(1) for both get and put</div></div><pre><span class="kw">class</span> <span class="fn">LRUNode</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, k=0, v=0):
+        self.k = k; self.v = v; self.prev = self.nxt = None
+
+<span class="kw">class</span> <span class="fn">LRUCache</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, cap):
+        self.cap = cap
+        self.cache = {}                        <span class="cm"># key to node mapping</span>
+        self.head = LRUNode()                  <span class="cm"># dummy head (most recent)</span>
+        self.tail = LRUNode()                  <span class="cm"># dummy tail (least recent)</span>
+        self.head.nxt = self.tail; self.tail.prev = self.head
+
+    <span class="kw">def</span> <span class="fn">_remove</span>(self, n):
+        n.prev.nxt = n.nxt; n.nxt.prev = n.prev
+
+    <span class="kw">def</span> <span class="fn">_insert_front</span>(self, n):
+        n.nxt = self.head.nxt; n.prev = self.head
+        self.head.nxt.prev = n; self.head.nxt = n
+
+    <span class="kw">def</span> <span class="fn">get</span>(self, key):
+        <span class="kw">if</span> key <span class="kw">not in</span> self.cache: <span class="kw">return</span> -1
+        self._remove(self.cache[key]); self._insert_front(self.cache[key])
+        <span class="kw">return</span> self.cache[key].v
+
+    <span class="kw">def</span> <span class="fn">put</span>(self, key, val):
+        <span class="kw">if</span> key <span class="kw">in</span> self.cache: self._remove(self.cache[key])
+        self.cache[key] = LRUNode(key, val); self._insert_front(self.cache[key])
+        <span class="kw">if</span> len(self.cache) > self.cap:
+            lru = self.tail.prev
+            self._remove(lru); <span class="kw">del</span> self.cache[lru.k]
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 LRU Cache — every get/put moves a node to the front</div>
+  <svg viewBox="0 0 600 280" width="600" role="img" aria-label="Animated LRU cache operations">
+    <text x="300" y="22" text-anchor="middle" class="svg-tm" font-size="13">cap=3 · operations: put(A) put(B) put(C) get(A) put(D) → evicts B</text>
+    <!-- list labels -->
+    <text x="40" y="75" class="svg-tm" font-size="11">head
+(MRU)</text>
+    <text x="40" y="175" class="svg-tm" font-size="11">tail
+(LRU)</text>
+    <!-- state 0: empty -->
+    <text x="300" y="70" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.04;0.08;0.15;0.17" dur="13s" repeatCount="indefinite"/>after put(A): [A]</text>
+    <text x="300" y="70" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.17;0.21;0.30;0.32" dur="13s" repeatCount="indefinite"/>after put(B): [B → A]</text>
+    <text x="300" y="70" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.32;0.36;0.45;0.47" dur="13s" repeatCount="indefinite"/>after put(C): [C → B → A]  cache full</text>
+    <text x="300" y="70" text-anchor="middle" class="svg-lbl" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.47;0.51;0.60;0.62" dur="13s" repeatCount="indefinite"/>get(A): move A to front → [A → C → B]</text>
+    <!-- final state: put(D) evicts B -->
+    <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.65;0.69;1" dur="13s" repeatCount="indefinite"/>
+      <rect x="130" y="86" width="70" height="50" rx="8" fill="rgba(16,185,129,.2)" stroke="#10b981" stroke-width="2"/><text x="165" y="116" class="svg-s" font-size="16" text-anchor="middle">D</text>
+      <rect x="220" y="86" width="70" height="50" rx="8" fill="rgba(6,182,212,.15)" stroke="#06b6d4" stroke-width="2"/><text x="255" y="116" class="svg-lbl" font-size="16" text-anchor="middle">A</text>
+      <rect x="310" y="86" width="70" height="50" rx="8" fill="#162032" stroke="#475569"/><text x="345" y="116" class="svg-t" font-size="16" text-anchor="middle">C</text>
+      <line x1="198" y1="111" x2="222" y2="111" stroke="#475569" stroke-width="2"/>
+      <line x1="288" y1="111" x2="312" y2="111" stroke="#475569" stroke-width="2"/>
+    </g>
+    <rect x="420" y="86" width="70" height="50" rx="8" fill="rgba(239,68,68,.18)" stroke="#ef4444" stroke-width="2" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.65;0.69;1" dur="13s" repeatCount="indefinite"/></rect>
+    <text x="455" y="116" class="svg-d" font-size="14" text-anchor="middle" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.65;0.69;1" dur="13s" repeatCount="indefinite"/>B evicted</text>
+    <text x="300" y="178" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.72;0.76;1" dur="13s" repeatCount="indefinite"/>put(D) evicts B (tail.prev = LRU) → cache = [D → A → C]</text>
+    <text x="300" y="210" text-anchor="middle" class="svg-s" font-size="14" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.79;0.83;1" dur="13s" repeatCount="indefinite"/>HashMap: key→node (O(1) find) · DLL: O(1) move &amp; evict</text>
+  </svg>
+  <div class="fig-cap"><b>Two data structures, one contract.</b> The hash map finds a node in O(1); the doubly-linked list removes and re-inserts it at the front in O(1). Without the list, HashMap alone can't answer "which key was least recently used" efficiently. Without the map, the list alone can't find a key in O(1). Together they're perfect. ▶ loops every 13s.</div>
+  <div class="legend">
+    <span><i style="background:#10b981"></i>newly inserted (MRU)</span>
+    <span><i style="background:#06b6d4"></i>moved to front on get</span>
+    <span><i style="background:#ef4444"></i>evicted (LRU)</span>
+  </div>
+</div>
+
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Longest Consecutive Sequence — O(n)</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 128):</strong> Given an unsorted array of integers, find the length of the longest consecutive elements sequence. Must run in O(n) time.</div>
+    <div class="iq-approach"><strong>Hash Set + smart start detection:</strong> Add all numbers to a set. Only START counting a streak when num-1 is NOT in the set (meaning this is a sequence head). Extend while num+1, num+2, ... exist in set. This ensures each number is visited at most twice.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums = [100,4,200,1,3,2]
+Set = {100,4,200,1,3,2}
+
+num=100: 99 not in set → START. Streak: 100,101? No. Length=1
+num=4:   3 in set → skip (not start)
+num=200: 199 not in set → START. Length=1
+num=1:   0 not in set → START. 2∈set: 3∈set: 4∈set: 5∉set → Length=4
+num=3:   2 in set → skip
+num=2:   1 in set → skip
+
+Max streak: 4 → [1,2,3,4] ✓
+
+Why O(n): Each number is a START at most once. The while loop
+across ALL start points visits each number at most once total.</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Longest Consecutive Sequence</div></div><pre><span class="kw">def</span> <span class="fn">longest_consecutive</span>(nums):
+    num_set = set(nums)
+    best = 0
+    <span class="kw">for</span> num <span class="kw">in</span> num_set:
+        <span class="kw">if</span> num - 1 <span class="kw">not in</span> num_set:     <span class="cm"># sequence start</span>
+            streak = 1
+            curr = num + 1
+            <span class="kw">while</span> curr <span class="kw">in</span> num_set:
+                streak += 1
+                curr += 1
+            best = max(best, streak)
+    <span class="kw">return</span> best</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Top K Frequent Elements</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 347):</strong> Given an integer array, return the k most frequent elements. You may assume k is always valid. Aim for O(n) solution.</div>
+    <div class="iq-approach"><strong>Bucket Sort on frequency:</strong> Count frequencies with a hash map. Create 'buckets' where buckets[f] = list of all numbers that appear exactly f times. Frequency is at most n, so scan buckets from high to low. O(n) vs O(n log k) for heap.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums = [1,1,1,2,2,3]  k=2
+Frequencies: {1:3, 2:2, 3:1}
+
+Buckets (index = frequency):
+  buckets[1] = [3]
+  buckets[2] = [2]
+  buckets[3] = [1]
+
+Scan from high to low:
+  i=6: empty
+  ...
+  i=3: [1] → result=[1], need 1 more
+  i=2: [2] → result=[1,2], need 0 more
+
+Result = [1,2] ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Top K Frequent Elements (Bucket Sort)</div></div><pre><span class="kw">def</span> <span class="fn">top_k_frequent</span>(nums, k):
+    count = {}
+    <span class="kw">for</span> n <span class="kw">in</span> nums: count[n] = count.get(n, 0) + 1
+
+    buckets = [[] <span class="kw">for</span> _ <span class="kw">in</span> range(len(nums) + 1)]
+    <span class="kw">for</span> num, freq <span class="kw">in</span> count.items():
+        buckets[freq].append(num)          <span class="cm"># bucket by frequency</span>
+
+    result = []
+    <span class="kw">for</span> freq <span class="kw">in</span> range(len(buckets)-1, 0, -1):  <span class="cm"># high freq first</span>
+        result.extend(buckets[freq])
+        <span class="kw">if</span> len(result) >= k: <span class="kw">break</span>
+    <span class="kw">return</span> result[:k]</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">4Sum II</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 454):</strong> Given four integer arrays A, B, C, D (each length n), count how many tuples (i,j,k,l) such that A[i]+B[j]+C[k]+D[l] == 0.</div>
+    <div class="iq-approach"><strong>Meet-in-the-middle hashing:</strong> Compute all A[i]+B[j] sums and store their counts in a hash map. Then for every C[k]+D[l] pair, check if -(C[k]+D[l]) exists in the map. This reduces O(n^4) to O(n^2).</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">A=[1,2]  B=[-2,-1]  C=[-1,2]  D=[0,2]
+
+Phase 1 — build sum_map:
+  A[0]+B[0]=1+(-2)=-1   → count: {-1:1}
+  A[0]+B[1]=1+(-1)=0    → count: {-1:1, 0:1}
+  A[1]+B[0]=2+(-2)=0    → count: {-1:1, 0:2}
+  A[1]+B[1]=2+(-1)=1    → count: {-1:1, 0:2, 1:1}
+
+Phase 2 — query with -(C+D):
+  C[0]+D[0]=-1+0=-1  target= 1  → sum_map[1]=1  count+=1
+  C[0]+D[1]=-1+2=1   target=-1  → sum_map[-1]=1 count+=1
+  C[1]+D[0]=2+0=2    target=-2  → not in map
+  C[1]+D[1]=2+2=4    target=-4  → not in map
+
+Total = 2 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · 4Sum II</div></div><pre><span class="kw">def</span> <span class="fn">four_sum_count</span>(A, B, C, D):
+    sum_map = {}
+    <span class="kw">for</span> a <span class="kw">in</span> A:
+        <span class="kw">for</span> b <span class="kw">in</span> B:
+            sum_map[a+b] = sum_map.get(a+b, 0) + 1
+
+    count = 0
+    <span class="kw">for</span> c <span class="kw">in</span> C:
+        <span class="kw">for</span> d <span class="kw">in</span> D:
+            count += sum_map.get(-(c+d), 0)  <span class="cm"># look for complement</span>
+    <span class="kw">return</span> count</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n²)</span>
+      <span class="iq-pill s">Space: O(n²)</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

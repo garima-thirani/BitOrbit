@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Thinking Like an Algorithm</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;
+  background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;
+  border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.defbox{background:rgba(79,70,229,.09);border-left:3px solid #4f46e5;
+  padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0;font-size:.92rem;line-height:1.8;}
+.defbox strong{color:#818cf8;}
+.tag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:16px 0;}
+.tag-card{background:var(--bc2);border:1px solid var(--brd);border-radius:10px;padding:14px 16px;}
+.tag-card .tc{font-weight:700;font-size:.85rem;color:#fca5a5;margin-bottom:4px;}
+.tag-card .td{font-size:.82rem;color:var(--tm);}
+.cmp-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.88rem;}
+.cmp-table th{background:rgba(79,70,229,.15);color:#818cf8;padding:10px 14px;text-align:left;border-bottom:1px solid var(--brd);}
+.cmp-table td{padding:9px 14px;border-bottom:1px solid rgba(51,65,85,.5);color:var(--tm);}
+.cmp-table tr:hover td{background:rgba(79,70,229,.05);}
+.cmp-table .h{color:#fca5a5;font-weight:600;}
+.cmp-table .g{color:#6ee7b7;font-weight:600;}
+.cmp-table .y{color:#fcd34d;font-weight:600;}
+.step-list{counter-reset:step;list-style:none;padding:0;margin:14px 0;}
+.step-list li{counter-increment:step;display:flex;gap:14px;margin-bottom:14px;align-items:flex-start;}
+.step-list li::before{content:counter(step);min-width:28px;height:28px;background:var(--p);
+  color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:.78rem;font-weight:700;flex-shrink:0;margin-top:2px;}
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;
+  background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);
+  padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 1 · Chapter 1</div><h1>Thinking Like an Algorithm<br><span>From Problem to Solution</span></h1><p>Before you write a single line of code, you need to think like an algorithm designer.</p><div class="stats"><div class="stat"><div class="sn">Decompose</div><div class="sl">Break into subproblems</div></div><div class="stat"><div class="sn">Pattern Match</div><div class="sl">Recognize known structures</div></div><div class="stat"><div class="sn">Verify</div><div class="sl">Test with examples</div></div><div class="stat"><div class="sn">Foundation</div><div class="sl">Everything builds on this</div></div></div></div></div><div class="wrap">
+
+<div class="sec">&#129504; The Story &#8212; The Treasure Hunt</div>
+<div class="story">
+  <div class="slabel">The Algorithmic Mindset</div>
+  <h3>An algorithm is a precise, finite sequence of steps to solve a problem. You use algorithms every day without realising it.</h3>
+  <p>
+    When you follow a recipe you're executing an algorithm. When you find parking you're running a search. When you rank search results you're running a scoring function.
+    <br><br>
+    <strong>The leap from "coding" to "algorithmic thinking"</strong> is learning to see a problem as: <em>What are the inputs? What are the valid outputs? What is the constraint?</em> Only then do you write code.
+  </p>
+</div>
+
+<div class="sec">&#128295; The 5-Step Design Process</div>
+<div class="card">
+<ul class="step-list">
+  <li><strong>Define the problem precisely.</strong> What is the input? What are valid outputs? Are there constraints (size, range, duplicates)?</li>
+  <li><strong>Work a small example by hand.</strong> Pick n=4 or n=5, trace manually. This reveals patterns you'd miss just reading the spec.</li>
+  <li><strong>Write brute force first.</strong> The simplest correct solution — no matter how slow. It is your reference implementation and your sanity check.</li>
+  <li><strong>Identify the bottleneck.</strong> Profile or analyse: which loop is doing redundant work? Usually one nested loop hides the answer.</li>
+  <li><strong>Optimise via patterns.</strong> Hash for O(1) lookup, sort to enable binary search, sliding window to avoid re-scanning, DP to avoid re-computing.</li>
+</ul>
+</div>
+
+<div class="viz-box">Example walk-through: "Find two numbers that sum to target"
+
+INPUT:  nums = [2, 7, 11, 15],  target = 9
+OUTPUT: indices [0, 1]
+
+Step 1 – Define
+  Input : int[] nums, int target
+  Output: int[] of two indices i, j  (i ≠ j, nums[i]+nums[j]==target)
+  Constraint: exactly one solution guaranteed, 2 ≤ len ≤ 10⁴
+
+Step 2 – Small example (by hand)
+  n=4  → try all pairs: (0,1)=9 ✓  done.
+
+Step 3 – Brute force
+  For every pair (i,j) with i&lt;j, check if sum == target.
+  Time O(n²),  Space O(1)
+
+Step 4 – Bottleneck: the inner loop searches for complement.
+  For nums[0]=2, we want to know: "Is 7 in the array?"
+  Re-scanning array each time = O(n) per element = O(n²) total.
+
+Step 5 – Optimise: hash map gives O(1) lookup
+  Pass through once. For each x, check if (target-x) already seen.
+  Time O(n),  Space O(n)  ← best possible for unsorted input</div>
+
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Two Sum — Brute Force → Optimal</div></div><pre><span class="cm"># Brute force — O(n²)</span>
+<span class="kw">def</span> <span class="fn">two_sum_brute</span>(nums, target):
+    <span class="kw">for</span> i <span class="kw">in</span> range(len(nums)):
+        <span class="kw">for</span> j <span class="kw">in</span> range(i+1, len(nums)):
+            <span class="kw">if</span> nums[i] + nums[j] == target:
+                <span class="kw">return</span> [i, j]
+
+<span class="cm"># Optimal — O(n) using complement lookup</span>
+<span class="kw">def</span> <span class="fn">two_sum</span>(nums, target):
+    seen = {}                          <span class="cm"># val → index</span>
+    <span class="kw">for</span> i, x <span class="kw">in</span> enumerate(nums):
+        complement = target - x
+        <span class="kw">if</span> complement <span class="kw">in</span> seen:
+            <span class="kw">return</span> [seen[complement], i]
+        seen[x] = i</pre></div>
+
+<div class="sec">&#128270; Pattern Recognition &#8212; The Cheat Sheet</div>
+<div class="card">
+<p style="margin-bottom:14px;color:var(--tm)">When you see a problem, scan for these signals to immediately know the algorithmic family:</p>
+<div class="tag-grid">
+  <div class="tag-card"><div class="tc">&#128269; "Find if exists"</div><div class="td">HashSet — O(1) lookup. Sort + binary search if sorted.</div></div>
+  <div class="tag-card"><div class="tc">&#128200; "Longest / Shortest subarray"</div><div class="td">Sliding window (unsorted) or two pointers.</div></div>
+  <div class="tag-card"><div class="tc">&#9889; "All combinations / subsets"</div><div class="td">Backtracking with pruning.</div></div>
+  <div class="tag-card"><div class="tc">&#128196; "Max/min over choices"</div><div class="td">Dynamic programming — overlapping subproblems.</div></div>
+  <div class="tag-card"><div class="tc">&#127758; "Connected groups"</div><div class="td">BFS/DFS on graph or matrix.</div></div>
+  <div class="tag-card"><div class="tc">&#128260; "Sorted + search"</div><div class="td">Binary search — always O(log n).</div></div>
+  <div class="tag-card"><div class="tc">&#128202; "Rank / k-th element"</div><div class="td">Heap or QuickSelect.</div></div>
+  <div class="tag-card"><div class="tc">&#127381; "Parentheses / nested"</div><div class="td">Stack — LIFO structure mirrors nesting.</div></div>
+</div>
+</div>
+
+<div class="sec">&#128203; Correctness: Edge Cases Every Algorithm Must Handle</div>
+<div class="card">
+  <p style="color:var(--tm);margin-bottom:12px">Before submitting, always test these edge cases mentally or with assertions:</p>
+  <table class="cmp-table">
+    <tr><th>Category</th><th>Example</th><th>Why it matters</th></tr>
+    <tr><td class="h">Empty input</td><td>nums = []</td><td>Off-by-one or index-out-of-bounds</td></tr>
+    <tr><td class="h">Single element</td><td>nums = [42]</td><td>Loops that assume length ≥ 2</td></tr>
+    <tr><td class="h">All same</td><td>[5,5,5,5]</td><td>Hash collision, equal-comparison bugs</td></tr>
+    <tr><td class="h">Already sorted</td><td>[1,2,3,4]</td><td>Algorithms that depend on shuffled input</td></tr>
+    <tr><td class="h">Reverse sorted</td><td>[4,3,2,1]</td><td>Worst case for QuickSort, insertion sort</td></tr>
+    <tr><td class="h">Negative numbers</td><td>[-3,-1,2]</td><td>Absolute value tricks, modulo pitfalls</td></tr>
+    <tr><td class="h">Integer overflow</td><td>a+b for a,b near INT_MAX</td><td>Use long or (a-target)+b form</td></tr>
+  </table>
+</div>
+
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Analyse Two Nested Loops</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem:</strong> What is the time complexity of this code? <code>for i in range(n): for j in range(i+1,n): if arr[i]&gt;arr[j]: arr[i],arr[j]=arr[j],arr[i]</code></div>
+    <div class="iq-approach"><strong>Count operations:</strong> The inner loop runs (n-1) + (n-2) + ... + 1 = n(n-1)/2 times. Drop constants and lower-order terms → O(n²). This is Bubble Sort's comparison count.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">Outer i=0: inner runs n-1 times  (j=1,2,...,n-1)
+Outer i=1: inner runs n-2 times  (j=2,3,...,n-1)
+Outer i=2: inner runs n-3 times
+...
+Outer i=n-2: inner runs 1 time
+
+Total = (n-1) + (n-2) + ... + 1
+      = n(n-1) / 2
+      = (n² - n) / 2
+      ≈ n²/2
+
+Drop constant factor 1/2 → O(n²)
+
+Rule: when inner loop depends on outer variable and
+runs roughly proportionally, result is O(n²).</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Count comparisons explicitly</div></div><pre><span class="kw">def</span> <span class="fn">count_ops</span>(n):
+    ops = 0
+    <span class="kw">for</span> i <span class="kw">in</span> range(n):
+        <span class="kw">for</span> j <span class="kw">in</span> range(i+1, n):
+            ops += 1
+    <span class="kw">return</span> ops
+
+<span class="kw">for</span> n <span class="kw">in</span> [10, 100, 1000]:
+    print(f<span class="nm">"n={n}: ops={count_ops(n)}, formula={n*(n-1)//2}"</span>)
+<span class="cm"># n=10: ops=45, formula=45 ✓</span></pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n²)</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Brute Force → Optimal: Contains Duplicate</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 217):</strong> Given array, return True if any value appears at least twice. E.g. [1,2,3,1] → True.</div>
+    <div class="iq-approach"><strong>Three approaches:</strong> (1) Brute force O(n²) — compare every pair. (2) Sort O(n log n) — check adjacent elements. (3) HashSet O(n) — O(1) lookup. Always start at brute force and optimise systematically.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">Approach 1 — Brute Force O(n²)
+  For every pair (i,j), check if arr[i]==arr[j]
+  4 elements → 6 comparisons
+  [1,2,3,1]: (0,3): 1==1 → True ✓
+
+Approach 2 — Sort + scan O(n log n)
+  Sort: [1,1,2,3]
+  Scan adjacent: arr[0]==arr[1]? 1==1 → True ✓
+  Space O(1) if sort in-place
+
+Approach 3 — HashSet O(n)
+  seen = {}
+  x=1: not in seen → add
+  x=2: not in seen → add
+  x=3: not in seen → add
+  x=1: IN seen → return True ✓
+
+Interview tip: mention all 3, then justify choosing HashSet
+for O(n) time. If memory is constrained, offer sort approach.</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Contains Duplicate (all 3 approaches)</div></div><pre><span class="cm"># O(n) — HashSet</span>
+<span class="kw">def</span> <span class="fn">contains_duplicate</span>(nums):
+    seen = set()
+    <span class="kw">for</span> x <span class="kw">in</span> nums:
+        <span class="kw">if</span> x <span class="kw">in</span> seen: <span class="kw">return</span> True
+        seen.add(x)
+    <span class="kw">return</span> False
+
+<span class="cm"># One-liner (same complexity)</span>
+<span class="kw">def</span> <span class="fn">contains_dup2</span>(nums):
+    <span class="kw">return</span> len(nums) != len(set(nums))</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">Identify the Pattern: Sliding Window vs Two Pointers</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Question:</strong> You have an unsorted array and must find the max sum of any contiguous subarray of length k. Which technique applies? What if k is variable and you want the smallest subarray with sum ≥ target?</div>
+    <div class="iq-approach"><strong>Fixed window → sliding window.</strong> Maintain a running sum of size k — add right element, remove left element each step. Variable window → two pointers: expand right to meet target, shrink left to minimise, track minimum width.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">FIXED WINDOW (k=3): [2,1,5,1,3,2], k=3
+  Window [2,1,5] = 8
+  Slide → remove 2, add 1: [1,5,1] = 7
+  Slide → remove 1, add 3: [5,1,3] = 9  ← max
+  Slide → remove 5, add 2: [1,3,2] = 6
+  Answer: 9
+
+VARIABLE WINDOW: find min length with sum≥7
+  [2,3,1,2,4,3], target=7
+  lo=0 hi=0 sum=2   < 7 → expand right
+  lo=0 hi=3 sum=8   ≥ 7 → shrink left (size=4)
+  lo=1 hi=3 sum=6   < 7 → expand right
+  lo=1 hi=4 sum=10  ≥ 7 → shrink left (size=4)
+  lo=2 hi=4 sum=7   ≥ 7 → shrink left (size=3)
+  lo=3 hi=4 sum=6   < 7 → expand right
+  lo=3 hi=5 sum=9   ≥ 7 → shrink left (size=3)
+  lo=4 hi=5 sum=7   ≥ 7 → shrink left (size=2) ← min!
+  Answer: 2</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Max Fixed Window + Min Variable Window</div></div><pre><span class="kw">def</span> <span class="fn">max_fixed_window</span>(arr, k):
+    window_sum = sum(arr[:k])
+    best = window_sum
+    <span class="kw">for</span> i <span class="kw">in</span> range(k, len(arr)):
+        window_sum += arr[i] - arr[i-k]
+        best = max(best, window_sum)
+    <span class="kw">return</span> best
+
+<span class="kw">def</span> <span class="fn">min_subarray_len</span>(target, nums):
+    lo, cur, best = 0, 0, float(<span class="nm">'inf'</span>)
+    <span class="kw">for</span> hi, x <span class="kw">in</span> enumerate(nums):
+        cur += x
+        <span class="kw">while</span> cur >= target:
+            best = min(best, hi - lo + 1)
+            cur -= nums[lo]; lo += 1
+    <span class="kw">return</span> best <span class="kw">if</span> best != float(<span class="nm">'inf'</span>) <span class="kw">else</span> 0</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

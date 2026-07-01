@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Asymptotic Analysis</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;
+  background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;
+  border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.defbox{background:rgba(79,70,229,.09);border-left:3px solid #4f46e5;
+  padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0;font-size:.92rem;line-height:1.8;}
+.defbox strong{color:#818cf8;}
+.tag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:16px 0;}
+.tag-card{background:var(--bc2);border:1px solid var(--brd);border-radius:10px;padding:14px 16px;}
+.tag-card .tc{font-weight:700;font-size:.85rem;color:#fca5a5;margin-bottom:4px;}
+.tag-card .td{font-size:.82rem;color:var(--tm);}
+.cmp-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.88rem;}
+.cmp-table th{background:rgba(79,70,229,.15);color:#818cf8;padding:10px 14px;text-align:left;border-bottom:1px solid var(--brd);}
+.cmp-table td{padding:9px 14px;border-bottom:1px solid rgba(51,65,85,.5);color:var(--tm);}
+.cmp-table tr:hover td{background:rgba(79,70,229,.05);}
+.cmp-table .h{color:#fca5a5;font-weight:600;}
+.cmp-table .g{color:#6ee7b7;font-weight:600;}
+.cmp-table .y{color:#fcd34d;font-weight:600;}
+.step-list{counter-reset:step;list-style:none;padding:0;margin:14px 0;}
+.step-list li{counter-increment:step;display:flex;gap:14px;margin-bottom:14px;align-items:flex-start;}
+.step-list li::before{content:counter(step);min-width:28px;height:28px;background:var(--p);
+  color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:.78rem;font-weight:700;flex-shrink:0;margin-top:2px;}
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;
+  background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);
+  padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 1 · Chapter 3</div><h1>Asymptotic Analysis<br><span>Big O, Omega, and Theta</span></h1><p>Beyond Big O: Big Omega (lower bound) and Big Theta (tight bound) complete your complexity toolkit.</p><div class="stats"><div class="stat"><div class="sn">O(f)</div><div class="sl">Upper bound (worst)</div></div><div class="stat"><div class="sn">Ω(f)</div><div class="sl">Lower bound (best)</div></div><div class="stat"><div class="sn">Θ(f)</div><div class="sl">Tight bound (both)</div></div><div class="stat"><div class="sn">Amortized</div><div class="sl">Average per operation</div></div></div></div></div><div class="wrap">
+
+<div class="sec">&#129504; The Three Bounds &#8212; O, &#937;, &#920;</div>
+<div class="story">
+  <div class="slabel">Why three notations?</div>
+  <h3>Big O describes the worst case. Big Omega describes the best case. Big Theta describes both — a tight, two-sided bound.</h3>
+  <p>When an interviewer asks "what's the complexity?", they almost always mean Big O (worst case). But understanding all three lets you give precise, impressive answers about algorithm behaviour under different inputs.</p>
+</div>
+
+<div class="sec">&#128218; Formal Definitions with Examples</div>
+<div class="card">
+  <div class="defbox"><strong>Big O — upper bound (worst case)</strong><br>
+  f(n) = O(g(n)) iff ∃ constants c &gt; 0, n₀ &gt; 0 such that f(n) ≤ c·g(n) for all n ≥ n₀<br>
+  Example: Linear search. Best case O(1) (first element). Worst case O(n) (last or not found). We say O(n).</div>
+  <div class="defbox"><strong>Big Ω — lower bound (best case)</strong><br>
+  f(n) = Ω(g(n)) iff ∃ constants c &gt; 0, n₀ &gt; 0 such that f(n) ≥ c·g(n) for all n ≥ n₀<br>
+  Example: Any comparison-based sort is Ω(n log n). No comparison sort can do better.</div>
+  <div class="defbox"><strong>Big Θ — tight bound (both sides)</strong><br>
+  f(n) = Θ(g(n)) iff f(n) = O(g(n)) AND f(n) = Ω(g(n))<br>
+  Example: Merge sort is Θ(n log n) — always n log n regardless of input.</div>
+</div>
+
+<div class="sec">&#128200; Visualising the Bounds</div>
+<div class="viz-box">
+  f(n) = Θ(g(n)):   c₁·g(n) ≤ f(n) ≤ c₂·g(n)  for large n
+
+        cost
+          │        c₂·g(n) ──── upper bound
+          │       /
+          │      / f(n) ─── actual function (squeezed between bounds)
+          │     /
+          │    / c₁·g(n) ─── lower bound
+          │   /
+          └─────────────── n
+               n₀
+
+Real examples:
+  T(n) = 3n + 7                    → Θ(n)          [linear]
+  T(n) = 5n² + 3n + 100            → Θ(n²)         [quadratic]
+  T(n) = n + 47 log n + 12         → Θ(n)          [n dominates log n]
+  T(n) = n·log(n²)                 → Θ(n log n)    [log(n²) = 2 log n]
+  T(n) = 2^(n+1)                   → Θ(2ⁿ)         [constant factor 2]
+  T(n) = log₂n + log₃n             → Θ(log n)      [all logs are O(log n)]</div>
+
+<div class="sec">&#128268; Best ≠ O, Worst ≠ Ω &#8212; Common Mistake</div>
+<div class="card">
+  <p style="color:var(--tm);margin-bottom:12px">Big O is an upper bound — it does NOT mean "worst case". Big Omega is a lower bound — it does NOT mean "best case". They are mathematical bounds on a function.</p>
+  <table class="cmp-table">
+    <tr><th>Algorithm</th><th>Best case</th><th>Worst case</th><th>Θ exists?</th></tr>
+    <tr><td>Insertion sort (sorted input)</td><td class="g">O(n)</td><td class="h">O(n²)</td><td>No — differs by input</td></tr>
+    <tr><td>Merge sort</td><td class="g">O(n log n)</td><td class="g">O(n log n)</td><td class="g">Yes — Θ(n log n)</td></tr>
+    <tr><td>QuickSort (random pivot)</td><td class="g">O(n log n)</td><td class="h">O(n²)</td><td>No — pivots matter</td></tr>
+    <tr><td>Binary search</td><td class="g">O(1)</td><td class="g">O(log n)</td><td>No — depends on position</td></tr>
+    <tr><td>Linear scan</td><td class="g">O(1)</td><td class="h">O(n)</td><td>No</td></tr>
+    <tr><td>Hash map lookup (good hash)</td><td class="g">O(1)</td><td class="y">O(n)</td><td>No — depends on collisions</td></tr>
+  </table>
+</div>
+
+<div class="sec">&#128295; Recurrence Relations &#8212; Master Theorem</div>
+<div class="card">
+<div class="viz-box">Master Theorem: T(n) = a·T(n/b) + f(n)
+  a = branching factor (sub-problems)
+  b = division factor (how much smaller)
+  f(n) = cost of work at each level
+
+Case 1: f(n) = O(n^(log_b(a) - ε))  → T(n) = Θ(n^log_b(a))
+Case 2: f(n) = Θ(n^log_b(a))         → T(n) = Θ(n^log_b(a) · log n)
+Case 3: f(n) = Ω(n^(log_b(a) + ε))  → T(n) = Θ(f(n))
+
+Common algorithms:
+  Binary search:  T(n)=T(n/2)+O(1)   a=1,b=2, log_2(1)=0, f=O(1)=O(n⁰) → Case 2 → O(log n)
+  Merge sort:     T(n)=2T(n/2)+O(n)  a=2,b=2, log_2(2)=1, f=O(n¹)       → Case 2 → O(n log n)
+  Strassen:       T(n)=7T(n/2)+O(n²) a=7,b=2, log_2(7)≈2.81&gt;2           → Case 1 → O(n^2.81)</div>
+</div>
+
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Simplify T(n) = T(n-1) + O(n)</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Question:</strong> Solve the recurrence T(n) = T(n-1) + O(n). This describes selection sort or any algorithm that does O(n) work at each level and reduces the problem by 1 each time.</div>
+    <div class="iq-approach"><strong>Telescoping:</strong> Expand repeatedly until base case. T(n) = T(n-1)+n = T(n-2)+(n-1)+n = ... = n + (n-1) + ... + 1 = n(n+1)/2 = O(n²). This is the sum of arithmetic series.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">T(n) = T(n-1) + n
+
+Expand (telescoping):
+  T(n)   = T(n-1) + n
+  T(n-1) = T(n-2) + (n-1)
+  T(n-2) = T(n-3) + (n-2)
+  ...
+  T(2)   = T(1)   + 2
+  T(1)   = O(1)   (base)
+
+Substitute back:
+  T(n) = O(1) + 2 + 3 + ... + (n-1) + n
+       = 1 + 2 + 3 + ... + n
+       = n(n+1)/2
+       = O(n²)
+
+Algorithms with this recurrence:
+  - Selection sort (find min in shrinking array)
+  - Insertion sort (worst case: already reverse sorted)
+  - Naive string matching</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Verify empirically</div></div><pre><span class="kw">def</span> <span class="fn">count_ops</span>(n):
+    <span class="cm"># T(n) = T(n-1) + n pattern: e.g. selection sort comparisons</span>
+    total = 0
+    <span class="kw">for</span> i <span class="kw">in</span> range(n):
+        <span class="kw">for</span> j <span class="kw">in</span> range(i+1, n):   <span class="cm"># inner loop shrinks</span>
+            total += 1
+    <span class="kw">return</span> total
+
+<span class="kw">for</span> n <span class="kw">in</span> [10, 100, 1000]:
+    ops = count_ops(n)
+    formula = n*(n-1)//2
+    print(f<span class="nm">"n={n}: ops={ops}, n(n-1)/2={formula}"</span>)
+<span class="cm"># n=10: ops=45, n(n-1)/2=45 ✓</span></pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n²)</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Compare Θ vs O for Merge Sort vs Quick Sort</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Question:</strong> Merge sort is O(n log n). Quick sort is also O(n log n). But merge sort is Θ(n log n) while quick sort is NOT Θ(n log n). Explain why.</div>
+    <div class="iq-approach"><strong>Θ requires both bounds to hold for ALL inputs.</strong> Merge sort always divides evenly, always does O(n) merge work — the recurrence is always T(n)=2T(n/2)+O(n) regardless of input → Θ(n log n). Quick sort's recurrence depends on pivot: with sorted input and bad pivot, T(n)=T(n-1)+O(n) → O(n²). So O(n²) worst case means it cannot be Θ(n log n).</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">Merge sort on any input:
+  Level 0:  1 problem of size n  →  n work
+  Level 1:  2 problems of n/2    →  n work
+  Level 2:  4 problems of n/4    →  n work
+  ...
+  log n levels, n work each = Θ(n log n) always
+
+Quick sort — good pivot (median):
+  Level 0:  1 problem of size n  →  n work
+  Level 1:  2 problems of n/2    →  n work (balanced!)
+  → Θ(n log n) this time
+
+Quick sort — bad pivot (always smallest):
+  Level 0:  1 problem of size n  →  n comparisons
+  Level 1:  1 problem of size n-1→  n-1 comparisons
+  ...
+  n levels total → Θ(n²) this time
+
+Since worst case is Θ(n²), we cannot say T(n)=Θ(n log n).
+We CAN say T(n)=O(n²) and T(n)=Ω(n log n).</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · QuickSort worst case demo</div></div><pre><span class="kw">import</span> sys; sys.setrecursionlimit(10000)
+<span class="kw">def</span> <span class="fn">qsort_worst</span>(arr):
+    <span class="cm"># Always pick first as pivot → worst on sorted input</span>
+    <span class="kw">if</span> len(arr) &lt;= 1: <span class="kw">return</span> arr
+    pivot = arr[0]
+    left  = [x <span class="kw">for</span> x <span class="kw">in</span> arr[1:] <span class="kw">if</span> x &lt;= pivot]
+    right = [x <span class="kw">for</span> x <span class="kw">in</span> arr[1:] <span class="kw">if</span> x  &gt; pivot]
+    <span class="kw">return</span> qsort_worst(left) + [pivot] + qsort_worst(right)
+<span class="cm"># sorted([1..1000]) triggers O(n²) — 1000 levels of recursion!</span></pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n²) worst, O(n log n) avg</span>
+      <span class="iq-pill s">Space: O(n) stack</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">What is o(n) (little o) vs O(n)?</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Question:</strong> What is the difference between o(n) and O(n)? Give an example function that is O(n) but not o(n).</div>
+    <div class="iq-approach"><strong>Little-o is strictly less than; Big-O is at most.</strong> f(n) = o(g(n)) means f grows STRICTLY SLOWER than g — for every c > 0, there exists n₀ such that f(n) < c·g(n). Big-O allows equality. So O(n) includes Θ(n), but o(n) excludes it.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">o(n) vs O(n):
+
+f(n) = 5      is o(n)?  YES: 5 &lt; c·n for all n&gt;5/c  (constant is strictly slower than linear)
+f(n) = log n  is o(n)?  YES: log n grows strictly slower than n
+f(n) = n      is o(n)?  NO:  n ≥ c·n means c≤1, but "for EVERY c" must hold; for c=1, n&lt;1·n is false
+
+f(n) = n is O(n)? YES: n ≤ 1·n for all n ≥ 1 ✓
+f(n) = n is o(n)? NO:  for c=1, we'd need n&lt;1·n=n which is false ✗
+
+So linear search T(n) = n is O(n) but NOT o(n).
+It's Θ(n) — tight bound.
+
+Analogy:
+  O(n)  like  ≤  (at most)
+  o(n)  like  &lt;  (strictly less than)
+  Ω(n)  like  ≥  (at least)
+  ω(n)  like  &gt;  (strictly greater than)
+  Θ(n)  like  =  (exactly)</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(log n) is o(n)</span>
+      <span class="iq-pill s">Space: N/A</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

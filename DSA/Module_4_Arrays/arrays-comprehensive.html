@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Arrays — Module 4</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+/* ── expanded interview question styles ── */
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+/* ===== deep-dive intuition card ===== */
+.pat{background:linear-gradient(160deg,rgba(79,70,229,.08),rgba(15,23,42,.4));border:1px solid var(--brd);border-radius:18px;padding:30px 34px;margin:24px 0 40px;}
+.pat-lead{font-size:.95rem;color:var(--t);line-height:1.85;margin-bottom:6px;}
+.pat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+@media(max-width:760px){.pat-grid{grid-template-columns:1fr;}}
+.pat-cell{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:18px 22px;}
+.pat-cell h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.pat-cell.when h4{color:var(--w);}.pat-cell.state h4{color:var(--a);}
+.pat-cell.rec h4{color:var(--pl);}.pat-cell.base h4{color:var(--s);}
+.pat-cell p,.pat-cell li{font-size:.9rem;color:var(--tm);line-height:1.8;}
+.pat-cell ul{padding-left:18px;margin-top:6px;}.pat-cell li{margin:4px 0;}
+.formula{background:var(--cbg);border:1px solid #30363d;border-radius:10px;padding:16px 20px;margin:14px 0;font-family:'Fira Code','Courier New',monospace;font-size:.9rem;color:#a5b4fc;line-height:1.9;overflow-x:auto;}
+.formula .hl{color:#67e8f9;font-weight:700;}
+.keywords{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+.kwp{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:3px 14px;font-size:.8rem;font-weight:600;}
+.pitfall{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.03));border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.pitfall .pl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#fca5a5;font-weight:700;margin-bottom:6px;}
+.pitfall p{font-size:.88rem;color:#fecaca;line-height:1.8;}
+.real{background:linear-gradient(135deg,rgba(16,185,129,.09),rgba(16,185,129,.02));border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.real .rl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#6ee7b7;font-weight:700;margin-bottom:8px;}
+.real ul{padding-left:18px;margin:0;}.real li{font-size:.88rem;color:#a7f3d0;line-height:1.85;margin:5px 0;}
+.real li b{color:#d1fae5;}
+/* ===== animated SVG figure ===== */
+.fig{background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,.06),transparent 70%),var(--cbg);border:1px solid #30363d;border-radius:14px;padding:24px;margin:22px 0;overflow-x:auto;}
+.fig svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+.fig-cap{text-align:center;font-size:.82rem;color:var(--tm);margin-top:14px;font-style:italic;}
+.fig-cap b{color:var(--a);font-style:normal;}
+.fig-title{font-size:1.02rem;color:var(--t);margin:8px 0 10px;font-weight:700;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:16px;}
+.legend span{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--tm);}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;}
+.svg-t{fill:#e2e8f0;font-family:'Fira Code',monospace;}
+.svg-tm{fill:#94a3b8;font-family:'Segoe UI',sans-serif;}
+.svg-lbl{fill:#67e8f9;font-family:'Segoe UI',sans-serif;font-weight:700;}
+.svg-acc{fill:#fcd34d;font-family:'Fira Code',monospace;}
+.svg-s{fill:#6ee7b7;font-family:'Fira Code',monospace;}
+.svg-d{fill:#fca5a5;font-family:'Fira Code',monospace;}
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 4 · Arrays — The Foundation</div><h1>Every Algorithm Starts<br><span>with an Array</span></h1><p>Arrays are the most basic data structure and the most common interview topic. Master these patterns cold.</p><div class="stats"><div class="stat"><div class="sn">O(1)</div><div class="sl">Index access</div></div><div class="stat"><div class="sn">O(n)</div><div class="sl">Most problems</div></div><div class="stat"><div class="sn">Prefix Sums</div><div class="sl">Superpower technique</div></div><div class="stat"><div class="sn">FAANG ⭐⭐⭐</div><div class="sl">Most common topic</div></div></div></div></div><div class="wrap">
+<div class="sec">🧠 The Story — The Scoreboard</div>
+<div class="story">
+  <div class="slabel">Real World Story — Game Scores</div>
+  <h3>You have a scoreboard with daily scores. "What's the total score from day 3 to day 7?" — 100 times a day.</h3>
+  <p>
+    <strong>Naive:</strong> Scan days 3 to 7 each time. O(n) per query. 100 queries = 100n operations.<br><br>
+    <strong>Prefix Sum:</strong> Precompute prefix[i] = sum of scores[0..i]. Then query(3,7) = prefix[7] - prefix[2]. O(1) per query after O(n) preprocessing.<br><br>
+    This "precompute once, query many times" pattern is the essence of the prefix sum technique — and it appears in dozens of interview problems.
+  </p>
+</div>
+
+<div class="ibox">
+  <div class="lbl">The Core Array Patterns</div>
+  <ul>
+    <li><strong>Prefix Sum:</strong> Precompute cumulative sums for range queries</li>
+    <li><strong>Two Pointers:</strong> Reduce O(n^2) to O(n) for pair/triplet problems</li>
+    <li><strong>Sliding Window:</strong> Find optimal contiguous subarray</li>
+    <li><strong>Kadane's Algorithm:</strong> Maximum subarray in O(n)</li>
+    <li><strong>Boyer-Moore Voting:</strong> Find majority element in O(1) space</li>
+    <li><strong>Binary Search on Answer:</strong> "Find minimum k such that condition holds"</li>
+  </ul>
+</div>
+
+<div class="sec">💡 The Deep Intuition — Trade a Second Loop for a Single Memory</div>
+<div class="pat">
+  <p class="pat-lead">Almost every "fast array" trick is the same move in disguise: <b>the brute-force solution re-walks the array again and again; the fast one walks it once and <em>remembers</em> the right summary as it goes.</b> Prefix sums remember a running total. Two pointers remember where the other end is. Sliding windows remember the current window's contents. Kadane remembers the best subarray ending here. Once you see "I'm recomputing something I already knew," you've found the optimization.</p>
+  <div class="pat-grid">
+    <div class="pat-cell when">
+      <h4>🟡 Prefix sum — precompute once</h4>
+      <p>When you'll answer <em>many</em> range-sum questions, build a cumulative array first. Then any range is one subtraction: a re-scan per query (O(n)) collapses to O(1). Generalises to prefix-XOR, prefix-count, and 2D prefix sums for submatrix queries.</p>
+    </div>
+    <div class="pat-cell state">
+      <h4>🔵 Two pointers — squeeze from both ends</h4>
+      <p>On <em>sorted</em> data, a left and right pointer let you decide which way to move from the current sum: too small → move left up, too big → move right down. Each pointer only ever advances, so the whole scan is O(n) instead of O(n²).</p>
+    </div>
+    <div class="pat-cell rec">
+      <h4>🟣 Kadane — the local/global trick</h4>
+      <p>The maximum subarray ends <em>somewhere</em>. So ask at each index: "best sum ending here?" Either extend the previous best or restart fresh:</p>
+      <div class="formula">curr = <span class="hl">max</span>(num, curr + num)<br>best = max(best, curr)</div>
+    </div>
+    <div class="pat-cell base">
+      <h4>🟢 Boyer-Moore — cancel the noise</h4>
+      <p>A true majority (&gt; n/2) survives if every other value cancels one copy of it. Keep a candidate and a count; pair off opposites. Whatever is left standing must be the majority — O(n) time, O(1) space, almost magical.</p>
+    </div>
+  </div>
+  <div class="keywords">
+    <span class="kwp">range sum</span><span class="kwp">two pointers</span><span class="kwp">sliding window</span><span class="kwp">max subarray</span><span class="kwp">in-place O(1)</span><span class="kwp">prefix / suffix</span>
+  </div>
+  <div class="real">
+    <div class="rl">🌍 Where these array tricks earn their keep</div>
+    <ul>
+      <li><b>Spreadsheets &amp; dashboards:</b> a "running total" column is a prefix sum; "revenue from Q2 to Q3" is one subtraction, not a re-add.</li>
+      <li><b>Your bank statement:</b> the balance after each transaction is a prefix sum of deposits and withdrawals.</li>
+      <li><b>Image processing (integral images):</b> 2D prefix sums let face-detection sum any rectangle of pixels in O(1) — the trick behind real-time camera filters.</li>
+      <li><b>Stock analysis:</b> "best buy-low/sell-high window" is exactly Kadane's maximum-subarray on daily price changes.</li>
+      <li><b>Voting &amp; streaming telemetry:</b> Boyer-Moore finds the dominant signal in one pass over a firehose, using almost no memory.</li>
+    </ul>
+  </div>
+  <div class="pitfall">
+    <div class="pl">⚠️ Classic off-by-one &amp; ordering traps</div>
+    <p><b>Prefix bounds:</b> with a size-(n+1) prefix array, range <code>[l, r]</code> inclusive is <code>prefix[r+1] - prefix[l]</code> — mixing these up is the #1 bug. <b>Two pointers need sorted input</b> — forgetting to sort first silently returns wrong pairs. <b>Kadane with all-negative arrays:</b> initialise <code>best</code> to the first element (or −∞), not 0, or you'll wrongly return 0 for <code>[-3,-1,-2]</code>.</p>
+  </div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Prefix Sum, Kadane, Boyer-Moore</div></div><pre><span class="cm"># --- Prefix Sum: range sum in O(1) ---</span>
+<span class="kw">def</span> <span class="fn">build_prefix</span>(nums):
+    prefix = [0] * (len(nums) + 1)
+    <span class="kw">for</span> i, v <span class="kw">in</span> enumerate(nums):
+        prefix[i+1] = prefix[i] + v
+    <span class="kw">return</span> prefix
+<span class="cm"># query(l, r) = prefix[r+1] - prefix[l]</span>
+
+<span class="cm"># --- Kadane's: Maximum Subarray O(n) ---</span>
+<span class="kw">def</span> <span class="fn">max_subarray</span>(nums):
+    max_sum = curr = nums[0]
+    <span class="kw">for</span> num <span class="kw">in</span> nums[1:]:
+        curr = max(num, curr + num)   <span class="cm"># extend or restart subarray</span>
+        max_sum = max(max_sum, curr)
+    <span class="kw">return</span> max_sum
+
+<span class="cm"># --- Boyer-Moore Voting: Majority Element O(n) time, O(1) space ---</span>
+<span class="kw">def</span> <span class="fn">majority_element</span>(nums):
+    count, candidate = 0, None
+    <span class="kw">for</span> num <span class="kw">in</span> nums:
+        <span class="kw">if</span> count == 0: candidate = num
+        count += 1 <span class="kw">if</span> num == candidate <span class="kw">else</span> -1
+    <span class="kw">return</span> candidate   <span class="cm"># guaranteed >n/2, so always survives cancellation</span>
+
+<span class="cm"># --- Product of Array Except Self: O(n), O(1) space ---</span>
+<span class="kw">def</span> <span class="fn">product_except_self</span>(nums):
+    n = len(nums)
+    result = [1] * n
+    <span class="kw">for</span> i <span class="kw">in</span> range(1, n):
+        result[i] = result[i-1] * nums[i-1]   <span class="cm"># left products</span>
+    right = 1
+    <span class="kw">for</span> i <span class="kw">in</span> range(n-1, -1, -1):
+        result[i] *= right                     <span class="cm"># multiply right products</span>
+        right *= nums[i]
+    <span class="kw">return</span> result
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Prefix sum — build cumulative totals once, answer any range in O(1)</div>
+  <svg viewBox="0 0 620 300" width="620" role="img" aria-label="Animated prefix sum range query">
+    <text x="310" y="24" text-anchor="middle" class="svg-tm" font-size="13">nums = [3, 1, 4, 1, 5] · query(1, 3) = nums[1]+nums[2]+nums[3]</text>
+    <!-- nums row -->
+    <text x="60" y="74" class="svg-tm" font-size="12">nums</text>
+    <rect x="214" y="50" width="184" height="40" rx="7" fill="rgba(245,158,11,.14)" stroke="#f59e0b" stroke-width="2.5" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.64;0.68;1" dur="11s" repeatCount="indefinite"/></rect>
+    <g text-anchor="middle" font-size="18">
+      <rect x="150" y="50" width="56" height="40" rx="7" fill="#162032" stroke="#475569"/><text x="178" y="77" class="svg-t">3</text>
+      <rect x="214" y="50" width="56" height="40" rx="7" fill="#162032" stroke="#475569"/><text x="242" y="77" class="svg-t">1</text>
+      <rect x="278" y="50" width="56" height="40" rx="7" fill="#162032" stroke="#475569"/><text x="306" y="77" class="svg-t">4</text>
+      <rect x="342" y="50" width="56" height="40" rx="7" fill="#162032" stroke="#475569"/><text x="370" y="77" class="svg-t">1</text>
+      <rect x="406" y="50" width="56" height="40" rx="7" fill="#162032" stroke="#475569"/><text x="434" y="77" class="svg-t">5</text>
+    </g>
+    <!-- prefix row -->
+    <text x="40" y="160" class="svg-tm" font-size="12">prefix</text>
+    <g text-anchor="middle" font-size="17">
+      <rect x="120" y="136" width="52" height="40" rx="7" fill="#0d1117" stroke="#30363d"/><text x="146" y="162" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.03;0.07;1" dur="11s" repeatCount="indefinite"/>0</text>
+      <rect x="186" y="136" width="52" height="40" rx="7" fill="#0d1117" stroke="#30363d"/><text x="212" y="162" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.12;0.16;1" dur="11s" repeatCount="indefinite"/>3</text>
+      <rect x="252" y="136" width="52" height="40" rx="7" fill="#0d1117" stroke="#30363d"/><text x="278" y="162" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.21;0.25;1" dur="11s" repeatCount="indefinite"/>4</text>
+      <rect x="318" y="136" width="52" height="40" rx="7" fill="#0d1117" stroke="#30363d"/><text x="344" y="162" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.30;0.34;1" dur="11s" repeatCount="indefinite"/>8</text>
+      <rect x="384" y="136" width="52" height="40" rx="7" fill="#0d1117" stroke="#30363d"/><text x="410" y="162" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.39;0.43;1" dur="11s" repeatCount="indefinite"/>9</text>
+      <rect x="450" y="136" width="52" height="40" rx="7" fill="#0d1117" stroke="#30363d"/><text x="476" y="162" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.48;0.52;1" dur="11s" repeatCount="indefinite"/>14</text>
+    </g>
+    <text x="146" y="196" text-anchor="middle" class="svg-tm" font-size="11">[0]</text>
+    <!-- query highlights on prefix -->
+    <rect x="186" y="136" width="52" height="40" rx="7" fill="none" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.64;0.68;1" dur="11s" repeatCount="indefinite"/></rect>
+    <rect x="384" y="136" width="52" height="40" rx="7" fill="none" stroke="#fcd34d" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.64;0.68;1" dur="11s" repeatCount="indefinite"/></rect>
+    <text x="212" y="200" text-anchor="middle" class="svg-lbl" font-size="11" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.64;0.68;1" dur="11s" repeatCount="indefinite"/>prefix[1]</text>
+    <text x="410" y="200" text-anchor="middle" class="svg-acc" font-size="11" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.64;0.68;1" dur="11s" repeatCount="indefinite"/>prefix[4]</text>
+    <!-- result -->
+    <text x="310" y="248" text-anchor="middle" class="svg-s" font-size="16" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.76;0.80;1" dur="11s" repeatCount="indefinite"/>query(1,3) = prefix[4] − prefix[1] = 9 − 3 = 6 ✓</text>
+    <text x="310" y="274" text-anchor="middle" class="svg-tm" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.82;0.86;1" dur="11s" repeatCount="indefinite"/>one subtraction — no matter how many elements the range spans</text>
+  </svg>
+  <div class="fig-cap"><b>Pay O(n) once, then every query is O(1).</b> <code>prefix[i+1] = prefix[i] + nums[i]</code> stores the running total; the sum of any window is the difference of its two endpoints. A thousand range queries that would cost a thousand re-scans become a thousand subtractions. ▶ loops every 11s.</div>
+</div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Kadane's algorithm — extend the run, or cut your losses and restart</div>
+  <svg viewBox="0 0 640 280" width="640" role="img" aria-label="Animated Kadane maximum subarray">
+    <text x="320" y="24" text-anchor="middle" class="svg-tm" font-size="13">nums = [−2, 1, −3, 4, −1, 2, 1, −5] · curr = max(num, curr+num)</text>
+    <g text-anchor="middle" font-size="17">
+      <rect x="80" y="50" width="60" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="110" y="77" class="svg-d">−2</text>
+      <rect x="148" y="50" width="60" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="178" y="77" class="svg-t">1</text>
+      <rect x="216" y="50" width="60" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="246" y="77" class="svg-d">−3</text>
+      <rect x="284" y="50" width="60" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="314" y="77" class="svg-t">4</text>
+      <rect x="352" y="50" width="60" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="382" y="77" class="svg-d">−1</text>
+      <rect x="420" y="50" width="60" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="450" y="77" class="svg-t">2</text>
+      <rect x="488" y="50" width="60" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="518" y="77" class="svg-t">1</text>
+      <rect x="556" y="50" width="60" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="586" y="77" class="svg-d">−5</text>
+    </g>
+    <!-- winning subarray highlight [4,-1,2,1] = indices 3..6 -->
+    <rect x="284" y="50" width="264" height="42" rx="7" fill="rgba(16,185,129,.15)" stroke="#10b981" stroke-width="2.5" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.74;0.78;1" dur="12s" repeatCount="indefinite"/></rect>
+    <!-- running curr ticker -->
+    <g font-family="'Fira Code',monospace" font-size="13" text-anchor="start">
+      <text x="80" y="140" class="svg-tm" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.06;0.09;0.15;0.17" dur="12s" repeatCount="indefinite"/>−2:  curr = −2          best = −2</text>
+      <text x="80" y="140" class="svg-tm" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.17;0.20;0.26;0.28" dur="12s" repeatCount="indefinite"/> 1:  curr = max(1, −1) = 1   best = 1</text>
+      <text x="80" y="140" class="svg-tm" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.28;0.31;0.37;0.39" dur="12s" repeatCount="indefinite"/>−3:  curr = max(−3, −2) = −2  best = 1</text>
+      <text x="80" y="140" class="svg-acc" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.39;0.42;0.48;0.50" dur="12s" repeatCount="indefinite"/> 4:  curr = max(4, 2) = 4 ← restart!  best = 4</text>
+      <text x="80" y="140" class="svg-tm" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.50;0.53;0.59;0.61" dur="12s" repeatCount="indefinite"/>−1:  curr = 3           best = 4</text>
+      <text x="80" y="140" class="svg-tm" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.61;0.64;0.70;0.72" dur="12s" repeatCount="indefinite"/> 2:  curr = 5           best = 5</text>
+      <text x="80" y="140" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.72;0.75;1" dur="12s" repeatCount="indefinite"/> 1:  curr = 6           best = 6  ✓</text>
+    </g>
+    <text x="320" y="186" text-anchor="middle" class="svg-s" font-size="15" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.78;0.82;1" dur="12s" repeatCount="indefinite"/>maximum subarray = [4, −1, 2, 1] = 6</text>
+    <text x="320" y="214" text-anchor="middle" class="svg-tm" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.84;0.88;1" dur="12s" repeatCount="indefinite"/>at index 3, the past sum (−2) only hurts, so we drop it and restart at 4</text>
+  </svg>
+  <div class="fig-cap"><b>The whole algorithm is one decision, repeated.</b> At each element: is the running sum still helping? If <code>curr + num &lt; num</code>, the past is dead weight — throw it away and start a fresh run here. A single O(n) pass, O(1) memory. ▶ loops every 12s.</div>
+  <div class="legend">
+    <span><i style="background:#fcd34d"></i>restart point</span>
+    <span><i style="background:#10b981"></i>winning subarray</span>
+    <span><i style="background:#fca5a5"></i>negative drag</span>
+  </div>
+</div>
+
+<div class="sec">🎬 Two Pointers — Three Sum</div>
+<div class="ts">
+  <div class="sn2">💡</div>
+  <div class="sc"><strong>3Sum: Find all unique triplets summing to 0.</strong>
+  Sort first. Fix one element i. Use two pointers l=i+1, r=n-1.
+  Sum = nums[i]+nums[l]+nums[r]:
+  — if sum==0: found triplet, skip duplicates, move both pointers
+  — if sum&lt;0: l++ (need larger)
+  — if sum>0: r-- (need smaller)
+  <div class="mini">nums=[-4,-1,-1,0,1,2] (sorted)
+i=0 (nums[0]=-4): l=1,r=5: -4+-1+2=-3 &lt;0 → l++
+  l=2,r=5: -4+-1+2=-3 &lt;0 → l++
+  l=3,r=5: -4+0+2=-2 &lt;0 → l++
+  l=4,r=5: -4+1+2=-1 &lt;0 → l++
+i=1 (nums[1]=-1): l=2,r=5: -1+-1+2=0 → ADD! skip dups.
+  l=3,r=4: -1+0+1=0 → ADD!
+i=2 (nums[2]=-1): skip (same as i=1)
+Result: [[-1,-1,2],[-1,0,1]] ✓</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · 3Sum, Container With Most Water, Jump Game</div></div><pre><span class="cm"># --- 3Sum ---</span>
+<span class="kw">def</span> <span class="fn">three_sum</span>(nums):
+    nums.sort(); result = []
+    <span class="kw">for</span> i <span class="kw">in</span> range(len(nums) - 2):
+        <span class="kw">if</span> i > 0 <span class="kw">and</span> nums[i] == nums[i-1]: <span class="kw">continue</span>  <span class="cm"># skip dups</span>
+        l, r = i+1, len(nums)-1
+        <span class="kw">while</span> l < r:
+            s = nums[i] + nums[l] + nums[r]
+            <span class="kw">if</span>   s == 0:
+                result.append([nums[i], nums[l], nums[r]])
+                <span class="kw">while</span> l < r <span class="kw">and</span> nums[l] == nums[l+1]: l += 1  <span class="cm"># skip dups</span>
+                <span class="kw">while</span> l < r <span class="kw">and</span> nums[r] == nums[r-1]: r -= 1
+                l += 1; r -= 1
+            <span class="kw">elif</span> s < 0: l += 1
+            <span class="kw">else</span>:       r -= 1
+    <span class="kw">return</span> result
+
+<span class="cm"># --- Jump Game I: can you reach end? ---</span>
+<span class="kw">def</span> <span class="fn">can_jump</span>(nums):
+    reach = 0
+    <span class="kw">for</span> i, jump <span class="kw">in</span> enumerate(nums):
+        <span class="kw">if</span> i > reach: <span class="kw">return</span> False        <span class="cm"># can't reach this position</span>
+        reach = max(reach, i + jump)    <span class="cm"># update farthest reachable</span>
+    <span class="kw">return</span> True
+</pre></div>
+<div class="fig">
+  <div class="fig-title">🎬 3Sum — fix one number, then squeeze two pointers toward each other</div>
+  <svg viewBox="0 0 600 280" width="600" role="img" aria-label="Animated 3Sum two pointers">
+    <text x="300" y="22" text-anchor="middle" class="svg-tm" font-size="13">sorted nums = [−4, −1, −1, 0, 1, 2] · fix i, move L/R by the sum</text>
+    <g text-anchor="middle" font-size="17">
+      <rect x="80" y="48" width="70" height="46" rx="8" fill="#162032" stroke="#475569"/><text x="115" y="77" class="svg-t">−4</text>
+      <rect x="160" y="48" width="70" height="46" rx="8" fill="rgba(129,140,248,.15)" stroke="#818cf8" stroke-width="2.5"/><text x="195" y="77" class="svg-t">−1</text>
+      <rect x="240" y="48" width="70" height="46" rx="8" fill="#162032" stroke="#475569"/><text x="275" y="77" class="svg-t">−1</text>
+      <rect x="320" y="48" width="70" height="46" rx="8" fill="#162032" stroke="#475569"/><text x="355" y="77" class="svg-t">0</text>
+      <rect x="400" y="48" width="70" height="46" rx="8" fill="#162032" stroke="#475569"/><text x="435" y="77" class="svg-t">1</text>
+      <rect x="480" y="48" width="70" height="46" rx="8" fill="#162032" stroke="#475569"/><text x="515" y="77" class="svg-t">2</text>
+    </g>
+    <text x="195" y="116" text-anchor="middle" class="svg-lbl" font-size="12" fill="#a5b4fc">▲ i = −1 (fixed)</text>
+    <g opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.14;0.18;0.40;0.43" dur="11s" repeatCount="indefinite"/>
+      <text x="275" y="134" text-anchor="middle" class="svg-lbl" font-size="12">▲ L</text>
+      <text x="515" y="134" text-anchor="middle" class="svg-acc" font-size="12">▲ R</text>
+      <text x="300" y="170" text-anchor="middle" class="svg-t" font-size="14">−1 + (−1) + 2 = 0 → triplet found: [−1, −1, 2]</text>
+    </g>
+    <g opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.43;0.47;0.66;0.69" dur="11s" repeatCount="indefinite"/>
+      <text x="355" y="134" text-anchor="middle" class="svg-lbl" font-size="12">▲ L</text>
+      <text x="435" y="134" text-anchor="middle" class="svg-acc" font-size="12">▲ R</text>
+      <text x="300" y="170" text-anchor="middle" class="svg-t" font-size="14">−1 + 0 + 1 = 0 → triplet found: [−1, 0, 1]</text>
+    </g>
+    <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.70;0.74;1" dur="11s" repeatCount="indefinite"/>
+      <text x="395" y="134" text-anchor="middle" class="svg-tm" font-size="12">L ≥ R → done with this i</text>
+    </g>
+    <text x="300" y="212" text-anchor="middle" class="svg-s" font-size="15" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.76;0.80;1" dur="11s" repeatCount="indefinite"/>result = [[−1, −1, 2], [−1, 0, 1]]</text>
+    <text x="300" y="240" text-anchor="middle" class="svg-tm" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.82;0.86;1" dur="11s" repeatCount="indefinite"/>sum&lt;0 → L++ (need bigger) · sum&gt;0 → R−− (need smaller) · =0 → record &amp; move both</text>
+  </svg>
+  <div class="fig-cap"><b>Sorting is what unlocks the two pointers.</b> Because the array is ordered, the sum tells you <em>which</em> pointer to move: too small, raise the floor; too big, lower the ceiling. The inner scan is O(n), so the whole 3Sum is O(n²) instead of the brute-force O(n³). ▶ loops every 11s.</div>
+  <div class="legend">
+    <span><i style="background:#818cf8"></i>fixed element i</span>
+    <span><i style="background:#06b6d4"></i>left pointer</span>
+    <span><i style="background:#f59e0b"></i>right pointer</span>
+  </div>
+</div>
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Next Permutation</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 31):</strong> Find the next lexicographically greater permutation of array. If already the largest, rearrange to smallest (ascending order). Must modify in-place.</div>
+    <div class="iq-approach"><strong>Three-step algorithm:</strong> (1) Find rightmost index i where nums[i] < nums[i+1] — this is the 'descent' point. (2) Find smallest element to the right of i that is greater (rightmost j where nums[j]>nums[i]). (3) Swap i and j, then reverse everything after i.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums = [1,2,3,2,1]
+
+Step 1 — Find rightmost ascent:
+  scan from right: nums[3]=2 < nums[2]=3? No. nums[2]=3 > nums[1]=2? Yes.
+  Wait: find where nums[i] < nums[i+1] FROM RIGHT:
+  i=3: nums[3]=2 > nums[4]=1 → no
+  i=2: nums[2]=3 > nums[3]=2 → no
+  i=1: nums[1]=2 < nums[2]=3 → YES! i=1
+
+Step 2 — Find smallest element > nums[1]=2 to the right:
+  nums[2]=3, nums[3]=2, nums[4]=1
+  Rightmost > 2: j=2 (value 3)
+
+Step 3 — Swap i=1 and j=2:
+  [1,3,2,2,1]
+  Reverse suffix after i=1: reverse [2,2,1] → [1,2,2]
+  Result: [1,3,1,2,2] ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Next Permutation</div></div><pre><span class="kw">def</span> <span class="fn">next_permutation</span>(nums):
+    n = len(nums)
+    i = n - 2
+    <span class="cm"># Step 1: find rightmost ascent</span>
+    <span class="kw">while</span> i >= 0 <span class="kw">and</span> nums[i] >= nums[i+1]: i -= 1
+
+    <span class="kw">if</span> i >= 0:
+        <span class="cm"># Step 2: find rightmost element > nums[i]</span>
+        j = n - 1
+        <span class="kw">while</span> nums[j] &lt;= nums[i]: j -= 1
+        nums[i], nums[j] = nums[j], nums[i]   <span class="cm"># Step 2: swap</span>
+
+    <span class="cm"># Step 3: reverse suffix (make it ascending)</span>
+    nums[i+1:] = nums[i+1:][::-1]</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Find Duplicate — Floyd's Cycle Detection</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 287):</strong> Array of n+1 integers where each is in [1,n]. Exactly one duplicate exists. Find it without modifying array and using O(1) extra space.</div>
+    <div class="iq-approach"><strong>Floyd's cycle detection disguised as an array problem:</strong> View the array as a linked list where nums[i] points to the next node. Since values are in [1,n] and there are n+1 elements, a duplicate value means two nodes point to the same next node — creating a cycle. Find the cycle start = the duplicate.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums = [1,3,4,2,2]  (index 0→1, 1→3, 2→4, 3→2, 4→2)
+
+Visualize as linked list: 0→1→3→2→4→2→4→... (cycle!)
+
+Phase 1 — find intersection (slow and fast pointers):
+  slow=nums[0]=1, fast=nums[nums[0]]=nums[1]=3
+  slow=nums[1]=3, fast=nums[nums[3]]=nums[2]=4
+  slow=nums[3]=2, fast=nums[nums[4]]=nums[2]=4
+  slow=nums[2]=4, fast=nums[nums[4]]=nums[2]=4
+  slow==fast=4 → intersection found!
+
+Phase 2 — find cycle start:
+  Reset one pointer to 0 (start):
+  ptr1=0, ptr2=4
+  ptr1=nums[0]=1, ptr2=nums[4]=2
+  ptr1=nums[1]=3, ptr2=nums[2]=4
+  ptr1=nums[3]=2, ptr2=nums[4]=2
+  ptr1==ptr2=2 → cycle start = DUPLICATE = 2 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Find Duplicate (Floyd's)</div></div><pre><span class="kw">def</span> <span class="fn">find_duplicate</span>(nums):
+    <span class="cm"># Phase 1: detect cycle (find intersection)</span>
+    slow = fast = nums[0]
+    <span class="kw">while</span> True:
+        slow = nums[slow]
+        fast = nums[nums[fast]]
+        <span class="kw">if</span> slow == fast: <span class="kw">break</span>
+
+    <span class="cm"># Phase 2: find cycle start (= duplicate)</span>
+    ptr1, ptr2 = 0, slow
+    <span class="kw">while</span> ptr1 != ptr2:
+        ptr1 = nums[ptr1]
+        ptr2 = nums[ptr2]
+    <span class="kw">return</span> ptr1</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">Maximum Product Subarray</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 152):</strong> Find the contiguous subarray with the largest product. E.g. [2,3,-2,4] → 6 ([2,3]).</div>
+    <div class="iq-approach"><strong>Track both min and max simultaneously:</strong> Unlike max sum (Kadane's), products can flip sign. A very negative product times a negative number becomes a large positive. So at each step, track BOTH current max and current min. Swap them when hitting a negative number.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums = [2, 3, -2, 4]
+
+curr_max=1  curr_min=1  global_max=negative_inf
+
+i=0 n=2:
+  new_max = max(2, 1*2, 1*2) = 2
+  new_min = min(2, 1*2, 1*2) = 2
+  curr_max=2, curr_min=2, global_max=2
+
+i=1 n=3:
+  new_max = max(3, 2*3, 2*3) = 6
+  new_min = min(3, 2*3, 2*3) = 3
+  curr_max=6, curr_min=3, global_max=6
+
+i=2 n=-2:
+  new_max = max(-2, 6*(-2), 3*(-2)) = max(-2,-12,-6) = -2
+  new_min = min(-2, 6*(-2), 3*(-2)) = min(-2,-12,-6) = -12
+  curr_max=-2, curr_min=-12, global_max=6
+
+i=3 n=4:
+  new_max = max(4, -2*4, -12*4) = max(4,-8,-48) = 4
+  new_min = min(4, -2*4, -12*4) = -48
+  global_max = max(6, 4) = 6 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Maximum Product Subarray</div></div><pre><span class="kw">def</span> <span class="fn">max_product</span>(nums):
+    curr_max = curr_min = 1
+    global_max = float(<span class="nm">'-inf'</span>)
+
+    <span class="kw">for</span> n <span class="kw">in</span> nums:
+        <span class="cm"># All three candidates for the new max</span>
+        candidates = (n, curr_max*n, curr_min*n)
+        curr_max = max(candidates)
+        curr_min = min(candidates)
+        global_max = max(global_max, curr_max)
+    <span class="kw">return</span> global_max</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

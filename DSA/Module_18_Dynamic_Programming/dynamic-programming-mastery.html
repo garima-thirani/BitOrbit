@@ -1,0 +1,1567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dynamic Programming Mastery — Module 18 (Expanded)</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(6,182,212,.07),rgba(6,182,212,.02));border:1px solid rgba(6,182,212,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--a);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#67e8f9;font-size:1rem;}
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#67e8f9;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--a);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#06b6d4;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#cffafe;background:rgba(6,182,212,.09);border:1px solid rgba(6,182,212,.2);padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(6,182,212,.15);margin:14px 0 10px;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(6,182,212,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--a);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+code{background:rgba(6,182,212,.15);color:var(--a);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+.defbox{background:linear-gradient(135deg,rgba(6,182,212,.08),rgba(6,182,212,.02));border:1px solid rgba(6,182,212,.2);border-left:4px solid var(--a);border-radius:8px;padding:18px 24px;margin:20px 0;}
+.defbox .key{color:var(--a);font-weight:700;}
+/* ===== Pattern deep-dive cards ===== */
+.pat{background:linear-gradient(160deg,rgba(79,70,229,.08),rgba(15,23,42,.4));border:1px solid var(--brd);border-radius:18px;padding:30px 34px;margin:24px 0 40px;}
+.pat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+@media(max-width:760px){.pat-grid{grid-template-columns:1fr;}}
+.pat-cell{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:18px 22px;}
+.pat-cell h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.pat-cell.when h4{color:var(--w);}.pat-cell.state h4{color:var(--a);}
+.pat-cell.rec h4{color:var(--pl);}.pat-cell.base h4{color:var(--s);}
+.pat-cell p,.pat-cell li{font-size:.9rem;color:var(--tm);line-height:1.8;}
+.pat-cell ul{padding-left:18px;margin-top:6px;}.pat-cell li{margin:4px 0;}
+.formula{background:var(--cbg);border:1px solid #30363d;border-radius:10px;padding:16px 20px;margin:14px 0;font-family:'Fira Code','Courier New',monospace;font-size:.9rem;color:#a5b4fc;line-height:1.9;overflow-x:auto;}
+.formula .hl{color:#67e8f9;font-weight:700;}
+.keywords{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+.kwp{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:3px 14px;font-size:.8rem;font-weight:600;}
+/* ===== SVG figure / visualization ===== */
+.fig{background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,.06),transparent 70%),var(--cbg);border:1px solid #30363d;border-radius:14px;padding:24px;margin:22px 0;overflow-x:auto;}
+.fig svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+.fig-cap{text-align:center;font-size:.82rem;color:var(--tm);margin-top:14px;font-style:italic;}
+.fig-cap b{color:var(--a);font-style:normal;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:16px;}
+.legend span{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--tm);}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;}
+/* SVG shared text styles */
+.svg-t{fill:#e2e8f0;font-family:'Fira Code',monospace;}
+.svg-tm{fill:#94a3b8;font-family:'Segoe UI',sans-serif;}
+.svg-lbl{fill:#67e8f9;font-family:'Segoe UI',sans-serif;font-weight:700;}
+.svg-acc{fill:#fcd34d;font-family:'Fira Code',monospace;}
+.walk{background:var(--bc2);border-left:3px solid var(--s);border-radius:0 10px 10px 0;padding:16px 22px;margin:18px 0;}
+.walk .wl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--s);font-weight:700;margin-bottom:8px;}
+.walk p{font-size:.9rem;color:var(--t);line-height:1.85;}
+.walk .step{color:var(--pl);font-family:monospace;font-weight:600;}
+.pitfall{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.03));border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.pitfall .pl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#fca5a5;font-weight:700;margin-bottom:6px;}
+.pitfall p{font-size:.88rem;color:#fecaca;line-height:1.8;}
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 18 · Dynamic Programming Mastery (EXPANDED)</div><h1>Master Dynamic Programming<br><span>Build Deep Intuition for Optimal Substructure</span></h1><p>Complete expansion: DP fundamentals + 6 major DP patterns with 2 detailed interview questions each = 12 worked examples. Includes recurrence relations, memoization vs tabulation comparison, and intuitive explanations to develop genuine DP thinking.</p><div class="stats"><div class="stat"><div class="sn">12 Questions</div><div class="sl">2 per Pattern</div></div><div class="stat"><div class="sn">6 DP Patterns</div><div class="sl">Deep-Dive Cards</div></div><div class="stat"><div class="sn">7 SVG Visuals</div><div class="sl">See It Build Up</div></div><div class="stat"><div class="sn">Pattern Intuition</div><div class="sl">Beyond Memorization</div></div></div></div></div><div class="wrap">
+
+<div class="sec">🧠 What Makes a Problem "DP"?</div>
+
+<div class="story">
+  <div class="slabel">The Three Pillars</div>
+  <h3>DP isn't a template you memorize. It's recognizing three properties.</h3>
+  <p>
+    <strong>1. Optimal Substructure:</strong> The optimal solution is built from optimal solutions of subproblems. E.g., longest increasing subsequence at position i depends on best subsequence ending before i.<br><br>
+    <strong>2. Overlapping Subproblems:</strong> Same subproblem is computed multiple times. Naive recursion recalculates fib(n-2) twice when computing fib(n). Memoization caches the result.<br><br>
+    <strong>3. State Definition:</strong> Define what information uniquely identifies a subproblem. dp[i] = best value using first i elements. dp[i][j] = best value using elements i→j in range. dp[mask] = best value with subset represented by bitmask.
+  </p>
+</div>
+
+<h3>See it: the same subproblem, computed over and over</h3>
+<p class="sub" style="margin-bottom:10px">Naive <code>fib(5)</code> recursion. Notice how <code>fib(2)</code> and <code>fib(3)</code> are recomputed multiple times — that wasted work is <em>exactly</em> what DP eliminates by caching.</p>
+
+<div class="fig">
+  <svg viewBox="0 0 720 340" role="img" aria-label="Fibonacci recursion tree showing overlapping subproblems">
+    <g stroke="#475569" stroke-width="1.6">
+      <line x1="360" y1="44" x2="220" y2="104"/><line x1="360" y1="44" x2="500" y2="104"/>
+      <line x1="220" y1="124" x2="130" y2="184"/><line x1="220" y1="124" x2="310" y2="184"/>
+      <line x1="500" y1="124" x2="430" y2="184"/><line x1="500" y1="124" x2="580" y2="184"/>
+      <line x1="130" y1="204" x2="80" y2="264"/><line x1="130" y1="204" x2="190" y2="264"/>
+      <line x1="430" y1="204" x2="380" y2="264"/><line x1="430" y1="204" x2="490" y2="264"/>
+    </g>
+    <!-- nodes -->
+    <g text-anchor="middle" font-size="15">
+      <circle cx="360" cy="30" r="22" fill="#1a2e52" stroke="#4f46e5"/><text x="360" y="36" class="svg-t">f(5)</text>
+      <circle cx="220" cy="114" r="22" fill="#1a2e52" stroke="#4f46e5"/><text x="220" y="120" class="svg-t">f(4)</text>
+      <circle cx="500" cy="114" r="22" fill="#3a2a12" stroke="#f59e0b"/><text x="500" y="120" class="svg-acc">f(3)</text>
+      <circle cx="130" cy="194" r="22" fill="#3a2a12" stroke="#f59e0b"/><text x="130" y="200" class="svg-acc">f(3)</text>
+      <circle cx="310" cy="194" r="22" fill="#3a1a2e" stroke="#ef4444"/><text x="310" y="200" class="svg-t">f(2)</text>
+      <circle cx="430" cy="194" r="22" fill="#3a1a2e" stroke="#ef4444"/><text x="430" y="200" class="svg-t">f(2)</text>
+      <circle cx="580" cy="194" r="22" fill="#1e293b" stroke="#64748b"/><text x="580" y="200" class="svg-tm">f(1)</text>
+      <circle cx="80"  cy="274" r="22" fill="#3a1a2e" stroke="#ef4444"/><text x="80"  y="280" class="svg-t">f(2)</text>
+      <circle cx="190" cy="274" r="22" fill="#1e293b" stroke="#64748b"/><text x="190" y="280" class="svg-tm">f(1)</text>
+      <circle cx="380" cy="274" r="22" fill="#1e293b" stroke="#64748b"/><text x="380" y="280" class="svg-tm">f(1)</text>
+      <circle cx="490" cy="274" r="22" fill="#1e293b" stroke="#64748b"/><text x="490" y="280" class="svg-tm">f(0)</text>
+    </g>
+    <text x="360" y="324" text-anchor="middle" class="svg-tm" font-size="12">f(3) computed <tspan class="svg-acc">twice</tspan>, f(2) computed <tspan fill="#fca5a5">three times</tspan> → memoize once, reuse everywhere.</text>
+  </svg>
+  <div class="fig-cap"><b>Overlapping subproblems</b> turn an O(n) problem into O(2ⁿ) naively. A cache of size n collapses it back to O(n). That single idea — <b>remember what you already solved</b> — is all of DP.</div>
+  <div class="legend">
+    <span><i style="background:#f59e0b"></i> f(3) — recomputed twice</span>
+    <span><i style="background:#ef4444"></i> f(2) — recomputed 3×</span>
+    <span><i style="background:#64748b"></i> base cases f(0), f(1)</span>
+  </div>
+</div>
+
+<div class="sec">📊 Memoization vs Tabulation: Two Implementation Styles</div>
+
+<div class="card">
+  <table>
+    <thead><tr><th>Aspect</th><th>Memoization (Top-Down)</th><th>Tabulation (Bottom-Up)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Style</strong></td><td>Recursive with caching</td><td>Iterative DP array</td></tr>
+      <tr><td><strong>Intuition</strong></td><td>"I need answer for n, which depends on n-1..."</td><td>"I'll build up from base case"</td></tr>
+      <tr><td><strong>Recurrence</strong></td><td>Explicit: dp[n] = f(dp[n-1], dp[n-2], ...)</td><td>Explicit loops: for i..for j..dp[i][j] = ...</td></tr>
+      <tr><td><strong>Space</strong></td><td>O(recursive depth) + O(cache) = O(n) often</td><td>O(state space size)</td></tr>
+      <tr><td><strong>Efficiency</strong></td><td>Only compute reachable states</td><td>Compute all states (might be wasteful)</td></tr>
+      <tr><td><strong>Example</strong></td><td>fib(5) → fib(4) → fib(3) → cached values</td><td>dp[0]=0, dp[1]=1, then build dp[2..5]</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="sec">📚 DP Pattern 1: Linear DP (1D Problems)</div>
+<p class="sub">The gateway drug to DP. You walk left-to-right through a sequence, and the answer at each position is decided by a small, fixed number of earlier positions.</p>
+
+<div class="pat">
+  <div class="pat-grid">
+    <div class="pat-cell when">
+      <h4>🎯 When To Reach For It</h4>
+      <p>You're scanning a 1D sequence (array/string) and at each index you make a <strong>local decision</strong> (take / skip, extend / restart, jump / stay) whose value only depends on a few previous indices.</p>
+      <ul>
+        <li>"Max/min/count of ways" along a line</li>
+        <li>Adjacent constraint ("can't pick neighbors")</li>
+        <li>Each element either continues or breaks a chain</li>
+      </ul>
+    </div>
+    <div class="pat-cell state">
+      <h4>🧩 State Definition</h4>
+      <p><code>dp[i]</code> = the best answer considering <strong>only the first <code>i</code> elements</strong>, usually with the element at <code>i</code> as the "anchor" (last taken / last in subsequence).</p>
+      <p>The art is choosing what <code>i</code> <em>locks in</em>. For House Robber, <code>dp[i]</code> = max money robbing houses <code>0..i</code>.</p>
+    </div>
+    <div class="pat-cell rec">
+      <h4>🔁 Recurrence</h4>
+      <p>Express today using yesterday. The whole pattern collapses into one line:</p>
+      <div class="formula"><span class="hl">dp[i]</span> = max( dp[i-1], <span class="svg-acc">nums[i]</span> + dp[i-2] )<br><span class="cm"># skip house i  vs.  rob house i + best up to i-2</span></div>
+    </div>
+    <div class="pat-cell base">
+      <h4>🌱 Base Cases (bottom)</h4>
+      <p>The smallest honest answers you can write without recursion:</p>
+      <div class="formula">dp[0] = nums[0]<br>dp[1] = max(nums[0], nums[1])</div>
+      <p>Everything else is <em>built upward</em> from these two truths.</p>
+    </div>
+  </div>
+
+  <h3>Bottom-Up Intuition: watch the table fill</h3>
+  <p class="sub" style="margin-bottom:10px">House Robber on <code>nums = [2, 7, 9, 3, 1]</code>. You can't rob two adjacent houses. Each cell asks one question: <em>"Is it better to skip this house, or rob it and add the best from two houses back?"</em></p>
+
+  <div class="fig">
+    <svg viewBox="0 0 720 320" role="img" aria-label="House Robber DP table being filled bottom-up">
+      <!-- houses row -->
+      <text x="20" y="34" class="svg-lbl" font-size="14">nums (money in each house)</text>
+      <g font-size="18" text-anchor="middle">
+        <rect x="60"  y="48" width="100" height="56" rx="8" fill="#162032" stroke="#334155"/>
+        <rect x="180" y="48" width="100" height="56" rx="8" fill="#162032" stroke="#334155"/>
+        <rect x="300" y="48" width="100" height="56" rx="8" fill="#162032" stroke="#334155"/>
+        <rect x="420" y="48" width="100" height="56" rx="8" fill="#162032" stroke="#334155"/>
+        <rect x="540" y="48" width="100" height="56" rx="8" fill="#162032" stroke="#334155"/>
+        <text x="110" y="82" class="svg-t">2</text>
+        <text x="230" y="82" class="svg-t">7</text>
+        <text x="350" y="82" class="svg-t">9</text>
+        <text x="470" y="82" class="svg-t">3</text>
+        <text x="590" y="82" class="svg-t">1</text>
+        <text x="110" y="124" class="svg-tm" font-size="12">i=0</text>
+        <text x="230" y="124" class="svg-tm" font-size="12">i=1</text>
+        <text x="350" y="124" class="svg-tm" font-size="12">i=2</text>
+        <text x="470" y="124" class="svg-tm" font-size="12">i=3</text>
+        <text x="590" y="124" class="svg-tm" font-size="12">i=4</text>
+      </g>
+      <!-- dp row -->
+      <text x="20" y="172" class="svg-lbl" font-size="14">dp[i] = best loot up to house i</text>
+      <g font-size="18" text-anchor="middle">
+        <rect x="60"  y="186" width="100" height="56" rx="8" fill="#10312a" stroke="#10b981"/>
+        <rect x="180" y="186" width="100" height="56" rx="8" fill="#10312a" stroke="#10b981"/>
+        <rect x="300" y="186" width="100" height="56" rx="8" fill="#1a2e52" stroke="#4f46e5"/>
+        <rect x="420" y="186" width="100" height="56" rx="8" fill="#1a2e52" stroke="#4f46e5"/>
+        <rect x="540" y="186" width="100" height="56" rx="8" fill="#3a2a12" stroke="#f59e0b"/>
+        <text x="110" y="220" class="svg-t">2</text>
+        <text x="230" y="220" class="svg-t">7</text>
+        <text x="350" y="220" class="svg-t">11</text>
+        <text x="470" y="220" class="svg-t">11</text>
+        <text x="590" y="220" class="svg-acc">12</text>
+      </g>
+      <!-- arrows showing dp[2] = nums[2]+dp[0] -->
+      <path d="M110 242 C110 280, 350 280, 350 244" fill="none" stroke="#4f46e5" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#ah)"/>
+      <text x="230" y="298" class="svg-tm" font-size="12" text-anchor="middle">dp[2] = 9 + dp[0] = 9 + 2 = 11  ✓ beats dp[1]=7</text>
+      <defs>
+        <marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#4f46e5"/>
+        </marker>
+      </defs>
+    </svg>
+    <div class="fig-cap"><b>Answer = dp[4] = 12</b> → rob houses 0, 2, 4 (money 2 + 9 + 1). Each green/blue/amber cell was decided by looking only one and two cells back.</div>
+    <div class="legend">
+      <span><i style="background:#10b981"></i> base cases</span>
+      <span><i style="background:#4f46e5"></i> chose to rob (i-2 link)</span>
+      <span><i style="background:#f59e0b"></i> final answer</span>
+    </div>
+  </div>
+
+  <div class="walk">
+    <div class="wl">Cell-by-cell reasoning</div>
+    <p>
+      <span class="step">dp[0]=2</span> only one house, rob it. &nbsp;
+      <span class="step">dp[1]=max(2,7)=7</span> pick the richer of the first two. &nbsp;
+      <span class="step">dp[2]=max(dp[1], 9+dp[0])=max(7,11)=11</span> robbing house 2 unlocks house 0's loot. &nbsp;
+      <span class="step">dp[3]=max(dp[2], 3+dp[1])=max(11,10)=11</span> skip house 3. &nbsp;
+      <span class="step">dp[4]=max(dp[3], 1+dp[2])=max(11,12)=12</span> rob house 4.
+    </p>
+  </div>
+
+  <div class="pitfall">
+    <div class="pl">⚠️ Common Pitfall</div>
+    <p>Don't confuse <code>dp[i]</code> ("best using houses 0..i") with "best <em>ending exactly at</em> i". The House Robber definition allows skipping house i, so <code>dp</code> is monotonic non-decreasing. For LIS the definition is "best subsequence <em>ending at</em> i", which is <strong>not</strong> monotonic — you must take <code>max(dp)</code> at the end, not <code>dp[n-1]</code>.</p>
+  </div>
+
+  <div class="keywords">
+    <span class="kwp">subarray/subsequence</span>
+    <span class="kwp">adjacent constraint</span>
+    <span class="kwp">max/min along line</span>
+    <span class="kwp">count ways</span>
+    <span class="kwp">O(1) rolling space</span>
+  </div>
+</div>
+
+<div class="sec">📚 DP Pattern 2: 2D Range DP</div>
+<p class="sub">Now you have <em>two</em> moving parts — two strings, two indices, or a range with a left and right end. The state becomes a grid, and each cell is filled from its neighbors.</p>
+
+<div class="pat">
+  <div class="pat-grid">
+    <div class="pat-cell when">
+      <h4>🎯 When To Reach For It</h4>
+      <p>Two sequences being compared/aligned, OR one sequence where the subproblem is a <strong>contiguous range</strong> <code>[i..j]</code>.</p>
+      <ul>
+        <li>Compare two strings (LCS, edit distance, regex match)</li>
+        <li>Split a range optimally (matrix chain, burst balloons)</li>
+        <li>Palindrome questions on substrings</li>
+      </ul>
+    </div>
+    <div class="pat-cell state">
+      <h4>🧩 State Definition</h4>
+      <p><code>dp[i][j]</code> = answer for <strong>prefix <code>A[0..i]</code> vs prefix <code>B[0..j]</code></strong> (alignment style), or answer for <strong>range <code>[i..j]</code></strong> (interval style).</p>
+      <p>A cell is a <em>2D coordinate</em> in a table — that's why we draw a grid.</p>
+    </div>
+    <div class="pat-cell rec">
+      <h4>🔁 Recurrence (LCS)</h4>
+      <div class="formula"><span class="cm"># if characters match, extend the diagonal</span><br><span class="hl">dp[i][j]</span> = dp[i-1][j-1] + 1   <span class="cm">(A[i]==B[j])</span><br><span class="cm"># else inherit the better neighbor</span><br><span class="hl">dp[i][j]</span> = max(dp[i-1][j], dp[i][j-1])</div>
+    </div>
+    <div class="pat-cell base">
+      <h4>🌱 Base Cases (bottom)</h4>
+      <p>An empty prefix matches nothing:</p>
+      <div class="formula">dp[0][*] = 0<br>dp[*][0] = 0</div>
+      <p>The whole grid grows from this zero-filled top row and left column.</p>
+    </div>
+  </div>
+
+  <h3>Bottom-Up Intuition: fill the grid diagonally</h3>
+  <p class="sub" style="margin-bottom:10px">Longest Common Subsequence of <code>A = "ABCBDAB"</code> and <code>B = "BDCAB"</code>. Each cell looks at three neighbors: ↖ diagonal (match), ↑ up, ← left.</p>
+
+  <div class="fig">
+    <svg viewBox="0 0 560 360" role="img" aria-label="LCS dynamic programming grid">
+      <!-- column headers (B) -->
+      <g text-anchor="middle" font-size="15">
+        <text x="70"  y="30" class="svg-tm">∅</text>
+        <text x="130" y="30" class="svg-lbl">B</text>
+        <text x="190" y="30" class="svg-lbl">D</text>
+        <text x="250" y="30" class="svg-lbl">C</text>
+        <text x="310" y="30" class="svg-lbl">A</text>
+        <text x="370" y="30" class="svg-lbl">B</text>
+      </g>
+      <!-- row headers (A) -->
+      <g text-anchor="middle" font-size="15">
+        <text x="30" y="74"  class="svg-tm">∅</text>
+        <text x="30" y="119" class="svg-lbl">A</text>
+        <text x="30" y="164" class="svg-lbl">B</text>
+        <text x="30" y="209" class="svg-lbl">C</text>
+        <text x="30" y="254" class="svg-lbl">B</text>
+        <text x="30" y="299" class="svg-lbl">D</text>
+      </g>
+      <!-- grid cells: rows ∅,A,B,C,B,D  cols ∅,B,D,C,A,B (truncated 6x6 for clarity) -->
+      <g font-size="15" text-anchor="middle">
+        <!-- helper: 60px cells starting x=40,y=52 -->
+        <!-- row0 (all zeros) -->
+        <g>
+          <rect x="40" y="52" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="70" y="78" class="svg-tm">0</text>
+          <rect x="100" y="52" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="130" y="78" class="svg-tm">0</text>
+          <rect x="160" y="52" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="190" y="78" class="svg-tm">0</text>
+          <rect x="220" y="52" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="250" y="78" class="svg-tm">0</text>
+          <rect x="280" y="52" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="310" y="78" class="svg-tm">0</text>
+          <rect x="340" y="52" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="370" y="78" class="svg-tm">0</text>
+        </g>
+        <!-- rowA -->
+        <g>
+          <rect x="40" y="92" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="70" y="118" class="svg-tm">0</text>
+          <rect x="100" y="92" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="130" y="118" class="svg-t">0</text>
+          <rect x="160" y="92" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="190" y="118" class="svg-t">0</text>
+          <rect x="220" y="92" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="250" y="118" class="svg-t">0</text>
+          <rect x="280" y="92" width="60" height="40" fill="#10312a" stroke="#10b981"/><text x="310" y="118" class="svg-t">1</text>
+          <rect x="340" y="92" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="370" y="118" class="svg-t">1</text>
+        </g>
+        <!-- rowB -->
+        <g>
+          <rect x="40" y="132" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="70" y="158" class="svg-tm">0</text>
+          <rect x="100" y="132" width="60" height="40" fill="#10312a" stroke="#10b981"/><text x="130" y="158" class="svg-t">1</text>
+          <rect x="160" y="132" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="190" y="158" class="svg-t">1</text>
+          <rect x="220" y="132" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="250" y="158" class="svg-t">1</text>
+          <rect x="280" y="132" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="310" y="158" class="svg-t">1</text>
+          <rect x="340" y="132" width="60" height="40" fill="#10312a" stroke="#10b981"/><text x="370" y="158" class="svg-t">2</text>
+        </g>
+        <!-- rowC -->
+        <g>
+          <rect x="40" y="172" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="70" y="198" class="svg-tm">0</text>
+          <rect x="100" y="172" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="130" y="198" class="svg-t">1</text>
+          <rect x="160" y="172" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="190" y="198" class="svg-t">1</text>
+          <rect x="220" y="172" width="60" height="40" fill="#10312a" stroke="#10b981"/><text x="250" y="198" class="svg-t">2</text>
+          <rect x="280" y="172" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="310" y="198" class="svg-t">2</text>
+          <rect x="340" y="172" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="370" y="198" class="svg-t">2</text>
+        </g>
+        <!-- rowB2 -->
+        <g>
+          <rect x="40" y="212" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="70" y="238" class="svg-tm">0</text>
+          <rect x="100" y="212" width="60" height="40" fill="#10312a" stroke="#10b981"/><text x="130" y="238" class="svg-t">1</text>
+          <rect x="160" y="212" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="190" y="238" class="svg-t">1</text>
+          <rect x="220" y="212" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="250" y="238" class="svg-t">2</text>
+          <rect x="280" y="212" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="310" y="238" class="svg-t">2</text>
+          <rect x="340" y="212" width="60" height="40" fill="#10312a" stroke="#10b981"/><text x="370" y="238" class="svg-t">3</text>
+        </g>
+        <!-- rowD -->
+        <g>
+          <rect x="40" y="252" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="70" y="278" class="svg-tm">0</text>
+          <rect x="100" y="252" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="130" y="278" class="svg-t">1</text>
+          <rect x="160" y="252" width="60" height="40" fill="#10312a" stroke="#10b981"/><text x="190" y="278" class="svg-t">2</text>
+          <rect x="220" y="252" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="250" y="278" class="svg-t">2</text>
+          <rect x="280" y="252" width="60" height="40" fill="#0d1117" stroke="#30363d"/><text x="310" y="278" class="svg-t">2</text>
+          <rect x="340" y="252" width="60" height="40" fill="#3a2a12" stroke="#f59e0b"/><text x="370" y="278" class="svg-acc">3</text>
+        </g>
+      </g>
+      <text x="280" y="330" class="svg-tm" font-size="12" text-anchor="middle">Green = characters matched (diagonal +1). Amber = final LCS length.</text>
+    </svg>
+    <div class="fig-cap"><b>LCS length = 3</b> ("BCAB" → actually "BCBA"/"BDAB" length 3). The bottom-right cell is the answer; trace the green diagonal hops backward to recover the subsequence.</div>
+    <div class="legend">
+      <span><i style="background:#10b981"></i> character match (↖ +1)</span>
+      <span><i style="background:#f59e0b"></i> final answer</span>
+      <span><i style="background:#30363d"></i> inherited max(↑, ←)</span>
+    </div>
+  </div>
+
+  <div class="walk">
+    <div class="wl">How one cell is decided</div>
+    <p>Take cell <span class="step">(row "B", col "B")</span> near the top-left. The characters match, so it copies its ↖ diagonal neighbor and adds 1: <span class="step">0 + 1 = 1</span>. A non-matching cell like <span class="step">(row "C", col "B")</span> can't extend, so it inherits the larger of ↑ and ←. This "match → diagonal, else → best neighbor" rule fills the entire grid in <code>O(m·n)</code>.</p>
+  </div>
+
+  <div class="pitfall">
+    <div class="pl">⚠️ Common Pitfall</div>
+    <p>Fill order matters. <code>dp[i][j]</code> needs <code>dp[i-1][j-1]</code>, <code>dp[i-1][j]</code>, and <code>dp[i][j-1]</code> already computed — so loop <code>i</code> outer, <code>j</code> inner (top-to-bottom, left-to-right). For <em>interval</em> DP (range <code>[i..j]</code>) you instead loop by <strong>increasing length</strong>, because a long range depends on shorter ranges inside it.</p>
+  </div>
+
+  <div class="keywords">
+    <span class="kwp">two strings</span>
+    <span class="kwp">alignment/matching</span>
+    <span class="kwp">range [i..j]</span>
+    <span class="kwp">edit distance</span>
+    <span class="kwp">palindrome substrings</span>
+    <span class="kwp">grid fill order</span>
+  </div>
+</div>
+
+<div class="sec">📚 DP Pattern 3: Tree DP</div>
+<p class="sub">The sequence becomes a tree. Instead of "previous index", each node's answer is assembled from its <em>children's</em> answers — computed in post-order (children first, then parent).</p>
+
+<div class="pat">
+  <div class="pat-grid">
+    <div class="pat-cell when">
+      <h4>🎯 When To Reach For It</h4>
+      <p>The input is a tree (or a graph you root into a tree) and the answer for a node depends on results already computed for its subtrees.</p>
+      <ul>
+        <li>"Best result rooted at each node"</li>
+        <li>Include/exclude decisions on nodes (independent set)</li>
+        <li>Path / diameter through subtrees</li>
+      </ul>
+    </div>
+    <div class="pat-cell state">
+      <h4>🧩 State Definition</h4>
+      <p>Usually a <strong>pair per node</strong>: <code>(rob, skip)</code> or <code>(include, exclude)</code>.</p>
+      <div class="formula">f(node) = (<span class="hl">rob</span>, <span class="hl">skip</span>)<br><span class="cm">rob  = take node, must skip children</span><br><span class="cm">skip = free to take or drop children</span></div>
+    </div>
+    <div class="pat-cell rec">
+      <h4>🔁 Recurrence (House Robber III)</h4>
+      <div class="formula"><span class="hl">rob</span>  = node.val + L.skip + R.skip<br><span class="hl">skip</span> = max(L.rob, L.skip)<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ max(R.rob, R.skip)</div>
+    </div>
+    <div class="pat-cell base">
+      <h4>🌱 Base Cases (bottom)</h4>
+      <p>A null child contributes nothing:</p>
+      <div class="formula">f(None) = (0, 0)</div>
+      <p>Recursion <em>bottoms out at the leaves</em> and the answers bubble up to the root.</p>
+    </div>
+  </div>
+
+  <h3>Bottom-Up Intuition: answers bubble up from leaves</h3>
+  <p class="sub" style="margin-bottom:10px">House Robber III. Each node returns <code>(rob, skip)</code>. The thief never robs a parent and child together. Read the tree leaves-first.</p>
+
+  <div class="fig">
+    <svg viewBox="0 0 640 340" role="img" aria-label="Tree DP post-order rob/skip computation">
+      <!-- edges -->
+      <g stroke="#475569" stroke-width="2">
+        <line x1="320" y1="70" x2="180" y2="160"/>
+        <line x1="320" y1="70" x2="460" y2="160"/>
+        <line x1="180" y1="190" x2="120" y2="270"/>
+        <line x1="180" y1="190" x2="250" y2="270"/>
+        <line x1="460" y1="190" x2="520" y2="270"/>
+      </g>
+      <!-- root -->
+      <circle cx="320" cy="55" r="30" fill="#1a2e52" stroke="#4f46e5" stroke-width="2"/>
+      <text x="320" y="61" text-anchor="middle" class="svg-t" font-size="18">3</text>
+      <text x="320" y="20" text-anchor="middle" class="svg-acc" font-size="13">(rob 3+1+1=… skip)→ max=9</text>
+      <!-- left child -->
+      <circle cx="180" cy="175" r="28" fill="#1a2e52" stroke="#4f46e5" stroke-width="2"/>
+      <text x="180" y="181" text-anchor="middle" class="svg-t" font-size="17">2</text>
+      <text x="80" y="150" text-anchor="middle" class="svg-lbl" font-size="12">(rob 2+3=5,</text>
+      <text x="80" y="166" text-anchor="middle" class="svg-lbl" font-size="12">skip 3) → 5</text>
+      <!-- right child -->
+      <circle cx="460" cy="175" r="28" fill="#1a2e52" stroke="#4f46e5" stroke-width="2"/>
+      <text x="460" y="181" text-anchor="middle" class="svg-t" font-size="17">3</text>
+      <text x="560" y="150" text-anchor="middle" class="svg-lbl" font-size="12">(rob 3+1=4,</text>
+      <text x="560" y="166" text-anchor="middle" class="svg-lbl" font-size="12">skip 1) → 4</text>
+      <!-- leaves -->
+      <circle cx="120" cy="290" r="24" fill="#10312a" stroke="#10b981" stroke-width="2"/>
+      <text x="120" y="296" text-anchor="middle" class="svg-t" font-size="16">3</text>
+      <text x="120" y="332" text-anchor="middle" class="svg-tm" font-size="11">(3, 0)</text>
+      <circle cx="250" cy="290" r="24" fill="#10312a" stroke="#10b981" stroke-width="2"/>
+      <text x="250" y="296" text-anchor="middle" class="svg-t" font-size="16">1</text>
+      <text x="250" y="332" text-anchor="middle" class="svg-tm" font-size="11">(1, 0)</text>
+      <circle cx="520" cy="290" r="24" fill="#10312a" stroke="#10b981" stroke-width="2"/>
+      <text x="520" y="296" text-anchor="middle" class="svg-t" font-size="16">1</text>
+      <text x="520" y="332" text-anchor="middle" class="svg-tm" font-size="11">(1, 0)</text>
+    </svg>
+    <div class="fig-cap"><b>Answer = max(root.rob, root.skip) = 9</b>. Leaves return <code>(val, 0)</code>; each parent combines children's <em>skip</em> when it robs, and children's <em>best</em> when it skips.</div>
+    <div class="legend">
+      <span><i style="background:#10b981"></i> leaf base case (val, 0)</span>
+      <span><i style="background:#4f46e5"></i> internal node (rob, skip)</span>
+    </div>
+  </div>
+
+  <div class="walk">
+    <div class="wl">Post-order, leaves → root</div>
+    <p>
+      <span class="step">Leaves</span> return <code>(val, 0)</code> — robbing a leaf gives its value, skipping gives 0. &nbsp;
+      <span class="step">Left node "2"</span>: rob = 2 + (left leaf skip 0) + (right leaf skip 0)… here with one child = 2+0=2? It instead takes child skips → rob=2+0=2, skip=max(3,0)=3, so best 5 path shown. &nbsp;
+      <span class="step">Root "3"</span>: rob = 3 + left.skip + right.skip; skip = max(left.rob,left.skip) + max(right.rob,right.skip). The <em>max of the root pair</em> is the final loot.
+    </p>
+  </div>
+
+  <div class="pitfall">
+    <div class="pl">⚠️ Common Pitfall</div>
+    <p>Returning a single number per node forces O(2ⁿ) recomputation (you re-explore grandchildren). Always return the <strong>pair</strong> <code>(rob, skip)</code> in one post-order pass so each node is visited exactly once → O(n). This "return a tuple of states" trick is the heart of tree DP.</p>
+  </div>
+
+  <div class="keywords">
+    <span class="kwp">tree / rooted graph</span>
+    <span class="kwp">post-order DFS</span>
+    <span class="kwp">(include, exclude)</span>
+    <span class="kwp">subtree result</span>
+    <span class="kwp">diameter / path</span>
+    <span class="kwp">return a tuple</span>
+  </div>
+</div>
+
+<div class="sec">📚 DP Pattern 4: Graph DP (Shortest Paths)</div>
+<p class="sub">DP where the "previous states" are connected by edges instead of array indices. The key requirement: the dependency graph must be acyclic <em>in the dimension you iterate</em> (positions, coins used, or steps allowed).</p>
+
+<div class="pat">
+  <div class="pat-grid">
+    <div class="pat-cell when">
+      <h4>🎯 When To Reach For It</h4>
+      <p>States form a graph and you want the optimal cost/count to reach each one. Transitions are edges (a coin, a word, a move).</p>
+      <ul>
+        <li>"Fewest coins / steps to reach amount N"</li>
+        <li>"Can the string be segmented?" (Word Break)</li>
+        <li>Shortest path on a DAG of states</li>
+      </ul>
+    </div>
+    <div class="pat-cell state">
+      <h4>🧩 State Definition</h4>
+      <p><code>dp[amount]</code> = fewest coins to make <code>amount</code>. Each amount is a node; using a coin <code>c</code> is an edge from <code>amount-c</code> → <code>amount</code>.</p>
+      <p>You relax edges in increasing order of the amount so dependencies are ready.</p>
+    </div>
+    <div class="pat-cell rec">
+      <h4>🔁 Recurrence (Coin Change)</h4>
+      <div class="formula"><span class="hl">dp[a]</span> = min over coins c of<br>&nbsp;&nbsp;( dp[a - c] + 1 )<br><span class="cm"># take coin c, then solve remainder a-c</span></div>
+    </div>
+    <div class="pat-cell base">
+      <h4>🌱 Base Cases (bottom)</h4>
+      <div class="formula">dp[0] = 0   <span class="cm"># zero coins make amount 0</span><br>dp[a] = ∞   <span class="cm"># unknown / unreachable</span></div>
+      <p>Build <code>dp[1], dp[2], …, dp[N]</code> upward; ∞ that survives means "impossible".</p>
+    </div>
+  </div>
+
+  <h3>Bottom-Up Intuition: amounts as a layered graph</h3>
+  <p class="sub" style="margin-bottom:10px">Coin Change with coins <code>{1, 3, 4}</code>, target <code>6</code>. Each amount node is reached from a smaller amount by adding one coin. We want the shortest chain of coins to 6.</p>
+
+  <div class="fig">
+    <svg viewBox="0 0 700 280" role="img" aria-label="Coin change states as a layered graph">
+      <!-- nodes 0..6 -->
+      <g font-size="16" text-anchor="middle">
+        <circle cx="60"  cy="140" r="26" fill="#10312a" stroke="#10b981" stroke-width="2"/><text x="60"  y="146" class="svg-t">0</text>
+        <circle cx="160" cy="140" r="26" fill="#1a2e52" stroke="#4f46e5"/><text x="160" y="146" class="svg-t">1</text>
+        <circle cx="260" cy="140" r="26" fill="#1a2e52" stroke="#4f46e5"/><text x="260" y="146" class="svg-t">2</text>
+        <circle cx="360" cy="140" r="26" fill="#1a2e52" stroke="#4f46e5"/><text x="360" y="146" class="svg-t">3</text>
+        <circle cx="460" cy="140" r="26" fill="#1a2e52" stroke="#4f46e5"/><text x="460" y="146" class="svg-t">4</text>
+        <circle cx="560" cy="140" r="26" fill="#1a2e52" stroke="#4f46e5"/><text x="560" y="146" class="svg-t">5</text>
+        <circle cx="660" cy="140" r="26" fill="#3a2a12" stroke="#f59e0b" stroke-width="2"/><text x="660" y="146" class="svg-acc">6</text>
+      </g>
+      <!-- dp values under nodes -->
+      <g font-size="12" text-anchor="middle" class="svg-tm">
+        <text x="60"  y="186">dp=0</text>
+        <text x="160" y="186">dp=1</text>
+        <text x="260" y="186">dp=2</text>
+        <text x="360" y="186">dp=1</text>
+        <text x="460" y="186">dp=1</text>
+        <text x="560" y="186">dp=2</text>
+        <text x="660" y="186">dp=2</text>
+      </g>
+      <!-- key edges: +3 and +4 jumps -->
+      <defs>
+        <marker id="ah2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#06b6d4"/></marker>
+        <marker id="ah3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#f59e0b"/></marker>
+      </defs>
+      <!-- 0 ->3 (+3) -->
+      <path d="M82 122 C170 70, 270 70, 342 122" fill="none" stroke="#06b6d4" stroke-width="2" marker-end="url(#ah2)"/>
+      <text x="210" y="70" class="svg-tm" font-size="12" text-anchor="middle">+3 coin</text>
+      <!-- 0 ->4 (+4) -->
+      <path d="M80 124 C200 50, 360 50, 444 122" fill="none" stroke="#06b6d4" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#ah2)"/>
+      <!-- 3 ->6 (+3) winning -->
+      <path d="M382 122 C470 70, 570 70, 642 122" fill="none" stroke="#f59e0b" stroke-width="2.5" marker-end="url(#ah3)"/>
+      <text x="510" y="70" class="svg-acc" font-size="12" text-anchor="middle">+3 coin → 6</text>
+      <text x="350" y="245" class="svg-tm" font-size="13" text-anchor="middle">Best path to 6:  0 →(+3) 3 →(+3) 6   = <tspan class="svg-acc">2 coins</tspan></text>
+    </svg>
+    <div class="fig-cap"><b>dp[6] = 2</b> (coins 3 + 3). Although <code>1+1+4</code> and <code>1+1+1+3</code> also reach 6, the layered relaxation keeps only the <em>minimum</em> coin count at each node.</div>
+    <div class="legend">
+      <span><i style="background:#10b981"></i> base dp[0]=0</span>
+      <span><i style="background:#4f46e5"></i> intermediate amount</span>
+      <span><i style="background:#f59e0b"></i> winning transition</span>
+    </div>
+  </div>
+
+  <div class="walk">
+    <div class="wl">Relaxing amounts in order</div>
+    <p>
+      <span class="step">dp[1]=1</span> (one 1-coin). <span class="step">dp[2]=2</span>. <span class="step">dp[3]=min(dp[2]+1, dp[0]+1)=1</span> — the 3-coin beats three 1-coins. <span class="step">dp[4]=min(dp[3]+1, dp[0]+1)=1</span> via the 4-coin. <span class="step">dp[6]=min(dp[5]+1, dp[3]+1, dp[2]+1)=min(3,2,3)=2</span>. The 3-coin edge into node 6 wins.
+    </p>
+  </div>
+
+  <div class="pitfall">
+    <div class="pl">⚠️ Common Pitfall</div>
+    <p>Iteration order encodes the dependency direction. For <strong>unbounded</strong> coins (reuse allowed) loop amount ascending with coins inside. For <strong>0/1</strong> items (each used once) loop the capacity <em>descending</em> so an item can't be picked twice. Mixing these up silently gives wrong answers — it's the #1 knapsack bug.</p>
+  </div>
+
+  <div class="keywords">
+    <span class="kwp">fewest steps/coins</span>
+    <span class="kwp">reachability</span>
+    <span class="kwp">DAG of states</span>
+    <span class="kwp">knapsack</span>
+    <span class="kwp">word break</span>
+    <span class="kwp">relaxation order</span>
+  </div>
+</div>
+
+<div class="sec">📚 DP Pattern 5: Digit DP</div>
+<p class="sub">You're counting numbers in a range <code>[0, N]</code> that satisfy some digit property. Instead of looping billions of numbers, you build them <em>one digit at a time</em> and memoize on the abstract state.</p>
+
+<div class="pat">
+  <div class="pat-grid">
+    <div class="pat-cell when">
+      <h4>🎯 When To Reach For It</h4>
+      <p>"How many numbers ≤ N have property X?" where X depends on digits — sum, count of a digit, no repeated digits, divisibility.</p>
+      <ul>
+        <li>N is huge (up to 10¹⁸) — can't iterate</li>
+        <li>Property is expressible digit-by-digit</li>
+        <li>Often a "count in [L, R]" via f(R) − f(L−1)</li>
+      </ul>
+    </div>
+    <div class="pat-cell state">
+      <h4>🧩 State Definition</h4>
+      <div class="formula">dp[<span class="hl">pos</span>][<span class="hl">acc</span>][<span class="hl">tight</span>]<br><span class="cm">pos   = digit index left→right</span><br><span class="cm">acc   = accumulated property (e.g. digit sum)</span><br><span class="cm">tight = are we still hugging N's prefix?</span></div>
+    </div>
+    <div class="pat-cell rec">
+      <h4>🔁 Recurrence</h4>
+      <p>At each position try every allowed digit; the cap depends on <code>tight</code>:</p>
+      <div class="formula">limit = tight ? digit(N,pos) : 9<br><span class="hl">count</span> = Σ over d in 0..limit<br>&nbsp;&nbsp;dp[pos+1][acc+d][tight && d==limit]</div>
+    </div>
+    <div class="pat-cell base">
+      <h4>🌱 Base Cases (bottom)</h4>
+      <div class="formula">pos == len:<br>&nbsp;&nbsp;return 1 if acc satisfies target else 0</div>
+      <p>When all digits are placed, check the property. The <code>tight=false</code> states are reusable across many prefixes — that's the memo win.</p>
+    </div>
+  </div>
+
+  <h3>Bottom-Up Intuition: a tree of digit choices</h3>
+  <p class="sub" style="margin-bottom:10px">Count numbers in <code>[0, 21]</code> whose digit-sum is even. We place the tens digit, then the units digit. The <span style="color:#f59e0b">tight</span> branch is constrained by N=21; once we go below, choices open to 0–9.</p>
+
+  <div class="fig">
+    <svg viewBox="0 0 700 320" role="img" aria-label="Digit DP decision tree with tight constraint">
+      <!-- root -->
+      <circle cx="350" cy="40" r="24" fill="#1e293b" stroke="#64748b"/><text x="350" y="46" text-anchor="middle" class="svg-t" font-size="14">start</text>
+      <!-- tens digit choices: 0,1,2 -->
+      <g stroke="#475569" stroke-width="2">
+        <line x1="350" y1="64" x2="150" y2="140"/>
+        <line x1="350" y1="64" x2="350" y2="140"/>
+        <line x1="350" y1="64" x2="560" y2="140"/>
+      </g>
+      <circle cx="150" cy="160" r="24" fill="#1a2e52" stroke="#4f46e5"/><text x="150" y="166" text-anchor="middle" class="svg-t" font-size="14">t=0</text>
+      <circle cx="350" cy="160" r="24" fill="#1a2e52" stroke="#4f46e5"/><text x="350" y="166" text-anchor="middle" class="svg-t" font-size="14">t=1</text>
+      <circle cx="560" cy="160" r="24" fill="#3a2a12" stroke="#f59e0b" stroke-width="2"/><text x="560" y="166" text-anchor="middle" class="svg-acc" font-size="14">t=2*</text>
+      <text x="150" y="120" text-anchor="middle" class="svg-tm" font-size="11">free (0–9 units)</text>
+      <text x="560" y="120" text-anchor="middle" class="svg-acc" font-size="11">tight! units ≤ 1</text>
+      <!-- units under tens=2 (tight): only 0,1 -->
+      <g stroke="#475569" stroke-width="2">
+        <line x1="560" y1="184" x2="510" y2="250"/>
+        <line x1="560" y1="184" x2="610" y2="250"/>
+      </g>
+      <circle cx="510" cy="268" r="22" fill="#10312a" stroke="#10b981"/><text x="510" y="274" text-anchor="middle" class="svg-t" font-size="13">20</text>
+      <circle cx="610" cy="268" r="22" fill="#1e293b" stroke="#64748b"/><text x="610" y="274" text-anchor="middle" class="svg-tm" font-size="13">21</text>
+      <text x="510" y="312" text-anchor="middle" class="svg-tm" font-size="11">sum 2 ✓ even</text>
+      <text x="610" y="312" text-anchor="middle" class="svg-tm" font-size="11">sum 3 ✗ odd</text>
+      <!-- annotate free subtree -->
+      <text x="150" y="200" text-anchor="middle" class="svg-tm" font-size="11">memoized once,</text>
+      <text x="150" y="216" text-anchor="middle" class="svg-tm" font-size="11">reused for t=1</text>
+    </svg>
+    <div class="fig-cap"><b>tight*</b> branch (tens=2) must respect N=21, so units only range 0–1. The <code>tight=false</code> subtrees (tens=0,1) are identical and computed <b>once</b> then cached.</div>
+    <div class="legend">
+      <span><i style="background:#f59e0b"></i> tight (bounded by N)</span>
+      <span><i style="background:#4f46e5"></i> free (full 0–9)</span>
+      <span><i style="background:#10b981"></i> valid leaf</span>
+    </div>
+  </div>
+
+  <div class="walk">
+    <div class="wl">Why the "tight" flag is the whole trick</div>
+    <p>When <span class="step">tight=true</span> you're still tracing N's exact prefix, so the current digit can't exceed N's digit there. The moment you pick something <em>smaller</em>, <span class="step">tight flips to false</span> forever and the remaining positions are completely free (0–9). All free states with the same <code>(pos, acc)</code> are interchangeable → memoize on them and the exponential digit-tree collapses to <code>O(len · acc · 2)</code>.</p>
+  </div>
+
+  <div class="pitfall">
+    <div class="pl">⚠️ Common Pitfall</div>
+    <p>Don't memoize the <code>tight=true</code> states — they're tied to one specific prefix of N and aren't reusable. Only cache when <code>tight=false</code> (and usually when leading-zero handling is settled). Forgetting this either corrupts the cache or kills the speedup.</p>
+  </div>
+
+  <div class="keywords">
+    <span class="kwp">count ≤ N</span>
+    <span class="kwp">digit property</span>
+    <span class="kwp">tight bound</span>
+    <span class="kwp">position state</span>
+    <span class="kwp">f(R) − f(L−1)</span>
+    <span class="kwp">huge ranges</span>
+  </div>
+</div>
+
+<div class="sec">📚 DP Pattern 6: State Compression (Bitmask DP)</div>
+<p class="sub">When the state is "which subset of items have I used", you encode that subset as the bits of an integer. A set of <code>n</code> items becomes a number in <code>[0, 2ⁿ)</code> — compact, hashable, and fast.</p>
+
+<div class="pat">
+  <div class="pat-grid">
+    <div class="pat-cell when">
+      <h4>🎯 When To Reach For It</h4>
+      <p>Small <code>n</code> (≈ ≤ 20) and the subproblem is defined by <strong>which subset</strong> is done, plus maybe a "current position".</p>
+      <ul>
+        <li>Visit-every-node tours (TSP)</li>
+        <li>Assign tasks ↔ people perfectly</li>
+        <li>Partition into groups, count perfect matchings</li>
+      </ul>
+    </div>
+    <div class="pat-cell state">
+      <h4>🧩 State Definition</h4>
+      <div class="formula">dp[<span class="hl">mask</span>][<span class="hl">i</span>]<br><span class="cm">mask = set of visited nodes (bit k = node k)</span><br><span class="cm">i    = node we are currently standing on</span></div>
+      <p>Bit <code>k</code> set ⇒ item <code>k</code> already used. <code>1011</code> = items 0,1,3 used.</p>
+    </div>
+    <div class="pat-cell rec">
+      <h4>🔁 Recurrence (TSP)</h4>
+      <div class="formula"><span class="hl">dp[mask|1&lt;&lt;j][j]</span> = min(<br>&nbsp;&nbsp;dp[mask][i] + dist[i][j] )<br><span class="cm"># extend tour from i to unvisited j</span></div>
+    </div>
+    <div class="pat-cell base">
+      <h4>🌱 Base Cases (bottom)</h4>
+      <div class="formula">dp[1&lt;&lt;0][0] = 0  <span class="cm"># start at node 0</span><br>everything else = ∞</div>
+      <p>Build masks in increasing numeric order — a superset always has a larger integer value than its subsets, so dependencies are ready.</p>
+    </div>
+  </div>
+
+  <h3>Bottom-Up Intuition: subsets as binary numbers</h3>
+  <p class="sub" style="margin-bottom:10px">With 4 cities, a "visited set" is a 4-bit number. There are <code>2⁴ = 16</code> possible subsets. DP marches from the empty-ish start mask up to the full mask <code>1111</code>.</p>
+
+  <div class="fig">
+    <svg viewBox="0 0 700 300" role="img" aria-label="Bitmask subsets as binary numbers">
+      <text x="350" y="26" text-anchor="middle" class="svg-lbl" font-size="14">Each bit = one city visited (bit3 bit2 bit1 bit0)</text>
+      <!-- show progression 0001 -> 0011 -> 0111 -> 1111 -->
+      <g font-size="20" text-anchor="middle" font-family="'Fira Code',monospace">
+        <rect x="40"  y="60" width="120" height="60" rx="10" fill="#10312a" stroke="#10b981" stroke-width="2"/>
+        <text x="100" y="98" class="svg-t">0001</text>
+        <text x="100" y="142" class="svg-tm" font-size="12">{0} start</text>
+
+        <rect x="220" y="60" width="120" height="60" rx="10" fill="#1a2e52" stroke="#4f46e5"/>
+        <text x="280" y="98" class="svg-t">0011</text>
+        <text x="280" y="142" class="svg-tm" font-size="12">{0,1}</text>
+
+        <rect x="400" y="60" width="120" height="60" rx="10" fill="#1a2e52" stroke="#4f46e5"/>
+        <text x="460" y="98" class="svg-t">0111</text>
+        <text x="460" y="142" class="svg-tm" font-size="12">{0,1,2}</text>
+
+        <rect x="560" y="60" width="120" height="60" rx="10" fill="#3a2a12" stroke="#f59e0b" stroke-width="2"/>
+        <text x="620" y="98" class="svg-acc">1111</text>
+        <text x="620" y="142" class="svg-tm" font-size="12">{0,1,2,3} full</text>
+      </g>
+      <!-- arrows -->
+      <defs><marker id="ahb" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#06b6d4"/></marker></defs>
+      <g stroke="#06b6d4" stroke-width="2" fill="none">
+        <line x1="162" y1="90" x2="216" y2="90" marker-end="url(#ahb)"/>
+        <line x1="342" y1="90" x2="396" y2="90" marker-end="url(#ahb)"/>
+        <line x1="522" y1="90" x2="556" y2="90" marker-end="url(#ahb)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" class="svg-tm">
+        <text x="189" y="50">| 1&lt;&lt;1</text>
+        <text x="369" y="50">| 1&lt;&lt;2</text>
+        <text x="539" y="50">| 1&lt;&lt;3</text>
+      </g>
+      <!-- bit ops cheatsheet -->
+      <g font-size="13" font-family="'Fira Code',monospace">
+        <text x="40" y="200" class="svg-lbl">Bit toolkit:</text>
+        <text x="40" y="226" class="svg-t">visited k?  →  mask &amp; (1&lt;&lt;k)</text>
+        <text x="40" y="250" class="svg-t">add k     →  mask | (1&lt;&lt;k)</text>
+        <text x="400" y="226" class="svg-t">all done? →  mask == (1&lt;&lt;n)-1</text>
+        <text x="400" y="250" class="svg-t">popcount  →  bin(mask).count('1')</text>
+      </g>
+    </svg>
+    <div class="fig-cap"><b>16 states for n=4.</b> DP fills <code>dp[mask][i]</code> from smaller masks to larger ones; the answer reads off the full mask <code>1111</code> across all ending cities.</div>
+    <div class="legend">
+      <span><i style="background:#10b981"></i> start mask</span>
+      <span><i style="background:#4f46e5"></i> partial subset</span>
+      <span><i style="background:#f59e0b"></i> full set (answer)</span>
+    </div>
+  </div>
+
+  <div class="walk">
+    <div class="wl">Why subsets-as-integers works</div>
+    <p>A subset is just a yes/no per item — exactly what a binary number stores. Adding item <code>j</code> is <span class="step">mask | (1&lt;&lt;j)</span>; the new mask is always numerically larger, so iterating <span class="step">for mask in range(1&lt;&lt;n)</span> guarantees every subset is processed only after all of its sub-subsets. That ordering is what makes the bottom-up fill valid. Total states <code>2ⁿ · n</code>, transitions <code>· n</code> → <code>O(2ⁿ · n²)</code>.</p>
+  </div>
+
+  <div class="pitfall">
+    <div class="pl">⚠️ Common Pitfall</div>
+    <p>Bitmask DP is exponential — it only works for <strong>small n (≈ ≤ 20)</strong>. <code>2²⁰ ≈ 1M</code> is fine; <code>2³⁰</code> is a billion and will TLE/OOM. If <code>n</code> is large, this pattern is the wrong tool — look for greedy, flow, or polynomial structure instead.</p>
+  </div>
+
+  <div class="keywords">
+    <span class="kwp">small n (≤ 20)</span>
+    <span class="kwp">subset = integer</span>
+    <span class="kwp">visit all / TSP</span>
+    <span class="kwp">assignment / matching</span>
+    <span class="kwp">dp[mask][i]</span>
+    <span class="kwp">2ⁿ states</span>
+  </div>
+</div>
+
+<div class="sec">🧭 Which Pattern? A Recognition Guide</div>
+<p class="sub">In an interview you won't be told "this is Tree DP". You infer it from the shape of the input and the question. Use these signals.</p>
+
+<div class="card">
+  <table>
+    <thead><tr><th>If the input / question looks like…</th><th>Reach for</th><th>State shape</th></tr></thead>
+    <tbody>
+      <tr><td>1D array/string, decision per element, neighbor constraint</td><td><strong style="color:#10b981">Linear DP</strong></td><td><code>dp[i]</code></td></tr>
+      <tr><td>Two strings, or "optimal split of a range [i..j]"</td><td><strong style="color:#06b6d4">2D / Range DP</strong></td><td><code>dp[i][j]</code></td></tr>
+      <tr><td>Input is a tree; answer rooted at each node</td><td><strong style="color:#818cf8">Tree DP</strong></td><td><code>(incl, excl)</code> per node</td></tr>
+      <tr><td>"Fewest steps/coins", reachability, segmentation</td><td><strong style="color:#f59e0b">Graph / Knapsack DP</strong></td><td><code>dp[amount]</code></td></tr>
+      <tr><td>"Count numbers ≤ N with digit property", N huge</td><td><strong style="color:#f97316">Digit DP</strong></td><td><code>dp[pos][acc][tight]</code></td></tr>
+      <tr><td>"Use every item once", small n (≤20), assignment/tour</td><td><strong style="color:#ef4444">Bitmask DP</strong></td><td><code>dp[mask][i]</code></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="defbox">
+  <p><span class="key">The 5-Step DP Recipe (use it on every problem):</span></p>
+  <ol style="padding-left:22px;margin-top:8px;line-height:2;color:var(--tm)">
+    <li><strong style="color:#67e8f9">Define the state</strong> — what does <code>dp[…]</code> mean in one English sentence? If you can't say it, you can't solve it.</li>
+    <li><strong style="color:#67e8f9">Write the recurrence</strong> — express <code>dp[x]</code> using <em>smaller</em> states. This is the decision: take/skip, match/mismatch, which split.</li>
+    <li><strong style="color:#67e8f9">Nail the base cases</strong> — the smallest states you can answer without recursion (empty, leaf, amount 0).</li>
+    <li><strong style="color:#67e8f9">Pick the order</strong> — bottom-up loop order must respect dependencies (ascending index, increasing range length, increasing mask).</li>
+    <li><strong style="color:#67e8f9">Read off the answer</strong> — is it <code>dp[n]</code>, <code>max(dp)</code>, or <code>dp[full_mask]</code>? Easy to get wrong; tie it back to your state sentence.</li>
+  </ol>
+</div>
+
+<div class="sec">🎯 12 Interview Questions: Comprehensive DP Walkthroughs</div>
+
+<div class="igrid">
+
+<!-- PATTERN 1: Linear DP -->
+<div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">House Robber</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 198):</strong> Rob houses in a line (can't rob adjacent). Return max money. nums=[1,2,3,1] → 4 (rob house 1 and 3)</div>
+    <div class="iq-approach"><strong>Linear DP:</strong> State: dp[i] = max money robbing houses 0…i. Recurrence: dp[i] = max(dp[i-1], nums[i] + dp[i-2]). Either skip house i (take dp[i-1]) or rob it (add to dp[i-2]).</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums=[1,2,3,1]
+
+Base: dp[0]=1 (rob house 0)
+      dp[1]=max(1, 2)=2 (rob house 1, skip 0)
+
+i=2: dp[2]=max(dp[1], nums[2]+dp[0])
+           =max(2, 3+1)=4
+           (rob houses 0 and 2)
+
+i=3: dp[3]=max(dp[2], nums[3]+dp[1])
+           =max(4, 1+2)=4
+           (keep robbing 0 and 2, skip 3)
+
+Result: dp[3]=4 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · House Robber</div></div><pre><span class="kw">def</span> <span class="fn">rob</span>(nums):
+    <span class="kw">if</span> <span class="kw">not</span> nums: <span class="kw">return</span> 0
+    <span class="kw">if</span> len(nums) == 1: <span class="kw">return</span> nums[0]
+    
+    dp = [0] * len(nums)
+    dp[0] = nums[0]
+    dp[1] = max(nums[0], nums[1])
+    
+    <span class="kw">for</span> i <span class="kw">in</span> range(2, len(nums)):
+        dp[i] = max(dp[i-1], nums[i] + dp[i-2])
+    
+    <span class="kw">return</span> dp[-1]
+
+<span class="cm"># Space-optimized: only need prev2, prev1</span>
+<span class="kw">def</span> <span class="fn">rob_optimized</span>(nums):
+    prev2, prev1 = 0, 0
+    <span class="kw">for</span> num <span class="kw">in</span> nums:
+        prev2, prev1 = prev1, max(prev1, num + prev2)
+    <span class="kw">return</span> prev1</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(1) optimized</span>
+    </div>
+  </div>
+</div>
+
+<div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Longest Increasing Subsequence (LIS)</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 300):</strong> Find length of longest strictly increasing subsequence. nums=[10,9,2,5,3,7,101,18] → 4 (subsequence [2,3,7,101])</div>
+    <div class="iq-approach"><strong>Linear DP:</strong> State: dp[i] = length of LIS ending at index i. Recurrence: dp[i] = 1 + max(dp[j]) for all j < i where nums[j] < nums[i]. Answer: max(dp).</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums=[10,9,2,5,3,7,101,18]
+
+i=0, nums[0]=10: dp[0]=1 (LIS=[10])
+i=1, nums[1]=9: no j<1 with nums[j]<9, dp[1]=1
+i=2, nums[2]=2: no j with nums[j]<2, dp[2]=1
+i=3, nums[3]=5: 
+  j=2: nums[2]=2<5, dp[2]=1 → candidate dp[3]=1+1=2
+  dp[3]=2
+i=4, nums[4]=3:
+  j=2: nums[2]=2<3, dp[2]=1 → dp[4]=2
+i=5, nums[5]=7:
+  j=3: nums[3]=5<7, dp[3]=2 → dp[5]=3 (LIS=[2,5,7])
+i=6, nums[6]=101:
+  j=5: nums[5]=7<101, dp[5]=3 → dp[6]=4 (LIS=[2,5,7,101])
+i=7, nums[7]=18:
+  j=5: nums[5]=7<18, dp[5]=3 → dp[7]=4
+
+Result: max(dp)=4 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · LIS DP</div></div><pre><span class="kw">def</span> <span class="fn">lis</span>(nums):
+    <span class="kw">if</span> <span class="kw">not</span> nums: <span class="kw">return</span> 0
+    
+    dp = [1] * len(nums)
+    <span class="kw">for</span> i <span class="kw">in</span> range(1, len(nums)):
+        <span class="kw">for</span> j <span class="kw">in</span> range(i):
+            <span class="kw">if</span> nums[j] < nums[i]:
+                dp[i] = max(dp[i], dp[j] + 1)
+    
+    <span class="kw">return</span> max(dp)
+
+<span class="cm"># Binary search optimization: O(n log n)</span>
+<span class="kw">def</span> <span class="fn">lis_fast</span>(nums):
+    <span class="kw">import</span> bisect
+    tails = []  <span class="cm"># tails[i] = smallest tail of LIS length i+1</span>
+    <span class="kw">for</span> num <span class="kw">in</span> nums:
+        pos = bisect.bisect_left(tails, num)
+        <span class="kw">if</span> pos == len(tails):
+            tails.append(num)
+        <span class="kw">else</span>:
+            tails[pos] = num
+    <span class="kw">return</span> len(tails)</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n²) naive, O(n log n) optimized</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div>
+
+<!-- PATTERN 2: 2D Range DP -->
+<div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">Longest Common Subsequence (LCS)</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 1143):</strong> Find length of longest common subsequence. text1="abc", text2="ac" → 2 (subsequence "ac")</div>
+    <div class="iq-approach"><strong>2D Range DP:</strong> State: dp[i][j] = LCS length of text1[0..i-1] and text2[0..j-1]. Recurrence: if text1[i-1]==text2[j-1], dp[i][j]=dp[i-1][j-1]+1; else dp[i][j]=max(dp[i-1][j], dp[i][j-1]).</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">text1="abc", text2="ac"
+
+DP table (rows=text1, cols=text2):
+      ""  a  c
+ ""   0  0  0
+ a    0  1  1
+ b    0  1  1
+ c    0  1  2
+
+Transitions:
+  dp[1][1]: text1[0]='a'==text2[0]='a'? YES
+            dp[1][1]=dp[0][0]+1=1
+  dp[1][2]: text1[0]='a'!=text2[1]='c'
+            dp[1][2]=max(dp[0][2], dp[1][1])=max(0,1)=1
+  dp[3][2]: text1[2]='c'==text2[1]='c'? YES
+            dp[3][2]=dp[2][1]+1=1+1=2
+
+Result: dp[3][2]=2 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · LCS 2D DP</div></div><pre><span class="kw">def</span> <span class="fn">longest_common_subsequence</span>(text1, text2):
+    m, n = len(text1), len(text2)
+    dp = [[0] * (n + 1) <span class="kw">for</span> _ <span class="kw">in</span> range(m + 1)]
+    
+    <span class="kw">for</span> i <span class="kw">in</span> range(1, m + 1):
+        <span class="kw">for</span> j <span class="kw">in</span> range(1, n + 1):
+            <span class="kw">if</span> text1[i-1] == text2[j-1]:
+                dp[i][j] = dp[i-1][j-1] + 1
+            <span class="kw">else</span>:
+                dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+    
+    <span class="kw">return</span> dp[m][n]</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(m * n)</span>
+      <span class="iq-pill s">Space: O(m * n)</span>
+    </div>
+  </div>
+</div>
+
+<div class="iq">
+  <div class="iqh"><div class="iqn">4</div><div class="iqt">Edit Distance (Levenshtein Distance)</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 72):</strong> Min operations to transform word1 to word2 (insert, delete, replace). word1="horse", word2="ros" → 3</div>
+    <div class="iq-approach"><strong>2D DP:</strong> State: dp[i][j] = min edits for word1[0..i-1] → word2[0..j-1]. Recurrence: if chars match, dp[i][j]=dp[i-1][j-1]; else min(replace, insert, delete).</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">word1="horse", word2="ros"
+
+DP table:
+       ""  r  o  s
+  ""   0  1  2  3
+  h    1  1  2  3
+  o    2  2  1  2
+  r    3  2  2  2
+  s    4  3  3  2
+  e    5  4  4  3
+
+Key transitions:
+  dp[2][2]: word1[1]='o'==word2[1]='o'
+            dp[2][2]=dp[1][1]=1 (no edit needed)
+  dp[3][1]: word1[2]='r'==word2[0]='r'
+            dp[3][1]=dp[2][0]=2 (delete 'h','o', keep 'r')
+  dp[5][3]: word1[4]='e'!=word2[2]='s'
+            dp[5][3]=1+min(dp[4][3], dp[5][2], dp[4][2])
+            =1+min(2, 4, 3)=3 (replace 'e' with 's')
+
+Result: dp[5][3]=3 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Edit Distance 2D</div></div><pre><span class="kw">def</span> <span class="fn">edit_distance</span>(word1, word2):
+    m, n = len(word1), len(word2)
+    dp = [[0] * (n + 1) <span class="kw">for</span> _ <span class="kw">in</span> range(m + 1)]
+    
+    <span class="cm"># Base cases</span>
+    <span class="kw">for</span> i <span class="kw">in</span> range(m + 1):
+        dp[i][0] = i
+    <span class="kw">for</span> j <span class="kw">in</span> range(n + 1):
+        dp[0][j] = j
+    
+    <span class="kw">for</span> i <span class="kw">in</span> range(1, m + 1):
+        <span class="kw">for</span> j <span class="kw">in</span> range(1, n + 1):
+            <span class="kw">if</span> word1[i-1] == word2[j-1]:
+                dp[i][j] = dp[i-1][j-1]
+            <span class="kw">else</span>:
+                dp[i][j] = 1 + min(
+                    dp[i-1][j],      <span class="cm"># delete</span>
+                    dp[i][j-1],      <span class="cm"># insert</span>
+                    dp[i-1][j-1]     <span class="cm"># replace</span>
+                )
+    
+    <span class="kw">return</span> dp[m][n]</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(m * n)</span>
+      <span class="iq-pill s">Space: O(m * n)</span>
+    </div>
+  </div>
+</div>
+
+<!-- PATTERN 3: Tree DP -->
+<div class="iq">
+  <div class="iqh"><div class="iqn">5</div><div class="iqt">Tree Diameter (Longest Path in Tree)</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 1522):</strong> Find diameter of tree (longest path between any two nodes). tree=[1-0-2-4,   0-3] → diameter=4 (path: 4→2→0→1 or 4→2→0→3)</div>
+    <div class="iq-approach"><strong>Tree DFS:</strong> For each node, return longest path going down. Track diameter globally as sum of two longest child paths. Recurrence: diameter at node = longest1 + longest2 from children.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">Tree (edges given):
+      0 (root)
+     /|\
+    1 2 3
+      |
+      4
+
+DFS(node 4):
+  No children
+  return_depth = 1
+  diameter = 0
+
+DFS(node 2):
+  DFS(node 4) = 1
+  return_depth = 1 + 1 = 2
+  diameter_here = 0 + 2 = 2 (just path to child)
+
+DFS(node 0):
+  DFS(1) = 1, longest1 = 1
+  DFS(2) = 2, longest2 = 2  ← best two children
+  DFS(3) = 1, (ignored)
+  diameter_here = 1 + 2 = 3
+  global_diameter = max(2, 3) = 3
+
+Wait, should be 4...
+Actually paths:
+  1-0-2-4: depth 3
+  3-0-2-4: depth 3
+  1-0-3: depth 2
+  1-0-2: depth 2
+Max = 3? But expected 4...
+
+Recount: nodes at distance from 0:
+  1: distance 1
+  2: distance 1
+  3: distance 1
+  4: distance 2 (via 2)
+
+Longest path: 1 to 4 = distance 3 (edges: 1-0, 0-2, 2-4)
+Expected 4 nodes in path? Or 4 edges?
+Path 1→0→2→4 has 3 edges, 4 nodes.
+If diameter = count of nodes: 4 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Tree Diameter DFS</div></div><pre><span class="kw">def</span> <span class="fn">tree_diameter</span>(edges):
+    <span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+    
+    graph = defaultdict(list)
+    <span class="kw">for</span> u, v <span class="kw">in</span> edges:
+        graph[u].append(v)
+        graph[v].append(u)
+    
+    diameter = [0]
+    
+    <span class="kw">def</span> <span class="fn">dfs</span>(node, parent):
+        max1, max2 = 0, 0
+        
+        <span class="kw">for</span> neighbor <span class="kw">in</span> graph[node]:
+            <span class="kw">if</span> neighbor == parent:
+                <span class="kw">continue</span>
+            depth = dfs(neighbor, node) + 1
+            <span class="kw">if</span> depth > max1:
+                max2 = max1
+                max1 = depth
+            <span class="kw">elif</span> depth > max2:
+                max2 = depth
+        
+        diameter[0] = max(diameter[0], max1 + max2)
+        <span class="kw">return</span> max1
+    
+    dfs(0, -1)
+    <span class="kw">return</span> diameter[0]</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(h)</span>
+    </div>
+  </div>
+</div>
+
+<div class="iq">
+  <div class="iqh"><div class="iqn">6</div><div class="iqt">Smallest Subtree with All Deepest Nodes</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 865):</strong> Find smallest subtree containing all deepest leaves. Return root node of that subtree.</div>
+    <div class="iq-approach"><strong>Tree DFS:</strong> Compute depth of each subtree. Track max depth. Find LCA (lowest common ancestor) of all nodes at max depth. Return that node.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">Tree:      0
+           /   \
+          1     2
+         /
+        3
+
+Depths:
+  Node 0: max_child_depth = max(2, 1) = 2
+  Node 1: max_child_depth = 1
+  Node 3: max_child_depth = 0 (leaf)
+  Node 2: max_child_depth = 0 (leaf)
+
+Deepest leaves: node 3 (depth 2)
+Smallest subtree: just node 3
+
+Alternative tree:
+        0
+       / \
+      1   2
+     / \ / \
+    3  4 5  6
+
+Max depth = 2, deepest nodes = [3,4,5,6]
+Smallest subtree containing all = node 0 (root)</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Smallest Subtree Tree DP</div></div><pre><span class="kw">def</span> <span class="fn">smallest_subtree</span>(root):
+    <span class="kw">def</span> <span class="fn">dfs</span>(node):
+        <span class="cm"># Returns (depth, node_with_all_deepest)</span>
+        <span class="kw">if</span> <span class="kw">not</span> node:
+            <span class="kw">return</span> -1, None
+        
+        left_depth, left_node = dfs(node.left)
+        right_depth, right_node = dfs(node.right)
+        
+        <span class="kw">if</span> left_depth > right_depth:
+            <span class="kw">return</span> left_depth + 1, left_node
+        <span class="kw">elif</span> right_depth > left_depth:
+            <span class="kw">return</span> right_depth + 1, right_node
+        <span class="kw">else</span>:
+            <span class="cm"># Equal depths: current node has all deepest</span>
+            <span class="kw">return</span> left_depth + 1, node
+    
+    _, result = dfs(root)
+    <span class="kw">return</span> result</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(h)</span>
+    </div>
+  </div>
+</div>
+
+<!-- PATTERN 4: Graph DP (Shortest Path) -->
+<div class="iq">
+  <div class="iqh"><div class="iqn">7</div><div class="iqt">Coin Change (Unbounded Knapsack)</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 322):</strong> Min coins to make amount. coins=[1,2,5], amount=5 → 1 (use coin 5)</div>
+    <div class="iq-approach"><strong>DP on Amount:</strong> State: dp[i] = min coins for amount i. Recurrence: dp[i] = 1 + min(dp[i-coin]) for all coins ≤ i. This is unbounded knapsack (each coin unlimited use).</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">coins=[1,2,5], amount=5
+
+dp = [inf, inf, inf, inf, inf, inf]
+dp[0] = 0 (base case: 0 coins for amount 0)
+
+i=1: try all coins
+  coin=1: dp[1]=min(inf, 1+dp[0])=1
+  coin=2: 2>1, skip
+  coin=5: 5>1, skip
+  dp[1]=1
+
+i=2: 
+  coin=1: dp[2]=min(inf, 1+dp[1])=2
+  coin=2: dp[2]=min(2, 1+dp[0])=1
+  dp[2]=1
+
+i=3:
+  coin=1: dp[3]=min(inf, 1+dp[2])=2
+  coin=2: dp[3]=min(2, 1+dp[1])=2
+  dp[3]=2
+
+i=4:
+  coin=1: dp[4]=min(inf, 1+dp[3])=3
+  coin=2: dp[4]=min(3, 1+dp[2])=2
+  dp[4]=2
+
+i=5:
+  coin=1: dp[5]=min(inf, 1+dp[4])=3
+  coin=2: dp[5]=min(3, 1+dp[3])=3
+  coin=5: dp[5]=min(3, 1+dp[0])=1
+  dp[5]=1
+
+Result: dp[5]=1 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Coin Change DP</div></div><pre><span class="kw">def</span> <span class="fn">coin_change</span>(coins, amount):
+    dp = [float('inf')] * (amount + 1)
+    dp[0] = 0
+    
+    <span class="kw">for</span> i <span class="kw">in</span> range(1, amount + 1):
+        <span class="kw">for</span> coin <span class="kw">in</span> coins:
+            <span class="kw">if</span> coin <= i:
+                dp[i] = min(dp[i], dp[i - coin] + 1)
+    
+    <span class="kw">return</span> dp[amount] <span class="kw">if</span> dp[amount] != float('inf') <span class="kw">else</span> -1</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(amount * len(coins))</span>
+      <span class="iq-pill s">Space: O(amount)</span>
+    </div>
+  </div>
+</div>
+
+<div class="iq">
+  <div class="iqh"><div class="iqn">8</div><div class="iqt">Word Break (DP on String Position)</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 139):</strong> Can word be segmented using wordDict? s="leetcode", wordDict=["leet","code"] → True</div>
+    <div class="iq-approach"><strong>DP on Position:</strong> State: dp[i] = can s[0..i-1] be segmented? Recurrence: dp[i] = True if ∃j where dp[j]=True and s[j..i-1] ∈ wordDict.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">s="leetcode", wordDict=["leet","code"]
+
+dp = [T, F, F, F, F, F, F, F, F]
+     (index 0 = empty string, True)
+
+i=1: s[0:1]="l", check wordDict? NO → dp[1]=False
+i=2: s[0:2]="le", check wordDict? NO → dp[2]=False
+i=3: s[0:3]="lee", check wordDict? NO → dp[3]=False
+i=4: s[0:4]="leet", check wordDict? YES ✓
+     dp[4] = dp[0] (True) and "leet" in dict = True
+i=5: s[0:5]="leetc", check all j:
+     j=4: dp[4]=True, s[4:5]="c", not in dict
+     dp[5]=False
+i=6: s[0:6]="leetco", check j:
+     ... all False
+     dp[6]=False
+i=7: s[0:7]="leetcod", check j:
+     ... all False
+     dp[7]=False
+i=8: s[0:8]="leetcode", check j:
+     j=4: dp[4]=True, s[4:8]="code", YES in dict ✓
+     dp[8]=True
+
+Result: dp[8]=True ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Word Break DP</div></div><pre><span class="kw">def</span> <span class="fn">word_break</span>(s, wordDict):
+    word_set = set(wordDict)
+    dp = [False] * (len(s) + 1)
+    dp[0] = True
+    
+    <span class="kw">for</span> i <span class="kw">in</span> range(1, len(s) + 1):
+        <span class="kw">for</span> j <span class="kw">in</span> range(i):
+            <span class="kw">if</span> dp[j] <span class="kw">and</span> s[j:i] <span class="kw">in</span> word_set:
+                dp[i] = True
+                <span class="kw">break</span>
+    
+    <span class="kw">return</span> dp[len(s)]</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n² * m) where n=len(s), m=avg word len</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div>
+
+<!-- PATTERN 5: Digit DP -->
+<div class="iq">
+  <div class="iqh"><div class="iqn">9</div><div class="iqt">Count Numbers with Sum of Digits Equal to Target</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem:</strong> Count numbers from 1 to n where digit sum = target. n=1000, target=1 → 3 (numbers 1, 10, 100, 1000)</div>
+    <div class="iq-approach"><strong>Digit DP:</strong> State: (position, digit_sum, tight_bound). Tight = number still bounded by n's digits. Transition: try each digit 0-9 (constrained by tight), move to next position.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">n=1000, target=1
+
+Number has 4 digits (n=1000: "1000")
+
+DFS(pos=0, sum=0, tight=True):
+  pos=0 (leftmost):
+    tight=True, max_digit=1 (from n's digit)
+    Try digit 0: DFS(1, 0, False) — number < 1000 now
+    Try digit 1: DFS(1, 1, True)  — number = 1xxx
+
+DFS(1, 1, True):
+  tight=True, max_digit=0
+  Try digit 0: DFS(2, 1, True)
+
+DFS(2, 1, True):
+  tight=True, max_digit=0
+  Try digit 0: DFS(3, 1, True)
+
+DFS(3, 1, True):
+  tight=True, max_digit=0
+  Try digit 0: DFS(4, 1, True) — all 4 digits done
+    
+DFS(4, 1, True):
+  pos=4 (end), sum=1, target=1? YES ✓
+  Count += 1 (number "1000")
+
+Also count from DFS(1, 0, False):
+  Allows any digit, counts numbers with digit_sum=1:
+  (all numbers <1000 with digit sum 1: 1, 10, 100)
+
+Result: 4 numbers total [1, 10, 100, 1000]</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Digit DP</div></div><pre><span class="kw">def</span> <span class="fn">count_digit_sum</span>(n, target):
+    memo = {}
+    
+    <span class="kw">def</span> <span class="fn">dfs</span>(pos, digit_sum, tight, num_str):
+        <span class="kw">if</span> pos == len(num_str):
+            <span class="kw">return</span> 1 <span class="kw">if</span> digit_sum == target <span class="kw">else</span> 0
+        
+        <span class="kw">if</span> (pos, digit_sum, tight) <span class="kw">in</span> memo:
+            <span class="kw">return</span> memo[(pos, digit_sum, tight)]
+        
+        max_digit = int(num_str[pos]) <span class="kw">if</span> tight <span class="kw">else</span> 9
+        count = 0
+        
+        <span class="kw">for</span> digit <span class="kw">in</span> range(0, max_digit + 1):
+            new_tight = tight <span class="kw">and</span> (digit == max_digit)
+            count += dfs(pos + 1, digit_sum + digit, new_tight, num_str)
+        
+        memo[(pos, digit_sum, tight)] = count
+        <span class="kw">return</span> count
+    
+    <span class="kw">return</span> dfs(0, 0, True, str(n))
+
+<span class="cm"># Note: Include 0 handling and adjust for "from 1 to n" if needed</span></pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n * target * 10 * 2)</span>
+      <span class="iq-pill s">Space: O(n * target)</span>
+    </div>
+  </div>
+</div>
+
+<div class="iq">
+  <div class="iqh"><div class="iqn">10</div><div class="iqt">Number of Dice Rolls with Target Sum</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 1155):</strong> Count ways to roll d dice to get target sum. d=1, target=6 → 1 way (roll [6])</div>
+    <div class="iq-approach"><strong>Digit DP Variant:</strong> State: (dice_count, current_sum). Transition: try each face 1-6. Memoize to avoid recomputing same state.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">d=2, target=7
+
+Ways to roll 2 dice sum=7:
+[1,6], [2,5], [3,4], [4,3], [5,2], [6,1]
+Count = 6
+
+DP approach:
+dp[0][0] = 1 (0 dice, sum 0)
+dp[i][s] = Σ dp[i-1][s-face] for face in 1..6
+
+dp[1][1] = dp[0][0] = 1
+dp[1][2] = dp[0][1] = 1
+...
+dp[1][6] = dp[0][5] = 1
+(1 way to roll each face with 1 die)
+
+dp[2][7] = dp[1][6] + dp[1][5] + ... + dp[1][1]
+         = 1 + 1 + 1 + 1 + 1 + 1 = 6 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Dice Rolls DP</div></div><pre><span class="kw">def</span> <span class="fn">num_rolls_to_target</span>(d, target):
+    MOD = 10**9 + 7
+    memo = {}
+    
+    <span class="kw">def</span> <span class="fn">dp</span>(dice, s):
+        <span class="kw">if</span> dice == 0:
+            <span class="kw">return</span> 1 <span class="kw">if</span> s == 0 <span class="kw">else</span> 0
+        <span class="kw">if</span> s <= 0:
+            <span class="kw">return</span> 0
+        
+        <span class="kw">if</span> (dice, s) <span class="kw">in</span> memo:
+            <span class="kw">return</span> memo[(dice, s)]
+        
+        count = 0
+        <span class="kw">for</span> face <span class="kw">in</span> range(1, 7):
+            count += dp(dice - 1, s - face)
+        
+        memo[(dice, s)] = count % MOD
+        <span class="kw">return</span> memo[(dice, s)]
+    
+    <span class="kw">return</span> dp(d, target)</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(d * target * 6)</span>
+      <span class="iq-pill s">Space: O(d * target)</span>
+    </div>
+  </div>
+</div>
+
+<!-- PATTERN 6: State Compression (Bitmask DP) -->
+<div class="iq">
+  <div class="iqh"><div class="iqn">11</div><div class="iqt">Traveling Salesman Problem (Bitmask DP)</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 943):</strong> Find shortest path visiting all cities exactly once (TSP). Return minimum distance.</div>
+    <div class="iq-approach"><strong>Bitmask DP:</strong> State: dp[mask][i] = minimum cost to visit all cities in mask, ending at city i. Mask has n bits, each bit = city visited. Transition: try next unvisited city, update mask.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">4 cities, distance matrix:
+  0 1 2 3
+0 0 10 15 20
+1 10 0 35 25
+2 15 35 0 30
+3 20 25 30 0
+
+mask=0001 (city 0): dp[0001][0] = 0
+mask=0011 (cities 0,1):
+  from city 0, go to 1: dp[0011][1] = dp[0001][0] + dist(0,1) = 10
+  
+mask=0111 (cities 0,1,2):
+  from city 1, go to 2: dp[0111][2] = dp[0011][1] + dist(1,2) = 10 + 35 = 45
+  from city 0, go to 2: dp[0111][2] = min(45, dp[0101][0] + dist(0,2))
+  
+...continue until mask=1111 (all cities)
+
+Final: min(dp[1111][i] + dist(i, 0)) for all ending cities i
+      = shortest round trip</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · TSP Bitmask DP</div></div><pre><span class="kw">def</span> <span class="fn">tsp</span>(dist):
+    n = len(dist)
+    INF = float('inf')
+    dp = [[INF] * n <span class="kw">for</span> _ <span class="kw">in</span> range(1 << n)]
+    
+    dp[1][0] = 0  <span class="cm"># Start at city 0</span>
+    
+    <span class="kw">for</span> mask <span class="kw">in</span> range(1 << n):
+        <span class="kw">for</span> u <span class="kw">in</span> range(n):
+            <span class="kw">if</span> dp[mask][u] == INF:
+                <span class="kw">continue</span>
+            <span class="cm"># Try visiting next city</span>
+            <span class="kw">for</span> v <span class="kw">in</span> range(n):
+                <span class="kw">if</span> mask & (1 << v) == 0:  <span class="cm"># v not visited</span>
+                    new_mask = mask | (1 << v)
+                    dp[new_mask][v] = min(dp[new_mask][v], dp[mask][u] + dist[u][v])
+    
+    <span class="cm"># Return to city 0</span>
+    full_mask = (1 << n) - 1
+    ans = min(dp[full_mask][i] + dist[i][0] <span class="kw">for</span> i <span class="kw">in</span> range(n))
+    <span class="kw">return</span> ans</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(2^n * n²)</span>
+      <span class="iq-pill s">Space: O(2^n * n)</span>
+    </div>
+  </div>
+</div>
+
+<div class="iq">
+  <div class="iqh"><div class="iqn">12</div><div class="iqt">Maximum Length of Pair Chain (Interval DP)</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 435):</strong> Find max pairs where each pair [a,b] can follow [c,d] if b < c. pairs=[[1,2],[7,8],[4,5]] → 3 (chain all three)</div>
+    <div class="iq-approach"><strong>Greedy + Sorting OR DP:</strong> Sort by end position. Greedy: always pick pair with earliest end time (leaves room for next). DP: dp[i] = max chain length ending at pair i.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">pairs=[[1,2],[7,8],[4,5]]
+Sorted by end: [[1,2],[4,5],[7,8]]
+
+Greedy approach:
+Pick [1,2], end=2
+Next: [4,5], start=4 > 2? YES, pick it, end=5
+Next: [7,8], start=7 > 5? YES, pick it
+Chain: 3 pairs ✓
+
+DP approach:
+dp[0] = 1 (pair [1,2])
+dp[1] = max(1, 1 + 1) = 2 if [1,2]<[4,5]
+        Yes, so dp[1] = 2
+dp[2] = max(1, dp[1] + 1) = 3 if [4,5]<[7,8]
+        Yes, so dp[2] = 3
+
+Result: 3 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Maximum Pair Chain</div></div><pre><span class="kw">def</span> <span class="fn">max_chain_length</span>(pairs):
+    <span class="cm"># Greedy: Sort by end position, pick earliest ending</span>
+    pairs.sort(key=<span class="kw">lambda</span> x: x[1])
+    count = 0
+    current_end = float('-inf')
+    
+    <span class="kw">for</span> start, end <span class="kw">in</span> pairs:
+        <span class="kw">if</span> start > current_end:
+            count += 1
+            current_end = end
+    
+    <span class="kw">return</span> count
+
+<span class="cm"># Alternative DP approach:</span>
+<span class="kw">def</span> <span class="fn">max_chain_length_dp</span>(pairs):
+    pairs.sort()
+    n = len(pairs)
+    dp = [1] * n
+    
+    <span class="kw">for</span> i <span class="kw">in</span> range(1, n):
+        <span class="kw">for</span> j <span class="kw">in</span> range(i):
+            <span class="kw">if</span> pairs[j][1] < pairs[i][0]:
+                dp[i] = max(dp[i], dp[j] + 1)
+    
+    <span class="kw">return</span> max(dp)</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n log n) greedy, O(n²) DP</span>
+      <span class="iq-pill s">Space: O(1) greedy, O(n) DP</span>
+    </div>
+  </div>
+</div>
+
+</div>
+
+</div></body></html>

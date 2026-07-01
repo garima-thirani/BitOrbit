@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Matrix — Module 7</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+/* ── expanded interview question styles ── */
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+/* ===== deep-dive intuition card ===== */
+.pat{background:linear-gradient(160deg,rgba(79,70,229,.08),rgba(15,23,42,.4));border:1px solid var(--brd);border-radius:18px;padding:30px 34px;margin:24px 0 40px;}
+.pat-lead{font-size:.95rem;color:var(--t);line-height:1.85;margin-bottom:6px;}
+.pat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+@media(max-width:760px){.pat-grid{grid-template-columns:1fr;}}
+.pat-cell{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:18px 22px;}
+.pat-cell h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.pat-cell.when h4{color:var(--w);}.pat-cell.state h4{color:var(--a);}
+.pat-cell.rec h4{color:var(--pl);}.pat-cell.base h4{color:var(--s);}
+.pat-cell p,.pat-cell li{font-size:.9rem;color:var(--tm);line-height:1.8;}
+.pat-cell ul{padding-left:18px;margin-top:6px;}.pat-cell li{margin:4px 0;}
+.formula{background:var(--cbg);border:1px solid #30363d;border-radius:10px;padding:16px 20px;margin:14px 0;font-family:'Fira Code','Courier New',monospace;font-size:.9rem;color:#a5b4fc;line-height:1.9;overflow-x:auto;}
+.formula .hl{color:#67e8f9;font-weight:700;}
+.keywords{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+.kwp{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:3px 14px;font-size:.8rem;font-weight:600;}
+.pitfall{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.03));border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.pitfall .pl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#fca5a5;font-weight:700;margin-bottom:6px;}
+.pitfall p{font-size:.88rem;color:#fecaca;line-height:1.8;}
+.real{background:linear-gradient(135deg,rgba(16,185,129,.09),rgba(16,185,129,.02));border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.real .rl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#6ee7b7;font-weight:700;margin-bottom:8px;}
+.real ul{padding-left:18px;margin:0;}.real li{font-size:.88rem;color:#a7f3d0;line-height:1.85;margin:5px 0;}
+.real li b{color:#d1fae5;}
+/* ===== animated SVG figure ===== */
+.fig{background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,.06),transparent 70%),var(--cbg);border:1px solid #30363d;border-radius:14px;padding:24px;margin:22px 0;overflow-x:auto;}
+.fig svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+.fig-cap{text-align:center;font-size:.82rem;color:var(--tm);margin-top:14px;font-style:italic;}
+.fig-cap b{color:var(--a);font-style:normal;}
+.fig-title{font-size:1.02rem;color:var(--t);margin:8px 0 10px;font-weight:700;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:16px;}
+.legend span{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--tm);}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;}
+.svg-t{fill:#e2e8f0;font-family:'Fira Code',monospace;}
+.svg-tm{fill:#94a3b8;font-family:'Segoe UI',sans-serif;}
+.svg-lbl{fill:#67e8f9;font-family:'Segoe UI',sans-serif;font-weight:700;}
+.svg-acc{fill:#fcd34d;font-family:'Fira Code',monospace;}
+.svg-s{fill:#6ee7b7;font-family:'Fira Code',monospace;}
+.svg-d{fill:#fca5a5;font-family:'Fira Code',monospace;}
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 7 · Matrix & 2D Arrays</div><h1>The Grid is Everywhere:<br><span>Traversal, Search & Transformation</span></h1><p>From game boards to image processing, matrices model the world. Master traversal, transformation, and search in 2D.</p><div class="stats"><div class="stat"><div class="sn">4-directional</div><div class="sl">Standard movement</div></div><div class="stat"><div class="sn">DFS/BFS</div><div class="sl">Grid exploration</div></div><div class="stat"><div class="sn">In-place</div><div class="sl">Tricks abound</div></div><div class="stat"><div class="sn">FAANG ⭐⭐</div><div class="sl">Frequency: High</div></div></div></div></div><div class="wrap">
+<div class="sec">🧠 The Story — Google Maps Satellite View</div>
+<div class="story">
+  <div class="slabel">Real World Story — Pixel Processing</div>
+  <h3>A satellite image is a matrix. Each pixel is a cell. Processing it means navigating millions of cells.</h3>
+  <p>
+    <strong>Flood Fill (Paint Bucket tool):</strong> Click on a region. All connected pixels of the same color change. This is exactly BFS/DFS on a matrix.<br><br>
+    <strong>Image rotation:</strong> Rotate a photo 90 degrees. In code: transpose + reverse each row. O(n^2) in-place.<br><br>
+    <strong>Connected regions:</strong> How many distinct land masses in a map? Each cell is a node. Two cells are connected if they're adjacent and both land. Count components with DFS.<br><br>
+    Matrices are just graphs on a grid. Every graph algorithm (BFS, DFS, Dijkstra) applies with appropriate neighbor generation.
+  </p>
+</div>
+
+<div class="ibox">
+  <div class="lbl">The 4-Directional Template</div>
+  <p>For standard grid movement (no diagonals), use these direction vectors. For 8-directional (including diagonals), add (-1,-1), (-1,1), (1,-1), (1,1).</p>
+  <div style="font-family:monospace;background:#0d1117;padding:12px;border-radius:8px;color:#e6edf3;margin-top:8px">
+  DIRS = [(0,1),(0,-1),(1,0),(-1,0)]  # right, left, down, up<br><br>
+  # Always bounds-check neighbors:<br>
+  for dr, dc in DIRS:<br>
+  &nbsp;&nbsp;nr, nc = r+dr, c+dc<br>
+  &nbsp;&nbsp;if 0 &lt;= nr &lt; rows and 0 &lt;= nc &lt; cols:<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;# valid cell
+  </div>
+</div>
+
+<div class="pat">
+  <p class="pat-lead">A matrix is just a <strong>graph drawn on grid paper</strong>. Each cell is a node; each compass step is an edge. The moment you see "grid" in a problem, ask one question: <em>am I exploring connectivity?</em> If yes, reach for BFS/DFS with 4-directional moves and a visited marker. If not, ask: <em>am I transforming shape?</em> Then work out the coordinate algebra (transpose, spiral, rotate). 90% of matrix problems collapse into one of these two frames.</p>
+  <div class="pat-grid">
+    <div class="pat-cell when">
+      <h4>🌊 Flood fill / connectivity</h4>
+      <ul>
+        <li>Start at a cell, mark it visited, spread to un-visited neighbors</li>
+        <li><b>BFS</b> for shortest path / level-by-level; <b>DFS</b> for reachability / backtracking</li>
+        <li>Mark in-place (flip '1'→'0') to avoid a separate visited set</li>
+      </ul>
+    </div>
+    <div class="pat-cell state">
+      <h4>🔄 In-place transforms</h4>
+      <p>Rotate 90° = <b>transpose + reverse rows</b>. Spiral = <b>peel layers</b> with 4 shrinking boundaries. Set zeroes = <b>use first row/col as flags</b> so you don't need extra space.</p>
+    </div>
+    <div class="pat-cell rec">
+      <h4>📐 Coordinate math</h4>
+      <p>After transposing n×n: <code>new[i][j] = old[j][i]</code>. After rotating 90° CW: <code>new[i][j] = old[n−1−j][i]</code>. Derive once, trust the formula forever.</p>
+    </div>
+    <div class="pat-cell base">
+      <h4>⚡ Binary matrix tricks</h4>
+      <p>Always bounds-check before accessing. Use <code>DIRS = [(0,1),(0,−1),(1,0),(−1,0)]</code>. "Connected" means 4-directional unless the problem says diagonal.</p>
+    </div>
+  </div>
+  <div class="formula"><span class="hl">rotate 90° CW</span>: transpose then reverse each row  (2 passes, no extra space)<br><span class="hl">flood fill</span>: mark cell visited BEFORE pushing to queue/stack (prevents re-visits)<br><span class="hl">spiral</span>: top, bottom, left, right walls; shrink after each sweep direction</div>
+  <div class="keywords">
+    <span class="kwp">flood fill</span><span class="kwp">BFS/DFS on grid</span><span class="kwp">4-directional</span><span class="kwp">transpose</span><span class="kwp">spiral</span><span class="kwp">in-place</span>
+  </div>
+  <div class="real">
+    <div class="rl">🌍 Where this lives in the real world</div>
+    <ul>
+      <li><b>Paint bucket tool:</b> Photoshop/MS Paint flood-fill is DFS/BFS on a pixel grid, replacing one colour region.</li>
+      <li><b>Minesweeper reveal:</b> clicking an empty cell recursively reveals neighbours — exactly flood-fill.</li>
+      <li><b>Image rotation:</b> JPEG EXIF rotation, CSS <code>transform:rotate</code>, phone screen orientation are all transpose+reverse under the hood.</li>
+      <li><b>Satellite / medical imaging:</b> counting connected regions (tumour boundary, land mass, ocean current) is the islands problem.</li>
+      <li><b>Game of Life / cellular automata:</b> each generation reads the 8-neighbour count from the current grid and writes a new one.</li>
+      <li><b>Spreadsheet freeze panes:</b> spiral traversal mirrors how a printer reads a 2-D page into a 1-D stream.</li>
+    </ul>
+  </div>
+  <div class="pitfall">
+    <div class="pl">⚠️ The traps</div>
+    <p><b>Forget to mark visited before queuing:</b> you enqueue the same cell multiple times and DFS loops forever — mark <em>immediately</em> when you first visit, not when you process. <b>Modifying the matrix mid-scan:</b> in Set Zeroes, zeroing a row/col as you go poisons the markers for later cells — that's why you record flags first, zero second. <b>Diagonal vs 4-directional:</b> islands uses 4-dirs; word search and some variants need 8 — read the problem.</p>
+  </div>
+</div>
+
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Number of Islands — DFS and BFS</div></div><pre><span class="cm"># --- DFS Flood Fill approach ---</span>
+<span class="kw">def</span> <span class="fn">num_islands</span>(grid):
+    rows, cols = len(grid), len(grid[0])
+    count = 0
+
+    <span class="kw">def</span> <span class="fn">dfs</span>(r, c):
+        <span class="kw">if not</span> (0 &lt;= r < rows <span class="kw">and</span> 0 &lt;= c < cols): <span class="kw">return</span>
+        <span class="kw">if</span> grid[r][c] != '1': <span class="kw">return</span>
+        grid[r][c] = '0'                   <span class="cm"># mark visited (in-place)</span>
+        <span class="kw">for</span> dr, dc <span class="kw">in</span> [(0,1),(0,-1),(1,0),(-1,0)]:
+            dfs(r+dr, c+dc)
+
+    <span class="kw">for</span> r <span class="kw">in</span> range(rows):
+        <span class="kw">for</span> c <span class="kw">in</span> range(cols):
+            <span class="kw">if</span> grid[r][c] == '1':
+                dfs(r, c)                  <span class="cm"># flood fill one island</span>
+                count += 1
+    <span class="kw">return</span> count
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Flood-fill — a wildfire that stops at water</div>
+  <svg viewBox="0 0 560 280" width="560" role="img" aria-label="Animated BFS flood-fill on a grid">
+    <text x="280" y="22" text-anchor="middle" class="svg-tm" font-size="13">4×4 grid · '1'=land, '0'=water · count connected islands</text>
+    <!-- grid cells -->
+    <g font-family="'Fira Code',monospace" font-size="18" text-anchor="middle">
+      <!-- row 0 -->
+      <rect x="80" y="36" width="60" height="52" rx="6" fill="#162032" stroke="#475569"/><text x="110" y="68" class="svg-t">1</text>
+      <rect x="148" y="36" width="60" height="52" rx="6" fill="#162032" stroke="#475569"/><text x="178" y="68" class="svg-t">1</text>
+      <rect x="216" y="36" width="60" height="52" rx="6" fill="#0d1117" stroke="#334155"/><text x="246" y="68" class="svg-tm">0</text>
+      <rect x="284" y="36" width="60" height="52" rx="6" fill="#0d1117" stroke="#334155"/><text x="314" y="68" class="svg-tm">0</text>
+      <!-- row 1 -->
+      <rect x="80" y="96" width="60" height="52" rx="6" fill="#162032" stroke="#475569"/><text x="110" y="128" class="svg-t">1</text>
+      <rect x="148" y="96" width="60" height="52" rx="6" fill="#0d1117" stroke="#334155"/><text x="178" y="128" class="svg-tm">0</text>
+      <rect x="216" y="96" width="60" height="52" rx="6" fill="#162032" stroke="#475569"/><text x="246" y="128" class="svg-t">1</text>
+      <rect x="284" y="96" width="60" height="52" rx="6" fill="#162032" stroke="#475569"/><text x="314" y="128" class="svg-t">1</text>
+      <!-- row 2 -->
+      <rect x="80" y="156" width="60" height="52" rx="6" fill="#0d1117" stroke="#334155"/><text x="110" y="188" class="svg-tm">0</text>
+      <rect x="148" y="156" width="60" height="52" rx="6" fill="#0d1117" stroke="#334155"/><text x="178" y="188" class="svg-tm">0</text>
+      <rect x="216" y="156" width="60" height="52" rx="6" fill="#162032" stroke="#475569"/><text x="246" y="188" class="svg-t">1</text>
+      <rect x="284" y="156" width="60" height="52" rx="6" fill="#162032" stroke="#475569"/><text x="314" y="188" class="svg-t">1</text>
+    </g>
+    <!-- island 1 flood (r0c0,r0c1,r1c0) -->
+    <rect x="80" y="36" width="60" height="52" rx="6" fill="rgba(6,182,212,.3)" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.10;0.14;1" dur="11s" repeatCount="indefinite"/></rect>
+    <rect x="148" y="36" width="60" height="52" rx="6" fill="rgba(6,182,212,.3)" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.18;0.22;1" dur="11s" repeatCount="indefinite"/></rect>
+    <rect x="80" y="96" width="60" height="52" rx="6" fill="rgba(6,182,212,.3)" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.26;0.30;1" dur="11s" repeatCount="indefinite"/></rect>
+    <text x="420" y="68" class="svg-lbl" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.30;0.34;1" dur="11s" repeatCount="indefinite"/>island 1</text>
+    <!-- island 2 flood (r1c2,r1c3,r2c2,r2c3) -->
+    <rect x="216" y="96" width="60" height="52" rx="6" fill="rgba(245,158,11,.25)" stroke="#f59e0b" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.44;0.48;1" dur="11s" repeatCount="indefinite"/></rect>
+    <rect x="284" y="96" width="60" height="52" rx="6" fill="rgba(245,158,11,.25)" stroke="#f59e0b" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.52;0.56;1" dur="11s" repeatCount="indefinite"/></rect>
+    <rect x="216" y="156" width="60" height="52" rx="6" fill="rgba(245,158,11,.25)" stroke="#f59e0b" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.60;0.64;1" dur="11s" repeatCount="indefinite"/></rect>
+    <rect x="284" y="156" width="60" height="52" rx="6" fill="rgba(245,158,11,.25)" stroke="#f59e0b" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.68;0.72;1" dur="11s" repeatCount="indefinite"/></rect>
+    <text x="420" y="130" class="svg-acc" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.72;0.76;1" dur="11s" repeatCount="indefinite"/>island 2</text>
+    <text x="420" y="210" class="svg-s" font-size="16" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.80;0.84;1" dur="11s" repeatCount="indefinite"/>count = 2</text>
+    <text x="280" y="248" text-anchor="middle" class="svg-tm" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.84;0.88;1" dur="11s" repeatCount="indefinite"/>DFS marks '1' → '0' immediately — visited cells never re-enter the stack</text>
+  </svg>
+  <div class="fig-cap"><b>Mark before you spread, never after.</b> The moment you touch a land cell, flip it to '0'. This is your visited set — free, O(1), and in-place. Any unvisited '1' you find during the outer loop is guaranteed a new island. ▶ loops every 11s.</div>
+  <div class="legend">
+    <span><i style="background:#06b6d4"></i>island 1 (BFS wave)</span>
+    <span><i style="background:#f59e0b"></i>island 2 (BFS wave)</span>
+    <span><i style="background:#475569"></i>unvisited land</span>
+    <span><i style="background:#1e293b"></i>water</span>
+  </div>
+</div>
+
+<div class="sec">🎬 Rotate Image 90 Degrees In-Place</div>
+<div class="ts">
+  <div class="sn2">🔄</div>
+  <div class="sc"><strong>Key insight:</strong> Rotate 90° clockwise = Transpose + Reverse each row.
+  <br>Transpose: swap matrix[i][j] with matrix[j][i]
+  <br>Then reverse each row.
+  <div class="mini">Original:    After Transpose:  After Row Reverse:
+[1 2 3]      [1 4 7]           [7 4 1]
+[4 5 6]  ->  [2 5 8]   ->      [8 5 2]
+[7 8 9]      [3 6 9]           [9 6 3]  ← 90deg clockwise ✓</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Rotate Image, Spiral Order, Set Zeroes</div></div><pre><span class="cm"># --- Rotate Image 90° Clockwise (in-place) ---</span>
+<span class="kw">def</span> <span class="fn">rotate</span>(matrix):
+    n = len(matrix)
+    <span class="cm"># Step 1: Transpose (swap along diagonal)</span>
+    <span class="kw">for</span> i <span class="kw">in</span> range(n):
+        <span class="kw">for</span> j <span class="kw">in</span> range(i+1, n):
+            matrix[i][j], matrix[j][i] = matrix[j][i], matrix[i][j]
+    <span class="cm"># Step 2: Reverse each row</span>
+    <span class="kw">for</span> row <span class="kw">in</span> matrix:
+        row.reverse()
+
+<span class="cm"># --- Spiral Order Traversal ---</span>
+<span class="kw">def</span> <span class="fn">spiral_order</span>(matrix):
+    result = []
+    top, bottom, left, right = 0, len(matrix)-1, 0, len(matrix[0])-1
+    <span class="kw">while</span> top &lt;= bottom <span class="kw">and</span> left &lt;= right:
+        <span class="kw">for</span> c <span class="kw">in</span> range(left, right+1): result.append(matrix[top][c])
+        top += 1
+        <span class="kw">for</span> r <span class="kw">in</span> range(top, bottom+1): result.append(matrix[r][right])
+        right -= 1
+        <span class="kw">if</span> top &lt;= bottom:
+            <span class="kw">for</span> c <span class="kw">in</span> range(right, left-1, -1): result.append(matrix[bottom][c])
+            bottom -= 1
+        <span class="kw">if</span> left &lt;= right:
+            <span class="kw">for</span> r <span class="kw">in</span> range(bottom, top-1, -1): result.append(matrix[r][left])
+            left += 1
+    <span class="kw">return</span> result
+
+<span class="cm"># --- Set Matrix Zeroes (O(1) space trick) ---</span>
+<span class="kw">def</span> <span class="fn">set_zeroes</span>(matrix):
+    m, n = len(matrix), len(matrix[0])
+    first_row = any(matrix[0][j]==0 <span class="kw">for</span> j <span class="kw">in</span> range(n))
+    first_col = any(matrix[i][0]==0 <span class="kw">for</span> i <span class="kw">in</span> range(m))
+    <span class="kw">for</span> i <span class="kw">in</span> range(1, m):            <span class="cm"># use first row/col as markers</span>
+        <span class="kw">for</span> j <span class="kw">in</span> range(1, n):
+            <span class="kw">if</span> matrix[i][j] == 0: matrix[i][0] = matrix[0][j] = 0
+    <span class="kw">for</span> i <span class="kw">in</span> range(1, m):
+        <span class="kw">for</span> j <span class="kw">in</span> range(1, n):
+            <span class="kw">if</span> matrix[i][0]==0 <span class="kw">or</span> matrix[0][j]==0: matrix[i][j] = 0
+    <span class="kw">if</span> first_row: [<span class="kw">None</span> <span class="kw">for</span> j <span class="kw">in</span> range(n) <span class="kw">if not</span> (matrix[0].__setitem__(j,0) <span class="kw">or</span> True)]
+    <span class="kw">if</span> first_col: [<span class="kw">None</span> <span class="kw">for</span> i <span class="kw">in</span> range(m) <span class="kw">if not</span> (matrix[i].__setitem__(0,0) <span class="kw">or</span> True)]
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Rotate 90° CW — transpose the diagonal, then mirror each row</div>
+  <svg viewBox="0 0 600 290" width="600" role="img" aria-label="Animated 90 degree matrix rotation">
+    <text x="300" y="22" text-anchor="middle" class="svg-tm" font-size="13">3×3 matrix [1..9] → transpose → reverse rows → 90° CW</text>
+    <!-- original 3x3 -->
+    <text x="130" y="54" text-anchor="middle" class="svg-tm" font-size="11">original</text>
+    <g text-anchor="middle" font-size="16">
+      <rect x="80" y="60" width="48" height="44" rx="6" fill="#162032" stroke="#475569"/><text x="104" y="87" class="svg-t">1</text>
+      <rect x="132" y="60" width="48" height="44" rx="6" fill="#162032" stroke="#475569"/><text x="156" y="87" class="svg-t">2</text>
+      <rect x="184" y="60" width="48" height="44" rx="6" fill="#162032" stroke="#475569"/><text x="208" y="87" class="svg-t">3</text>
+      <rect x="80" y="108" width="48" height="44" rx="6" fill="#162032" stroke="#475569"/><text x="104" y="135" class="svg-t">4</text>
+      <rect x="132" y="108" width="48" height="44" rx="6" fill="#162032" stroke="#475569"/><text x="156" y="135" class="svg-t">5</text>
+      <rect x="184" y="108" width="48" height="44" rx="6" fill="#162032" stroke="#475569"/><text x="208" y="135" class="svg-t">6</text>
+      <rect x="80" y="156" width="48" height="44" rx="6" fill="#162032" stroke="#475569"/><text x="104" y="183" class="svg-t">7</text>
+      <rect x="132" y="156" width="48" height="44" rx="6" fill="#162032" stroke="#475569"/><text x="156" y="183" class="svg-t">8</text>
+      <rect x="184" y="156" width="48" height="44" rx="6" fill="#162032" stroke="#475569"/><text x="208" y="183" class="svg-t">9</text>
+    </g>
+    <!-- arrow step 1 -->
+    <text x="258" y="124" text-anchor="middle" class="svg-lbl" font-size="22" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.25;0.30;0.50;0.55" dur="12s" repeatCount="indefinite"/>→</text>
+    <text x="258" y="148" text-anchor="middle" class="svg-tm" font-size="10" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.25;0.30;0.50;0.55" dur="12s" repeatCount="indefinite"/>transpose</text>
+    <!-- transposed 3x3 -->
+    <text x="360" y="54" text-anchor="middle" class="svg-lbl" font-size="11" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.25;0.30;1" dur="12s" repeatCount="indefinite"/>transposed</text>
+    <g text-anchor="middle" font-size="16" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.25;0.30;1" dur="12s" repeatCount="indefinite"/>
+      <rect x="310" y="60" width="48" height="44" rx="6" fill="#0d1117" stroke="#06b6d4"/><text x="334" y="87" class="svg-lbl">1</text>
+      <rect x="362" y="60" width="48" height="44" rx="6" fill="#0d1117" stroke="#06b6d4"/><text x="386" y="87" class="svg-lbl">4</text>
+      <rect x="414" y="60" width="48" height="44" rx="6" fill="#0d1117" stroke="#06b6d4"/><text x="438" y="87" class="svg-lbl">7</text>
+      <rect x="310" y="108" width="48" height="44" rx="6" fill="#0d1117" stroke="#06b6d4"/><text x="334" y="135" class="svg-lbl">2</text>
+      <rect x="362" y="108" width="48" height="44" rx="6" fill="#0d1117" stroke="#06b6d4"/><text x="386" y="135" class="svg-lbl">5</text>
+      <rect x="414" y="108" width="48" height="44" rx="6" fill="#0d1117" stroke="#06b6d4"/><text x="438" y="135" class="svg-lbl">8</text>
+      <rect x="310" y="156" width="48" height="44" rx="6" fill="#0d1117" stroke="#06b6d4"/><text x="334" y="183" class="svg-lbl">3</text>
+      <rect x="362" y="156" width="48" height="44" rx="6" fill="#0d1117" stroke="#06b6d4"/><text x="386" y="183" class="svg-lbl">6</text>
+      <rect x="414" y="156" width="48" height="44" rx="6" fill="#0d1117" stroke="#06b6d4"/><text x="438" y="183" class="svg-lbl">9</text>
+    </g>
+    <!-- arrow step 2 -->
+    <text x="490" y="124" text-anchor="middle" class="svg-acc" font-size="22" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.52;0.57;0.75;0.80" dur="12s" repeatCount="indefinite"/>→</text>
+    <text x="490" y="148" text-anchor="middle" class="svg-tm" font-size="10" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.52;0.57;0.75;0.80" dur="12s" repeatCount="indefinite"/>rev rows</text>
+    <!-- result label -->
+    <text x="300" y="240" text-anchor="middle" class="svg-s" font-size="14" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.78;0.82;1" dur="12s" repeatCount="indefinite"/>result: [[7,4,1],[8,5,2],[9,6,3]] — 90° CW ✓</text>
+    <text x="300" y="264" text-anchor="middle" class="svg-tm" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.84;0.88;1" dur="12s" repeatCount="indefinite"/>two O(n²) passes, zero extra memory — the whole trick is the diagonal reflection</text>
+  </svg>
+  <div class="fig-cap"><b>Transpose then mirror.</b> After the transpose, row 0 holds what was column 0 (bottom-up). Reversing each row flips it left-to-right, which completes the 90° turn. You can derive any rotation from these two primitives. ▶ loops every 12s.</div>
+  <div class="legend">
+    <span><i style="background:#162032;border:1px solid #475569"></i>original</span>
+    <span><i style="background:#06b6d4"></i>after transpose</span>
+    <span><i style="background:#10b981"></i>final rotated</span>
+  </div>
+</div>
+
+<div class="sec">🎬 Word Search — DFS with Backtracking on Grid</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Word Search — DFS Backtracking</div></div><pre><span class="kw">def</span> <span class="fn">word_search</span>(board, word):
+    rows, cols = len(board), len(board[0])
+
+    <span class="kw">def</span> <span class="fn">dfs</span>(r, c, idx):
+        <span class="kw">if</span> idx == len(word): <span class="kw">return</span> True          <span class="cm"># all chars matched</span>
+        <span class="kw">if not</span> (0 &lt;= r < rows <span class="kw">and</span> 0 &lt;= c < cols): <span class="kw">return</span> False
+        <span class="kw">if</span> board[r][c] != word[idx]: <span class="kw">return</span> False
+
+        tmp = board[r][c]
+        board[r][c] = '#'                          <span class="cm"># mark visited</span>
+        found = any(dfs(r+dr, c+dc, idx+1) <span class="kw">for</span> dr,dc <span class="kw">in</span> [(0,1),(0,-1),(1,0),(-1,0)])
+        board[r][c] = tmp                          <span class="cm"># restore (backtrack)</span>
+        <span class="kw">return</span> found
+
+    <span class="kw">return</span> any(dfs(r, c, 0) <span class="kw">for</span> r <span class="kw">in</span> range(rows) <span class="kw">for</span> c <span class="kw">in</span> range(cols))
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Spiral order — peel the outer layer, shrink the boundary, repeat</div>
+  <svg viewBox="0 0 500 280" width="500" role="img" aria-label="Animated spiral order traversal">
+    <text x="250" y="22" text-anchor="middle" class="svg-tm" font-size="13">3×3 matrix · output each cell in spiral order</text>
+    <g font-size="18" text-anchor="middle">
+      <rect x="100" y="40" width="60" height="54" rx="7" fill="#162032" stroke="#475569"/><text x="130" y="72" class="svg-t">1</text>
+      <rect x="166" y="40" width="60" height="54" rx="7" fill="#162032" stroke="#475569"/><text x="196" y="72" class="svg-t">2</text>
+      <rect x="232" y="40" width="60" height="54" rx="7" fill="#162032" stroke="#475569"/><text x="262" y="72" class="svg-t">3</text>
+      <rect x="100" y="100" width="60" height="54" rx="7" fill="#162032" stroke="#475569"/><text x="130" y="132" class="svg-t">4</text>
+      <rect x="166" y="100" width="60" height="54" rx="7" fill="#162032" stroke="#475569"/><text x="196" y="132" class="svg-t">5</text>
+      <rect x="232" y="100" width="60" height="54" rx="7" fill="#162032" stroke="#475569"/><text x="262" y="132" class="svg-t">6</text>
+      <rect x="100" y="160" width="60" height="54" rx="7" fill="#162032" stroke="#475569"/><text x="130" y="192" class="svg-t">7</text>
+      <rect x="166" y="160" width="60" height="54" rx="7" fill="#162032" stroke="#475569"/><text x="196" y="192" class="svg-t">8</text>
+      <rect x="232" y="160" width="60" height="54" rx="7" fill="#162032" stroke="#475569"/><text x="262" y="192" class="svg-t">9</text>
+    </g>
+    <!-- wave 1: top row 1,2,3 -->
+    <rect x="100" y="40" width="60" height="54" rx="7" fill="rgba(6,182,212,.3)" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.06;0.10;1" dur="12s" repeatCount="indefinite"/></rect>
+    <rect x="166" y="40" width="60" height="54" rx="7" fill="rgba(6,182,212,.3)" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.12;0.16;1" dur="12s" repeatCount="indefinite"/></rect>
+    <rect x="232" y="40" width="60" height="54" rx="7" fill="rgba(6,182,212,.3)" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.18;0.22;1" dur="12s" repeatCount="indefinite"/></rect>
+    <!-- wave 2: right col 6,9 -->
+    <rect x="232" y="100" width="60" height="54" rx="7" fill="rgba(245,158,11,.3)" stroke="#f59e0b" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.26;0.30;1" dur="12s" repeatCount="indefinite"/></rect>
+    <rect x="232" y="160" width="60" height="54" rx="7" fill="rgba(245,158,11,.3)" stroke="#f59e0b" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.34;0.38;1" dur="12s" repeatCount="indefinite"/></rect>
+    <!-- wave 3: bottom row rev 8,7 -->
+    <rect x="166" y="160" width="60" height="54" rx="7" fill="rgba(16,185,129,.3)" stroke="#10b981" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.42;0.46;1" dur="12s" repeatCount="indefinite"/></rect>
+    <rect x="100" y="160" width="60" height="54" rx="7" fill="rgba(16,185,129,.3)" stroke="#10b981" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.50;0.54;1" dur="12s" repeatCount="indefinite"/></rect>
+    <!-- wave 4: left col up 4 -->
+    <rect x="100" y="100" width="60" height="54" rx="7" fill="rgba(139,92,246,.3)" stroke="#8b5cf6" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.58;0.62;1" dur="12s" repeatCount="indefinite"/></rect>
+    <!-- wave 5: center 5 -->
+    <rect x="166" y="100" width="60" height="54" rx="7" fill="rgba(239,68,68,.25)" stroke="#ef4444" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.68;0.72;1" dur="12s" repeatCount="indefinite"/></rect>
+    <text x="250" y="232" text-anchor="middle" class="svg-s" font-size="14" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.74;0.78;1" dur="12s" repeatCount="indefinite"/>output: [1, 2, 3, 6, 9, 8, 7, 4, 5]</text>
+    <text x="250" y="258" text-anchor="middle" class="svg-tm" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.80;0.84;1" dur="12s" repeatCount="indefinite"/>top++  right-- bottom-- left++ after each side sweep</text>
+  </svg>
+  <div class="fig-cap"><b>Four boundaries, four sweeps, repeat.</b> After reading the top row, shrink <code>top</code>. After the right column, shrink <code>right</code>. And so on. The loop stops when the walls cross. Each cell is visited exactly once — O(m·n) time, O(1) extra space. ▶ loops every 12s.</div>
+  <div class="legend">
+    <span><i style="background:#06b6d4"></i>→ top row</span>
+    <span><i style="background:#f59e0b"></i>↓ right col</span>
+    <span><i style="background:#10b981"></i>← bottom row</span>
+    <span><i style="background:#8b5cf6"></i>↑ left col</span>
+    <span><i style="background:#ef4444"></i>centre</span>
+  </div>
+</div>
+
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Surrounded Regions</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 130):</strong> Given a board of 'X' and 'O', capture all regions surrounded by 'X'. An 'O' region is captured if it's not connected to any 'O' on the border.</div>
+    <div class="iq-approach"><strong>Reverse thinking — mark safe cells first:</strong> Instead of finding surrounded regions (hard), find all 'O' cells connected to border (easy). Mark those as safe. Then: all remaining 'O' = surrounded → flip to 'X'. Restore safe to 'O'.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">board = [["X","X","X","X"],
+           ["X","O","O","X"],
+           ["X","X","O","X"],
+           ["X","O","X","X"]]
+
+Step 1: DFS from border 'O' cells:
+  (3,1)='O' on border → DFS marks it as 'S' (safe)
+  DFS: (3,1) → no connected 'O' neighbors on interior
+
+Step 2: Scan all cells:
+  (1,1)='O' → not safe → flip to 'X'
+  (1,2)='O' → not safe → flip to 'X'
+  (2,2)='O' → not safe → flip to 'X'
+  (3,1)='S' → restore to 'O'
+
+Result: [["X","X","X","X"],
+         ["X","X","X","X"],
+         ["X","X","X","X"],
+         ["X","O","X","X"]] ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Surrounded Regions</div></div><pre><span class="kw">def</span> <span class="fn">solve</span>(board):
+    <span class="kw">if not</span> board: <span class="kw">return</span>
+    m, n = len(board), len(board[0])
+    <span class="kw">def</span> <span class="fn">dfs</span>(r, c):
+        <span class="kw">if not</span> (0 &lt;= r &lt; m <span class="kw">and</span> 0 &lt;= c &lt; n) <span class="kw">or</span> board[r][c] != <span class="nm">'O'</span>: <span class="kw">return</span>
+        board[r][c] = <span class="nm">'S'</span>           <span class="cm"># mark as safe</span>
+        dfs(r+1,c); dfs(r-1,c); dfs(r,c+1); dfs(r,c-1)
+
+    <span class="cm"># Mark all border-connected 'O' cells as safe</span>
+    <span class="kw">for</span> r <span class="kw">in</span> range(m):
+        <span class="kw">for</span> c <span class="kw">in</span> range(n):
+            <span class="kw">if</span> (r <span class="kw">in</span> (0,m-1) <span class="kw">or</span> c <span class="kw">in</span> (0,n-1)) <span class="kw">and</span> board[r][c]==<span class="nm">'O'</span>:
+                dfs(r, c)
+
+    <span class="kw">for</span> r <span class="kw">in</span> range(m):
+        <span class="kw">for</span> c <span class="kw">in</span> range(n):
+            <span class="kw">if</span> board[r][c] == <span class="nm">'O'</span>:  board[r][c] = <span class="nm">'X'</span>   <span class="cm"># surrounded</span>
+            <span class="kw">elif</span> board[r][c] == <span class="nm">'S'</span>: board[r][c] = <span class="nm">'O'</span>   <span class="cm"># restore</span></pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(m×n)</span>
+      <span class="iq-pill s">Space: O(m×n) stack</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Maximal Square</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 221):</strong> Given a binary matrix, find the largest square containing only '1's. Return its area.</div>
+    <div class="iq-approach"><strong>DP — the 'min of three neighbors' insight:</strong> dp[i][j] = side length of largest square with bottom-right corner at (i,j). The limiting factor is the minimum square that fits at the top, left, and top-left corners. Current cell can extend only to the minimum of those three.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">matrix = [["1","0","1","0"],
+            ["1","0","1","1"],
+            ["1","1","1","1"],
+            ["1","0","0","1"]]
+
+Build dp (1 = 1, 0 = 0):
+Row 0: [1,0,1,0]   (same as input)
+Row 1: [1,0,1,1]   dp[1][3]=min(dp[0][3],dp[1][2],dp[0][2])+1=min(0,1,1)+1=1
+Row 2: [1,1,1,2]   dp[2][2]=min(dp[1][2],dp[2][1],dp[1][1])+1=min(1,1,0)+1=1
+                   dp[2][3]=min(dp[1][3],dp[2][2],dp[1][2])+1=min(1,1,1)+1=2
+Row 3: [1,0,0,1]   dp[3][3]=min(dp[2][3],dp[3][2],dp[2][2])+1=min(2,0,1)+1=1
+
+Max dp value = 2 → area = 2²= 4 ✓
+
+Intuition: dp[i][j] asks "how big a square can end here?"
+  The smallest square reachable from top/left/diagonal limits the size.</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Maximal Square</div></div><pre><span class="kw">def</span> <span class="fn">maximal_square</span>(matrix):
+    <span class="kw">if not</span> matrix: <span class="kw">return</span> 0
+    m, n = len(matrix), len(matrix[0])
+    dp = [[0]*n <span class="kw">for</span> _ <span class="kw">in</span> range(m)]
+    max_side = 0
+
+    <span class="kw">for</span> i <span class="kw">in</span> range(m):
+        <span class="kw">for</span> j <span class="kw">in</span> range(n):
+            <span class="kw">if</span> matrix[i][j] == <span class="nm">'1'</span>:
+                <span class="kw">if</span> i == 0 <span class="kw">or</span> j == 0:
+                    dp[i][j] = 1         <span class="cm"># first row/col: max square = 1x1</span>
+                <span class="kw">else</span>:
+                    dp[i][j] = min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1]) + 1
+                max_side = max(max_side, dp[i][j])
+    <span class="kw">return</span> max_side * max_side</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(m×n)</span>
+      <span class="iq-pill s">Space: O(m×n)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">Pacific Atlantic Water Flow</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 417):</strong> Find all cells where water can flow to BOTH Pacific (top/left border) and Atlantic (bottom/right border) oceans. Water flows from higher to equal/lower cells.</div>
+    <div class="iq-approach"><strong>Reverse BFS/DFS from each ocean:</strong> Instead of forward: 'from each cell, can it reach both oceans?' (expensive), do reverse: 'from each ocean boundary, what cells can contribute water (go uphill)?' Intersection = cells reaching both.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">matrix = [[1,2,2,3,5],
+            [3,2,3,4,4],
+            [2,4,5,3,1],
+            [6,7,1,4,5],
+            [5,1,1,2,4]]
+
+Pacific borders: top row (row 0) + left col (col 0)
+Atlantic borders: bottom row (row m-1) + right col (col n-1)
+
+Pacific BFS (go uphill from Pacific border):
+  Start: all cells in row 0 and col 0
+  BFS: can reach cells with height >= neighbor height
+  pacific_reachable = {set of cells}
+
+Atlantic BFS (go uphill from Atlantic border):
+  Start: all cells in row m-1 and col n-1
+  atlantic_reachable = {set of cells}
+
+Intersection = cells in BOTH sets = answer
+  (0,4),(1,3),(1,4),(2,2),(3,0),(3,1),(4,0) → 7 cells ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Pacific Atlantic Water Flow</div></div><pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+<span class="kw">def</span> <span class="fn">pacific_atlantic</span>(heights):
+    m, n = len(heights), len(heights[0])
+    <span class="kw">def</span> <span class="fn">bfs</span>(starts):
+        visited = set(starts)
+        q = deque(starts)
+        <span class="kw">while</span> q:
+            r, c = q.popleft()
+            <span class="kw">for</span> dr, dc <span class="kw">in</span> [(1,0),(-1,0),(0,1),(0,-1)]:
+                nr, nc = r+dr, c+dc
+                <span class="kw">if</span> (0 &lt;= nr &lt; m <span class="kw">and</span> 0 &lt;= nc &lt; n <span class="kw">and</span>
+                    (nr,nc) <span class="kw">not in</span> visited <span class="kw">and</span>
+                    heights[nr][nc] >= heights[r][c]):   <span class="cm"># go uphill</span>
+                    visited.add((nr,nc)); q.append((nr,nc))
+        <span class="kw">return</span> visited
+
+    pac = bfs([(0,c) <span class="kw">for</span> c <span class="kw">in</span> range(n)] + [(r,0) <span class="kw">for</span> r <span class="kw">in</span> range(1,m)])
+    atl = bfs([(m-1,c) <span class="kw">for</span> c <span class="kw">in</span> range(n)] + [(r,n-1) <span class="kw">for</span> r <span class="kw">in</span> range(m-1)])
+    <span class="kw">return</span> [list(cell) <span class="kw">for</span> cell <span class="kw">in</span> pac &amp; atl]</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(m×n)</span>
+      <span class="iq-pill s">Space: O(m×n)</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

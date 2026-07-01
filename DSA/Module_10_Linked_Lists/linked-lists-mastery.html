@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Linked Lists — Module 10</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+/* ── expanded interview question styles ── */
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+/* ===== deep-dive intuition card ===== */
+.pat{background:linear-gradient(160deg,rgba(79,70,229,.08),rgba(15,23,42,.4));border:1px solid var(--brd);border-radius:18px;padding:30px 34px;margin:24px 0 40px;}
+.pat-lead{font-size:.95rem;color:var(--t);line-height:1.85;margin-bottom:6px;}
+.pat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+@media(max-width:760px){.pat-grid{grid-template-columns:1fr;}}
+.pat-cell{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:18px 22px;}
+.pat-cell h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.pat-cell.when h4{color:var(--w);}.pat-cell.state h4{color:var(--a);}
+.pat-cell.rec h4{color:var(--pl);}.pat-cell.base h4{color:var(--s);}
+.pat-cell p,.pat-cell li{font-size:.9rem;color:var(--tm);line-height:1.8;}
+.pat-cell ul{padding-left:18px;margin-top:6px;}.pat-cell li{margin:4px 0;}
+.formula{background:var(--cbg);border:1px solid #30363d;border-radius:10px;padding:16px 20px;margin:14px 0;font-family:'Fira Code','Courier New',monospace;font-size:.9rem;color:#a5b4fc;line-height:1.9;overflow-x:auto;}
+.formula .hl{color:#67e8f9;font-weight:700;}
+.keywords{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+.kwp{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:3px 14px;font-size:.8rem;font-weight:600;}
+.pitfall{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.03));border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.pitfall .pl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#fca5a5;font-weight:700;margin-bottom:6px;}
+.pitfall p{font-size:.88rem;color:#fecaca;line-height:1.8;}
+.real{background:linear-gradient(135deg,rgba(16,185,129,.09),rgba(16,185,129,.02));border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.real .rl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#6ee7b7;font-weight:700;margin-bottom:8px;}
+.real ul{padding-left:18px;margin:0;}.real li{font-size:.88rem;color:#a7f3d0;line-height:1.85;margin:5px 0;}
+.real li b{color:#d1fae5;}
+/* ===== animated SVG figure ===== */
+.fig{background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,.06),transparent 70%),var(--cbg);border:1px solid #30363d;border-radius:14px;padding:24px;margin:22px 0;overflow-x:auto;}
+.fig svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+.fig-cap{text-align:center;font-size:.82rem;color:var(--tm);margin-top:14px;font-style:italic;}
+.fig-cap b{color:var(--a);font-style:normal;}
+.fig-title{font-size:1.02rem;color:var(--t);margin:8px 0 10px;font-weight:700;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:16px;}
+.legend span{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--tm);}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;}
+.svg-t{fill:#e2e8f0;font-family:'Fira Code',monospace;}
+.svg-tm{fill:#94a3b8;font-family:'Segoe UI',sans-serif;}
+.svg-lbl{fill:#67e8f9;font-family:'Segoe UI',sans-serif;font-weight:700;}
+.svg-acc{fill:#fcd34d;font-family:'Fira Code',monospace;}
+.svg-s{fill:#6ee7b7;font-family:'Fira Code',monospace;}
+.svg-d{fill:#fca5a5;font-family:'Fira Code',monospace;}
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 10 · Linked Lists</div><h1>Chains of Nodes,<br><span>Mastered With Pointers</span></h1><p>Linked lists are the foundation of dynamic data structures. Mastering pointer manipulation here pays dividends everywhere.</p><div class="stats"><div class="stat"><div class="sn">O(1)</div><div class="sl">Insert/Delete with pointer</div></div><div class="stat"><div class="sn">O(n)</div><div class="sl">Search / Access</div></div><div class="stat"><div class="sn">Pointers</div><div class="sl">Core skill</div></div><div class="stat"><div class="sn">FAANG ⭐⭐</div><div class="sl">Frequency: High</div></div></div></div></div><div class="wrap">
+<div class="sec">🧠 The Story — The Train</div>
+<div class="story">
+  <div class="slabel">Real World Story — Coupled Train Cars</div>
+  <h3>A linked list is a train. Each car holds cargo (data) and a coupling to the next car.</h3>
+  <p>
+    Adding a car in the middle: uncouple two adjacent cars, insert new car, reconnect — O(1) given the right pointer.<br>
+    Removing a car: point the previous car's coupling to the car AFTER the one being removed.<br><br>
+    <strong>The key difference from arrays:</strong> No random access (you can't jump to car 47 directly), but insertions and deletions anywhere are O(1) given a pointer to the right place.<br><br>
+    <strong>The dummy node trick:</strong> Add a fake head node at the start. This eliminates special cases for head deletion/insertion. Every operation becomes uniform. Use this in ALL linked list problems.
+  </p>
+</div>
+
+<div class="ibox">
+  <div class="lbl">The Dummy Node Trick — Eliminates Edge Cases</div>
+  <p>Instead of handling "what if head is removed?" as a special case, create a dummy node whose next points to head. After all operations, return dummy.next.</p>
+  <div style="font-family:monospace;background:#0d1117;padding:12px;border-radius:8px;color:#e6edf3;margin-top:8px">
+  dummy → 1 → 2 → 3 → None<br>
+  # Delete node with val=1:<br>
+  # Without dummy: "if head.val == val: return head.next"<br>
+  # With dummy:    dummy.next = dummy.next.next (uniform!)
+  </div>
+</div>
+
+<div class="pat">
+  <p class="pat-lead">A linked list is <strong>memory stitched together by pointers</strong>. There is no random access — you follow threads. This single constraint shapes every algorithm: you must keep a pointer to <em>where you were</em> before you move, because you can never go back. The <strong>three-pointer reversal</strong> (prev / curr / next) is the atom of most list problems; <strong>Floyd’s tortoise-and-hare</strong> turns the no-random-access constraint into a feature — two pointers at different speeds will meet in a cycle. <strong>Dummy head</strong> eliminates the special case when head itself gets deleted or replaced.</p>
+  <div class="pat-grid">
+    <div class="pat-cell when">
+      <h4>🩸 Three-pointer reversal</h4>
+      <p>Save <code>nxt = curr.next</code> BEFORE you overwrite it. Then <code>curr.next = prev</code> to flip the arrow, and slide both pointers forward. Repeat until <code>curr</code> is None; <code>prev</code> is the new head.</p>
+    </div>
+    <div class="pat-cell state">
+      <h4>🐢 Floyd’s cycle detection</h4>
+      <p>Slow moves 1 step, fast moves 2. If there's a cycle they must meet; if there's no cycle fast hits None first. Meeting point math also gives the cycle entry.</p>
+    </div>
+    <div class="pat-cell rec">
+      <h4>👤 Dummy head</h4>
+      <p>Prepend a sentinel node before the real head. Deletes, merges, and partitions work without “is head the special case?” branches. Return <code>dummy.next</code> at the end.</p>
+    </div>
+    <div class="pat-cell base">
+      <h4>⏱️ Fast &amp; slow for middle</h4>
+      <p>When fast hits the tail, slow is at the middle. Used as a sub-step for palindrome check, merge sort on lists, and reorder list.</p>
+    </div>
+  </div>
+  <div class="formula"><span class="hl">reverse</span>: prev=None; while curr: nxt=curr.next; curr.next=prev; prev=curr; curr=nxt<br><span class="hl">cycle</span>: slow+=1, fast+=2; if slow==fast → cycle. To find entry: reset one to head, both move 1 step, they meet at entry<br><span class="hl">middle</span>: while fast.next and fast.next.next: slow+=1, fast+=2</div>
+  <div class="keywords">
+    <span class="kwp">prev/curr/next</span><span class="kwp">tortoise-hare</span><span class="kwp">dummy head</span><span class="kwp">fast &amp; slow</span><span class="kwp">in-place</span>
+  </div>
+  <div class="real">
+    <div class="rl">🌍 Where this lives in the real world</div>
+    <ul>
+      <li><b>Browser history (back/forward):</b> a doubly-linked list — prev/next pointers give O(1) navigation.</li>
+      <li><b>Undo/redo in editors:</b> each action is a node; undo traverses prev, redo follows next.</li>
+      <li><b>OS process scheduler:</b> a circular linked list (round-robin) — cycle detection keeps the scheduler from running forever on a zombie process.</li>
+      <li><b>LRU cache (doubly-linked + hashmap):</b> the most-recently-used node is always the head; eviction pulls from the tail.</li>
+      <li><b>Music playlist (shuffle/loop):</b> next/previous songs are pointer traversals; a looped playlist is a circular linked list.</li>
+      <li><b>Memory allocator free-list:</b> freed blocks are linked; the allocator walks the list to find a big-enough gap.</li>
+    </ul>
+  </div>
+  <div class="pitfall">
+    <div class="pl">⚠️ The traps</div>
+    <p><b>Save next before overwriting:</b> the first line of every reversal loop is <code>nxt = curr.next</code>. Forget it and you've lost the rest of the list forever. <b>Null checks before .next.next:</b> <code>fast.next.next</code> crashes if <code>fast.next</code> is None — always guard <code>fast and fast.next</code>. <b>Off-by-one on middle:</b> <code>while fast.next and fast.next.next</code> leaves slow on the <em>first</em> middle node; change to <code>while fast and fast.next</code> for the second middle — know which variant you need before you write it.</p>
+  </div>
+</div>
+
+<div class="sec">🎬 Reversal — The Most Common Interview Operation</div>
+<div class="ts">
+  <div class="sn2">🔄</div>
+  <div class="sc"><strong>Three-pointer reversal:</strong> prev, curr, next.
+  At each step: save next, point curr backward, advance both pointers.
+  <div class="mini">Initial: None  1 → 2 → 3 → 4 → None
+prev=None, curr=1
+Step 1: next=2, 1→None, prev=1, curr=2
+Step 2: next=3, 2→1,    prev=2, curr=3
+Step 3: next=4, 3→2,    prev=3, curr=4
+Step 4: next=None, 4→3, prev=4, curr=None
+Return prev=4: 4→3→2→1→None ✓</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Reversal, Cycle Detection, Merge</div></div><pre><span class="cm"># --- Reverse Linked List: O(n) time, O(1) space ---</span>
+<span class="kw">def</span> <span class="fn">reverse</span>(head):
+    prev = None
+    <span class="kw">while</span> head:
+        nxt  = head.next    <span class="cm"># save next before overwriting</span>
+        head.next = prev    <span class="cm"># reverse the link</span>
+        prev = head         <span class="cm"># advance prev</span>
+        head = nxt          <span class="cm"># advance head</span>
+    <span class="kw">return</span> prev             <span class="cm"># prev is the new head</span>
+
+<span class="cm"># --- Detect Cycle: Floyd's Two Pointers ---</span>
+<span class="kw">def</span> <span class="fn">has_cycle</span>(head):
+    slow = fast = head
+    <span class="kw">while</span> fast <span class="kw">and</span> fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        <span class="kw">if</span> slow == fast: <span class="kw">return</span> True
+    <span class="kw">return</span> False
+
+<span class="cm"># --- Merge Two Sorted Lists ---</span>
+<span class="kw">def</span> <span class="fn">merge_sorted</span>(l1, l2):
+    dummy = ListNode(0)
+    cur = dummy
+    <span class="kw">while</span> l1 <span class="kw">and</span> l2:
+        <span class="kw">if</span> l1.val &lt;= l2.val:
+            cur.next = l1; l1 = l1.next    <span class="cm"># take from l1</span>
+        <span class="kw">else</span>:
+            cur.next = l2; l2 = l2.next    <span class="cm"># take from l2</span>
+        cur = cur.next
+    cur.next = l1 <span class="kw">or</span> l2                  <span class="cm"># attach remaining</span>
+    <span class="kw">return</span> dummy.next
+
+<span class="cm"># --- Find Middle (used for merge sort, palindrome check) ---</span>
+<span class="kw">def</span> <span class="fn">find_middle</span>(head):
+    slow = fast = head
+    <span class="kw">while</span> fast.next <span class="kw">and</span> fast.next.next:
+        slow = slow.next        <span class="cm"># slow moves 1 step</span>
+        fast = fast.next.next   <span class="cm"># fast moves 2 steps</span>
+    <span class="kw">return</span> slow                 <span class="cm"># slow = middle</span>
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 3-pointer reversal — flip each arrow, one node at a time</div>
+  <svg viewBox="0 0 600 270" width="600" role="img" aria-label="Animated linked list reversal prev curr next">
+    <defs>
+      <marker id="ll-arr" markerWidth="9" markerHeight="7" refX="7" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6 Z" fill="#475569"/>
+      </marker>
+      <marker id="ll-rev" markerWidth="9" markerHeight="7" refX="7" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6 Z" fill="#10b981"/>
+      </marker>
+    </defs>
+    <text x="300" y="22" text-anchor="middle" class="svg-tm" font-size="13">1 → 2 → 3 → 4 → None · prev=None, curr=1</text>
+    <!-- nodes -->
+    <g text-anchor="middle" font-size="18">
+      <rect x="80" y="80" width="70" height="50" rx="8" fill="#162032" stroke="#475569"/><text x="115" y="110" class="svg-t">1</text>
+      <rect x="196" y="80" width="70" height="50" rx="8" fill="#162032" stroke="#475569"/><text x="231" y="110" class="svg-t">2</text>
+      <rect x="312" y="80" width="70" height="50" rx="8" fill="#162032" stroke="#475569"/><text x="347" y="110" class="svg-t">3</text>
+      <rect x="428" y="80" width="70" height="50" rx="8" fill="#162032" stroke="#475569"/><text x="463" y="110" class="svg-t">4</text>
+    </g>
+    <!-- original arrows -->
+    <line x1="150" y1="105" x2="194" y2="105" stroke="#475569" stroke-width="2" marker-end="url(#ll-arr)"/>
+    <line x1="266" y1="105" x2="310" y2="105" stroke="#475569" stroke-width="2" marker-end="url(#ll-arr)"/>
+    <line x1="382" y1="105" x2="426" y2="105" stroke="#475569" stroke-width="2" marker-end="url(#ll-arr)"/>
+    <!-- reversed arrows appearing one by one -->
+    <line x1="194" y1="148" x2="152" y2="148" stroke="#10b981" stroke-width="2.5" marker-end="url(#ll-rev)" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.22;0.26;1" dur="11s" repeatCount="indefinite"/></line>
+    <line x1="310" y1="148" x2="268" y2="148" stroke="#10b981" stroke-width="2.5" marker-end="url(#ll-rev)" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.42;0.46;1" dur="11s" repeatCount="indefinite"/></line>
+    <line x1="426" y1="148" x2="384" y2="148" stroke="#10b981" stroke-width="2.5" marker-end="url(#ll-rev)" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.62;0.66;1" dur="11s" repeatCount="indefinite"/></line>
+    <!-- curr pointer -->
+    <rect y="80" width="70" height="50" rx="8" fill="none" stroke="#06b6d4" stroke-width="3">
+      <animate attributeName="x" values="80;80;196;196;312;312;428;428;428" keyTimes="0;0.10;0.14;0.30;0.34;0.50;0.54;0.70;1" dur="11s" repeatCount="indefinite"/>
+    </rect>
+    <text y="168" text-anchor="middle" class="svg-lbl" font-size="12">
+      <animate attributeName="x" values="115;115;231;231;347;347;463;463;463" keyTimes="0;0.10;0.14;0.30;0.34;0.50;0.54;0.70;1" dur="11s" repeatCount="indefinite"/>curr</text>
+    <text x="300" y="204" text-anchor="middle" class="svg-tm" font-size="13">
+      <animate attributeName="opacity" values="1;1;0;0;0;0;0;0;1;0;0;0;1" keyTimes="0;0.08;0.12;0.30;0.34;0.50;0.54;0.70;0.72;0.78;0.82;0.90;1" dur="11s" repeatCount="indefinite"/>save nxt → flip curr.next → advance prev &amp; curr</text>
+    <text x="300" y="238" text-anchor="middle" class="svg-s" font-size="14" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.72;0.76;1" dur="11s" repeatCount="indefinite"/>reversed: 4 → 3 → 2 → 1 → None  (prev is the new head)</text>
+  </svg>
+  <div class="fig-cap"><b>The three pointers work as a relay baton.</b> <code>nxt</code> saves the forward path before you cut it; <code>curr.next = prev</code> flips the arrow; then both prev and curr slide one step right. After the loop, curr is None and prev is pointing at the old tail — now the new head. ▶ loops every 11s.</div>
+  <div class="legend">
+    <span><i style="background:#06b6d4"></i>curr (being reversed)</span>
+    <span><i style="background:#10b981"></i>reversed arrow</span>
+    <span><i style="background:#475569"></i>original arrow</span>
+  </div>
+</div>
+
+<div class="sec">🎬 Palindrome Check — Classic Multi-Step Problem</div>
+<div class="ts">
+  <div class="sn2">📖</div>
+  <div class="sc"><strong>Algorithm:</strong> (1) Find middle. (2) Reverse second half. (3) Compare first and second half node by node. (4) Optionally restore original list.
+  <div class="mini">List: 1→2→3→2→1
+Step 1: middle = node(3)
+Step 2: reverse second half: 1→2←3   &amp;   2→1→None becomes 1→2→None
+        First half: 1→2→3  Second half (reversed): 1→2→None
+Step 3: compare: 1==1, 2==2 → PALINDROME ✓</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Reverse K-Group & LRU Cache</div></div><pre><span class="cm"># --- Reverse Nodes in K-Group (Hard) ---</span>
+<span class="kw">def</span> <span class="fn">reverse_k_group</span>(head, k):
+    <span class="cm"># Check if k nodes remain</span>
+    check, count = head, 0
+    <span class="kw">while</span> check <span class="kw">and</span> count < k: check = check.next; count += 1
+    <span class="kw">if</span> count < k: <span class="kw">return</span> head   <span class="cm"># not enough nodes: don't reverse</span>
+
+    prev, curr = None, head
+    <span class="kw">for</span> _ <span class="kw">in</span> range(k):
+        nxt = curr.next; curr.next = prev; prev = curr; curr = nxt
+
+    head.next = reverse_k_group(curr, k)   <span class="cm"># head is now tail of reversed group</span>
+    <span class="kw">return</span> prev
+
+<span class="cm"># --- LRU Cache: OrderedDict (Python built-in) ---</span>
+<span class="kw">from</span> collections <span class="kw">import</span> OrderedDict
+<span class="kw">class</span> <span class="fn">LRUCache</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, capacity): self.cap = capacity; self.cache = OrderedDict()
+    <span class="kw">def</span> <span class="fn">get</span>(self, key):
+        <span class="kw">if</span> key <span class="kw">not in</span> self.cache: <span class="kw">return</span> -1
+        self.cache.move_to_end(key)       <span class="cm"># mark as recently used</span>
+        <span class="kw">return</span> self.cache[key]
+    <span class="kw">def</span> <span class="fn">put</span>(self, key, value):
+        <span class="kw">if</span> key <span class="kw">in</span> self.cache: self.cache.move_to_end(key)
+        self.cache[key] = value
+        <span class="kw">if</span> len(self.cache) > self.cap: self.cache.popitem(last=False)  <span class="cm"># evict LRU</span>
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Floyd’s tortoise &amp; hare — two speeds, one meeting point</div>
+  <svg viewBox="0 0 600 270" width="600" role="img" aria-label="Animated Floyd cycle detection">
+    <defs>
+      <marker id="fl-arr" markerWidth="9" markerHeight="7" refX="7" refY="3" orient="auto">
+        <path d="M0,0 L8,3 L0,6 Z" fill="#475569"/>
+      </marker>
+    </defs>
+    <text x="300" y="22" text-anchor="middle" class="svg-tm" font-size="13">list: 1→2→3→4→5→3 (cycle at node 3) · slow +1, fast +2</text>
+    <!-- circular layout of nodes -->
+    <g text-anchor="middle" font-size="16">
+      <rect x="80" y="74" width="56" height="46" rx="8" fill="#162032" stroke="#475569"/><text x="108" y="102" class="svg-t">1</text>
+      <rect x="196" y="74" width="56" height="46" rx="8" fill="#162032" stroke="#475569"/><text x="224" y="102" class="svg-t">2</text>
+      <rect x="312" y="74" width="56" height="46" rx="8" fill="#162032" stroke="#475569"/><text x="340" y="102" class="svg-t">3</text>
+      <rect x="428" y="74" width="56" height="46" rx="8" fill="#162032" stroke="#475569"/><text x="456" y="102" class="svg-t">4</text>
+      <rect x="428" y="160" width="56" height="46" rx="8" fill="#162032" stroke="#475569"/><text x="456" y="188" class="svg-t">5</text>
+      <path d="M 484 160 Q 520 130 484 120" stroke="#ef4444" stroke-width="2" fill="none" stroke-dasharray="5 3"/>
+      <path d="M 484 120 Q 430 95 370 97" stroke="#ef4444" stroke-width="2" fill="none" stroke-dasharray="5 3" marker-end="url(#fl-arr)"/>
+    </g>
+    <line x1="136" y1="97" x2="194" y2="97" stroke="#475569" stroke-width="2" marker-end="url(#fl-arr)"/>
+    <line x1="252" y1="97" x2="310" y2="97" stroke="#475569" stroke-width="2" marker-end="url(#fl-arr)"/>
+    <line x1="368" y1="97" x2="426" y2="97" stroke="#475569" stroke-width="2" marker-end="url(#fl-arr)"/>
+    <line x1="456" y1="120" x2="456" y2="158" stroke="#475569" stroke-width="2" marker-end="url(#fl-arr)"/>
+    <text x="520" y="132" class="svg-d" font-size="11" text-anchor="middle">cycle</text>
+    <!-- slow pointer (turtle) -->
+    <rect y="74" width="56" height="46" rx="8" fill="none" stroke="#06b6d4" stroke-width="3">
+      <animate attributeName="x" values="80;80;196;312;428;428;312;312" keyTimes="0;0.12;0.22;0.34;0.46;0.58;0.70;1" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <text y="136" text-anchor="middle" class="svg-lbl" font-size="11">
+      <animate attributeName="x" values="108;108;224;340;456;456;340;340" keyTimes="0;0.12;0.22;0.34;0.46;0.58;0.70;1" dur="12s" repeatCount="indefinite"/>🐢 slow</text>
+    <!-- fast pointer (rabbit) -->
+    <rect y="74" width="56" height="46" rx="8" fill="none" stroke="#f59e0b" stroke-width="3">
+      <animate attributeName="x" values="80;80;312;312;312;312;312;312" keyTimes="0;0.12;0.22;0.34;0.46;0.58;0.70;1" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="y" values="74;74;74;74;160;160;74;74" keyTimes="0;0.12;0.22;0.34;0.46;0.58;0.70;1" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <text y="136" text-anchor="middle" class="svg-acc" font-size="11">
+      <animate attributeName="x" values="108;108;340;340;456;456;340;340" keyTimes="0;0.12;0.22;0.34;0.46;0.58;0.70;1" dur="12s" repeatCount="indefinite"/>🐇 fast</text>
+    <text x="300" y="228" text-anchor="middle" class="svg-s" font-size="14" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.68;0.72;1" dur="12s" repeatCount="indefinite"/>slow == fast at node 3 → cycle detected! ✓</text>
+    <text x="300" y="255" text-anchor="middle" class="svg-tm" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.76;0.80;1" dur="12s" repeatCount="indefinite"/>they’re guaranteed to meet inside the cycle — the math: fast gains 1 step per round, so gap closes at 1 per step</text>
+  </svg>
+  <div class="fig-cap"><b>Two runners, one ring.</b> If there’s a cycle, the fast runner laps the slow one inside it — their distance mod cycle-length decreases by 1 each step until it hits 0. If there’s no cycle, fast exits the list. No visited set needed, O(1) space. ▶ loops every 12s.</div>
+  <div class="legend">
+    <span><i style="background:#06b6d4"></i>🐢 slow (+1)</span>
+    <span><i style="background:#f59e0b"></i>🐇 fast (+2)</span>
+    <span><i style="background:#ef4444"></i>cycle back-edge</span>
+  </div>
+</div>
+
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Remove Nth Node From End</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 19):</strong> Given the head of a linked list, remove the Nth node from the end in ONE pass. E.g. 1→2→3→4→5 with n=2 → 1→2→3→5.</div>
+    <div class="iq-approach"><strong>Two-pointer gap trick:</strong> Use a dummy head to handle edge cases. Move fast pointer N steps ahead, then move both until fast.next is None. Now slow.next is the node to delete. The N-step gap means when fast reaches the last node, slow is exactly at the node before the target.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">List: dummy→1→2→3→4→5   n=2
+
+Step 1: Advance fast by N=2 steps:
+  fast starts at dummy
+  fast after 1 step: →1
+  fast after 2 steps: →2
+  fast = node(2), slow = dummy
+
+Step 2: Move both until fast.next is None:
+  fast=2, slow=dummy → fast=3, slow=1
+  fast=3, slow=1     → fast=4, slow=2
+  fast=4, slow=2     → fast=5, slow=3
+  fast.next=None, STOP
+
+slow = node(3), slow.next = node(4) → DELETE node(4)
+slow.next = node(4).next = node(5)
+
+Result: dummy→1→2→3→5 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Remove Nth From End</div></div><pre><span class="kw">def</span> <span class="fn">remove_nth_from_end</span>(head, n):
+    dummy = ListNode(0)
+    dummy.next = head
+    fast = slow = dummy
+
+    <span class="kw">for</span> _ <span class="kw">in</span> range(n):         <span class="cm"># advance fast by n steps</span>
+        fast = fast.next
+
+    <span class="kw">while</span> fast.next:           <span class="cm"># move both until fast at last node</span>
+        fast = fast.next
+        slow = slow.next
+
+    slow.next = slow.next.next  <span class="cm"># delete target node</span>
+    <span class="kw">return</span> dummy.next</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Intersection of Two Linked Lists</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 160):</strong> Find the node where two singly linked lists intersect. If they don't intersect, return null. Must use O(1) memory.</div>
+    <div class="iq-approach"><strong>Path equalization trick:</strong> Pointers a and b start at heads. When one reaches end, redirect to the OTHER list's head. After at most len(A)+len(B) steps, they'll meet at the intersection (or both be None). The key: both pointers travel the same total distance.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">List A: a1→a2→c1→c2→c3
+List B:       b1→b2→b3→c1→c2→c3
+(shared: c1→c2→c3)
+
+Pointer a: a1→a2→c1→c2→c3→None→b1→b2→b3→[c1]
+Pointer b: b1→b2→b3→c1→c2→c3→None→a1→a2→[c1]
+
+Both reach c1 simultaneously!
+Distance for a: 2+3 + 3 = 8
+Distance for b: 3+3 + 2 = 8  ← same!
+
+No intersection case:
+Both walk len(A)+len(B) steps and both end up at None → return None</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Linked List Intersection</div></div><pre><span class="kw">def</span> <span class="fn">get_intersection_node</span>(headA, headB):
+    a, b = headA, headB
+    <span class="kw">while</span> a != b:               <span class="cm"># pointers are equal at intersection or None</span>
+        a = a.next <span class="kw">if</span> a <span class="kw">else</span> headB   <span class="cm"># redirect to other list at end</span>
+        b = b.next <span class="kw">if</span> b <span class="kw">else</span> headA
+    <span class="kw">return</span> a                     <span class="cm"># intersection node or None</span></pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(m+n)</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">Sort List — Merge Sort</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 148):</strong> Sort a linked list in O(n log n) time and O(1) extra space. The challenge: arrays can use Timsort in-place, but linked lists require pointer manipulation.</div>
+    <div class="iq-approach"><strong>Bottom-up merge sort:</strong> Find the middle using fast/slow pointers, split into two halves, recursively sort each, then merge. Merge sort is ideal for linked lists because it accesses nodes sequentially (no random access needed). Merge two sorted lists is O(n).</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">List: 4→2→1→3
+
+Split: find mid
+  slow=4, fast=4
+  slow=2, fast=1  (fast.next.next=None → stop)
+  mid = 2, split: [4→2] and [1→3]
+
+Recursively sort [4→2]:
+  split: [4] and [2]
+  merge [4],[2] → [2→4]
+
+Recursively sort [1→3]:
+  split: [1] and [3]
+  merge [1],[3] → [1→3]
+
+Merge [2→4] and [1→3]:
+  compare 2 vs 1: take 1, result=[1], l2=[3]
+  compare 2 vs 3: take 2, result=[1→2], l1=[4]
+  compare 4 vs 3: take 3, result=[1→2→3], l2=None
+  append 4: result=[1→2→3→4] ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Sort List (Merge Sort)</div></div><pre><span class="kw">def</span> <span class="fn">sort_list</span>(head):
+    <span class="kw">if not</span> head <span class="kw">or not</span> head.next: <span class="kw">return</span> head
+
+    <span class="cm"># Find middle and split</span>
+    slow, fast = head, head.next
+    <span class="kw">while</span> fast <span class="kw">and</span> fast.next:
+        slow = slow.next; fast = fast.next.next
+    mid = slow.next
+    slow.next = None             <span class="cm"># cut the list</span>
+
+    left  = sort_list(head)
+    right = sort_list(mid)
+
+    <span class="cm"># Merge two sorted halves</span>
+    dummy = cur = ListNode(0)
+    <span class="kw">while</span> left <span class="kw">and</span> right:
+        <span class="kw">if</span> left.val &lt;= right.val: cur.next = left;  left  = left.next
+        <span class="kw">else</span>:                     cur.next = right; right = right.next
+        cur = cur.next
+    cur.next = left <span class="kw">or</span> right   <span class="cm"># attach remaining nodes</span>
+    <span class="kw">return</span> dummy.next</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n log n)</span>
+      <span class="iq-pill s">Space: O(log n) stack</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

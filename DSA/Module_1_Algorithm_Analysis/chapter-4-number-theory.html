@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Number Theory</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;
+  background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;
+  border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.defbox{background:rgba(79,70,229,.09);border-left:3px solid #4f46e5;
+  padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0;font-size:.92rem;line-height:1.8;}
+.defbox strong{color:#818cf8;}
+.tag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:16px 0;}
+.tag-card{background:var(--bc2);border:1px solid var(--brd);border-radius:10px;padding:14px 16px;}
+.tag-card .tc{font-weight:700;font-size:.85rem;color:#fca5a5;margin-bottom:4px;}
+.tag-card .td{font-size:.82rem;color:var(--tm);}
+.cmp-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.88rem;}
+.cmp-table th{background:rgba(79,70,229,.15);color:#818cf8;padding:10px 14px;text-align:left;border-bottom:1px solid var(--brd);}
+.cmp-table td{padding:9px 14px;border-bottom:1px solid rgba(51,65,85,.5);color:var(--tm);}
+.cmp-table tr:hover td{background:rgba(79,70,229,.05);}
+.cmp-table .h{color:#fca5a5;font-weight:600;}
+.cmp-table .g{color:#6ee7b7;font-weight:600;}
+.cmp-table .y{color:#fcd34d;font-weight:600;}
+.step-list{counter-reset:step;list-style:none;padding:0;margin:14px 0;}
+.step-list li{counter-increment:step;display:flex;gap:14px;margin-bottom:14px;align-items:flex-start;}
+.step-list li::before{content:counter(step);min-width:28px;height:28px;background:var(--p);
+  color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:.78rem;font-weight:700;flex-shrink:0;margin-top:2px;}
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;
+  background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);
+  padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 1 · Chapter 4</div><h1>Number Theory for CS<br><span>Primes, GCD & Modular Arithmetic</span></h1><p>Primes, GCD, modular arithmetic — the math behind cryptography, hashing, and competitive programming.</p><div class="stats"><div class="stat"><div class="sn">Sieve of Eratosthenes</div><div class="sl">Find all primes to n</div></div><div class="stat"><div class="sn">Euclidean GCD</div><div class="sl">O(log min(a,b))</div></div><div class="stat"><div class="sn">Modular Arithmetic</div><div class="sl">Key for large numbers</div></div><div class="stat"><div class="sn">Competitive Prog</div><div class="sl">Heavy use</div></div></div></div></div><div class="wrap">
+
+<div class="sec">&#128262; The Story &#8212; The Lock and the Key</div>
+<div class="story">
+  <div class="slabel">Why Number Theory?</div>
+  <h3>Number theory is the silent engine behind cryptography, hash functions, competitive programming, and interview problems. GCD, primes, and modular arithmetic appear constantly.</h3>
+  <p>RSA encryption — used for every HTTPS connection — is built entirely on prime factorisation and modular exponentiation. The Sieve of Eratosthenes finds all primes up to n in O(n log log n) and is a classic interview question in disguise.</p>
+</div>
+
+<div class="sec">&#128260; GCD &#8212; Euclidean Algorithm with Full Trace</div>
+<div class="card">
+  <p style="color:var(--tm);margin-bottom:12px">The Euclidean algorithm computes gcd(a,b) in O(log min(a,b)) by repeatedly replacing (a,b) with (b, a mod b) until b=0.</p>
+<div class="viz-box">gcd(252, 105) — step by step:
+  gcd(252, 105): 252 mod 105 = 42   → gcd(105, 42)
+  gcd(105,  42): 105 mod  42 = 21   → gcd(42,  21)
+  gcd( 42,  21):  42 mod  21 =  0   → gcd(21,   0)
+  gcd( 21,   0):  b=0, return a=21  → GCD = 21 ✓
+
+Verify: 252 = 21×12,  105 = 21×5  ✓
+
+Why it works: gcd(a,b) = gcd(b, a mod b)
+  Proof sketch: any divisor of a and b also divides (a mod b)
+  because a mod b = a - ⌊a/b⌋·b
+
+LCM from GCD: lcm(a,b) = a × b / gcd(a,b)
+  lcm(252,105) = 252×105 / 21 = 26460 / 21 = 1260
+
+Number of steps ≤ 5 × number of digits in min(a,b) → O(log min(a,b))</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · GCD, LCM, Extended Euclidean</div></div><pre><span class="cm"># Euclidean GCD — O(log min(a,b))</span>
+<span class="kw">def</span> <span class="fn">gcd</span>(a, b): <span class="kw">return</span> a <span class="kw">if not</span> b <span class="kw">else</span> gcd(b, a % b)
+
+<span class="cm"># LCM — avoids overflow by dividing first</span>
+<span class="kw">def</span> <span class="fn">lcm</span>(a, b): <span class="kw">return</span> a // gcd(a, b) * b
+
+<span class="cm"># Extended Euclidean: find x,y such that a*x + b*y = gcd(a,b)</span>
+<span class="kw">def</span> <span class="fn">ext_gcd</span>(a, b):
+    <span class="kw">if</span> b == 0: <span class="kw">return</span> a, 1, 0
+    g, x, y = ext_gcd(b, a % b)
+    <span class="kw">return</span> g, y, x - (a // b) * y
+<span class="cm"># ext_gcd(252,105) → (21, 2, -5): 252*2 + 105*(-5) = 504-525 = -21... let me verify</span>
+<span class="cm"># → 21, -2, 5: 252*(-2) + 105*5 = -504+525 = 21 ✓</span></pre></div>
+</div>
+
+<div class="sec">&#128202; Sieve of Eratosthenes &#8212; Find All Primes to n</div>
+<div class="card">
+<div class="viz-box">Find all primes up to 30 — visual trace:
+
+  Mark composites starting from each prime²:
+
+  Initial: [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
+
+  i=2: mark 4,6,8,10,12,14,16,18,20,22,24,26,28,30  (multiples of 2)
+  i=3: mark 9,15,21,27  (odd multiples of 3 not already marked)
+  i=5: mark 25          (5²=25, only unmarked multiple ≤30)
+  i=6: already composite, skip
+  √30 ≈ 5.5, stop here
+
+  Primes: 2, 3, 5, 7, 11, 13, 17, 19, 23, 29  (10 primes below 30)
+
+Time: O(n log log n) — harmonic series of primes
+  Work = n/2 + n/3 + n/5 + n/7 + ... = n × Σ(1/p for prime p≤n)
+       = n × O(log log n)  [Mertens' theorem]
+
+Space: O(n) — boolean array</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Sieve + Segmented Sieve for large ranges</div></div><pre><span class="kw">def</span> <span class="fn">sieve</span>(n):
+    <span class="cm"># Standard sieve: O(n log log n), O(n) space</span>
+    is_prime = bytearray([1]) * (n+1)
+    is_prime[0] = is_prime[1] = 0
+    <span class="kw">for</span> i <span class="kw">in</span> range(2, int(n**0.5)+1):
+        <span class="kw">if</span> is_prime[i]:
+            is_prime[i*i::i] = bytearray(len(is_prime[i*i::i]))
+    <span class="kw">return</span> [i <span class="kw">for</span> i <span class="kw">in</span> range(2, n+1) <span class="kw">if</span> is_prime[i]]
+
+<span class="cm"># Count primes up to n (Prime Counting Function)</span>
+<span class="kw">def</span> <span class="fn">prime_pi</span>(n): <span class="kw">return</span> len(sieve(n))
+<span class="cm"># prime_pi(100)=25, prime_pi(1000)=168, prime_pi(10000)=1229</span>
+
+<span class="cm"># Check single number: O(√n)</span>
+<span class="kw">def</span> <span class="fn">is_prime</span>(n):
+    <span class="kw">if</span> n &lt; 2: <span class="kw">return</span> False
+    <span class="kw">if</span> n == 2: <span class="kw">return</span> True
+    <span class="kw">if</span> n % 2 == 0: <span class="kw">return</span> False
+    <span class="kw">for</span> i <span class="kw">in</span> range(3, int(n**0.5)+1, 2):
+        <span class="kw">if</span> n % i == 0: <span class="kw">return</span> False
+    <span class="kw">return</span> True</pre></div>
+</div>
+
+<div class="sec">&#128221; Modular Arithmetic &#8212; The Clock Model</div>
+<div class="card">
+  <p style="color:var(--tm);margin-bottom:12px">Think of modular arithmetic as a clock. After 12, the hour hand wraps back to 1. This "wrap-around" is used in hashing, cryptography, and competitive programming.</p>
+<div class="viz-box">Key modular properties:
+  (a + b) mod m = ((a mod m) + (b mod m)) mod m
+  (a × b) mod m = ((a mod m) × (b mod m)) mod m
+  (a - b) mod m = ((a mod m) - (b mod m) + m) mod m   ← add m to avoid negative!
+
+Modular Exponentiation: (base^exp) mod m in O(log exp)
+  Example: 2^10 mod 1000
+  10 in binary = 1010
+
+  Exponent  Power   Result mod 1000
+    1         2^1     2
+    0         2^2     4       (skip, bit=0)
+    1         2^4    16       → multiply: 2 × 16 = 32
+    0         2^8   256       (skip, bit=0)
+  Wait: 10 = 8+2, so 2^10 = 2^8 × 2^2 = 256 × 4 = 1024 → mod 1000 = 24
+
+Python: pow(2, 10, 1000) = 24  ← built-in, highly optimised
+
+Fermat's Little Theorem: If p is prime and gcd(a,p)=1:
+  a^(p-1) ≡ 1 (mod p)
+  → modular inverse: a^(p-2) mod p  (needed for modular division)</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Modular inverse, Chinese Remainder Theorem</div></div><pre><span class="kw">def</span> <span class="fn">mod_inv</span>(a, m):
+    <span class="cm"># Fermat's little theorem (m must be prime)</span>
+    <span class="kw">return</span> pow(a, m-2, m)
+
+<span class="cm"># General modular inverse using Extended Euclidean</span>
+<span class="kw">def</span> <span class="fn">mod_inv_gen</span>(a, m):
+    g, x, _ = ext_gcd(a, m)
+    <span class="kw">if</span> g != 1: <span class="kw">raise</span> ValueError(<span class="nm">"No inverse — a and m must be coprime"</span>)
+    <span class="kw">return</span> x % m
+
+<span class="cm"># Combination C(n,r) mod p — Lucas theorem for large n</span>
+<span class="kw">def</span> <span class="fn">comb_mod</span>(n, r, p):
+    <span class="kw">if</span> r > n: <span class="kw">return</span> 0
+    num = <span class="fn">factorial_mod</span>(n, p)
+    den = <span class="fn">factorial_mod</span>(r, p) * <span class="fn">factorial_mod</span>(n-r, p) % p
+    <span class="kw">return</span> num * mod_inv(den, p) % p</pre></div>
+</div>
+
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Count Primes (LeetCode 204)</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem:</strong> Count all primes less than n. E.g. n=10 → 4 (primes: 2,3,5,7).</div>
+    <div class="iq-approach"><strong>Sieve of Eratosthenes:</strong> Mark all composites by iterating multiples of each prime starting from p² (smaller multiples already handled by smaller primes). Count remaining unmarked positions.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">n=10: find primes &lt; 10
+
+is_prime = [F,F,T,T,T,T,T,T,T,T]  (0 and 1 not prime)
+           [0,1,2,3,4,5,6,7,8,9]
+
+i=2 (prime):  mark 4,6,8  as composite
+  is_prime = [F,F,T,T,F,T,F,T,F,T]
+
+i=3 (prime):  mark 9  as composite (3*3=9, 3*4=12&gt;10)
+  is_prime = [F,F,T,T,F,T,F,T,F,F]
+
+i=4: already marked composite, skip
+Stop at √10 ≈ 3.16
+
+Count True values: indices 2,3,5,7 → 4 primes ✓
+
+Key: Start inner loop at i*i not 2*i
+  Reason: 2*i through (i-1)*i already marked by smaller primes</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Count Primes</div></div><pre><span class="kw">def</span> <span class="fn">count_primes</span>(n):
+    <span class="kw">if</span> n &lt; 2: <span class="kw">return</span> 0
+    is_prime = bytearray([1]) * n
+    is_prime[0] = is_prime[1] = 0
+    <span class="kw">for</span> i <span class="kw">in</span> range(2, int(n**0.5)+1):
+        <span class="kw">if</span> is_prime[i]:
+            is_prime[i*i:n:i] = bytes(len(is_prime[i*i:n:i]))
+    <span class="kw">return</span> sum(is_prime)</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n log log n)</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">GCD of Array (LeetCode 1979)</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem:</strong> Find GCD of all elements in array. E.g. [2,5,6,9,10] → gcd(2,5,6,9,10).</div>
+    <div class="iq-approach"><strong>Iterative GCD:</strong> gcd(a,b,c) = gcd(gcd(a,b),c). Scan left to right, accumulate GCD. The GCD can only decrease or stay same as we add more elements (since gcd ≤ each element). Stop early if GCD becomes 1.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">arr = [2, 5, 6, 9, 10]
+
+Step 1: gcd(2,5)    = 1   (5=2*2+1 → gcd(2,1)=1)
+Step 2: gcd(1,6)    = 1   (6 mod 1 = 0 → GCD=1)
+Step 3: gcd(1,9)    = 1   (short-circuit: once GCD=1, stays 1)
+Step 4: gcd(1,10)   = 1
+
+Answer: 1 ✓ (no common factor &gt; 1 among all elements)
+
+Better example: [4, 8, 12, 16]
+  gcd(4,8)=4  →  gcd(4,12)=4  →  gcd(4,16)=4
+  Answer: 4 ✓ (all multiples of 4)
+
+Insight: gcd of array = gcd of any two elements if the array
+  has that property. Otherwise scan all pairwise.</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · GCD of array</div></div><pre><span class="kw">from</span> math <span class="kw">import</span> gcd
+<span class="kw">from</span> functools <span class="kw">import</span> reduce
+
+<span class="kw">def</span> <span class="fn">find_gcd</span>(nums):
+    <span class="kw">return</span> reduce(gcd, nums)
+
+<span class="cm"># One-liner: reduce applies gcd left to right</span>
+<span class="cm"># For array [a,b,c,d]: gcd(gcd(gcd(a,b),c),d)</span>
+
+<span class="cm"># Interview note: gcd(a,0)=a is the base case in Euclidean</span>
+<span class="cm"># reduce(gcd, []) raises error — always check empty input</span></pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n log(max))</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">Modular Exponentiation (LeetCode 50 / Pow(x,n))</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem:</strong> Implement pow(x, n) in O(log n). n can be negative. E.g. pow(2.0, 10) → 1024.0, pow(2.0, -2) → 0.25.</div>
+    <div class="iq-approach"><strong>Fast exponentiation (binary exponentiation):</strong> x^n = (x^(n/2))² if n even; x * x^(n-1) if n odd. Recursively halves n → O(log n). For negative n: pow(x,n) = 1/pow(x,-n).</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">pow(2, 10):
+  10 = even → (2^5)²
+  5  = odd  → 2 × (2^4)
+  4  = even → (2^2)²
+  2  = even → (2^1)²
+  1  = base → 2
+
+Build back up:
+  2^1  = 2
+  2^2  = (2^1)² = 4
+  2^4  = (2^2)² = 16
+  2^5  = 2 × 2^4 = 32
+  2^10 = (2^5)² = 1024
+
+Operations: only 5 multiplications for n=10
+vs naive: 9 multiplications
+For n=1000: ~10 multiplications vs 999
+
+Negative: pow(2,-3) = 1/pow(2,3) = 1/8 = 0.125</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Fast Power</div></div><pre><span class="kw">def</span> <span class="fn">my_pow</span>(x, n):
+    <span class="kw">if</span> n == 0: <span class="kw">return</span> 1.0
+    <span class="kw">if</span> n &lt; 0: x, n = 1/x, -n
+    <span class="kw">if</span> n % 2 == 0:
+        half = my_pow(x, n//2)
+        <span class="kw">return</span> half * half
+    <span class="kw">else</span>:
+        <span class="kw">return</span> x * my_pow(x, n-1)
+
+<span class="cm"># Iterative (no stack overflow risk):</span>
+<span class="kw">def</span> <span class="fn">my_pow_iter</span>(x, n):
+    <span class="kw">if</span> n &lt; 0: x, n = 1/x, -n
+    result = 1.0
+    <span class="kw">while</span> n &gt; 0:
+        <span class="kw">if</span> n & 1: result *= x
+        x *= x; n &gt;&gt;= 1
+    <span class="kw">return</span> result</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(log n)</span>
+      <span class="iq-pill s">Space: O(log n) recursive / O(1) iterative</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

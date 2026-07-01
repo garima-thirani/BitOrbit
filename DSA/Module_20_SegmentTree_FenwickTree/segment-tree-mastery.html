@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Segment Tree & Fenwick Tree — Module 20</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+/* ── expanded interview question styles ── */
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+
+/* ===== deep-dive intuition card ===== */
+.pat{background:linear-gradient(160deg,rgba(79,70,229,.08),rgba(15,23,42,.4));border:1px solid var(--brd);border-radius:18px;padding:30px 34px;margin:24px 0 40px;}
+.pat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+@media(max-width:760px){.pat-grid{grid-template-columns:1fr;}}
+.pat-cell{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:18px 22px;}
+.pat-cell h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.pat-cell.when h4{color:var(--w);}.pat-cell.state h4{color:var(--a);}
+.pat-cell.rec h4{color:var(--pl);}.pat-cell.base h4{color:var(--s);}
+.pat-cell p,.pat-cell li{font-size:.9rem;color:var(--tm);line-height:1.8;}
+.pat-cell ul{padding-left:18px;margin-top:6px;}.pat-cell li{margin:4px 0;}
+.formula{background:var(--cbg);border:1px solid #30363d;border-radius:10px;padding:16px 20px;margin:14px 0;font-family:'Fira Code','Courier New',monospace;font-size:.9rem;color:#a5b4fc;line-height:1.9;overflow-x:auto;}
+.formula .hl{color:#67e8f9;font-weight:700;}
+.keywords{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+.kwp{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:3px 14px;font-size:.8rem;font-weight:600;}
+.pitfall{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.03));border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.pitfall .pl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#fca5a5;font-weight:700;margin-bottom:6px;}
+.pitfall p{font-size:.88rem;color:#fecaca;line-height:1.8;}
+/* ===== animated SVG figure ===== */
+.fig{background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,.06),transparent 70%),var(--cbg);border:1px solid #30363d;border-radius:14px;padding:24px;margin:22px 0;overflow-x:auto;}
+.fig svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+.fig-cap{text-align:center;font-size:.82rem;color:var(--tm);margin-top:14px;font-style:italic;}
+.fig-cap b{color:var(--a);font-style:normal;}
+.fig-title{font-size:1.02rem;color:var(--t);margin:8px 0 10px;font-weight:700;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:16px;}
+.legend span{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--tm);}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;}
+.svg-t{fill:#e2e8f0;font-family:'Fira Code',monospace;}
+.svg-tm{fill:#94a3b8;font-family:'Segoe UI',sans-serif;}
+.svg-lbl{fill:#67e8f9;font-family:'Segoe UI',sans-serif;font-weight:700;}
+.svg-acc{fill:#fcd34d;font-family:'Fira Code',monospace;}
+.svg-s{fill:#6ee7b7;font-family:'Fira Code',monospace;}
+.svg-d{fill:#fca5a5;font-family:'Fira Code',monospace;}
+
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 20 · Segment Tree & Fenwick Tree</div><h1>Range Queries in<br><span>Answers in Milliseconds</span></h1><p>O(log n) — every single time, even with updates.</p><div class="stats"><div class="stat"><div class="sn">O(n)</div><div class="sl">Build Time</div></div><div class="stat"><div class="sn">O(log n)</div><div class="sl">Query & Update</div></div><div class="stat"><div class="sn">Range Power</div><div class="sl">Primary Use Case</div></div><div class="stat"><div class="sn">FAANG ⭐⭐</div><div class="sl">Frequency: Medium-High</div></div></div></div></div><div class="wrap">
+<div class="sec">🧠 The Story — The Live Leaderboard</div>
+<p class="sub">Feel why these data structures exist before learning how they work.</p>
+<div class="story">
+  <div class="slabel">Real World Story — Gaming Leaderboard</div>
+  <h3>You run a competitive gaming platform. 1 million players. Scores update 100,000 times per second.</h3>
+  <p>
+    Your operations: <strong>(1) Update player score</strong> and <strong>(2) Sum of scores in rank range [L, R]</strong>.<br><br>
+    <strong>Naive array:</strong> Update = O(1). Sum of range = O(n) scan. With 100,000 updates and queries per second, you're doing 100,000 × 1,000,000 = 10¹¹ operations per second. Servers melt.<br><br>
+    <strong>Prefix sum array:</strong> Sum = O(1). But update = O(n) to recompute all affected prefix sums. Same problem.<br><br>
+    <strong>Segment Tree / Fenwick Tree:</strong> Both update AND query in O(log n). With n=1,000,000: log₂(1M) = 20. Both operations cost 20 steps. <em>That's 10,000× faster than the naive approach.</em><br><br>
+    The segment tree achieves this by organizing data as a tree where each node stores the aggregate of its subtree. An update flows up the tree (O(log n) nodes), and a query combines O(log n) precomputed ranges.
+  </p>
+</div>
+<div class="ibox">
+  <div class="lbl">Segment Tree: The Core Insight</div>
+  <p>
+    Array [1, 3, 5, 7, 9, 11] stored as a tree:<br><br>
+    <code>
+              [36] (sum 0-5)
+           /              \<br>
+        [9] (0-2)        [27] (3-5)<br>
+       /     \          /      \<br>
+    [4](0-1) [5](2) [16](3-4) [11](5)<br>
+    /   \              /    \<br>
+  [1]  [3]           [7]   [9]
+    </code><br>
+    Sum(1, 4) = arr[1]+arr[2]+arr[3]+arr[4]. Instead of scanning 4 elements, we combine [3] + [5] + [7] = node(0-1)'s right + node(2) + node(3)'s left. Just 3 lookups!
+  </p>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Segment Tree — Sum with Point Updates</div></div><pre><span class="kw">class</span> <span class="fn">SegmentTree</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, arr):
+        self.n = len(arr)
+        self.tree = [0] * (4 * self.n)   <span class="cm"># 4n is safe upper bound</span>
+        self._build(arr, 1, 0, self.n - 1)
+
+    <span class="kw">def</span> <span class="fn">_build</span>(self, arr, node, start, end):
+        <span class="kw">if</span> start == end:
+            self.tree[node] = arr[start]  <span class="cm"># leaf: store element</span>
+        <span class="kw">else</span>:
+            mid = (start + end) // 2
+            self._build(arr, 2*node,   start, mid)     <span class="cm"># build left child</span>
+            self._build(arr, 2*node+1, mid+1, end)     <span class="cm"># build right child</span>
+            self.tree[node] = self.tree[2*node] + self.tree[2*node+1]  <span class="cm"># merge</span>
+
+    <span class="kw">def</span> <span class="fn">update</span>(self, idx, val, node=1, start=None, end=None):
+        <span class="kw">if</span> start <span class="kw">is</span> None: start, end = 0, self.n - 1
+        <span class="kw">if</span> start == end:
+            self.tree[node] = val; <span class="kw">return</span>   <span class="cm"># update leaf</span>
+        mid = (start + end) // 2
+        <span class="kw">if</span> idx &lt;= mid: self.update(idx, val, 2*node,   start, mid)
+        <span class="kw">else</span>:          self.update(idx, val, 2*node+1, mid+1, end)
+        self.tree[node] = self.tree[2*node] + self.tree[2*node+1]  <span class="cm"># propagate up</span>
+
+    <span class="kw">def</span> <span class="fn">query</span>(self, l, r, node=1, start=None, end=None):
+        <span class="kw">if</span> start <span class="kw">is</span> None: start, end = 0, self.n - 1
+        <span class="kw">if</span> r &lt; start <span class="kw">or</span> end &lt; l: <span class="kw">return</span> 0        <span class="cm"># no overlap: identity</span>
+        <span class="kw">if</span> l &lt;= start <span class="kw">and</span> end &lt;= r: <span class="kw">return</span> self.tree[node]  <span class="cm"># full overlap: use cached</span>
+        mid = (start + end) // 2               <span class="cm"># partial overlap: recurse both</span>
+        <span class="kw">return</span> self.query(l, r, 2*node, start, mid) + self.query(l, r, 2*node+1, mid+1, end)
+
+<span class="cm"># Usage:
+# st = SegmentTree([1,3,5,7,9,11])
+# st.query(1, 4)    → 3+5+7+9 = 24 ✓
+# st.update(2, 10)  → arr[2] = 10
+# st.query(1, 4)    → 3+10+7+9 = 29 ✓</span>
+</pre></div>
+<div class="pat">
+  <div class="fig-title" style="font-size:1.15rem;margin-bottom:6px;">🧠 Intuition — why a range query touches only O(log n) nodes</div>
+  <p style="color:var(--tm);line-height:1.85;">
+    A segment tree pre-computes the aggregate of <em>every</em> power-of-two-aligned block and stacks them in a binary tree: the root covers the whole array, its children each cover a half, and so on down to single elements. The magic is that <strong>any</strong> range <code>[L,R]</code>, no matter how it's positioned, can be tiled by at most <strong>2·log n</strong> of these pre-computed blocks. The query walks down from the root and classifies each node three ways: <span style="color:#34d399">fully inside</span> the range → return its cached value and stop (don't go deeper); <span style="color:#fca5a5">fully outside</span> → return the identity (0 for sum); <span style="color:#67e8f9">partially overlapping</span> → recurse into both children. Because a node only splits when the range boundary cuts through it, and there are only two boundaries (L and R), the recursion fans out logarithmically. Updates run the same skeleton in reverse: change a leaf, then re-merge each ancestor on the way up.
+  </p>
+  <div class="pat-grid">
+    <div class="pat-cell base"><h4>🟢 Full overlap → use the cache</h4><p>If a node's segment sits entirely inside [L,R], its stored aggregate is exactly what you need — return it and never descend. This is what caps the work at O(log n).</p></div>
+    <div class="pat-cell rec"><h4>🔵 Partial overlap → recurse</h4><p>The range boundary cuts this node. Split into both children and let each decide. Only nodes straddling L or R ever do this.</p></div>
+    <div class="pat-cell when"><h4>🟠 No overlap → identity</h4><p>Disjoint from [L,R] → contribute the neutral element (0 for sum, +∞ for min). Prunes whole subtrees instantly.</p></div>
+    <div class="pat-cell state"><h4>🟣 Update propagates up</h4><p>Set the leaf, then walk to the root re-computing <code>node = left + right</code>. Exactly one root-to-leaf path changes → O(log n).</p></div>
+  </div>
+  <div class="formula">query(L,R) visits ≤ <span class="hl">2·log₂ n</span> nodes  ·  full-overlap nodes are returned whole, never split<br>point update re-merges <span class="hl">one root-to-leaf path</span>  →  O(log n)</div>
+
+  <div class="fig" style="margin-top:8px;">
+    <div class="fig-title">🌳 query(1, 4) on [1,3,5,7,9,11] — tiled by just 3 cached nodes = 24</div>
+    <svg viewBox="0 0 640 330" width="640" role="img" aria-label="Animated segment tree range query">
+      <!-- edges -->
+      <g stroke="#475569" stroke-width="2">
+        <line x1="320" y1="63" x2="180" y2="99"/><line x1="320" y1="63" x2="460" y2="99"/>
+        <line x1="180" y1="133" x2="110" y2="173"/><line x1="180" y1="133" x2="250" y2="173"/>
+        <line x1="460" y1="133" x2="400" y2="173"/><line x1="460" y1="133" x2="520" y2="173"/>
+        <line x1="110" y1="207" x2="75" y2="245"/><line x1="110" y1="207" x2="145" y2="245"/>
+        <line x1="400" y1="207" x2="365" y2="245"/><line x1="400" y1="207" x2="435" y2="245"/>
+      </g>
+      <!-- base nodes: [val](range) -->
+      <g text-anchor="middle">
+        <g><rect x="292" y="29" width="56" height="34" rx="6" fill="#162032" stroke="#334155"/><text x="320" y="49" class="svg-t" font-size="14">36</text><text x="320" y="76" class="svg-tm" font-size="10">0–5</text></g>
+        <g><rect x="152" y="99" width="56" height="34" rx="6" fill="#162032" stroke="#334155"/><text x="180" y="119" class="svg-t" font-size="14">9</text><text x="180" y="146" class="svg-tm" font-size="10">0–2</text></g>
+        <g><rect x="432" y="99" width="56" height="34" rx="6" fill="#162032" stroke="#334155"/><text x="460" y="119" class="svg-t" font-size="14">27</text><text x="460" y="146" class="svg-tm" font-size="10">3–5</text></g>
+        <g><rect x="82" y="173" width="56" height="34" rx="6" fill="#162032" stroke="#334155"/><text x="110" y="193" class="svg-t" font-size="14">4</text><text x="110" y="220" class="svg-tm" font-size="10">0–1</text></g>
+        <g><rect x="222" y="173" width="56" height="34" rx="6" fill="#162032" stroke="#334155"/><text x="250" y="193" class="svg-t" font-size="14">5</text><text x="250" y="220" class="svg-tm" font-size="10">2</text></g>
+        <g><rect x="372" y="173" width="56" height="34" rx="6" fill="#162032" stroke="#334155"/><text x="400" y="193" class="svg-t" font-size="14">16</text><text x="400" y="220" class="svg-tm" font-size="10">3–4</text></g>
+        <g><rect x="492" y="173" width="56" height="34" rx="6" fill="#162032" stroke="#334155"/><text x="520" y="193" class="svg-t" font-size="14">11</text><text x="520" y="220" class="svg-tm" font-size="10">5</text></g>
+        <g><rect x="47" y="245" width="56" height="34" rx="6" fill="#162032" stroke="#334155"/><text x="75" y="265" class="svg-t" font-size="14">1</text><text x="75" y="292" class="svg-tm" font-size="10">0</text></g>
+        <g><rect x="117" y="245" width="56" height="34" rx="6" fill="#162032" stroke="#334155"/><text x="145" y="265" class="svg-t" font-size="14">3</text><text x="145" y="292" class="svg-tm" font-size="10">1</text></g>
+        <g><rect x="337" y="245" width="56" height="34" rx="6" fill="#162032" stroke="#334155"/><text x="365" y="265" class="svg-t" font-size="14">7</text><text x="365" y="292" class="svg-tm" font-size="10">3</text></g>
+        <g><rect x="407" y="245" width="56" height="34" rx="6" fill="#162032" stroke="#334155"/><text x="435" y="265" class="svg-t" font-size="14">9</text><text x="435" y="292" class="svg-tm" font-size="10">4</text></g>
+      </g>
+      <!-- overlay highlights: cyan=partial, green=full(counted), red=no overlap -->
+      <g fill="none" stroke-width="3">
+        <rect x="292" y="29" width="56" height="34" rx="6" stroke="#06b6d4" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.08;0.12;1" dur="12s" repeatCount="indefinite"/></rect>
+        <rect x="152" y="99" width="56" height="34" rx="6" stroke="#06b6d4" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.18;0.22;1" dur="12s" repeatCount="indefinite"/></rect>
+        <rect x="432" y="99" width="56" height="34" rx="6" stroke="#06b6d4" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.18;0.22;1" dur="12s" repeatCount="indefinite"/></rect>
+        <rect x="82" y="173" width="56" height="34" rx="6" stroke="#06b6d4" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.30;0.34;1" dur="12s" repeatCount="indefinite"/></rect>
+        <rect x="222" y="173" width="56" height="34" rx="6" stroke="#10b981" stroke-width="4" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.30;0.34;1" dur="12s" repeatCount="indefinite"/></rect>
+        <rect x="372" y="173" width="56" height="34" rx="6" stroke="#10b981" stroke-width="4" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.42;0.46;1" dur="12s" repeatCount="indefinite"/></rect>
+        <rect x="47" y="245" width="56" height="34" rx="6" stroke="#ef4444" opacity="0"><animate attributeName="opacity" values="0;0;0.7;0.7" keyTimes="0;0.52;0.56;1" dur="12s" repeatCount="indefinite"/></rect>
+        <rect x="117" y="245" width="56" height="34" rx="6" stroke="#10b981" stroke-width="4" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.52;0.56;1" dur="12s" repeatCount="indefinite"/></rect>
+        <rect x="492" y="173" width="56" height="34" rx="6" stroke="#ef4444" opacity="0"><animate attributeName="opacity" values="0;0;0.7;0.7" keyTimes="0;0.64;0.68;1" dur="12s" repeatCount="indefinite"/></rect>
+      </g>
+      <!-- running sum -->
+      <text x="320" y="318" text-anchor="middle" class="svg-s" font-size="15" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.76;0.80;1" dur="12s" repeatCount="indefinite"/>query(1,4) = 3 (node 1) + 5 (node 2) + 16 (node 3–4) = 24 ✓</text>
+    </svg>
+    <div class="legend">
+      <span><i style="background:#10b981"></i>full overlap → counted, stop</span>
+      <span><i style="background:#06b6d4"></i>partial → recurse</span>
+      <span><i style="background:#ef4444"></i>no overlap → 0</span>
+    </div>
+    <div class="fig-cap">The query never visits leaves 3 or 4 — node <b>3–4</b> is fully inside [1,4] so its cached <b>16</b> is used directly. Three cached nodes tile the whole range. ▶ loops every 12s.</div>
+  </div>
+</div>
+<div class="sec">⚡ Fenwick Tree (BIT) — Simpler, More Space Efficient</div>
+<div class="ibox">
+  <div class="lbl">The Key Trick: i &amp; (-i)</div>
+  <p>
+    <code>i &amp; (-i)</code> gives the lowest set bit of i. This is used for both navigation:<br>
+    — <strong>Update:</strong> add <code>i &amp; (-i)</code> to i (move to the next index that covers i)<br>
+    — <strong>Query:</strong> subtract <code>i &amp; (-i)</code> from i (peel off the last covered range)<br><br>
+    Example: <code>6 = 110</code>, <code>6 &amp; (-6) = 010 = 2</code>. So BIT[6] covers range [5,6] (length=2). Update 6 → update 8 (next coverage). Query prefix 6 → sum BIT[6]+BIT[4] (peeling 2, then 4).
+  </p>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Fenwick Tree (BIT) — Prefix Sums</div></div><pre><span class="kw">class</span> <span class="fn">BIT</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, n):
+        self.n = n
+        self.tree = [0] * (n + 1)        <span class="cm"># 1-indexed</span>
+
+    <span class="kw">def</span> <span class="fn">update</span>(self, i, delta):          <span class="cm"># add delta to position i (1-indexed)</span>
+        <span class="kw">while</span> i &lt;= self.n:
+            self.tree[i] += delta
+            i += i & (-i)                 <span class="cm"># move to next responsible index</span>
+
+    <span class="kw">def</span> <span class="fn">prefix_sum</span>(self, i):             <span class="cm"># sum of [1..i]</span>
+        s = 0
+        <span class="kw">while</span> i > 0:
+            s += self.tree[i]
+            i -= i & (-i)                 <span class="cm"># move to parent</span>
+        <span class="kw">return</span> s
+
+    <span class="kw">def</span> <span class="fn">range_sum</span>(self, l, r):           <span class="cm"># sum of [l..r] (1-indexed)</span>
+        <span class="kw">return</span> self.prefix_sum(r) - self.prefix_sum(l - 1)
+
+<span class="cm"># Build from array: O(n log n)
+# bit = BIT(6)
+# for i,v in enumerate([1,3,5,7,9,11], 1): bit.update(i, v)
+# bit.range_sum(2, 5) → 3+5+7+9 = 24 ✓</span>
+</pre></div>
+<div class="fig">
+  <div class="fig-title">⚙️ Fenwick prefix_sum(6) — peel off the lowest set bit, one cached block at a time</div>
+  <svg viewBox="0 0 640 320" width="640" role="img" aria-label="Animated Fenwick tree prefix sum">
+    <text x="320" y="26" text-anchor="middle" class="svg-tm" font-size="13">i = 6 (110) → add BIT[6], drop lowbit 2 → i = 4 (100) → add BIT[4], drop lowbit 4 → i = 0 stop</text>
+    <!-- index navigation chips -->
+    <g text-anchor="middle" font-size="13">
+      <rect x="70" y="40" width="70" height="26" rx="6" fill="#0e2a3a" stroke="#06b6d4" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.08;0.12;1" dur="10s" repeatCount="indefinite"/></rect>
+      <text x="105" y="58" class="svg-lbl" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.08;0.12;1" dur="10s" repeatCount="indefinite"/>i=6 ·110</text>
+      <rect x="160" y="40" width="70" height="26" rx="6" fill="#0e2a3a" stroke="#06b6d4" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.30;0.34;1" dur="10s" repeatCount="indefinite"/></rect>
+      <text x="195" y="58" class="svg-lbl" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.30;0.34;1" dur="10s" repeatCount="indefinite"/>i=4 ·100</text>
+      <rect x="250" y="40" width="70" height="26" rx="6" fill="#1e293b" stroke="#475569" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.52;0.56;1" dur="10s" repeatCount="indefinite"/></rect>
+      <text x="285" y="58" class="svg-tm" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.52;0.56;1" dur="10s" repeatCount="indefinite"/>i=0 stop</text>
+    </g>
+    <!-- BIT[4] coverage bracket [1,4] -->
+    <path d="M70 112 L70 100 L368 100 L368 112" fill="none" stroke="#06b6d4" stroke-width="2.5" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.30;0.34;1" dur="10s" repeatCount="indefinite"/></path>
+    <text x="219" y="92" text-anchor="middle" class="svg-lbl" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.30;0.34;1" dur="10s" repeatCount="indefinite"/>BIT[4] covers [1,4] = 16</text>
+    <!-- BIT[6] coverage bracket [5,6] -->
+    <path d="M374 112 L374 100 L520 100 L520 112" fill="none" stroke="#10b981" stroke-width="2.5" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.08;0.12;1" dur="10s" repeatCount="indefinite"/></path>
+    <text x="447" y="92" text-anchor="middle" class="svg-s" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.08;0.12;1" dur="10s" repeatCount="indefinite"/>BIT[6] covers [5,6] = 20</text>
+    <!-- array cells 1..6 -->
+    <g text-anchor="middle">
+      <g><rect x="70" y="130" width="70" height="64" rx="8" fill="#162032" stroke="#334155"/><text x="105" y="168" class="svg-t" font-size="20">1</text><text x="105" y="186" class="svg-tm" font-size="11">idx 1</text></g>
+      <g><rect x="146" y="130" width="70" height="64" rx="8" fill="#162032" stroke="#334155"/><text x="181" y="168" class="svg-t" font-size="20">3</text><text x="181" y="186" class="svg-tm" font-size="11">idx 2</text></g>
+      <g><rect x="222" y="130" width="70" height="64" rx="8" fill="#162032" stroke="#334155"/><text x="257" y="168" class="svg-t" font-size="20">5</text><text x="257" y="186" class="svg-tm" font-size="11">idx 3</text></g>
+      <g><rect x="298" y="130" width="70" height="64" rx="8" fill="#162032" stroke="#334155"/><text x="333" y="168" class="svg-t" font-size="20">7</text><text x="333" y="186" class="svg-tm" font-size="11">idx 4</text></g>
+      <g><rect x="374" y="130" width="70" height="64" rx="8" fill="#162032" stroke="#334155"/><text x="409" y="168" class="svg-t" font-size="20">9</text><text x="409" y="186" class="svg-tm" font-size="11">idx 5</text></g>
+      <g><rect x="450" y="130" width="70" height="64" rx="8" fill="#162032" stroke="#334155"/><text x="485" y="168" class="svg-t" font-size="20">11</text><text x="485" y="186" class="svg-tm" font-size="11">idx 6</text></g>
+    </g>
+    <!-- coverage highlights -->
+    <rect x="374" y="130" width="146" height="64" rx="8" fill="rgba(16,185,129,.16)" stroke="#10b981" stroke-width="2.5" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.10;0.14;1" dur="10s" repeatCount="indefinite"/></rect>
+    <rect x="70" y="130" width="298" height="64" rx="8" fill="rgba(6,182,212,.14)" stroke="#06b6d4" stroke-width="2.5" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.32;0.36;1" dur="10s" repeatCount="indefinite"/></rect>
+    <!-- result -->
+    <text x="320" y="244" text-anchor="middle" class="svg-s" font-size="16" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.68;0.72;1" dur="10s" repeatCount="indefinite"/>prefix_sum(6) = BIT[6] + BIT[4] = 20 + 16 = 36 ✓</text>
+    <text x="320" y="270" text-anchor="middle" class="svg-tm" font-size="12.5" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.74;0.78;1" dur="10s" repeatCount="indefinite"/>just 2 jumps instead of summing 6 cells — that's the log n win</text>
+    <text x="320" y="296" text-anchor="middle" class="svg-acc" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.80;0.84;1" dur="10s" repeatCount="indefinite"/>update mirrors it: i += i &amp; (-i) climbs to every block that covers i</text>
+  </svg>
+  <div class="legend">
+    <span><i style="background:#10b981"></i>BIT[6] block [5,6]</span>
+    <span><i style="background:#06b6d4"></i>BIT[4] block [1,4]</span>
+    <span><i style="background:#475569"></i>i &amp; (-i) = lowest set bit</span>
+  </div>
+  <div class="fig-cap">Each <b>BIT[i]</b> stores the sum of a block whose length is <b>i &amp; (-i)</b> (the lowest set bit). A prefix sum repeatedly subtracts that bit, hopping across non-overlapping blocks that exactly tile <b>[1..i]</b>. ▶ loops every 10s.</div>
+</div>
+<div class="sec">⚖️ Segment Tree vs BIT vs Prefix Sum</div>
+<div class="card"><table>
+  <thead><tr><th>Operation</th><th>Prefix Sum Array</th><th>Fenwick Tree</th><th>Segment Tree</th></tr></thead>
+  <tbody>
+    <tr><td>Build</td><td>O(n)</td><td>O(n log n)</td><td>O(n)</td></tr>
+    <tr><td>Point Update</td><td>O(n)</td><td>O(log n)</td><td>O(log n)</td></tr>
+    <tr><td>Range Query</td><td>O(1)</td><td>O(log n)</td><td>O(log n)</td></tr>
+    <tr><td>Range Update (lazy)</td><td>O(n)</td><td>O(log n) with diff array</td><td>O(log n) with lazy prop</td></tr>
+    <tr><td>Space</td><td>O(n)</td><td>O(n)</td><td>O(4n)</td></tr>
+    <tr><td>Code Complexity</td><td>Simple</td><td>Medium</td><td>Complex</td></tr>
+    <tr><td>Supports Min/Max</td><td>No</td><td>No</td><td>Yes</td></tr>
+  </tbody>
+</table></div>
+<div class="callout inf"><div class="ci">💡</div><div class="cb"><strong>Interview Rule:</strong> If the problem needs range sum with point updates → use BIT (simpler to code). If it needs range min/max or range updates → use Segment Tree.</div></div>
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Range Sum Query — Mutable</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 307):</strong> Implement NumArray class with update(i, val) and sumRange(l, r). Both operations should be O(log n). Naive array: update O(1), sum O(n). Prefix sum: sum O(1), update O(n).</div>
+    <div class="iq-approach"><strong>Fenwick Tree (BIT):</strong> An array where each index stores the sum of a specific range of the original array, determined by the lowest set bit. update and query both take O(log n) by traversing these bit-based ranges.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums = [1, 3, 5, 7, 9, 11]
+
+BIT array (1-indexed):
+  bit[1] = nums[1] = 1            (LSB=1, range [1,1])
+  bit[2] = nums[1]+nums[2] = 4   (LSB=2, range [1,2])
+  bit[3] = nums[3] = 5           (LSB=1, range [3,3])
+  bit[4] = nums[1]+...+nums[4]=16 (LSB=4, range [1,4])
+  bit[5] = nums[5] = 9           (LSB=1, range [5,5])
+  bit[6] = nums[5]+nums[6] = 20  (LSB=2, range [5,6])
+
+sumRange(0,2) → query prefix(3) - prefix(0)
+  prefix(3): sum bit[3]+bit[2] = 5+4 = 9 ✓ (1+3+5=9)
+
+update(1, 2): change nums[1] from 3 to 2 (delta=-1)
+  Update bit[2]: bit[2]+=(-1) → bit[2]=3
+  Update bit[4]: bit[4]+=(-1) → bit[4]=15
+  (follow i += i & (-i) path)</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Range Sum Query Mutable (BIT)</div></div><pre><span class="kw">class</span> <span class="fn">NumArray</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, nums):
+        self.n = len(nums)
+        self.bit = [0] * (self.n + 1)
+        <span class="kw">for</span> i, v <span class="kw">in</span> enumerate(nums): self._update(i+1, v)
+
+    <span class="kw">def</span> <span class="fn">_update</span>(self, i, delta):    <span class="cm"># 1-indexed</span>
+        <span class="kw">while</span> i &lt;= self.n:
+            self.bit[i] += delta
+            i += i &amp; (-i)          <span class="cm"># next responsible index</span>
+
+    <span class="kw">def</span> <span class="fn">_prefix</span>(self, i):          <span class="cm"># prefix sum [1..i]</span>
+        s = 0
+        <span class="kw">while</span> i > 0:
+            s += self.bit[i]
+            i -= i &amp; (-i)          <span class="cm"># parent in BIT tree</span>
+        <span class="kw">return</span> s
+
+    <span class="kw">def</span> <span class="fn">update</span>(self, i, val):
+        delta = val - (self._prefix(i+1) - self._prefix(i))
+        self._update(i+1, delta)
+
+    <span class="kw">def</span> <span class="fn">sumRange</span>(self, l, r):
+        <span class="kw">return</span> self._prefix(r+1) - self._prefix(l)</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(log n) per op</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Count of Smaller Numbers After Self</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 315):</strong> For each element in array, count how many elements to its right are smaller. E.g. [5,2,6,1] → [2,1,1,0].</div>
+    <div class="iq-approach"><strong>BIT + coordinate compression:</strong> Process elements right-to-left. For each element, query BIT for sum at (element-1) = count of smaller elements already inserted (from the right). Then insert element into BIT. Coordinate compress to handle any value range.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums = [5, 2, 6, 1]
+
+Coordinate compress: {1:1, 2:2, 5:3, 6:4}
+BIT size = 4
+
+Process right-to-left:
+  i=3, val=1 (mapped=1):
+    query(0) = 0       → counts[3]=0
+    update(1, +1)      → BIT[1]+=1
+
+  i=2, val=6 (mapped=4):
+    query(3) = count(1,2,3 in BIT) = 1 (only 1 is there)
+    counts[2]=1
+    update(4, +1)
+
+  i=1, val=2 (mapped=2):
+    query(1) = count(1 in BIT) = 1 (only 1 is there)
+    counts[1]=1
+    update(2, +1)
+
+  i=0, val=5 (mapped=3):
+    query(2) = count(1,2 in BIT) = 2 (vals 1 and 2)
+    counts[0]=2
+    update(3, +1)
+
+counts = [2, 1, 1, 0] ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Count of Smaller Numbers After Self</div></div><pre><span class="kw">def</span> <span class="fn">count_smaller</span>(nums):
+    <span class="cm"># Coordinate compress</span>
+    sorted_unique = sorted(set(nums))
+    rank = {v: i+1 <span class="kw">for</span> i, v <span class="kw">in</span> enumerate(sorted_unique)}
+    n = len(sorted_unique)
+    bit = [0] * (n+1)
+
+    <span class="kw">def</span> <span class="fn">update</span>(i):
+        <span class="kw">while</span> i &lt;= n: bit[i] += 1; i += i &amp; (-i)
+    <span class="kw">def</span> <span class="fn">query</span>(i):
+        s = 0
+        <span class="kw">while</span> i > 0: s += bit[i]; i -= i &amp; (-i)
+        <span class="kw">return</span> s
+
+    result = []
+    <span class="kw">for</span> v <span class="kw">in</span> reversed(nums):
+        r = rank[v]
+        result.append(query(r-1))   <span class="cm"># count smaller elements already inserted</span>
+        update(r)
+    <span class="kw">return</span> result[::-1]</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n log n)</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

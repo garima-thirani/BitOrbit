@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Disjoint Set Union — Module 21</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+/* ── expanded interview question styles ── */
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+
+/* ===== deep-dive intuition card ===== */
+.pat{background:linear-gradient(160deg,rgba(79,70,229,.08),rgba(15,23,42,.4));border:1px solid var(--brd);border-radius:18px;padding:30px 34px;margin:24px 0 40px;}
+.pat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+@media(max-width:760px){.pat-grid{grid-template-columns:1fr;}}
+.pat-cell{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:18px 22px;}
+.pat-cell h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.pat-cell.when h4{color:var(--w);}.pat-cell.state h4{color:var(--a);}
+.pat-cell.rec h4{color:var(--pl);}.pat-cell.base h4{color:var(--s);}
+.pat-cell p,.pat-cell li{font-size:.9rem;color:var(--tm);line-height:1.8;}
+.pat-cell ul{padding-left:18px;margin-top:6px;}.pat-cell li{margin:4px 0;}
+.formula{background:var(--cbg);border:1px solid #30363d;border-radius:10px;padding:16px 20px;margin:14px 0;font-family:'Fira Code','Courier New',monospace;font-size:.9rem;color:#a5b4fc;line-height:1.9;overflow-x:auto;}
+.formula .hl{color:#67e8f9;font-weight:700;}
+.keywords{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+.kwp{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:3px 14px;font-size:.8rem;font-weight:600;}
+.pitfall{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.03));border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.pitfall .pl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#fca5a5;font-weight:700;margin-bottom:6px;}
+.pitfall p{font-size:.88rem;color:#fecaca;line-height:1.8;}
+/* ===== animated SVG figure ===== */
+.fig{background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,.06),transparent 70%),var(--cbg);border:1px solid #30363d;border-radius:14px;padding:24px;margin:22px 0;overflow-x:auto;}
+.fig svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+.fig-cap{text-align:center;font-size:.82rem;color:var(--tm);margin-top:14px;font-style:italic;}
+.fig-cap b{color:var(--a);font-style:normal;}
+.fig-title{font-size:1.02rem;color:var(--t);margin:8px 0 10px;font-weight:700;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:16px;}
+.legend span{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--tm);}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;}
+.svg-t{fill:#e2e8f0;font-family:'Fira Code',monospace;}
+.svg-tm{fill:#94a3b8;font-family:'Segoe UI',sans-serif;}
+.svg-lbl{fill:#67e8f9;font-family:'Segoe UI',sans-serif;font-weight:700;}
+.svg-acc{fill:#fcd34d;font-family:'Fira Code',monospace;}
+.svg-s{fill:#6ee7b7;font-family:'Fira Code',monospace;}
+.svg-d{fill:#fca5a5;font-family:'Fira Code',monospace;}
+
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 21 · Disjoint Set Union (Union-Find)</div><h1>Are These Two<br><span>In the Same Group?</span></h1><p>O(α(n)) ≈ O(1) — the most deceptively powerful data structure in competitive programming.</p><div class="stats"><div class="stat"><div class="sn">O(α(n))</div><div class="sl">Union & Find</div></div><div class="stat"><div class="sn">α(n) ≈ O(1)</div><div class="sl">Ackermann Inverse</div></div><div class="stat"><div class="sn">Graph Key</div><div class="sl">Connected Components</div></div><div class="stat"><div class="sn">FAANG ⭐⭐</div><div class="sl">Frequency: High</div></div></div></div></div><div class="wrap">
+<div class="sec">🧠 The Story — The Social Network Merger</div>
+<div class="story">
+  <div class="slabel">Real World Story — LinkedIn Groups</div>
+  <h3>You're building a social network. Users connect with each other over time.</h3>
+  <p>
+    Operations:<br>
+    <strong>(1) Connect(A, B):</strong> A and B are now in the same friend group.<br>
+    <strong>(2) Connected(A, B)?</strong> Are A and B in the same group (directly or through mutual friends)?<br><br>
+    <strong>Naive approach:</strong> Track each person's group with a color/label. On connect, recolor one whole group. Worst case O(n) per connection.<br><br>
+    <strong>Union-Find:</strong> Each person points to a "representative" (root) of their group. Two people are in the same group iff they share the same root. Connection (union) = make one root point to the other. Connected check = compare roots. With two optimizations (path compression + union by rank), both operations run in O(α(n)) ≈ O(1) time for all practical purposes.<br><br>
+    <em>α(n) is the inverse Ackermann function. For n = 10^80 (atoms in the universe), α(n) = 5. Effectively constant.</em>
+  </p>
+</div>
+<div class="ibox">
+  <div class="lbl">Two Optimizations That Make It Near O(1)</div>
+  <ul>
+    <li><strong>Path Compression:</strong> When find(x) navigates up to the root, make every node on the path point directly to the root. Future finds on those nodes cost O(1).</li>
+    <li><strong>Union by Rank:</strong> When unioning two trees, make the shorter tree point to the root of the taller one. This keeps tree height at O(log n) before path compression kicks in.</li>
+  </ul>
+  <p style="margin-top:10px;">Together, they create a near-flat tree structure where almost every find operation is a direct root lookup.</p>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Union-Find with Both Optimizations</div></div><pre><span class="kw">class</span> <span class="fn">UnionFind</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, n):
+        self.parent = list(range(n))    <span class="cm"># initially, each is its own root</span>
+        self.rank   = [0] * n           <span class="cm"># tree height approximation</span>
+        self.components = n             <span class="cm"># connected components count</span>
+
+    <span class="kw">def</span> <span class="fn">find</span>(self, x):
+        <span class="kw">if</span> self.parent[x] != x:
+            self.parent[x] = self.find(self.parent[x])   <span class="cm"># path compression</span>
+        <span class="kw">return</span> self.parent[x]
+
+    <span class="kw">def</span> <span class="fn">union</span>(self, x, y):
+        px, py = self.find(x), self.find(y)
+        <span class="kw">if</span> px == py: <span class="kw">return</span> False           <span class="cm"># already same group</span>
+
+        <span class="cm"># Union by rank: shorter tree's root points to taller tree's root</span>
+        <span class="kw">if</span>   self.rank[px] < self.rank[py]: self.parent[px] = py
+        <span class="kw">elif</span> self.rank[px] > self.rank[py]: self.parent[py] = px
+        <span class="kw">else</span>:
+            self.parent[py] = px
+            self.rank[px] += 1           <span class="cm"># only grows when ranks tie</span>
+
+        self.components -= 1
+        <span class="kw">return</span> True                     <span class="cm"># successfully merged</span>
+
+    <span class="kw">def</span> <span class="fn">connected</span>(self, x, y):
+        <span class="kw">return</span> self.find(x) == self.find(y)
+
+<span class="cm"># Example: social groups
+# uf = UnionFind(5)   # users 0-4
+# uf.union(0,1)       # 0 and 1 are friends
+# uf.union(1,2)       # 1 and 2 are friends
+# uf.connected(0,2)   # True — through 1!
+# uf.components       # 3 (groups: {0,1,2}, {3}, {4})</span>
+</pre></div>
+<div class="pat">
+  <div class="fig-title" style="font-size:1.15rem;margin-bottom:6px;">🧠 Intuition — why two tiny tricks collapse O(n) into ≈ O(1)</div>
+  <p style="color:var(--tm);line-height:1.85;">
+    A disjoint set is just a forest: every element points at a <em>parent</em>, and the <strong>root</strong> is the name of the group. "Are A and B together?" becomes "do they climb to the same root?". The danger is that naive unions can build a long stringy chain — climbing it costs O(n). The two optimizations attack that directly. <strong>Union by rank</strong> always hangs the <em>shorter</em> tree under the taller one, so height grows only when two equal-height trees merge — keeping it O(log n). <strong>Path compression</strong> goes further: every time you climb to find the root, you re-point each node you passed <em>straight</em> at the root, so the next query is a single hop. Together they flatten the forest so aggressively that the amortized cost is the inverse Ackermann function α(n) — which is ≤ 5 for any input you will ever see.
+  </p>
+  <div class="pat-grid">
+    <div class="pat-cell state"><h4>🔵 Root = group identity</h4><p>Two elements are connected iff <code>find(a) == find(b)</code>. The root carries no data beyond "I represent this set".</p></div>
+    <div class="pat-cell base"><h4>🟢 Path compression</h4><p>After <code>find(x)</code> reaches the root, every node on that path is re-pointed directly to the root. The tree gets shorter every single time you query it.</p></div>
+    <div class="pat-cell when"><h4>🟠 Union by rank/size</h4><p>Attach the smaller tree under the bigger root. Without it, an adversary could build a chain; with it, height stays logarithmic even before compression.</p></div>
+    <div class="pat-cell rec"><h4>🟣 The α(n) payoff</h4><p>Both tricks together → O(α(n)) amortized, effectively constant. Only one of them gives O(log n); you want both.</p></div>
+  </div>
+  <div class="formula">connected(a,b)  ⟺  <span class="hl">find(a) == find(b)</span><br>union by rank + path compression  →  amortized  <span class="hl">O(α(n)) ≈ O(1)</span></div>
+  <div class="pitfall"><div class="pl">⚠ Common bug</div><p>Forgetting to use the <em>roots</em> when unioning — <code>parent[x] = y</code> instead of <code>parent[find(x)] = find(y)</code> — silently corrupts the structure. Always union the representatives, never the raw nodes.</p></div>
+
+  <div class="fig" style="margin-top:8px;">
+    <div class="fig-title">🌲 find(3) with path compression — a tall chain collapses into a flat star</div>
+    <svg viewBox="0 0 640 320" width="640" role="img" aria-label="Animated union-find path compression">
+      <defs>
+        <marker id="uf-ar" markerWidth="9" markerHeight="7" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#64748b"/></marker>
+        <marker id="uf-hl" markerWidth="9" markerHeight="7" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#10b981"/></marker>
+      </defs>
+      <text x="170" y="26" text-anchor="middle" class="svg-tm" font-size="13">before: chain (height = 3)</text>
+      <text x="490" y="26" text-anchor="middle" class="svg-tm" font-size="13">after find(3): flat (height = 1)</text>
+      <!-- LEFT chain edges (child -> parent, up) -->
+      <g stroke="#64748b" stroke-width="2.5" marker-end="url(#uf-ar)">
+        <line x1="170" y1="252" x2="170" y2="226"/>
+        <line x1="170" y1="182" x2="170" y2="156"/>
+        <line x1="170" y1="112" x2="170" y2="86"/>
+      </g>
+      <!-- LEFT nodes -->
+      <g font-size="17" text-anchor="middle">
+        <circle cx="170" cy="64" r="22" fill="#10241c" stroke="#10b981" stroke-width="2.5"/><text x="170" y="70" class="svg-s">0</text>
+        <circle cx="170" cy="134" r="22" fill="#162032" stroke="#334155" stroke-width="2"/><text x="170" y="140" class="svg-t">1</text>
+        <circle cx="170" cy="204" r="22" fill="#162032" stroke="#334155" stroke-width="2"/><text x="170" y="210" class="svg-t">2</text>
+        <circle cx="170" cy="274" r="22" fill="#162032" stroke="#334155" stroke-width="2"/><text x="170" y="280" class="svg-t">3</text>
+      </g>
+      <!-- climbing probe -->
+      <circle cx="170" r="10" fill="#06b6d4" opacity="0">
+        <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.08;0.12;0.52;0.58" dur="10s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="274;274;204;134;64;64" keyTimes="0;0.10;0.22;0.34;0.46;1" calcMode="discrete" dur="10s" repeatCount="indefinite"/>
+      </circle>
+      <text x="250" y="170" class="svg-lbl" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.12;0.16;0.50;0.56" dur="10s" repeatCount="indefinite"/>climb to root…</text>
+      <!-- arrow between panels -->
+      <text x="320" y="160" text-anchor="middle" class="svg-acc" font-size="26" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.54;0.60;1" dur="10s" repeatCount="indefinite"/>⟹</text>
+      <!-- RIGHT flattened star -->
+      <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.58;0.66;1" dur="10s" repeatCount="indefinite"/>
+        <g stroke="#10b981" stroke-width="2.5" marker-end="url(#uf-hl)">
+          <line x1="415" y1="210" x2="475" y2="82"/>
+          <line x1="490" y1="208" x2="490" y2="86"/>
+          <line x1="565" y1="210" x2="505" y2="82"/>
+        </g>
+        <g font-size="17" text-anchor="middle">
+          <circle cx="490" cy="64" r="22" fill="#10241c" stroke="#10b981" stroke-width="2.5"/><text x="490" y="70" class="svg-s">0</text>
+          <circle cx="410" cy="230" r="22" fill="#0e2a3a" stroke="#06b6d4" stroke-width="2"/><text x="410" y="236" class="svg-lbl">1</text>
+          <circle cx="490" cy="230" r="22" fill="#0e2a3a" stroke="#06b6d4" stroke-width="2"/><text x="490" y="236" class="svg-lbl">2</text>
+          <circle cx="570" cy="230" r="22" fill="#0e2a3a" stroke="#06b6d4" stroke-width="2"/><text x="570" y="236" class="svg-lbl">3</text>
+        </g>
+      </g>
+      <text x="490" y="300" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.70;0.76;1" dur="10s" repeatCount="indefinite"/>1, 2, 3 now point straight at root 0</text>
+    </svg>
+    <div class="legend">
+      <span><i style="background:#10b981"></i>root</span>
+      <span><i style="background:#06b6d4"></i>find probe / re-pointed node</span>
+      <span><i style="background:#64748b"></i>parent pointer</span>
+    </div>
+    <div class="fig-cap">Climbing the chain costs O(height), but on the way back <b>every visited node is re-pointed at the root</b>. The next <b>find</b> on 1, 2 or 3 is a single hop — that's why amortized cost approaches O(1). ▶ loops every 10s.</div>
+  </div>
+</div>
+<div class="sec">🎬 Problem 1: Number of Islands — Union-Find vs DFS</div>
+<div class="ts">
+  <div class="sn2">💡</div>
+  <div class="sc">
+    <strong>Both approaches work, but Union-Find has advantages:</strong>
+    DFS is simpler but destructive (modifies the grid). Union-Find is non-destructive, more elegant for dynamic graphs, and naturally tracks the component count. In an interview, being able to solve the same problem two ways shows depth.
+    <div class="mini">Grid:
+1 1 0 0 0
+1 1 0 0 0
+0 0 1 0 0
+0 0 0 1 1
+For each '1', union with its '1' neighbors.
+Components of '1's after all unions = 3 islands ✓</div>
+  </div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Number of Islands — Union-Find</div></div><pre><span class="kw">def</span> <span class="fn">num_islands</span>(grid):
+    <span class="kw">if not</span> grid: <span class="kw">return</span> 0
+    m, n = len(grid), len(grid[0])
+    uf = UnionFind(m * n)
+    water = 0
+
+    <span class="kw">for</span> r <span class="kw">in</span> range(m):
+        <span class="kw">for</span> c <span class="kw">in</span> range(n):
+            <span class="kw">if</span> grid[r][c] == '0':
+                water += 1                          <span class="cm"># count water cells</span>
+            <span class="kw">else</span>:
+                <span class="kw">for</span> dr, dc <span class="kw">in</span> [(0,1),(1,0)]:    <span class="cm"># only right & down (avoid duplicates)</span>
+                    nr, nc = r+dr, c+dc
+                    <span class="kw">if</span> 0 &lt;= nr < m <span class="kw">and</span> 0 &lt;= nc < n <span class="kw">and</span> grid[nr][nc] == '1':
+                        uf.union(r*n+c, nr*n+nc)    <span class="cm"># merge land cells</span>
+
+    <span class="kw">return</span> uf.components - water                    <span class="cm"># total - water = islands</span>
+</pre></div>
+<div class="sec">🎬 Problem 2: Kruskal's MST — Union-Find Powers It</div>
+<div class="ts">
+  <div class="sn2">💡</div>
+  <div class="sc">
+    <strong>Minimum Spanning Tree = minimum total edge weight connecting all vertices.</strong>
+    Kruskal's is greedily greedy: sort all edges by weight, add each edge if it doesn't create a cycle. Union-Find detects cycles in O(α(n)) — two vertices are already connected iff find(u) == find(v).
+    <div class="mini">Edges sorted by weight: (1,A-B),(2,C-D),(3,A-C),(4,B-D),(5,A-D)
+Add A-B (weight=1): find(A)≠find(B) → add → union A,B
+Add C-D (weight=2): find(C)≠find(D) → add → union C,D
+Add A-C (weight=3): find(A)≠find(C) → add → union {A,B},{C,D}
+Add B-D (weight=4): find(B)==find(D) → CYCLE! skip
+MST weight = 1+2+3 = 6 ✓ (n-1=3 edges added)</div>
+  </div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Kruskal's MST — O(E log E)</div></div><pre><span class="kw">def</span> <span class="fn">kruskal_mst</span>(n, edges):
+    <span class="cm"># edges = [(weight, u, v), ...]</span>
+    edges.sort()                            <span class="cm"># sort by weight (greedy)</span>
+    uf = UnionFind(n)
+    mst_edges = []
+    total_weight = 0
+
+    <span class="kw">for</span> weight, u, v <span class="kw">in</span> edges:
+        <span class="kw">if</span> uf.union(u, v):                  <span class="cm"># no cycle: add edge</span>
+            mst_edges.append((u, v, weight))
+            total_weight += weight
+            <span class="kw">if</span> len(mst_edges) == n - 1:     <span class="cm"># MST complete: n-1 edges</span>
+                <span class="kw">break</span>
+
+    <span class="kw">return</span> total_weight, mst_edges
+</pre></div>
+<div class="fig">
+  <div class="fig-title">🌉 Kruskal's MST — add the cheapest edge unless Union-Find says it makes a cycle</div>
+  <svg viewBox="0 0 640 320" width="640" role="img" aria-label="Animated Kruskal MST">
+    <!-- base edges (dim) -->
+    <g stroke="#475569" stroke-width="2.5">
+      <line x1="162" y1="80" x2="358" y2="80"/>
+      <line x1="162" y1="240" x2="358" y2="240"/>
+      <line x1="140" y1="102" x2="140" y2="218"/>
+      <line x1="380" y1="102" x2="380" y2="218"/>
+      <line x1="158" y1="98" x2="362" y2="222"/>
+    </g>
+    <!-- weight labels -->
+    <g font-size="13" text-anchor="middle">
+      <rect x="248" y="60" width="24" height="20" rx="4" fill="#0d1117"/><text x="260" y="75" class="svg-tm">1</text>
+      <rect x="248" y="230" width="24" height="20" rx="4" fill="#0d1117"/><text x="260" y="245" class="svg-tm">2</text>
+      <rect x="116" y="150" width="24" height="20" rx="4" fill="#0d1117"/><text x="128" y="165" class="svg-tm">3</text>
+      <rect x="368" y="150" width="24" height="20" rx="4" fill="#0d1117"/><text x="380" y="165" class="svg-tm">4</text>
+      <rect x="280" y="146" width="24" height="20" rx="4" fill="#0d1117"/><text x="292" y="161" class="svg-tm">5</text>
+    </g>
+    <!-- added edges (green) -->
+    <line x1="162" y1="80" x2="358" y2="80" stroke="#10b981" stroke-width="5" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.10;0.14;1" dur="11s" repeatCount="indefinite"/></line>
+    <line x1="162" y1="240" x2="358" y2="240" stroke="#10b981" stroke-width="5" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.24;0.28;1" dur="11s" repeatCount="indefinite"/></line>
+    <line x1="140" y1="102" x2="140" y2="218" stroke="#10b981" stroke-width="5" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.40;0.44;1" dur="11s" repeatCount="indefinite"/></line>
+    <!-- skipped edge (red, cycle) -->
+    <line x1="380" y1="102" x2="380" y2="218" stroke="#ef4444" stroke-width="4" stroke-dasharray="7 5" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.56;0.60;1" dur="11s" repeatCount="indefinite"/></line>
+    <!-- nodes -->
+    <g font-size="17" text-anchor="middle">
+      <circle cx="140" cy="80" r="22" fill="#162032" stroke="#818cf8" stroke-width="2"/><text x="140" y="86" class="svg-t">A</text>
+      <circle cx="380" cy="80" r="22" fill="#162032" stroke="#818cf8" stroke-width="2"/><text x="380" y="86" class="svg-t">B</text>
+      <circle cx="140" cy="240" r="22" fill="#162032" stroke="#818cf8" stroke-width="2"/><text x="140" y="246" class="svg-t">C</text>
+      <circle cx="380" cy="240" r="22" fill="#162032" stroke="#818cf8" stroke-width="2"/><text x="380" y="246" class="svg-t">D</text>
+    </g>
+    <!-- sorted edge list panel -->
+    <text x="470" y="50" class="svg-tm" font-size="12">edges sorted by weight</text>
+    <g font-size="13">
+      <text x="470" y="78" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.10;0.14;1" dur="11s" repeatCount="indefinite"/>A–B  w1   ✓ add</text>
+      <text x="470" y="104" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.24;0.28;1" dur="11s" repeatCount="indefinite"/>C–D  w2   ✓ add</text>
+      <text x="470" y="130" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.40;0.44;1" dur="11s" repeatCount="indefinite"/>A–C  w3   ✓ add</text>
+      <text x="470" y="156" class="svg-d" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.56;0.60;1" dur="11s" repeatCount="indefinite"/>B–D  w4   ✗ cycle</text>
+      <text x="470" y="182" class="svg-tm" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.62;0.66;1" dur="11s" repeatCount="indefinite"/>A–D  w5   — (done)</text>
+    </g>
+    <text x="320" y="300" text-anchor="middle" class="svg-s" font-size="15" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.72;0.78;1" dur="11s" repeatCount="indefinite"/>MST complete: n−1 = 3 edges, total weight = 1+2+3 = 6 ✓</text>
+  </svg>
+  <div class="legend">
+    <span><i style="background:#10b981"></i>added to MST (no cycle)</span>
+    <span><i style="background:#ef4444"></i>rejected (find(u)==find(v))</span>
+    <span><i style="background:#475569"></i>candidate edge</span>
+  </div>
+  <div class="fig-cap">Process edges cheapest-first. <b>union(u,v)</b> succeeds only when they're in different sets; if they already share a root, the edge would close a cycle and is skipped. Stop after <b>n−1</b> edges. ▶ loops every 11s.</div>
+</div>
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Number of Provinces</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 547):</strong> n cities, isConnected[i][j]=1 means city i and j are directly connected. Find the number of provinces (groups of directly or indirectly connected cities).</div>
+    <div class="iq-approach"><strong>Union-Find:</strong> Initialize each city as its own component. For each connection, union the two cities. Count distinct root nodes. Path compression + union by rank makes each operation nearly O(1) amortized.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">n=3, isConnected=[[1,1,0],[1,1,0],[0,0,1]]
+
+DSU: parent=[0,1,2]  rank=[0,0,0]
+
+union(0,1): root(0)=0, root(1)=1 → different
+  Merge: parent[1]=0, rank[0]=1
+  parent=[0,0,2]
+
+isConnected[0][2]=0, isConnected[1][2]=0 → no more unions
+
+Count distinct roots:
+  find(0)=0 (root)
+  find(1)=find(parent[1])=find(0)=0 (not root)
+  find(2)=2 (root)
+  Distinct roots: {0, 2} → 2 provinces ✓
+
+Timeline with path compression:
+  find(1): parent[1]=0, parent[0]=0 → root=0
+  Path compress: parent[1] already points to 0 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Number of Provinces (Union-Find)</div></div><pre><span class="kw">def</span> <span class="fn">find_circle_num</span>(isConnected):
+    n = len(isConnected)
+    parent = list(range(n))
+    rank = [0] * n
+
+    <span class="kw">def</span> <span class="fn">find</span>(x):
+        <span class="kw">if</span> parent[x] != x:
+            parent[x] = find(parent[x])  <span class="cm"># path compression</span>
+        <span class="kw">return</span> parent[x]
+
+    <span class="kw">def</span> <span class="fn">union</span>(x, y):
+        rx, ry = find(x), find(y)
+        <span class="kw">if</span> rx == ry: <span class="kw">return</span>
+        <span class="kw">if</span> rank[rx] &lt; rank[ry]: rx, ry = ry, rx
+        parent[ry] = rx                  <span class="cm"># union by rank</span>
+        <span class="kw">if</span> rank[rx] == rank[ry]: rank[rx] += 1
+
+    <span class="kw">for</span> i <span class="kw">in</span> range(n):
+        <span class="kw">for</span> j <span class="kw">in</span> range(i+1, n):
+            <span class="kw">if</span> isConnected[i][j]: union(i, j)
+
+    <span class="kw">return</span> sum(1 <span class="kw">for</span> i <span class="kw">in</span> range(n) <span class="kw">if</span> find(i) == i)</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n² × α(n))</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Redundant Connection — Find Cycle</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 684):</strong> Given a graph that was a tree plus one extra edge (making exactly one cycle), find and return that redundant edge.</div>
+    <div class="iq-approach"><strong>Union-Find cycle detection:</strong> Process edges one by one. Before adding an edge, check if the two endpoints are already in the same component (both have the same root). If yes, this edge creates a cycle — it's the redundant one. If no, union them and continue.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">edges = [[1,2],[1,3],[2,3]]
+parent=[0,1,2,3]  (1-indexed)
+
+Process [1,2]: find(1)=1, find(2)=2 → different → union(1,2)
+  parent=[0,1,2,3] → parent[2]=1 → parent=[0,1,1,3]
+
+Process [1,3]: find(1)=1, find(3)=3 → different → union(1,3)
+  parent=[0,1,1,3] → parent[3]=1 → parent=[0,1,1,1]
+
+Process [2,3]: find(2)=find(parent[2])=find(1)=1
+              find(3)=find(parent[3])=find(1)=1
+  SAME ROOT → cycle detected! return [2,3] ✓
+
+Why process edges in order? The last edge that creates a cycle
+must be the extra edge (graph was a valid tree before it).</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Redundant Connection</div></div><pre><span class="kw">def</span> <span class="fn">find_redundant_connection</span>(edges):
+    n = len(edges)
+    parent = list(range(n+1))
+
+    <span class="kw">def</span> <span class="fn">find</span>(x):
+        <span class="kw">while</span> parent[x] != x:
+            parent[x] = parent[parent[x]]   <span class="cm"># path halving</span>
+            x = parent[x]
+        <span class="kw">return</span> x
+
+    <span class="kw">def</span> <span class="fn">union</span>(x, y):
+        rx, ry = find(x), find(y)
+        <span class="kw">if</span> rx == ry: <span class="kw">return</span> False   <span class="cm"># same component → cycle!</span>
+        parent[rx] = ry
+        <span class="kw">return</span> True
+
+    <span class="kw">for</span> u, v <span class="kw">in</span> edges:
+        <span class="kw">if not</span> union(u, v):
+            <span class="kw">return</span> [u, v]            <span class="cm"># this edge creates the cycle</span></pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n × α(n))</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

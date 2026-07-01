@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DSA Mastery — Complete Learning Guide</title>
+<style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+</style>
+<style>
+.module-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin:32px 0}
+.mod-card {background:#1e293b;border:1px solid #334155;border-radius:14px;padding:22px;text-decoration:none;display:block;transition:all 0.2s;position:relative;overflow:hidden}
+.mod-card:hover {border-color:#4f46e5;transform:translateY(-3px);box-shadow:0 8px 32px rgba(79,70,229,0.18)}
+.mod-badge {font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#818cf8;margin-bottom:10px}
+.mod-title {font-size:18px;font-weight:700;color:#e2e8f0;margin-bottom:6px}
+.mod-sub {font-size:13px;color:#64748b;line-height:1.5}
+.mod-tag {display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;margin-top:12px}
+.t1 {background:#4f46e522;color:#818cf8}
+.t2 {background:#10b98122;color:#10b981}
+.t3 {background:#f59e0b22;color:#f59e0b}
+.mod-icon {font-size:28px;margin-bottom:12px;display:block}
+.cat-title {font-size:22px;font-weight:800;color:#818cf8;margin:40px 0 8px;border-left:4px solid #4f46e5;padding-left:14px}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-inner">
+    <div class="badge">Complete DSA Learning Guide</div>
+    <h1>Data Structures &amp; Algorithms<br><span>Your One-Stop Interview Mastery Guide</span></h1>
+    <p>Story-driven, instructor-style explanations. Real-world analogies. Step-by-step algorithm traces. Interactive animations. From foundations to FAANG-level problems.</p>
+    <div class="stats">
+      <div class="stat"><div class="sn">27+</div><div class="sl">Modules &amp; Chapters</div></div>
+      <div class="stat"><div class="sn">100+</div><div class="sl">Interview Questions</div></div>
+      <div class="stat"><div class="sn">Story-Driven</div><div class="sl">Every concept</div></div>
+      <div class="stat"><div class="sn">Dark Theme</div><div class="sl">Modern UI</div></div>
+    </div>
+  </div>
+</div>
+<div class="wrap">
+
+<div class="cat-title">📐 Module 1 — Algorithm Analysis Foundations</div>
+<div class="module-grid">
+  <a class="mod-card" href="Module_1_Algorithm_Analysis/chapter-1-thinking-like-algorithm.html">
+    <span class="mod-icon">🧠</span><div class="mod-badge">Chapter 1</div>
+    <div class="mod-title">Thinking Like an Algorithm</div>
+    <div class="mod-sub">The mindset shift. Problem decomposition. Edge cases. The 5-step design process.</div>
+    <span class="mod-tag t1">Foundation</span>
+  </a>
+  <a class="mod-card" href="Module_1_Algorithm_Analysis/chapter-2-complexity-analysis.html">
+    <span class="mod-icon">📊</span><div class="mod-badge">Chapter 2</div>
+    <div class="mod-title">Big O Complexity Analysis</div>
+    <div class="mod-sub">O(1) to O(n!). Rules for computing complexity. The complexity table with real numbers.</div>
+    <span class="mod-tag t1">Essential</span>
+  </a>
+  <a class="mod-card" href="Module_1_Algorithm_Analysis/chapter-3-asymptotic-analysis.html">
+    <span class="mod-icon">📈</span><div class="mod-badge">Chapter 3</div>
+    <div class="mod-title">Asymptotic Analysis</div>
+    <div class="mod-sub">Big O vs Omega vs Theta. Amortized analysis. Dynamic array as case study.</div>
+    <span class="mod-tag t1">Deep Dive</span>
+  </a>
+  <a class="mod-card" href="Module_1_Algorithm_Analysis/chapter-4-number-theory.html">
+    <span class="mod-icon">🔢</span><div class="mod-badge">Chapter 4</div>
+    <div class="mod-title">Number Theory</div>
+    <div class="mod-sub">Sieve of Eratosthenes. Euclidean GCD. Modular arithmetic. Primality testing.</div>
+    <span class="mod-tag t1">Math</span>
+  </a>
+  <a class="mod-card" href="Module_1_Algorithm_Analysis/chapter-5-algorithm-design.html">
+    <span class="mod-icon">🗺️</span><div class="mod-badge">Chapter 5</div>
+    <div class="mod-title">Algorithm Design Paradigms</div>
+    <div class="mod-sub">Divide &amp; Conquer. Greedy. DP. Backtracking. The decision framework.</div>
+    <span class="mod-tag t1">Framework</span>
+  </a>
+</div>
+
+<div class="cat-title">⚡ Core Data Structures</div>
+<div class="module-grid">
+  <a class="mod-card" href="Module_2_Bit_Manipulation/bit-manipulation-complete.html">
+    <span class="mod-icon">🔲</span><div class="mod-badge">Module 2</div>
+    <div class="mod-title">Bit Manipulation</div>
+    <div class="mod-sub">Feature flags story. Essential bit tricks. Bitmask DP. XOR patterns. Brian Kernighan's algorithm.</div>
+    <span class="mod-tag t2">O(1) tricks</span>
+  </a>
+  <a class="mod-card" href="Module_3_Recursion_Backtracking/recursion-backtracking-foundations.html">
+    <span class="mod-icon">🪆</span><div class="mod-badge">Module 3</div>
+    <div class="mod-title">Recursion &amp; Backtracking</div>
+    <div class="mod-sub">Russian dolls story. Three-question framework. Generate Parentheses. Subsets. Permutations.</div>
+    <span class="mod-tag t2">Foundation</span>
+  </a>
+  <a class="mod-card" href="Module_4_Arrays/arrays-comprehensive.html">
+    <span class="mod-icon">📋</span><div class="mod-badge">Module 4</div>
+    <div class="mod-title">Arrays — The Foundation</div>
+    <div class="mod-sub">Prefix sums. Kadane's algorithm. Boyer-Moore voting. 3Sum with two pointers.</div>
+    <span class="mod-tag t2">FAANG ⭐⭐⭐</span>
+  </a>
+  <a class="mod-card" href="Module_5_Searching/binary-search-mastery.html">
+    <span class="mod-icon">🔍</span><div class="mod-badge">Module 5</div>
+    <div class="mod-title">Binary Search</div>
+    <div class="mod-sub">Interactive animation! Librarian story. 4 variants. Search on answer. Koko Eating Bananas.</div>
+    <span class="mod-tag t2">Interactive ✨</span>
+  </a>
+  <a class="mod-card" href="Module_6_Sorting/sorting-mastery.html">
+    <span class="mod-icon">🔀</span><div class="mod-badge">Module 6</div>
+    <div class="mod-title">Sorting Algorithms</div>
+    <div class="mod-sub">All 9 algorithms. Stable vs unstable. Merge Sort. QuickSort with random pivot. Dutch flag.</div>
+    <span class="mod-tag t2">Complete Coverage</span>
+  </a>
+  <a class="mod-card" href="Module_7_Matrix/matrix-mastery.html">
+    <span class="mod-icon">🗃️</span><div class="mod-badge">Module 7</div>
+    <div class="mod-title">Matrix &amp; 2D Arrays</div>
+    <div class="mod-sub">Satellite image story. Rotate image. Spiral order. Word search with DFS backtracking.</div>
+    <span class="mod-tag t2">FAANG ⭐⭐</span>
+  </a>
+  <a class="mod-card" href="Module_8_Hashing/hashing-mastery.html">
+    <span class="mod-icon">🗝️</span><div class="mod-badge">Module 8</div>
+    <div class="mod-title">Hashing</div>
+    <div class="mod-sub">Hotel desk story. Prefix sum + hash map trick. LRU Cache. Longest consecutive sequence.</div>
+    <span class="mod-tag t2">FAANG ⭐⭐⭐</span>
+  </a>
+  <a class="mod-card" href="Module_9_Strings/strings-mastery.html">
+    <span class="mod-icon">📝</span><div class="mod-badge">Module 9</div>
+    <div class="mod-title">Strings &amp; Sliding Window</div>
+    <div class="mod-sub">Autocomplete story. Minimum Window Substring. KMP pattern matching. Anagram patterns.</div>
+    <span class="mod-tag t2">FAANG ⭐⭐</span>
+  </a>
+  <a class="mod-card" href="Module_10_Linked_Lists/linked-lists-mastery.html">
+    <span class="mod-icon">🚂</span><div class="mod-badge">Module 10</div>
+    <div class="mod-title">Linked Lists</div>
+    <div class="mod-sub">Train cars story. Reversal. Floyd's cycle. LRU with OrderedDict. Dummy node trick.</div>
+    <span class="mod-tag t2">FAANG ⭐⭐</span>
+  </a>
+  <a class="mod-card" href="Module_11_Stack_Queue_Deque/stack-queue-deque-mastery.html">
+    <span class="mod-icon">🍽️</span><div class="mod-badge">Module 11</div>
+    <div class="mod-title">Stack, Queue &amp; Deque</div>
+    <div class="mod-sub">Kitchen story. Monotonic stack — daily temps. Largest rectangle. Queue with two stacks.</div>
+    <span class="mod-tag t2">FAANG ⭐⭐</span>
+  </a>
+</div>
+
+<div class="cat-title">🌳 Trees &amp; Advanced Structures</div>
+<div class="module-grid">
+  <a class="mod-card" href="Module_12_Trees/trees-mastery.html">
+    <span class="mod-icon">🌳</span><div class="mod-badge">Module 12</div>
+    <div class="mod-title">Binary Trees</div>
+    <div class="mod-sub">Family tree story. Universal recursion template. All traversals. Diameter. LCA. Max Path Sum.</div>
+    <span class="mod-tag t3">FAANG ⭐⭐⭐</span>
+  </a>
+  <a class="mod-card" href="Module_13_BST/bst-mastery.html">
+    <span class="mod-icon">📖</span><div class="mod-badge">Module 13</div>
+    <div class="mod-title">Binary Search Tree</div>
+    <div class="mod-sub">Phone book story. In-order = sorted. Search, Insert, Delete. Validate BST (bounds trick).</div>
+    <span class="mod-tag t3">FAANG ⭐⭐</span>
+  </a>
+  <a class="mod-card" href="Module_14_Heap_PriorityQueue/heap-priority-queue-mastery.html">
+    <span class="mod-icon">🏥</span><div class="mod-badge">Module 14</div>
+    <div class="mod-title">Heap &amp; Priority Queue</div>
+    <div class="mod-sub">ER triage story. heapq API. Kth Largest. Merge K sorted. Two-heap median finder.</div>
+    <span class="mod-tag t3">FAANG ⭐⭐</span>
+  </a>
+  <a class="mod-card" href="Module_15_Graph_Theory/graph-theory-mastery.html">
+    <span class="mod-icon">🗺️</span><div class="mod-badge">Module 15</div>
+    <div class="mod-title">Graph Theory</div>
+    <div class="mod-sub">GPS navigation story. BFS shortest path. DFS + cycle detection. Dijkstra. Bellman-Ford.</div>
+    <span class="mod-tag t3">FAANG ⭐⭐⭐</span>
+  </a>
+  <a class="mod-card" href="Module_19_Trie/trie-mastery.html">
+    <span class="mod-icon">🌐</span><div class="mod-badge">Module 19</div>
+    <div class="mod-title">Trie</div>
+    <div class="mod-sub">Google autocomplete story. Trie from scratch. Search Suggestions System. Max XOR with bit trie.</div>
+    <span class="mod-tag t3">FAANG ⭐⭐</span>
+  </a>
+  <a class="mod-card" href="Module_20_SegmentTree_FenwickTree/segment-tree-mastery.html">
+    <span class="mod-icon">🎮</span><div class="mod-badge">Module 20</div>
+    <div class="mod-title">Segment Tree &amp; BIT</div>
+    <div class="mod-sub">Gaming leaderboard story. Range queries in O(log n). Fenwick tree i&amp;(-i) trick. Comparison table.</div>
+    <span class="mod-tag t3">Advanced</span>
+  </a>
+  <a class="mod-card" href="Module_21_DisjointSetUnion/disjoint-set-mastery.html">
+    <span class="mod-icon">🔗</span><div class="mod-badge">Module 21</div>
+    <div class="mod-title">Disjoint Set Union</div>
+    <div class="mod-sub">LinkedIn story. Path compression + union by rank. Number of Islands. Kruskal's MST.</div>
+    <span class="mod-tag t3">Powerful</span>
+  </a>
+</div>
+
+<div class="cat-title">🎯 Algorithm Paradigms</div>
+<div class="module-grid">
+  <a class="mod-card" href="Module_16_Greedy_Algorithms/greedy-mastery.html">
+    <span class="mod-icon">💰</span><div class="mod-badge">Module 16</div>
+    <div class="mod-title">Greedy Algorithms</div>
+    <div class="mod-sub">Activity Selection. Jump Game I &amp; II. Fractional Knapsack. Gas Station. Meeting Rooms II.</div>
+    <span class="mod-tag t2">FAANG ⭐⭐</span>
+  </a>
+  <a class="mod-card" href="Module_17_Backtracking/backtracking-mastery.html">
+    <span class="mod-icon">🚪</span><div class="mod-badge">Module 17</div>
+    <div class="mod-title">Backtracking</div>
+    <div class="mod-sub">Escape room story. Universal template. Permutations. N-Queens. Combination Sum. Sudoku.</div>
+    <span class="mod-tag t2">FAANG ⭐⭐</span>
+  </a>
+  <a class="mod-card" href="Module_18_Dynamic_Programming/dynamic-programming-mastery.html">
+    <span class="mod-icon">⛰️</span><div class="mod-badge">Module 18</div>
+    <div class="mod-title">Dynamic Programming</div>
+    <div class="mod-sub">Mountain climber story. Interactive Coin Change animation! 0/1 Knapsack. LCS. LIS. Edit Distance.</div>
+    <span class="mod-tag t2">FAANG ⭐⭐⭐ Interactive ✨</span>
+  </a>
+  <a class="mod-card" href="Module_22_Advanced_Algorithms/advanced-mastery.html">
+    <span class="mod-icon">🚀</span><div class="mod-badge">Module 22</div>
+    <div class="mod-title">Advanced Algorithms</div>
+    <div class="mod-sub">Rabin-Karp rolling hash. A* search. Bloom Filter. Skip List. LSM Tree. System design connections.</div>
+    <span class="mod-tag t2">Senior Level</span>
+  </a>
+</div>
+
+<div class="cat-title">🏆 Interview Mastery</div>
+<div class="module-grid">
+  <a class="mod-card" href="Module_23_Patterns_Mastery/patterns-mastery.html">
+    <span class="mod-icon">🎓</span><div class="mod-badge">Module 23</div>
+    <div class="mod-title">Interview Patterns Mastery</div>
+    <div class="mod-sub">14 core patterns. 5-step interview framework. Pattern identification quiz. Classic problems mapped.</div>
+    <span class="mod-tag t3">MUST READ FIRST</span>
+  </a>
+</div>
+
+<div class="callout inf" style="margin-top:40px"><div class="ci">🎯</div><div class="cb"><strong>Recommended Study Path:</strong> Start with Module 23 (Patterns) to get the meta-skill. Then Arrays (4) → Binary Search (5) → Hashing (8) → Two Pointers/Sliding Window (in 9) → Trees (12) → Graphs (15) → DP (18) → rest. Revisit Module 1 Chapters 1-2 whenever you're unsure about complexity analysis.</div></div>
+
+</div>
+</body>
+</html>

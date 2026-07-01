@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Sorting Algorithms — Module 6</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+/* ── expanded interview question styles ── */
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+/* ===== deep-dive intuition card ===== */
+.pat{background:linear-gradient(160deg,rgba(79,70,229,.08),rgba(15,23,42,.4));border:1px solid var(--brd);border-radius:18px;padding:30px 34px;margin:24px 0 40px;}
+.pat-lead{font-size:.95rem;color:var(--t);line-height:1.85;margin-bottom:6px;}
+.pat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+@media(max-width:760px){.pat-grid{grid-template-columns:1fr;}}
+.pat-cell{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:18px 22px;}
+.pat-cell h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.pat-cell.when h4{color:var(--w);}.pat-cell.state h4{color:var(--a);}
+.pat-cell.rec h4{color:var(--pl);}.pat-cell.base h4{color:var(--s);}
+.pat-cell p,.pat-cell li{font-size:.9rem;color:var(--tm);line-height:1.8;}
+.pat-cell ul{padding-left:18px;margin-top:6px;}.pat-cell li{margin:4px 0;}
+.formula{background:var(--cbg);border:1px solid #30363d;border-radius:10px;padding:16px 20px;margin:14px 0;font-family:'Fira Code','Courier New',monospace;font-size:.9rem;color:#a5b4fc;line-height:1.9;overflow-x:auto;}
+.formula .hl{color:#67e8f9;font-weight:700;}
+.keywords{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+.kwp{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:3px 14px;font-size:.8rem;font-weight:600;}
+.pitfall{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.03));border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.pitfall .pl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#fca5a5;font-weight:700;margin-bottom:6px;}
+.pitfall p{font-size:.88rem;color:#fecaca;line-height:1.8;}
+.real{background:linear-gradient(135deg,rgba(16,185,129,.09),rgba(16,185,129,.02));border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.real .rl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#6ee7b7;font-weight:700;margin-bottom:8px;}
+.real ul{padding-left:18px;margin:0;}.real li{font-size:.88rem;color:#a7f3d0;line-height:1.85;margin:5px 0;}
+.real li b{color:#d1fae5;}
+/* ===== animated SVG figure ===== */
+.fig{background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,.06),transparent 70%),var(--cbg);border:1px solid #30363d;border-radius:14px;padding:24px;margin:22px 0;overflow-x:auto;}
+.fig svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+.fig-cap{text-align:center;font-size:.82rem;color:var(--tm);margin-top:14px;font-style:italic;}
+.fig-cap b{color:var(--a);font-style:normal;}
+.fig-title{font-size:1.02rem;color:var(--t);margin:8px 0 10px;font-weight:700;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:16px;}
+.legend span{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--tm);}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;}
+.svg-t{fill:#e2e8f0;font-family:'Fira Code',monospace;}
+.svg-tm{fill:#94a3b8;font-family:'Segoe UI',sans-serif;}
+.svg-lbl{fill:#67e8f9;font-family:'Segoe UI',sans-serif;font-weight:700;}
+.svg-acc{fill:#fcd34d;font-family:'Fira Code',monospace;}
+.svg-s{fill:#6ee7b7;font-family:'Fira Code',monospace;}
+.svg-d{fill:#fca5a5;font-family:'Fira Code',monospace;}
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 6 · Sorting Algorithms</div><h1>From O(n²) to<br><span>O(n log n)</span></h1><p>Sort is the single most studied problem in CS. Understanding all 9 algorithms — when to use each and why — sets you apart.</p><div class="stats"><div class="stat"><div class="sn">9 Algorithms</div><div class="sl">Covered</div></div><div class="stat"><div class="sn">O(n log n)</div><div class="sl">Optimal comparison sort</div></div><div class="stat"><div class="sn">Stable vs Unstable</div><div class="sl">Key property</div></div><div class="stat"><div class="sn">Interviews ⭐⭐</div><div class="sl">Sort + two pointers</div></div></div></div></div><div class="wrap">
+<div class="sec">🧠 The Story — Sorting Your Bookshelf</div>
+<div class="story">
+  <div class="slabel">Real World Story — The Perfect Bookshelf</div>
+  <h3>You have 1000 books to sort by title. How do you do it?</h3>
+  <p>
+    <strong>Bubble Sort:</strong> Compare every pair, bubble the largest to the end. Do this 1000 times. You're very patient but very slow.<br><br>
+    <strong>Merge Sort:</strong> Split into piles of 1. Merge pairs. Merge groups of 4. Keep merging. Each merge is O(n). With log n levels, total O(n log n).<br><br>
+    <strong>Quick Sort:</strong> Pick a "pivot" book. Books before it are smaller, after it are larger. Recurse on each side. Best case O(n log n), worst case O(n^2) with bad pivots.<br><br>
+    <strong>Tim Sort (Python's sort):</strong> Hybrid merge+insertion. Detects natural runs. Used in Python, Java, Android. O(n log n) worst, O(n) best.
+  </p>
+</div>
+
+<div class="sec">📊 The Big Picture — All 9 Algorithms</div>
+<div class="card"><table>
+  <thead><tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Space</th><th>Stable?</th><th>When to Use</th></tr></thead>
+  <tbody>
+    <tr><td>Bubble Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>Yes</td><td>Almost sorted, educational only</td></tr>
+    <tr><td>Selection Sort</td><td>O(n²)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>No</td><td>Minimizes swaps (small arrays)</td></tr>
+    <tr><td>Insertion Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>Yes</td><td>Small arrays, nearly sorted, online</td></tr>
+    <tr><td>Merge Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td>Yes</td><td>Guaranteed O(n log n), linked lists</td></tr>
+    <tr><td>Quick Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>O(log n)</td><td>No</td><td>General purpose, cache-friendly</td></tr>
+    <tr><td>Heap Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(1)</td><td>No</td><td>O(1) space guaranteed</td></tr>
+    <tr><td>Counting Sort</td><td>O(n+k)</td><td>O(n+k)</td><td>O(n+k)</td><td>O(k)</td><td>Yes</td><td>Small integer range</td></tr>
+    <tr><td>Radix Sort</td><td>O(d*(n+k))</td><td>O(d*(n+k))</td><td>O(d*(n+k))</td><td>O(n+k)</td><td>Yes</td><td>Integers, fixed-length strings</td></tr>
+    <tr><td>Tim Sort</td><td>O(n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td>Yes</td><td>Python default (real world data)</td></tr>
+  </tbody>
+</table></div>
+
+<div class="ibox">
+  <div class="lbl">Stable vs Unstable — Why It Matters</div>
+  <p>
+    A sort is <strong>stable</strong> if equal elements maintain their original relative order.<br><br>
+    Example: Sort students by grade, then by name. If grade sort is stable, students with the same grade keep their name-alphabetical order.<br><br>
+    <strong>Stable:</strong> Merge Sort, Insertion Sort, Bubble Sort, Counting Sort, Tim Sort<br>
+    <strong>Unstable:</strong> Quick Sort, Heap Sort, Selection Sort
+  </p>
+</div>
+
+<div class="pat">
+  <p class="pat-lead">Every fast sort is a bet on one of two ideas. <strong>Divide &amp; conquer</strong> says: a big mess is too hard, so cut it in half, sort each half, and stitch them together — that's merge sort and quicksort. <strong>The comparison barrier</strong> says: if all you can do is ask "is a &lt; b?", you can't beat <code>O(n log n)</code> — there are n! possible orderings and each yes/no question only halves them. The only way to go faster is to <em>stop comparing</em> and start counting (counting/radix sort). Pick your sort by answering: do I need a guarantee, do I need stability, and can I spare extra memory?</p>
+  <div class="pat-grid">
+    <div class="pat-cell when">
+      <h4>🪓 Merge — split &amp; combine</h4>
+      <p>Halve until size 1 (trivially sorted), then <b>merge</b> sorted halves in linear time. Always <code>O(n log n)</code>, <b>stable</b>, but needs <code>O(n)</code> scratch space. The merge step is the real work.</p>
+    </div>
+    <div class="pat-cell state">
+      <h4>🎯 Quick — partition around a pivot</h4>
+      <p>Pick a pivot, shove smaller left / larger right; the pivot lands in its <b>final</b> spot. Recurse on each side. In-place &amp; cache-friendly, but a bad pivot on sorted input degrades to <code>O(n²)</code> — randomize it.</p>
+    </div>
+    <div class="pat-cell rec">
+      <h4>📏 The n log n floor</h4>
+      <p>Comparison sorts can't beat <code>O(n log n)</code>: n! orderings, each compare halves the possibilities → <code>log₂(n!) ≈ n log n</code> questions minimum.</p>
+    </div>
+    <div class="pat-cell base">
+      <h4>🏷️ Stability &amp; memory</h4>
+      <p><b>Stable</b> = equal keys keep their order (lets you sort by one field, then another). Then choose <b>in-place</b> (heap/quick) vs <b>extra memory</b> (merge) based on constraints.</p>
+    </div>
+  </div>
+  <div class="formula"><span class="hl">comparison lower bound</span>: log₂(n!) ≈ n·log₂(n)  →  no compare-sort beats O(n log n)<br><span class="hl">counting/radix</span>: O(n + k) — skip comparisons entirely when keys are small integers<br><span class="hl">quicksort recurrence</span>: balanced T(n)=2T(n/2)+O(n)=O(n log n) · skewed T(n)=T(n−1)+O(n)=O(n²)</div>
+  <div class="keywords">
+    <span class="kwp">divide &amp; conquer</span><span class="kwp">partition</span><span class="kwp">pivot</span><span class="kwp">stable</span><span class="kwp">in-place</span><span class="kwp">n log n barrier</span>
+  </div>
+  <div class="real">
+    <div class="rl">🌍 Where this lives in the real world</div>
+    <ul>
+      <li><b>Database <code>ORDER BY</code>:</b> engines use Tim/merge variants and external merge sort when results don't fit in RAM.</li>
+      <li><b>External / big-data sort:</b> sorting a 100 GB file on 8 GB of RAM is merge sort's k-way merge — sort chunks, merge streams.</li>
+      <li><b>Leaderboards &amp; feeds:</b> "top by score, then by recency" is a stable multi-key sort — exactly why stability matters.</li>
+      <li><b>Library &amp; warehouse shelving:</b> humans naturally do insertion sort on a handful of items, merge when combining piles.</li>
+      <li><b>Log merging:</b> combining already-sorted log streams from many servers into one timeline is the merge step itself.</li>
+      <li><b>Counting/radix:</b> sorting millions of small integers (ages, ZIP codes, RGB) blows past the comparison floor.</li>
+    </ul>
+  </div>
+  <div class="pitfall">
+    <div class="pl">⚠️ The traps</div>
+    <p><b>Quicksort on sorted input:</b> a fixed first/last pivot gives O(n²) on already-sorted or reverse data — the classic interview gotcha. Randomize the pivot or use median-of-three. <b>Merge sort memory:</b> it's <code>O(n)</code> extra — not free. <b>Assuming stability:</b> Python's <code>sorted</code> is stable, but C++ <code>std::sort</code> and quicksort are <em>not</em> — don't rely on tie order unless the sort guarantees it.</p>
+  </div>
+</div>
+
+<div class="sec">🎬 Merge Sort — The Gold Standard</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Merge Sort — O(n log n)</div></div><pre><span class="kw">def</span> <span class="fn">merge_sort</span>(arr):
+    <span class="kw">if</span> len(arr) &lt;= 1: <span class="kw">return</span> arr    <span class="cm"># base case</span>
+    mid = len(arr) // 2
+    left  = merge_sort(arr[:mid])       <span class="cm"># recurse left</span>
+    right = merge_sort(arr[mid:])       <span class="cm"># recurse right</span>
+    <span class="kw">return</span> merge(left, right)           <span class="cm"># merge sorted halves</span>
+
+<span class="kw">def</span> <span class="fn">merge</span>(left, right):
+    result, i, j = [], 0, 0
+    <span class="kw">while</span> i < len(left) <span class="kw">and</span> j < len(right):
+        <span class="kw">if</span> left[i] &lt;= right[j]:           <span class="cm"># &lt;= preserves stability</span>
+            result.append(left[i]); i += 1
+        <span class="kw">else</span>:
+            result.append(right[j]); j += 1
+    <span class="kw">return</span> result + left[i:] + right[j:]  <span class="cm"># append remaining</span>
+
+<span class="cm"># Trace: [5,2,8,1,9,3]
+# Split: [5,2,8] | [1,9,3]
+# Split: [5,2],[8] | [1,9],[3]
+# Split: [5],[2]   | [1],[9]
+# Merge: [2,5],[8] | [1,9],[3]
+# Merge: [2,5,8]   | [1,3,9]
+# Merge: [1,2,3,5,8,9] ✓</span>
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 The merge step — zip two sorted halves into one</div>
+  <svg viewBox="0 0 540 300" width="540" role="img" aria-label="Animated merge of two sorted halves">
+    <text x="270" y="22" text-anchor="middle" class="svg-tm" font-size="13">always take the smaller head — that's why the result stays sorted</text>
+    <text x="40" y="78" class="svg-lbl" font-size="12">left</text>
+    <g text-anchor="middle" font-size="17">
+      <rect x="110" y="54" width="56" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="138" y="81" class="svg-t">2</text>
+      <rect x="174" y="54" width="56" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="202" y="81" class="svg-t">5</text>
+      <rect x="238" y="54" width="56" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="266" y="81" class="svg-t">8</text>
+    </g>
+    <rect y="54" width="56" height="42" rx="7" fill="none" stroke="#06b6d4" stroke-width="3">
+      <animate attributeName="x" values="110;110;174;174;238;238;238" keyTimes="0;0.18;0.20;0.42;0.44;0.66;1" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <text x="40" y="148" class="svg-acc" font-size="12">right</text>
+    <g text-anchor="middle" font-size="17">
+      <rect x="110" y="124" width="56" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="138" y="151" class="svg-t">1</text>
+      <rect x="174" y="124" width="56" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="202" y="151" class="svg-t">3</text>
+      <rect x="238" y="124" width="56" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="266" y="151" class="svg-t">9</text>
+    </g>
+    <rect y="124" width="56" height="42" rx="7" fill="none" stroke="#f59e0b" stroke-width="3">
+      <animate attributeName="x" values="110;110;174;174;238;238;238" keyTimes="0;0.06;0.08;0.30;0.32;0.66;1" dur="12s" repeatCount="indefinite"/>
+    </rect>
+    <text x="40" y="222" class="svg-s" font-size="12">out</text>
+    <g text-anchor="middle" font-size="17">
+      <rect x="78" y="198" width="56" height="42" rx="7" fill="#0d1117" stroke="#30363d"/><text x="106" y="225" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.06;0.10;1" dur="12s" repeatCount="indefinite"/>1</text>
+      <rect x="142" y="198" width="56" height="42" rx="7" fill="#0d1117" stroke="#30363d"/><text x="170" y="225" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.18;0.22;1" dur="12s" repeatCount="indefinite"/>2</text>
+      <rect x="206" y="198" width="56" height="42" rx="7" fill="#0d1117" stroke="#30363d"/><text x="234" y="225" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.30;0.34;1" dur="12s" repeatCount="indefinite"/>3</text>
+      <rect x="270" y="198" width="56" height="42" rx="7" fill="#0d1117" stroke="#30363d"/><text x="298" y="225" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.42;0.46;1" dur="12s" repeatCount="indefinite"/>5</text>
+      <rect x="334" y="198" width="56" height="42" rx="7" fill="#0d1117" stroke="#30363d"/><text x="362" y="225" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.54;0.58;1" dur="12s" repeatCount="indefinite"/>8</text>
+      <rect x="398" y="198" width="56" height="42" rx="7" fill="#0d1117" stroke="#30363d"/><text x="426" y="225" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.70;1" dur="12s" repeatCount="indefinite"/>9</text>
+    </g>
+    <text x="270" y="270" text-anchor="middle" class="svg-tm" font-size="13">
+      <animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.62;0.66;1" dur="12s" repeatCount="indefinite"/>compare heads → 1&lt;2 · 2&lt;3 · 3&lt;5 · 5&lt;9 · 8&lt;9 · take leftover 9</text>
+    <text x="270" y="270" text-anchor="middle" class="svg-s" font-size="14" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.70;1" dur="12s" repeatCount="indefinite"/>merged = [1, 2, 3, 5, 8, 9] ✓ stable &amp; sorted</text>
+  </svg>
+  <div class="fig-cap"><b>Merge is the whole algorithm.</b> Splitting is free; the work is this linear zip. Because we only ever compare the two front elements and <code>&lt;=</code> favours the left half on ties, equal keys keep their order — that's what makes merge sort <em>stable</em>. ▶ loops every 12s.</div>
+  <div class="legend">
+    <span><i style="background:#06b6d4"></i>left pointer i</span>
+    <span><i style="background:#f59e0b"></i>right pointer j</span>
+    <span><i style="background:#10b981"></i>merged output</span>
+  </div>
+</div>
+
+<div class="sec">🎬 Quick Sort — Fast in Practice</div>
+<div class="ts">
+  <div class="sn2">🎯</div>
+  <div class="sc"><strong>Key idea:</strong> Partition array around a pivot. All elements less than pivot go left, all greater go right. Pivot is now in its final sorted position. Recursively sort both sides.<br>
+  <strong>Pivot choice matters:</strong> Random pivot or median-of-three avoids O(n^2) worst case on already-sorted input.
+  <div class="mini">arr=[3,6,8,10,1,2,1], pivot=arr[-1]=1
+Partition: scan from left, swap elements &lt;= pivot to front.
+Compare 3>1: skip. Compare 6>1: skip. Compare 8>1: skip.
+Compare 10>1: skip. Compare 1<=1: swap with first "large" → [1,6,8,10,3,2,1]
+Compare 2>1: skip.
+Place pivot: swap arr[-1] with arr[1] → [1,1,8,10,3,2,6]
+Pivot (1) is now at index 1 (its final position) ✓</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Quick Sort with Random Pivot</div></div><pre><span class="kw">import</span> random
+
+<span class="kw">def</span> <span class="fn">quick_sort</span>(arr, lo=0, hi=None):
+    <span class="kw">if</span> hi <span class="kw">is</span> None: hi = len(arr) - 1
+    <span class="kw">if</span> lo >= hi: <span class="kw">return</span>
+    pivot_idx = partition(arr, lo, hi)
+    quick_sort(arr, lo, pivot_idx - 1)
+    quick_sort(arr, pivot_idx + 1, hi)
+
+<span class="kw">def</span> <span class="fn">partition</span>(arr, lo, hi):
+    rand_idx = random.randint(lo, hi)      <span class="cm"># random pivot</span>
+    arr[rand_idx], arr[hi] = arr[hi], arr[rand_idx]
+    pivot = arr[hi]
+    i = lo - 1                             <span class="cm"># i = last "small" index</span>
+    <span class="kw">for</span> j <span class="kw">in</span> range(lo, hi):
+        <span class="kw">if</span> arr[j] &lt;= pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]  <span class="cm"># move small element to front</span>
+    arr[i+1], arr[hi] = arr[hi], arr[i+1]    <span class="cm"># place pivot in correct position</span>
+    <span class="kw">return</span> i + 1
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Quick Sort — recursive Lomuto partitions fully sort the array</div>
+  <svg viewBox="0 0 430 298" width="430" role="img" aria-label="Animated quicksort fully sorting five values">
+      <text x="215" y="24" text-anchor="middle" class="svg-tm" font-size="13">arr = [3, 5, 1, 4, 2] · quicksort → [1,2,3,4,5]</text>
+      <line x1="54" y1="220" x2="386" y2="220" stroke="#30363d" stroke-width="1"/>
+      <text x="87" y="240" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">0</text>
+      <text x="151" y="240" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">1</text>
+      <text x="215" y="240" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">2</text>
+      <text x="279" y="240" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">3</text>
+      <text x="343" y="240" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">4</text>
+      <g>
+        <rect x="64" y="130" width="46" height="90" rx="6" stroke-width="2">
+          <animate attributeName="fill" values="#1e293b;#155e75;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#166534;#1e293b;#166534;#065f46" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>
+          <animate attributeName="stroke" values="#475569;#22d3ee;#475569;#475569;#475569;#475569;#475569;#475569;#34d399;#475569;#34d399;#10b981" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>
+        </rect>
+        <text x="87" y="212" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700" fill="#e2e8f0">3</text>
+        <animateTransform attributeName="transform" type="translate" values="0,0;0,0;0,0;0,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite"/>
+      </g>
+      <g>
+        <rect x="64" y="70" width="46" height="150" rx="6" stroke-width="2">
+          <animate attributeName="fill" values="#1e293b;#1e293b;#155e75;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#78350f;#065f46;#065f46;#065f46" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>
+          <animate attributeName="stroke" values="#475569;#475569;#22d3ee;#475569;#475569;#475569;#475569;#475569;#fbbf24;#10b981;#10b981;#10b981" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>
+        </rect>
+        <text x="87" y="212" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700" fill="#e2e8f0">5</text>
+        <animateTransform attributeName="transform" type="translate" values="64,0;64,0;64,0;64,0;64,0;64,0;256,0;256,0;256,0;256,0;256,0;256,0" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite"/>
+      </g>
+      <g>
+        <rect x="64" y="190" width="46" height="30" rx="6" stroke-width="2">
+          <animate attributeName="fill" values="#1e293b;#1e293b;#1e293b;#155e75;#166534;#166534;#166534;#065f46;#065f46;#065f46;#065f46;#065f46" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>
+          <animate attributeName="stroke" values="#475569;#475569;#475569;#22d3ee;#34d399;#34d399;#34d399;#10b981;#10b981;#10b981;#10b981;#10b981" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>
+        </rect>
+        <text x="87" y="212" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700" fill="#e2e8f0">1</text>
+        <animateTransform attributeName="transform" type="translate" values="128,0;128,0;128,0;128,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite"/>
+      </g>
+      <g>
+        <rect x="64" y="100" width="46" height="120" rx="6" stroke-width="2">
+          <animate attributeName="fill" values="#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#155e75;#1e293b;#1e293b;#166534;#1e293b;#78350f;#065f46" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>
+          <animate attributeName="stroke" values="#475569;#475569;#475569;#475569;#475569;#22d3ee;#475569;#475569;#34d399;#475569;#fbbf24;#10b981" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>
+        </rect>
+        <text x="87" y="212" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700" fill="#e2e8f0">4</text>
+        <animateTransform attributeName="transform" type="translate" values="192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite"/>
+      </g>
+      <g>
+        <rect x="64" y="160" width="46" height="60" rx="6" stroke-width="2">
+          <animate attributeName="fill" values="#78350f;#78350f;#78350f;#78350f;#78350f;#78350f;#065f46;#065f46;#065f46;#065f46;#065f46;#065f46" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>
+          <animate attributeName="stroke" values="#fbbf24;#fbbf24;#fbbf24;#fbbf24;#fbbf24;#fbbf24;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>
+        </rect>
+        <text x="87" y="212" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700" fill="#e2e8f0">2</text>
+        <animateTransform attributeName="transform" type="translate" values="256,0;256,0;256,0;256,0;256,0;256,0;64,0;64,0;64,0;64,0;64,0;64,0" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite"/>
+      </g>
+      <text x="215" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="1;0;0;0;0;0;0;0;0;0;0;0" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>start [3,5,1,4,2] · pivot = 2 (last)</text>
+      <text x="215" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;1;0;0;0;0;0;0;0;0;0;0" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>is 3 ≤ 2?  no</text>
+      <text x="215" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;0;0;0;0;0;0;0;0;0" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>is 5 ≤ 2?  no</text>
+      <text x="215" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;0;1;0;0;0;0;0;0;0;0" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>is 1 ≤ 2?  yes → swap into ≤ zone</text>
+      <text x="215" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;0;0;1;0;0;0;0;0;0;0" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>swap slot0 ↔ slot2</text>
+      <text x="215" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;0;0;0;1;0;0;0;0;0;0" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>is 4 ≤ 2?  no</text>
+      <text x="215" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;0;0;0;0;1;0;0;0;0;0" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>place pivot 2 at boundary</text>
+      <text x="215" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;0;0;0;0;0;1;0;0;0;0" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>2 locked · left [1] done → recurse right [3,4,5]</text>
+      <text x="215" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;0;0;0" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>right pivot 5 · 3≤5 ✓  4≤5 ✓</text>
+      <text x="215" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;1;0;0" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>5 locked · recurse left [3,4]</text>
+      <text x="215" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;1;0" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>left pivot 4 · 3≤4 ✓ → place</text>
+      <text x="215" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;0;1" keyTimes="0.0;0.0909;0.1818;0.2727;0.3636;0.4545;0.5455;0.6364;0.7273;0.8182;0.9091;1.0" dur="14s" repeatCount="indefinite" calcMode="discrete"/>sorted ✓ [1, 2, 3, 4, 5]</text>
+    </svg>
+  <div class="fig-cap"><b>Divide &amp; conquer in motion.</b> Each partition picks the last element as <b>pivot</b> (amber), sweeps left→right sending every value ≤ pivot into the green “≤ zone”, then drops the pivot at the boundary — locking it (bright green) into its final sorted position. Quicksort then recurses on the left and right sub-arrays until every bar is locked. ▶ loops every 14s.</div>
+  <div class="legend">
+    <span><i style="background:#22d3ee"></i>comparing</span>
+    <span><i style="background:#fbbf24"></i>pivot</span>
+    <span><i style="background:#34d399"></i>≤ zone</span>
+    <span><i style="background:#10b981"></i>locked / sorted</span>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     ALL 9 ALGORITHMS — DETAILED DEEP DIVES
+     ═══════════════════════════════════════════════════════════ -->
+<div class="sec">🔵 Bubble Sort — Learn the Baseline</div>
+<div class="ts">
+  <div class="sn2">💡</div>
+  <div class="sc"><strong>Idea:</strong> Scan left-to-right comparing adjacent pairs; swap if out of order. The largest unsorted element "bubbles up" to its final position on every full pass. After k passes, the last k positions are sorted. Stop early if a pass makes zero swaps (array already sorted).<br><br>
+  <strong>When to use:</strong> Only for educational purposes or when the array is nearly sorted (best-case O(n) with early termination).<br>
+  <div class="mini">arr = [5, 3, 1, 4, 2]
+Pass 1: [3,1,4,2,5]  ← 5 bubbled to end (4 comparisons, 4 swaps)
+Pass 2: [1,3,2,4,5]  ← 4 settled
+Pass 3: [1,2,3,4,5]  ← sorted, next pass finds 0 swaps → stop ✓
+Time: O(n²) average/worst · O(n) best (nearly sorted) · Space: O(1)</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Bubble Sort</div></div><pre><span class="kw">def</span> <span class="fn">bubble_sort</span>(arr):
+    n = len(arr)
+    <span class="kw">for</span> i <span class="kw">in</span> range(n):
+        swapped = False
+        <span class="kw">for</span> j <span class="kw">in</span> range(0, n - i - 1):     <span class="cm"># last i elements are already sorted</span>
+            <span class="kw">if</span> arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                swapped = True
+        <span class="kw">if not</span> swapped: <span class="kw">break</span>           <span class="cm"># early exit: already sorted</span>
+    <span class="kw">return</span> arr
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Bubble Sort — adjacent bars swap until the big ones sink right</div>
+  <svg viewBox="0 0 366 298" width="366" role="img" aria-label="Animated bubble sort — bars physically swap into a sorted staircase">
+    <text x="183" y="24" text-anchor="middle" class="svg-tm" font-size="13">arr = [3, 1, 4, 2] · bar height = value · watch them rearrange into a staircase</text>
+    <line x1="54" y1="220" x2="312" y2="220" stroke="#30363d" stroke-width="1"/>
+    <text x="87" y="258" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">0</text>
+    <text x="151" y="258" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">1</text>
+    <text x="215" y="258" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">2</text>
+    <text x="279" y="258" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">3</text>
+    <g>
+      <rect x="64" y="130" width="46" height="90" rx="6" stroke-width="2">
+        <animate attributeName="fill" values="#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);#1e293b;#1e293b;#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32)" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+        <animate attributeName="stroke" values="#475569;#475569;#22d3ee;#22d3ee;#22d3ee;#22d3ee;#22d3ee;#22d3ee;#475569;#475569;#475569;#475569;#22d3ee;#22d3ee;#22d3ee;#22d3ee;#22d3ee;#22d3ee;#10b981;#10b981;#10b981;#10b981" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+      </rect>
+      <text x="87" y="238" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700"><animate attributeName="fill" values="#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#a5f3fc;#a5f3fc;#a5f3fc;#a5f3fc;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#a5f3fc;#a5f3fc;#a5f3fc;#a5f3fc;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>3</text>
+      <animateTransform attributeName="transform" type="translate" values="0,0;0,0;0,0;0,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;128,0;128,0;128,0;128,0;128,0;128,0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="64" y="190" width="46" height="30" rx="6" stroke-width="2">
+        <animate attributeName="fill" values="#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);#1e293b;#1e293b;#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(16,185,129,.32);rgba(16,185,129,.32)" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+        <animate attributeName="stroke" values="#475569;#475569;#22d3ee;#22d3ee;#22d3ee;#22d3ee;#475569;#475569;#475569;#475569;#475569;#475569;#22d3ee;#22d3ee;#475569;#475569;#475569;#475569;#22d3ee;#22d3ee;#10b981;#10b981" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+      </rect>
+      <text x="87" y="238" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700"><animate attributeName="fill" values="#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#a5f3fc;#a5f3fc;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#a7f3d0;#a7f3d0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>1</text>
+      <animateTransform attributeName="transform" type="translate" values="64,0;64,0;64,0;64,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="64" y="100" width="46" height="120" rx="6" stroke-width="2">
+        <animate attributeName="fill" values="#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32)" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+        <animate attributeName="stroke" values="#475569;#475569;#475569;#475569;#475569;#475569;#22d3ee;#22d3ee;#22d3ee;#22d3ee;#22d3ee;#22d3ee;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+      </rect>
+      <text x="87" y="238" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700"><animate attributeName="fill" values="#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#a5f3fc;#a5f3fc;#a5f3fc;#a5f3fc;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>4</text>
+      <animateTransform attributeName="transform" type="translate" values="128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="64" y="160" width="46" height="60" rx="6" stroke-width="2">
+        <animate attributeName="fill" values="#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(16,185,129,.32);rgba(16,185,129,.32)" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+        <animate attributeName="stroke" values="#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#22d3ee;#22d3ee;#22d3ee;#22d3ee;#475569;#475569;#22d3ee;#22d3ee;#22d3ee;#22d3ee;#22d3ee;#22d3ee;#10b981;#10b981" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+      </rect>
+      <text x="87" y="238" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700"><animate attributeName="fill" values="#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#a5f3fc;#a5f3fc;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#a5f3fc;#a5f3fc;#a5f3fc;#a5f3fc;#a7f3d0;#a7f3d0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>2</text>
+      <animateTransform attributeName="transform" type="translate" values="192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;128,0;128,0;128,0;128,0;128,0;128,0;64,0;64,0;64,0;64,0;64,0;64,0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+    </g>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0.0;0.0901;0.0909;1.0" dur="11s" repeatCount="indefinite"/>start: bars = heights of [3, 1, 4, 2]. Compare each adjacent pair →</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.0901;0.0909;0.181;0.1818;1.0" dur="11s" repeatCount="indefinite"/>compare 3 &amp; 1</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.181;0.1818;0.2719;0.2727;1.0" dur="11s" repeatCount="indefinite"/>3 &gt; 1 → swap (larger drifts right)</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.2719;0.2727;0.3628;0.3636;1.0" dur="11s" repeatCount="indefinite"/>compare 3 &amp; 4</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.3628;0.3636;0.4537;0.4545;1.0" dur="11s" repeatCount="indefinite"/>compare 4 &amp; 2</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.4537;0.4545;0.5447;0.5455;1.0" dur="11s" repeatCount="indefinite"/>4 &gt; 2 → swap (larger drifts right)</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.5447;0.5455;0.6356;0.6364;1.0" dur="11s" repeatCount="indefinite"/>compare 1 &amp; 3</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.6356;0.6364;0.7265;0.7273;1.0" dur="11s" repeatCount="indefinite"/>compare 3 &amp; 2</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.7265;0.7273;0.8174;0.8182;1.0" dur="11s" repeatCount="indefinite"/>3 &gt; 2 → swap (larger drifts right)</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.8174;0.8182;0.9083;0.9091;1.0" dur="11s" repeatCount="indefinite"/>compare 1 &amp; 2</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0.0;0.9083;0.9091;1.0" dur="11s" repeatCount="indefinite"/>sorted ✓ every bar in its final slot</text>
+  </svg>
+  <div class="fig-cap"><b>Heavy bars sink right.</b> On every pass the largest un-settled bar keeps swapping with its smaller right neighbour until it reaches the end. After pass k the last k bars are locked in (green). A pass with zero swaps ⇒ already sorted ⇒ stop early (best case O(n)). ▶ loops every 11s.</div>
+  <div class="legend">
+    <span><i style="background:#22d3ee"></i>comparing pair</span>
+    <span><i style="background:#10b981"></i>in final place</span>
+  </div>
+</div>
+
+<div class="sec">🟢 Selection Sort — Find the Minimum, Place It</div>
+<div class="ts">
+  <div class="sn2">💡</div>
+  <div class="sc"><strong>Idea:</strong> Divide the array into sorted (left) and unsorted (right). Find the minimum in the unsorted portion and swap it with the first unsorted element. The sorted portion grows by one on each pass.<br><br>
+  <strong>Key property:</strong> Always performs exactly n−1 swaps regardless of input — great when swap cost is high (e.g., writing to flash memory). But <em>not stable</em>.<br>
+  <div class="mini">arr = [5, 3, 1, 4, 2]
+Pass 1: min=1 (idx 2) → swap with idx 0 → [1, 3, 5, 4, 2]
+Pass 2: min=2 (idx 4) → swap with idx 1 → [1, 2, 5, 4, 3]
+Pass 3: min=3 (idx 4) → swap with idx 2 → [1, 2, 3, 4, 5]
+Pass 4: min=4 (idx 3) → already in place ✓
+Time: O(n²) always · Swaps: O(n) · Space: O(1)</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Selection Sort</div></div><pre><span class="kw">def</span> <span class="fn">selection_sort</span>(arr):
+    n = len(arr)
+    <span class="kw">for</span> i <span class="kw">in</span> range(n):
+        min_idx = i
+        <span class="kw">for</span> j <span class="kw">in</span> range(i + 1, n):     <span class="cm"># find minimum in unsorted portion</span>
+            <span class="kw">if</span> arr[j] < arr[min_idx]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]    <span class="cm"># swap minimum to front</span>
+    <span class="kw">return</span> arr
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Selection Sort — find the smallest bar, fly it to the front</div>
+  <svg viewBox="0 0 366 298" width="366" role="img" aria-label="Animated selection sort — smallest bar flies to the front each pass">
+    <text x="183" y="24" text-anchor="middle" class="svg-tm" font-size="13">arr = [3, 1, 4, 2] · amber = current minimum · cyan = bar being scanned</text>
+    <line x1="54" y1="220" x2="312" y2="220" stroke="#30363d" stroke-width="1"/>
+    <text x="87" y="258" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">0</text>
+    <text x="151" y="258" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">1</text>
+    <text x="215" y="258" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">2</text>
+    <text x="279" y="258" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">3</text>
+    <g>
+      <rect x="64" y="130" width="46" height="90" rx="6" stroke-width="2">
+        <animate attributeName="fill" values="#1e293b;#1e293b;rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(245,158,11,.25);#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(245,158,11,.25);#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32)" keyTimes="0.0;0.0324;0.0588;0.0912;0.1176;0.15;0.1765;0.2088;0.2353;0.2676;0.2941;0.3265;0.3529;0.3853;0.4118;0.4441;0.4706;0.5029;0.5294;0.5618;0.5882;0.6206;0.6471;0.6794;0.7059;0.7382;0.7647;0.7971;0.8235;0.8559;0.8824;0.9147;0.9412;1.0" dur="15s" repeatCount="indefinite"/>
+        <animate attributeName="stroke" values="#475569;#475569;#fbbf24;#fbbf24;#fbbf24;#fbbf24;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#fbbf24;#fbbf24;#fbbf24;#fbbf24;#fbbf24;#fbbf24;#475569;#475569;#475569;#475569;#475569;#475569;#22d3ee;#22d3ee;#fbbf24;#fbbf24;#10b981;#10b981;#10b981;#10b981" keyTimes="0.0;0.0324;0.0588;0.0912;0.1176;0.15;0.1765;0.2088;0.2353;0.2676;0.2941;0.3265;0.3529;0.3853;0.4118;0.4441;0.4706;0.5029;0.5294;0.5618;0.5882;0.6206;0.6471;0.6794;0.7059;0.7382;0.7647;0.7971;0.8235;0.8559;0.8824;0.9147;0.9412;1.0" dur="15s" repeatCount="indefinite"/>
+      </rect>
+      <text x="87" y="238" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700"><animate attributeName="fill" values="#cbd5e1;#cbd5e1;#fde68a;#fde68a;#fde68a;#fde68a;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#fde68a;#fde68a;#fde68a;#fde68a;#fde68a;#fde68a;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#fde68a;#fde68a;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0" keyTimes="0.0;0.0324;0.0588;0.0912;0.1176;0.15;0.1765;0.2088;0.2353;0.2676;0.2941;0.3265;0.3529;0.3853;0.4118;0.4441;0.4706;0.5029;0.5294;0.5618;0.5882;0.6206;0.6471;0.6794;0.7059;0.7382;0.7647;0.7971;0.8235;0.8559;0.8824;0.9147;0.9412;1.0" dur="15s" repeatCount="indefinite"/>3</text>
+      <animateTransform attributeName="transform" type="translate" values="0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;128,0;128,0;128,0;128,0" keyTimes="0.0;0.0324;0.0588;0.0912;0.1176;0.15;0.1765;0.2088;0.2353;0.2676;0.2941;0.3265;0.3529;0.3853;0.4118;0.4441;0.4706;0.5029;0.5294;0.5618;0.5882;0.6206;0.6471;0.6794;0.7059;0.7382;0.7647;0.7971;0.8235;0.8559;0.8824;0.9147;0.9412;1.0" dur="15s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="64" y="190" width="46" height="30" rx="6" stroke-width="2">
+        <animate attributeName="fill" values="#1e293b;#1e293b;#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32)" keyTimes="0.0;0.0324;0.0588;0.0912;0.1176;0.15;0.1765;0.2088;0.2353;0.2676;0.2941;0.3265;0.3529;0.3853;0.4118;0.4441;0.4706;0.5029;0.5294;0.5618;0.5882;0.6206;0.6471;0.6794;0.7059;0.7382;0.7647;0.7971;0.8235;0.8559;0.8824;0.9147;0.9412;1.0" dur="15s" repeatCount="indefinite"/>
+        <animate attributeName="stroke" values="#475569;#475569;#475569;#475569;#22d3ee;#22d3ee;#fbbf24;#fbbf24;#fbbf24;#fbbf24;#fbbf24;#fbbf24;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981" keyTimes="0.0;0.0324;0.0588;0.0912;0.1176;0.15;0.1765;0.2088;0.2353;0.2676;0.2941;0.3265;0.3529;0.3853;0.4118;0.4441;0.4706;0.5029;0.5294;0.5618;0.5882;0.6206;0.6471;0.6794;0.7059;0.7382;0.7647;0.7971;0.8235;0.8559;0.8824;0.9147;0.9412;1.0" dur="15s" repeatCount="indefinite"/>
+      </rect>
+      <text x="87" y="238" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700"><animate attributeName="fill" values="#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#fde68a;#fde68a;#fde68a;#fde68a;#fde68a;#fde68a;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0" keyTimes="0.0;0.0324;0.0588;0.0912;0.1176;0.15;0.1765;0.2088;0.2353;0.2676;0.2941;0.3265;0.3529;0.3853;0.4118;0.4441;0.4706;0.5029;0.5294;0.5618;0.5882;0.6206;0.6471;0.6794;0.7059;0.7382;0.7647;0.7971;0.8235;0.8559;0.8824;0.9147;0.9412;1.0" dur="15s" repeatCount="indefinite"/>1</text>
+      <animateTransform attributeName="transform" type="translate" values="64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0" keyTimes="0.0;0.0324;0.0588;0.0912;0.1176;0.15;0.1765;0.2088;0.2353;0.2676;0.2941;0.3265;0.3529;0.3853;0.4118;0.4441;0.4706;0.5029;0.5294;0.5618;0.5882;0.6206;0.6471;0.6794;0.7059;0.7382;0.7647;0.7971;0.8235;0.8559;0.8824;0.9147;0.9412;1.0" dur="15s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="64" y="100" width="46" height="120" rx="6" stroke-width="2">
+        <animate attributeName="fill" values="#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(245,158,11,.25);#1e293b;#1e293b;#1e293b;#1e293b;rgba(16,185,129,.32);rgba(16,185,129,.32)" keyTimes="0.0;0.0324;0.0588;0.0912;0.1176;0.15;0.1765;0.2088;0.2353;0.2676;0.2941;0.3265;0.3529;0.3853;0.4118;0.4441;0.4706;0.5029;0.5294;0.5618;0.5882;0.6206;0.6471;0.6794;0.7059;0.7382;0.7647;0.7971;0.8235;0.8559;0.8824;0.9147;0.9412;1.0" dur="15s" repeatCount="indefinite"/>
+        <animate attributeName="stroke" values="#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#22d3ee;#22d3ee;#475569;#475569;#475569;#475569;#475569;#475569;#22d3ee;#22d3ee;#475569;#475569;#475569;#475569;#475569;#475569;#fbbf24;#fbbf24;#fbbf24;#fbbf24;#475569;#475569;#475569;#475569;#10b981;#10b981" keyTimes="0.0;0.0324;0.0588;0.0912;0.1176;0.15;0.1765;0.2088;0.2353;0.2676;0.2941;0.3265;0.3529;0.3853;0.4118;0.4441;0.4706;0.5029;0.5294;0.5618;0.5882;0.6206;0.6471;0.6794;0.7059;0.7382;0.7647;0.7971;0.8235;0.8559;0.8824;0.9147;0.9412;1.0" dur="15s" repeatCount="indefinite"/>
+      </rect>
+      <text x="87" y="238" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700"><animate attributeName="fill" values="#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#fde68a;#fde68a;#fde68a;#fde68a;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#a7f3d0;#a7f3d0" keyTimes="0.0;0.0324;0.0588;0.0912;0.1176;0.15;0.1765;0.2088;0.2353;0.2676;0.2941;0.3265;0.3529;0.3853;0.4118;0.4441;0.4706;0.5029;0.5294;0.5618;0.5882;0.6206;0.6471;0.6794;0.7059;0.7382;0.7647;0.7971;0.8235;0.8559;0.8824;0.9147;0.9412;1.0" dur="15s" repeatCount="indefinite"/>4</text>
+      <animateTransform attributeName="transform" type="translate" values="128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;192,0;192,0;192,0;192,0" keyTimes="0.0;0.0324;0.0588;0.0912;0.1176;0.15;0.1765;0.2088;0.2353;0.2676;0.2941;0.3265;0.3529;0.3853;0.4118;0.4441;0.4706;0.5029;0.5294;0.5618;0.5882;0.6206;0.6471;0.6794;0.7059;0.7382;0.7647;0.7971;0.8235;0.8559;0.8824;0.9147;0.9412;1.0" dur="15s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="64" y="160" width="46" height="60" rx="6" stroke-width="2">
+        <animate attributeName="fill" values="#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32)" keyTimes="0.0;0.0324;0.0588;0.0912;0.1176;0.15;0.1765;0.2088;0.2353;0.2676;0.2941;0.3265;0.3529;0.3853;0.4118;0.4441;0.4706;0.5029;0.5294;0.5618;0.5882;0.6206;0.6471;0.6794;0.7059;0.7382;0.7647;0.7971;0.8235;0.8559;0.8824;0.9147;0.9412;1.0" dur="15s" repeatCount="indefinite"/>
+        <animate attributeName="stroke" values="#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#22d3ee;#22d3ee;#475569;#475569;#475569;#475569;#475569;#475569;#22d3ee;#22d3ee;#fbbf24;#fbbf24;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981" keyTimes="0.0;0.0324;0.0588;0.0912;0.1176;0.15;0.1765;0.2088;0.2353;0.2676;0.2941;0.3265;0.3529;0.3853;0.4118;0.4441;0.4706;0.5029;0.5294;0.5618;0.5882;0.6206;0.6471;0.6794;0.7059;0.7382;0.7647;0.7971;0.8235;0.8559;0.8824;0.9147;0.9412;1.0" dur="15s" repeatCount="indefinite"/>
+      </rect>
+      <text x="87" y="238" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700"><animate attributeName="fill" values="#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#fde68a;#fde68a;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0" keyTimes="0.0;0.0324;0.0588;0.0912;0.1176;0.15;0.1765;0.2088;0.2353;0.2676;0.2941;0.3265;0.3529;0.3853;0.4118;0.4441;0.4706;0.5029;0.5294;0.5618;0.5882;0.6206;0.6471;0.6794;0.7059;0.7382;0.7647;0.7971;0.8235;0.8559;0.8824;0.9147;0.9412;1.0" dur="15s" repeatCount="indefinite"/>2</text>
+      <animateTransform attributeName="transform" type="translate" values="192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0" keyTimes="0.0;0.0324;0.0588;0.0912;0.1176;0.15;0.1765;0.2088;0.2353;0.2676;0.2941;0.3265;0.3529;0.3853;0.4118;0.4441;0.4706;0.5029;0.5294;0.5618;0.5882;0.6206;0.6471;0.6794;0.7059;0.7382;0.7647;0.7971;0.8235;0.8559;0.8824;0.9147;0.9412;1.0" dur="15s" repeatCount="indefinite"/>
+    </g>
+    <text x="183" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0.0;0.058;0.0588;1.0" dur="15s" repeatCount="indefinite"/>start: [3, 1, 4, 2]. Each pass finds the minimum of the unsorted part →</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.058;0.0588;0.1168;0.1176;1.0" dur="15s" repeatCount="indefinite"/>assume min = 3 (first unsorted)</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.1168;0.1176;0.1757;0.1765;1.0" dur="15s" repeatCount="indefinite"/>scan 1 vs min 3</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.1757;0.1765;0.2345;0.2353;1.0" dur="15s" repeatCount="indefinite"/>new min = 1</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.2345;0.2353;0.2933;0.2941;1.0" dur="15s" repeatCount="indefinite"/>scan 4 vs min 1</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.2933;0.2941;0.3521;0.3529;1.0" dur="15s" repeatCount="indefinite"/>scan 2 vs min 1</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.3521;0.3529;0.411;0.4118;1.0" dur="15s" repeatCount="indefinite"/>swap min 1 to front (was 3)</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.411;0.4118;0.4698;0.4706;1.0" dur="15s" repeatCount="indefinite"/>assume min = 3 (first unsorted)</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.4698;0.4706;0.5286;0.5294;1.0" dur="15s" repeatCount="indefinite"/>scan 4 vs min 3</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.5286;0.5294;0.5874;0.5882;1.0" dur="15s" repeatCount="indefinite"/>scan 2 vs min 3</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.5874;0.5882;0.6463;0.6471;1.0" dur="15s" repeatCount="indefinite"/>new min = 2</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.6463;0.6471;0.7051;0.7059;1.0" dur="15s" repeatCount="indefinite"/>swap min 2 to front (was 3)</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.7051;0.7059;0.7639;0.7647;1.0" dur="15s" repeatCount="indefinite"/>assume min = 4 (first unsorted)</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.7639;0.7647;0.8227;0.8235;1.0" dur="15s" repeatCount="indefinite"/>scan 3 vs min 4</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.8227;0.8235;0.8816;0.8824;1.0" dur="15s" repeatCount="indefinite"/>new min = 3</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.8816;0.8824;0.9404;0.9412;1.0" dur="15s" repeatCount="indefinite"/>swap min 3 to front (was 4)</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0.0;0.9404;0.9412;1.0" dur="15s" repeatCount="indefinite"/>sorted ✓</text>
+  </svg>
+  <div class="fig-cap"><b>Exactly one swap per pass.</b> Each pass scans the whole unsorted region to find the minimum, then swaps it to the front. Comparisons are always O(n²), but it performs only n−1 swaps total — handy when writes are expensive (flash/EEPROM). Not stable. ▶ loops every 15s.</div>
+  <div class="legend">
+    <span><i style="background:#22d3ee"></i>scanning</span>
+    <span><i style="background:#fbbf24"></i>minimum so far</span>
+    <span><i style="background:#10b981"></i>placed</span>
+  </div>
+</div>
+
+<div class="sec">🟡 Insertion Sort — Build the Sorted Half One Card at a Time</div>
+<div class="ts">
+  <div class="sn2">💡</div>
+  <div class="sc"><strong>Idea:</strong> Like sorting playing cards in your hand: pick the next unsorted card and insert it into its correct position among the already-sorted cards on the left. Shift elements right to make room.<br><br>
+  <strong>Best case O(n):</strong> If the array is already sorted, no shifts are needed — each element compares once and stays. This is why Tim Sort uses insertion sort for small (≤64) sub-arrays.<br>
+  <div class="mini">arr = [5, 3, 1, 4, 2]
+i=1: key=3, shift 5 right → [3,5,1,4,2]
+i=2: key=1, shift 5,3 right → [1,3,5,4,2]
+i=3: key=4, shift 5 right → [1,3,4,5,2]
+i=4: key=2, shift 5,4,3 right → [1,2,3,4,5] ✓
+Time: O(n²) avg/worst · O(n) best · Stable · In-place</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Insertion Sort</div></div><pre><span class="kw">def</span> <span class="fn">insertion_sort</span>(arr):
+    <span class="kw">for</span> i <span class="kw">in</span> range(1, len(arr)):
+        key = arr[i]            <span class="cm"># element to be inserted</span>
+        j = i - 1
+        <span class="kw">while</span> j >= 0 <span class="kw">and</span> arr[j] > key:
+            arr[j + 1] = arr[j] <span class="cm"># shift larger element right</span>
+            j -= 1
+        arr[j + 1] = key        <span class="cm"># insert key at correct position</span>
+    <span class="kw">return</span> arr
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Insertion Sort — slide each new bar back into the sorted half</div>
+  <svg viewBox="0 0 366 298" width="366" role="img" aria-label="Animated insertion sort — each key slides left into the sorted region">
+    <text x="183" y="24" text-anchor="middle" class="svg-tm" font-size="13">arr = [3, 1, 4, 2] · amber = key being inserted · green = already sorted left half</text>
+    <line x1="54" y1="220" x2="312" y2="220" stroke="#30363d" stroke-width="1"/>
+    <text x="87" y="258" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">0</text>
+    <text x="151" y="258" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">1</text>
+    <text x="215" y="258" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">2</text>
+    <text x="279" y="258" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">3</text>
+    <g>
+      <rect x="64" y="130" width="46" height="90" rx="6" stroke-width="2">
+        <animate attributeName="fill" values="rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32)" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+        <animate attributeName="stroke" values="#10b981;#10b981;#10b981;#10b981;#22d3ee;#22d3ee;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#22d3ee;#22d3ee;#10b981;#10b981;#10b981;#10b981" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+      </rect>
+      <text x="87" y="238" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700"><animate attributeName="fill" values="#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a5f3fc;#a5f3fc;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a5f3fc;#a5f3fc;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>3</text>
+      <animateTransform attributeName="transform" type="translate" values="0,0;0,0;0,0;0,0;0,0;0,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;128,0;128,0;128,0;128,0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="64" y="190" width="46" height="30" rx="6" stroke-width="2">
+        <animate attributeName="fill" values="#1e293b;#1e293b;rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32)" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+        <animate attributeName="stroke" values="#475569;#475569;#fbbf24;#fbbf24;#fbbf24;#fbbf24;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+      </rect>
+      <text x="87" y="238" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700"><animate attributeName="fill" values="#cbd5e1;#cbd5e1;#fde68a;#fde68a;#fde68a;#fde68a;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>1</text>
+      <animateTransform attributeName="transform" type="translate" values="64,0;64,0;64,0;64,0;64,0;64,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0;0,0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="64" y="100" width="46" height="120" rx="6" stroke-width="2">
+        <animate attributeName="fill" values="#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32)" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+        <animate attributeName="stroke" values="#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#fbbf24;#fbbf24;#10b981;#10b981;#10b981;#10b981;#22d3ee;#22d3ee;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+      </rect>
+      <text x="87" y="238" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700"><animate attributeName="fill" values="#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#fde68a;#fde68a;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a5f3fc;#a5f3fc;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>4</text>
+      <animateTransform attributeName="transform" type="translate" values="128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;128,0;192,0;192,0;192,0;192,0;192,0;192,0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="64" y="160" width="46" height="60" rx="6" stroke-width="2">
+        <animate attributeName="fill" values="#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32)" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+        <animate attributeName="stroke" values="#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#fbbf24;#fbbf24;#fbbf24;#fbbf24;#fbbf24;#fbbf24;#10b981;#10b981;#10b981;#10b981" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+      </rect>
+      <text x="87" y="238" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700"><animate attributeName="fill" values="#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#fde68a;#fde68a;#fde68a;#fde68a;#fde68a;#fde68a;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>2</text>
+      <animateTransform attributeName="transform" type="translate" values="192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;128,0;128,0;64,0;64,0;64,0;64,0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+    </g>
+    <text x="183" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0.0;0.0901;0.0909;1.0" dur="11s" repeatCount="indefinite"/>start: [3, 1, 4, 2]. Grow a sorted region on the left →</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.0901;0.0909;0.181;0.1818;1.0" dur="11s" repeatCount="indefinite"/>pick key = 1 (next unsorted)</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.181;0.1818;0.2719;0.2727;1.0" dur="11s" repeatCount="indefinite"/>3 &gt; 1 → shift 3 right</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.2719;0.2727;0.3628;0.3636;1.0" dur="11s" repeatCount="indefinite"/>insert 1 — left side stays sorted</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.3628;0.3636;0.4537;0.4545;1.0" dur="11s" repeatCount="indefinite"/>pick key = 4 (next unsorted)</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.4537;0.4545;0.5447;0.5455;1.0" dur="11s" repeatCount="indefinite"/>insert 4 — left side stays sorted</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.5447;0.5455;0.6356;0.6364;1.0" dur="11s" repeatCount="indefinite"/>pick key = 2 (next unsorted)</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.6356;0.6364;0.7265;0.7273;1.0" dur="11s" repeatCount="indefinite"/>4 &gt; 2 → shift 4 right</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.7265;0.7273;0.8174;0.8182;1.0" dur="11s" repeatCount="indefinite"/>3 &gt; 2 → shift 3 right</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.8174;0.8182;0.9083;0.9091;1.0" dur="11s" repeatCount="indefinite"/>insert 2 — left side stays sorted</text>
+    <text x="183" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0.0;0.9083;0.9091;1.0" dur="11s" repeatCount="indefinite"/>sorted ✓</text>
+  </svg>
+  <div class="fig-cap"><b>The left half is always sorted.</b> Each new key bubbles left past every taller bar (which shifts right to make room) until it meets a smaller one. On nearly-sorted data almost nothing moves ⇒ O(n) best case — that is why Tim Sort uses it on small runs. ▶ loops every 11s.</div>
+  <div class="legend">
+    <span><i style="background:#fbbf24"></i>key</span>
+    <span><i style="background:#22d3ee"></i>shifting right</span>
+    <span><i style="background:#10b981"></i>sorted region</span>
+  </div>
+</div>
+
+<div class="sec">🔴 Heap Sort — Sort via a Max-Heap</div>
+<div class="ts">
+  <div class="sn2">💡</div>
+  <div class="sc"><strong>Idea:</strong> Phase 1 — build a max-heap from the array in O(n) ("heapify"). Phase 2 — repeatedly extract the max (swap root with last, shrink heap, sift root down). After n extractions the array is sorted.<br><br>
+  <strong>Key advantages:</strong> O(n log n) worst-case guaranteed (unlike quicksort), O(1) extra space. <strong>Weakness:</strong> poor cache performance; in practice 2–4× slower than quicksort despite same asymptotic complexity.<br>
+  <div class="mini">arr = [4, 3, 2, 1]
+Build max-heap: [4,3,2,1] (already a valid max-heap)
+Extract 4: swap with last → [1,3,2,4]. Sift down 1 → [3,1,2 | 4]
+Extract 3: swap → [2,1,3 | 4]. Sift down 2 → [2,1 | 3,4]
+Extract 2: swap → [1,2 | 3,4]. Sift down 1 → done.
+Result: [1,2,3,4] ✓ Time: O(n log n) · Space: O(1)</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Heap Sort</div></div><pre><span class="kw">def</span> <span class="fn">heap_sort</span>(arr):
+    n = len(arr)
+
+    <span class="kw">def</span> <span class="fn">sift_down</span>(root, end):
+        <span class="kw">while</span> True:
+            largest, l, r = root, 2*root+1, 2*root+2
+            <span class="kw">if</span> l < end <span class="kw">and</span> arr[l] > arr[largest]: largest = l
+            <span class="kw">if</span> r < end <span class="kw">and</span> arr[r] > arr[largest]: largest = r
+            <span class="kw">if</span> largest == root: <span class="kw">break</span>
+            arr[root], arr[largest] = arr[largest], arr[root]
+            root = largest
+
+    <span class="cm"># Phase 1: build max-heap (O(n) — start from last non-leaf)</span>
+    <span class="kw">for</span> i <span class="kw">in</span> range(n // 2 - 1, -1, -1):
+        sift_down(i, n)
+
+    <span class="cm"># Phase 2: extract max n times</span>
+    <span class="kw">for</span> end <span class="kw">in</span> range(n - 1, 0, -1):
+        arr[0], arr[end] = arr[end], arr[0]   <span class="cm"># swap max to end</span>
+        sift_down(0, end)                      <span class="cm"># restore heap property</span>
+    <span class="kw">return</span> arr
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Heap Sort — build a max-heap, then pop the max to the end</div>
+  <svg viewBox="0 0 430 298" width="430" role="img" aria-label="Animated heap sort — build a max-heap then pop each max to the sorted tail">
+    <text x="215" y="24" text-anchor="middle" class="svg-tm" font-size="13">arr = [4, 2, 5, 1, 3] · amber = parent · cyan = larger child it swaps with</text>
+    <line x1="54" y1="220" x2="376" y2="220" stroke="#30363d" stroke-width="1"/>
+    <text x="87" y="258" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">0</text>
+    <text x="151" y="258" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">1</text>
+    <text x="215" y="258" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">2</text>
+    <text x="279" y="258" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">3</text>
+    <text x="343" y="258" text-anchor="middle" fill="#475569" font-size="10" font-family="Fira Code,monospace">4</text>
+    <g>
+      <rect x="64" y="100" width="46" height="120" rx="6" stroke-width="2">
+        <animate attributeName="fill" values="#1e293b;#1e293b;#1e293b;#1e293b;rgba(245,158,11,.25);rgba(245,158,11,.25);#1e293b;#1e293b;#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32)" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+        <animate attributeName="stroke" values="#475569;#475569;#475569;#475569;#fbbf24;#fbbf24;#475569;#475569;#475569;#475569;#22d3ee;#22d3ee;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+      </rect>
+      <text x="87" y="238" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700"><animate attributeName="fill" values="#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#fde68a;#fde68a;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>4</text>
+      <animateTransform attributeName="transform" type="translate" values="0,0;0,0;0,0;0,0;0,0;0,0;128,0;128,0;128,0;128,0;128,0;128,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="64" y="160" width="46" height="60" rx="6" stroke-width="2">
+        <animate attributeName="fill" values="#1e293b;#1e293b;rgba(245,158,11,.25);rgba(245,158,11,.25);#1e293b;#1e293b;#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(245,158,11,.25);rgba(245,158,11,.25);#1e293b;#1e293b;#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32)" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+        <animate attributeName="stroke" values="#475569;#475569;#fbbf24;#fbbf24;#475569;#475569;#475569;#475569;#22d3ee;#22d3ee;#fbbf24;#fbbf24;#475569;#475569;#475569;#475569;#22d3ee;#22d3ee;#10b981;#10b981;#10b981;#10b981" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+      </rect>
+      <text x="87" y="238" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700"><animate attributeName="fill" values="#cbd5e1;#cbd5e1;#fde68a;#fde68a;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#fde68a;#fde68a;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>2</text>
+      <animateTransform attributeName="transform" type="translate" values="64,0;64,0;64,0;64,0;256,0;256,0;256,0;256,0;0,0;0,0;0,0;0,0;128,0;128,0;128,0;128,0;0,0;0,0;64,0;64,0;64,0;64,0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="64" y="70" width="46" height="150" rx="6" stroke-width="2">
+        <animate attributeName="fill" values="#1e293b;#1e293b;#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(245,158,11,.25);rgba(245,158,11,.25);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32)" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+        <animate attributeName="stroke" values="#475569;#475569;#475569;#475569;#22d3ee;#22d3ee;#fbbf24;#fbbf24;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+      </rect>
+      <text x="87" y="238" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700"><animate attributeName="fill" values="#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#fde68a;#fde68a;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>5</text>
+      <animateTransform attributeName="transform" type="translate" values="128,0;128,0;128,0;128,0;128,0;128,0;0,0;0,0;256,0;256,0;256,0;256,0;256,0;256,0;256,0;256,0;256,0;256,0;256,0;256,0;256,0;256,0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="64" y="190" width="46" height="30" rx="6" stroke-width="2">
+        <animate attributeName="fill" values="#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(245,158,11,.25);rgba(245,158,11,.25);#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(16,185,129,.32);rgba(16,185,129,.32)" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+        <animate attributeName="stroke" values="#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#22d3ee;#22d3ee;#fbbf24;#fbbf24;#475569;#475569;#22d3ee;#22d3ee;#10b981;#10b981" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+      </rect>
+      <text x="87" y="238" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700"><animate attributeName="fill" values="#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#fde68a;#fde68a;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#a7f3d0;#a7f3d0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>1</text>
+      <animateTransform attributeName="transform" type="translate" values="192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;192,0;0,0;0,0;0,0;0,0;64,0;64,0;0,0;0,0;0,0;0,0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+    </g>
+    <g>
+      <rect x="64" y="130" width="46" height="90" rx="6" stroke-width="2">
+        <animate attributeName="fill" values="#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;#1e293b;rgba(6,182,212,.28);rgba(6,182,212,.28);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32);rgba(16,185,129,.32)" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+        <animate attributeName="stroke" values="#475569;#475569;#22d3ee;#22d3ee;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#475569;#22d3ee;#22d3ee;#10b981;#10b981;#10b981;#10b981;#10b981;#10b981" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+      </rect>
+      <text x="87" y="238" text-anchor="middle" font-size="14" font-family="Fira Code,monospace" font-weight="700"><animate attributeName="fill" values="#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#cbd5e1;#a5f3fc;#a5f3fc;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0;#a7f3d0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>3</text>
+      <animateTransform attributeName="transform" type="translate" values="256,0;256,0;256,0;256,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;64,0;128,0;128,0;128,0;128,0;128,0;128,0" keyTimes="0.0;0.05;0.0909;0.1409;0.1818;0.2318;0.2727;0.3227;0.3636;0.4136;0.4545;0.5045;0.5455;0.5955;0.6364;0.6864;0.7273;0.7773;0.8182;0.8682;0.9091;1.0" dur="11s" repeatCount="indefinite"/>
+    </g>
+    <text x="215" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="1;1;0;0" keyTimes="0.0;0.0901;0.0909;1.0" dur="11s" repeatCount="indefinite"/>start: [4, 2, 5, 1, 3]. Phase 1 — turn the array into a max-heap →</text>
+    <text x="215" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.0901;0.0909;0.181;0.1818;1.0" dur="11s" repeatCount="indefinite"/>build-heap: parent 2 &lt; child 3 → swap</text>
+    <text x="215" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.181;0.1818;0.2719;0.2727;1.0" dur="11s" repeatCount="indefinite"/>build-heap: parent 4 &lt; child 5 → swap</text>
+    <text x="215" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.2719;0.2727;0.3628;0.3636;1.0" dur="11s" repeatCount="indefinite"/>max-heap ready — root 5 is the largest</text>
+    <text x="215" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.3628;0.3636;0.4537;0.4545;1.0" dur="11s" repeatCount="indefinite"/>move max 5 to the end (sorted tail grows)</text>
+    <text x="215" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.4537;0.4545;0.5447;0.5455;1.0" dur="11s" repeatCount="indefinite"/>sift-down: parent 2 &lt; child 4 → swap</text>
+    <text x="215" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.5447;0.5455;0.6356;0.6364;1.0" dur="11s" repeatCount="indefinite"/>move max 4 to the end (sorted tail grows)</text>
+    <text x="215" y="272" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.6356;0.6364;0.7265;0.7273;1.0" dur="11s" repeatCount="indefinite"/>sift-down: parent 1 &lt; child 3 → swap</text>
+    <text x="215" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.7265;0.7273;0.8174;0.8182;1.0" dur="11s" repeatCount="indefinite"/>move max 3 to the end (sorted tail grows)</text>
+    <text x="215" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0.0;0.8174;0.8182;0.9083;0.9091;1.0" dur="11s" repeatCount="indefinite"/>move max 2 to the end (sorted tail grows)</text>
+    <text x="215" y="272" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0.0;0.9083;0.9091;1.0" dur="11s" repeatCount="indefinite"/>sorted ✓ heap emptied</text>
+  </svg>
+  <div class="fig-cap"><b>The heap guarantees the max is always at index 0.</b> Phase 1 sift-downs turn the raw array into a max-heap in O(n). Phase 2 repeatedly swaps the root (max) to the end, shrinks the heap, and sift-downs the new root in O(log n). n extractions ⇒ O(n log n) worst-case, O(1) extra space. ▶ loops every 11s.</div>
+  <div class="legend">
+    <span><i style="background:#fbbf24"></i>parent</span>
+    <span><i style="background:#22d3ee"></i>swapped child</span>
+    <span><i style="background:#10b981"></i>sorted tail</span>
+  </div>
+</div>
+
+<div class="sec">🟣 Counting Sort — Skip Comparisons, Count Directly</div>
+<div class="ts">
+  <div class="sn2">💡</div>
+  <div class="sc"><strong>Idea:</strong> Instead of comparing elements, <em>count</em> how many times each value appears. Build a frequency array. Then reconstruct the sorted array by reading the frequency array left-to-right. Fastest when the value range k is small relative to n.<br><br>
+  <strong>The O(n + k) breakthrough:</strong> Bypasses the O(n log n) comparison lower bound entirely because it never compares elements. It's a non-comparison sort.<br>
+  <div class="mini">arr = [3,1,4,1,5,2]  (values in range 1–5, k=5)
+count array: [0, 2, 1, 1, 1, 1]   (index = value)
+             ↑  ↑  ↑  ↑  ↑  ↑
+             0  1  2  3  4  5
+Reconstruct: 1,1, 2, 3, 4, 5 ✓
+Time: O(n+k) · Space: O(k) · Stable</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Counting Sort</div></div><pre><span class="kw">def</span> <span class="fn">counting_sort</span>(arr):
+    <span class="kw">if not</span> arr: <span class="kw">return</span> arr
+    max_val = max(arr)
+    count = [0] * (max_val + 1)
+
+    <span class="kw">for</span> num <span class="kw">in</span> arr:
+        count[num] += 1                <span class="cm"># tally occurrences</span>
+
+    result, i = [], 0
+    <span class="kw">for</span> val, freq <span class="kw">in</span> enumerate(count):
+        result.extend([val] * freq)    <span class="cm"># output each value `freq` times</span>
+    <span class="kw">return</span> result
+
+<span class="cm"># Stable counting sort (for Radix Sort): uses prefix sums</span>
+<span class="kw">def</span> <span class="fn">counting_sort_stable</span>(arr, exp):
+    <span class="cm"># exp = current digit position (1, 10, 100, ...)</span>
+    count = [0] * 10
+    <span class="kw">for</span> num <span class="kw">in</span> arr: count[(num // exp) % 10] += 1
+    <span class="kw">for</span> i <span class="kw">in</span> range(1, 10): count[i] += count[i - 1]  <span class="cm"># prefix sums → positions</span>
+    output = [0] * len(arr)
+    <span class="kw">for</span> num <span class="kw">in</span> reversed(arr):                         <span class="cm"># traverse right-to-left: stable</span>
+        digit = (num // exp) % 10
+        count[digit] -= 1; output[count[digit]] = num
+    <span class="kw">return</span> output
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Counting sort — tally frequencies, then read them back in order</div>
+  <svg viewBox="0 0 580 270" width="580" role="img" aria-label="Animated counting sort">
+    <text x="290" y="22" text-anchor="middle" class="svg-tm" font-size="13">arr = [3, 1, 4, 1, 5, 2] · values 1–5 · count each value</text>
+    <!-- input row -->
+    <text x="30" y="74" class="svg-tm" font-size="12">input</text>
+    <g text-anchor="middle" font-size="17">
+      <rect x="80" y="52" width="72" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="116" y="79" class="svg-t">3</text>
+      <rect x="158" y="52" width="72" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="194" y="79" class="svg-t">1</text>
+      <rect x="236" y="52" width="72" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="272" y="79" class="svg-t">4</text>
+      <rect x="314" y="52" width="72" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="350" y="79" class="svg-t">1</text>
+      <rect x="392" y="52" width="72" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="428" y="79" class="svg-t">5</text>
+      <rect x="470" y="52" width="72" height="42" rx="7" fill="#162032" stroke="#475569"/><text x="506" y="79" class="svg-t">2</text>
+    </g>
+    <!-- count array -->\n    <text x="30" y="164" class="svg-tm" font-size="12">count</text>
+    <g text-anchor="middle" font-size="16">
+      <rect x="80" y="142" width="62" height="38" rx="6" fill="#0d1117" stroke="#30363d"/><text x="111" y="166" class="svg-tm" font-size="13">0</text>
+      <text x="111" y="136" class="svg-tm" font-size="11">[0]</text>
+      <rect x="148" y="142" width="62" height="38" rx="6" fill="#0d1117" stroke="#30363d"/><text x="179" y="166" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.30;0.34;1" dur="11s" repeatCount="indefinite"/>2</text>
+      <text x="179" y="136" class="svg-s" font-size="11">[1]</text>
+      <rect x="216" y="142" width="62" height="38" rx="6" fill="#0d1117" stroke="#30363d"/><text x="247" y="166" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.40;0.44;1" dur="11s" repeatCount="indefinite"/>1</text>
+      <text x="247" y="136" class="svg-s" font-size="11">[2]</text>
+      <rect x="284" y="142" width="62" height="38" rx="6" fill="#0d1117" stroke="#30363d"/><text x="315" y="166" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.50;0.54;1" dur="11s" repeatCount="indefinite"/>1</text>
+      <text x="315" y="136" class="svg-s" font-size="11">[3]</text>
+      <rect x="352" y="142" width="62" height="38" rx="6" fill="#0d1117" stroke="#30363d"/><text x="383" y="166" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.58;0.62;1" dur="11s" repeatCount="indefinite"/>1</text>
+      <text x="383" y="136" class="svg-s" font-size="11">[4]</text>
+      <rect x="420" y="142" width="62" height="38" rx="6" fill="#0d1117" stroke="#30363d"/><text x="451" y="166" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.70;1" dur="11s" repeatCount="indefinite"/>1</text>
+      <text x="451" y="136" class="svg-s" font-size="11">[5]</text>
+    </g>
+    <text x="290" y="210" text-anchor="middle" class="svg-s" font-size="14" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.75;0.79;1" dur="11s" repeatCount="indefinite"/>output: [1, 1, 2, 3, 4, 5] — read count[0..5] times each value</text>
+    <text x="290" y="240" text-anchor="middle" class="svg-tm" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.82;0.86;1" dur="11s" repeatCount="indefinite"/>O(n+k) — no comparisons at all · best for small integer range k</text>
+  </svg>
+  <div class="fig-cap"><b>Comparing is optional — if you know the range, just count.</b> The count array is indexed by value; its entry tells you exactly where in the output that value belongs. Nothing is moved or swapped mid-pass. ▶ loops every 11s.</div>
+</div>
+
+<div class="sec">🟠 Radix Sort — Sort Digit by Digit</div>
+<div class="ts">
+  <div class="sn2">💡</div>
+  <div class="sc"><strong>Idea:</strong> Sort integers one digit at a time, from least-significant to most-significant (LSD radix sort). Each digit-pass uses a stable counting sort (so digits sorted earlier are preserved). After d passes (d = number of digits), the array is fully sorted.<br><br>
+  <strong>Why LSD and stable?</strong> When we sort by the tens digit, ties are broken by the ones-digit order we established in the previous pass. Stability preserves that sub-order.<br>
+  <div class="mini">arr = [170, 45, 75, 90, 802, 24, 2, 66]
+Pass 1 (ones):  [170, 90, 802, 2, 24, 45, 75, 66]
+Pass 2 (tens):  [802, 2, 24, 45, 66, 170, 75, 90]
+Pass 3 (hundreds): [2, 24, 45, 66, 75, 90, 170, 802] ✓
+Time: O(d·(n+k)) · Space: O(n+k) · Stable</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Radix Sort (LSD)</div></div><pre><span class="kw">def</span> <span class="fn">radix_sort</span>(arr):
+    <span class="kw">if not</span> arr: <span class="kw">return</span> arr
+    max_val = max(arr)
+    exp = 1
+    <span class="kw">while</span> max_val // exp > 0:
+        arr = counting_sort_stable(arr, exp)  <span class="cm"># stable sort by this digit</span>
+        exp *= 10
+    <span class="kw">return</span> arr
+<span class="cm"># Complexity: O(d·(n+k)) where d=max digits, k=10 (decimal)
+# Beats comparison sorts when d is small (e.g. 32-bit ints: d≤10)</span>
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Radix sort — sort by ones digit, then tens digit (stability keeps order)</div>
+  <svg viewBox="0 0 580 260" width="580" role="img" aria-label="Animated LSD radix sort">
+    <text x="290" y="22" text-anchor="middle" class="svg-tm" font-size="13">arr = [53, 17, 42, 91, 05, 80] · pass 1: sort by ones · pass 2: sort by tens</text>
+    <text x="100" y="54" text-anchor="middle" class="svg-tm" font-size="11">original</text>
+    <g text-anchor="middle" font-size="15">
+      <rect x="64" y="60" width="72" height="38" rx="6" fill="#162032" stroke="#475569"/><text x="100" y="84" class="svg-t">53</text>
+      <rect x="64" y="102" width="72" height="38" rx="6" fill="#162032" stroke="#475569"/><text x="100" y="126" class="svg-t">17</text>
+      <rect x="64" y="144" width="72" height="38" rx="6" fill="#162032" stroke="#475569"/><text x="100" y="168" class="svg-t">42</text>
+      <rect x="64" y="186" width="72" height="38" rx="6" fill="#162032" stroke="#475569"/><text x="100" y="210" class="svg-t">91</text>
+    </g>
+    <!-- after ones sort -->
+    <text x="248" y="54" text-anchor="middle" class="svg-lbl" font-size="11" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.28;0.32;1" dur="12s" repeatCount="indefinite"/>after ones</text>
+    <g text-anchor="middle" font-size="15" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.28;0.32;1" dur="12s" repeatCount="indefinite"/>
+      <rect x="212" y="60" width="72" height="38" rx="6" fill="rgba(6,182,212,.15)" stroke="#06b6d4"/><text x="248" y="84" class="svg-lbl">91</text>
+      <rect x="212" y="102" width="72" height="38" rx="6" fill="rgba(6,182,212,.15)" stroke="#06b6d4"/><text x="248" y="126" class="svg-lbl">42</text>
+      <rect x="212" y="144" width="72" height="38" rx="6" fill="rgba(6,182,212,.15)" stroke="#06b6d4"/><text x="248" y="168" class="svg-lbl">53</text>
+      <rect x="212" y="186" width="72" height="38" rx="6" fill="rgba(6,182,212,.15)" stroke="#06b6d4"/><text x="248" y="210" class="svg-lbl">17</text>
+    </g>
+    <text x="290" y="54" text-anchor="middle" class="svg-tm" font-size="20" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.30;0.34;0.56;0.60" dur="12s" repeatCount="indefinite"/>→</text>
+    <!-- after tens sort -->
+    <text x="430" y="54" text-anchor="middle" class="svg-s" font-size="11" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.60;0.64;1" dur="12s" repeatCount="indefinite"/>after tens (sorted!)</text>
+    <g text-anchor="middle" font-size="15" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.60;0.64;1" dur="12s" repeatCount="indefinite"/>
+      <rect x="394" y="60" width="72" height="38" rx="6" fill="rgba(16,185,129,.2)" stroke="#10b981"/><text x="430" y="84" class="svg-s">17</text>
+      <rect x="394" y="102" width="72" height="38" rx="6" fill="rgba(16,185,129,.2)" stroke="#10b981"/><text x="430" y="126" class="svg-s">42</text>
+      <rect x="394" y="144" width="72" height="38" rx="6" fill="rgba(16,185,129,.2)" stroke="#10b981"/><text x="430" y="168" class="svg-s">53</text>
+      <rect x="394" y="186" width="72" height="38" rx="6" fill="rgba(16,185,129,.2)" stroke="#10b981"/><text x="430" y="210" class="svg-s">91</text>
+    </g>
+    <text x="480" y="54" text-anchor="middle" class="svg-s" font-size="20" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.70;1" dur="12s" repeatCount="indefinite"/>✓</text>
+    <text x="290" y="240" text-anchor="middle" class="svg-tm" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.74;0.78;1" dur="12s" repeatCount="indefinite"/>stability is critical: ones-digit order is preserved when we sort by tens</text>
+  </svg>
+  <div class="fig-cap"><b>Stable passes build on each other.</b> Because the ones-pass is stable, equal tens-digit numbers retain their ones-order from the previous round. Two passes sort two-digit numbers; three passes sort three-digit numbers. Each pass is O(n + 10) = O(n). ▶ loops every 12s.</div>
+  <div class="legend">
+    <span><i style="background:#06b6d4"></i>after ones-pass</span>
+    <span><i style="background:#10b981"></i>final sorted</span>
+  </div>
+</div>
+
+<div class="sec">⚪ Tim Sort — Python's Built-In (Merge + Insertion Hybrid)</div>
+<div class="ts">
+  <div class="sn2">💡</div>
+  <div class="sc"><strong>Idea:</strong> Tim Sort (invented by Tim Peters, 2002) is Python's <code>sorted()</code> and Java's <code>Arrays.sort</code>. It combines insertion sort's excellence on small/nearly-sorted data with merge sort's O(n log n) guarantee on large data.<br><br>
+  <strong>Two key ideas:</strong><br>
+  (1) <strong>Natural runs:</strong> scan for naturally ascending (or descending, then reverse) sub-sequences — real data often has these already.<br>
+  (2) <strong>Binary insertion sort</strong> on runs shorter than 64 elements; then <strong>k-way merge</strong> on the runs using a merge stack with a "galloping mode" for long matches.<br>
+  <div class="mini">arr = [5,3,4,1,2,9,8,7,6]
+Run 1: [5,3,4] → insertion-sorted → [3,4,5]
+Run 2: [1,2]   → natural ascending → [1,2]
+Run 3: [9,8,7,6] → descending → reverse → [6,7,8,9]
+Merge runs: [3,4,5]+[1,2] → [1,2,3,4,5]
+           [1,2,3,4,5]+[6,7,8,9] → [1,2,3,4,5,6,7,8,9] ✓
+Best: O(n) · Avg/Worst: O(n log n) · Stable · Space: O(n)</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Tim Sort — (built-in, shown for illustration)</div></div><pre><span class="cm"># Python's sorted() and list.sort() ARE Tim Sort — you get it for free.
+# This simplified illustration shows the key ideas:</span>
+<span class="kw">def</span> <span class="fn">timsort_simplified</span>(arr, run=32):
+    n = len(arr)
+    <span class="cm"># Phase 1: insertion-sort every run of size `run`</span>
+    <span class="kw">for</span> start <span class="kw">in</span> range(0, n, run):
+        end = min(start + run, n)
+        insertion_sort(arr[start:end])   <span class="cm"># O(run²) ≈ O(1) for small run</span>
+
+    <span class="cm"># Phase 2: merge runs using merge sort's merge step</span>
+    size = run
+    <span class="kw">while</span> size < n:
+        <span class="kw">for</span> left <span class="kw">in</span> range(0, n, 2 * size):
+            mid   = min(left + size, n)
+            right = min(left + 2 * size, n)
+            <span class="kw">if</span> mid < right:
+                arr[left:right] = merge(arr[left:mid], arr[mid:right])
+        size *= 2
+    <span class="kw">return</span> arr
+<span class="cm"># Real Tim Sort also uses: galloping mode, natural run detection,
+# and a merge-stack with invariants to bound the merge cost.</span>
+</pre></div>
+
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Sort Colors (Dutch National Flag)</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 75):</strong> Sort array containing only 0, 1, 2 in-place in a single pass without using any sorting library. E.g. [2,0,2,1,1,0] → [0,0,1,1,2,2].</div>
+    <div class="iq-approach"><strong>Three-pointer Dutch National Flag:</strong> Maintain three regions: [0..low-1]=all 0s, [low..mid-1]=all 1s, [high+1..n-1]=all 2s. Process nums[mid]: if 0→swap with low,advance both; if 2→swap with high,decrement high (don't advance mid!); if 1→just advance mid.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums = [2, 0, 2, 1, 1, 0]
+low=0  mid=0  high=5
+
+mid=0: nums[0]=2 → swap(0,5): [0,0,2,1,1,2], high=4
+mid=0: nums[0]=0 → swap(0,0): [0,0,2,1,1,2], low=1, mid=1
+mid=1: nums[1]=0 → swap(1,1): [0,0,2,1,1,2], low=2, mid=2
+mid=2: nums[2]=2 → swap(2,4): [0,0,1,1,2,2], high=3
+mid=2: nums[2]=1 → mid=3
+mid=3: nums[3]=1 → mid=4
+mid=4 > high=3 → DONE
+
+Result: [0,0,1,1,2,2] ✓
+
+KEY: When swapping with high (2 found), DON'T advance mid!
+  The swapped value from high is unknown — must re-inspect it.</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Sort Colors (DNF Algorithm)</div></div><pre><span class="kw">def</span> <span class="fn">sort_colors</span>(nums):
+    low = mid = 0
+    high = len(nums) - 1
+
+    <span class="kw">while</span> mid &lt;= high:
+        <span class="kw">if</span> nums[mid] == 0:
+            nums[low], nums[mid] = nums[mid], nums[low]
+            low += 1; mid += 1     <span class="cm"># 0 placed, both advance</span>
+        <span class="kw">elif</span> nums[mid] == 2:
+            nums[mid], nums[high] = nums[high], nums[mid]
+            high -= 1              <span class="cm"># DON'T advance mid! recheck swapped value</span>
+        <span class="kw">else</span>:
+            mid += 1               <span class="cm"># 1 is in correct region, just advance</span></pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Kth Largest Element — QuickSelect</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 215):</strong> Find the Kth largest element in an unsorted array in O(n) average time. E.g. [3,2,1,5,6,4] k=2 → 5.</div>
+    <div class="iq-approach"><strong>QuickSelect — Lomuto partition:</strong> Like QuickSort but only recurse into one partition. Pick a pivot, partition around it. If pivot lands at index (n-k), that's the kth largest. If pivot index > n-k, recurse left. If < n-k, recurse right. Average O(n) because we halve the search space each time.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums=[3,2,1,5,6,4]  k=2  → want 2nd largest = index 4 (0-indexed n-k=4)
+
+QuickSelect, pivot=nums[-1]=4:
+  Partition [3,2,1,5,6,4] around 4:
+  [3,2,1,4,6,5] → pivot at index 3
+  n-k = 6-2 = 4 > 3 → recurse right: [6,5] with k=1 (still want position 4)
+
+  Actually: target index = n-k = 4 (4th from left = 2nd from right)
+  After partition pivot=4 at index 3 → target=4 > 3 → search in right [6,5]
+  pivot=5 at index 5, partition [6,5] → [5,6], pivot at 4
+  pivot_idx=4 == target=4 → return nums[4]=5 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Kth Largest — QuickSelect</div></div><pre><span class="kw">import</span> random
+<span class="kw">def</span> <span class="fn">find_kth_largest</span>(nums, k):
+    target = len(nums) - k     <span class="cm"># index of kth largest in sorted order</span>
+
+    <span class="kw">def</span> <span class="fn">partition</span>(l, r):
+        pivot = nums[r]
+        p = l
+        <span class="kw">for</span> i <span class="kw">in</span> range(l, r):
+            <span class="kw">if</span> nums[i] &lt;= pivot:
+                nums[p], nums[i] = nums[i], nums[p]; p += 1
+        nums[p], nums[r] = nums[r], nums[p]
+        <span class="kw">return</span> p
+
+    <span class="kw">def</span> <span class="fn">quickselect</span>(l, r):
+        <span class="kw">if</span> l == r: <span class="kw">return</span> nums[l]
+        pivot_idx = partition(l, r)
+        <span class="kw">if</span>   pivot_idx == target: <span class="kw">return</span> nums[pivot_idx]
+        <span class="kw">elif</span> pivot_idx &lt; target: <span class="kw">return</span> quickselect(pivot_idx+1, r)
+        <span class="kw">else</span>:                     <span class="kw">return</span> quickselect(l, pivot_idx-1)
+
+    <span class="kw">return</span> quickselect(0, len(nums)-1)</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n) average</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">Count Inversions — Modified Merge Sort</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem:</strong> Count pairs (i,j) where i < j but arr[i] > arr[j]. E.g. [2,4,1,3,5] → 3 inversions: (2,1),(4,1),(4,3).</div>
+    <div class="iq-approach"><strong>Merge sort instrumentation:</strong> During the merge step, when we take an element from the RIGHT half before exhausting the LEFT half, all remaining left elements are inversions with that right element. Count how many left elements remain at that point.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">arr = [2, 4, 1, 3]
+
+Merge sort tree:
+  [2,4,1,3]
+  [2,4] and [1,3]
+  [2][4] and [1][3]
+
+Merge [2][4] → [2,4]  (no inversions: 2<4)
+Merge [1][3] → [1,3]  (no inversions: 1<3)
+Merge [2,4] and [1,3]:
+  Compare 2 vs 1: take 1 (from right)
+    inversions += len_left_remaining = 2  (2 and 4 both > 1)
+  Compare 2 vs 3: take 2 (from left)  inversions += 0
+  Compare 4 vs 3: take 3 (from right)
+    inversions += 1  (only 4 remains on left, 4 > 3)
+  Take 4. Done.
+
+Total inversions: 0+0+2+1 = 3 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Count Inversions (Merge Sort)</div></div><pre><span class="kw">def</span> <span class="fn">count_inversions</span>(arr):
+    <span class="kw">if</span> len(arr) &lt;= 1: <span class="kw">return</span> arr, 0
+
+    mid = len(arr) // 2
+    left,  inv_l = count_inversions(arr[:mid])
+    right, inv_r = count_inversions(arr[mid:])
+
+    merged = []
+    inv = inv_l + inv_r
+    i = j = 0
+    <span class="kw">while</span> i &lt; len(left) <span class="kw">and</span> j &lt; len(right):
+        <span class="kw">if</span> left[i] &lt;= right[j]:
+            merged.append(left[i]); i += 1
+        <span class="kw">else</span>:
+            merged.append(right[j])
+            inv += len(left) - i   <span class="cm"># all remaining left elements are inversions</span>
+            j += 1
+    merged.extend(left[i:])
+    merged.extend(right[j:])
+    <span class="kw">return</span> merged, inv</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n log n)</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Strings — Module 9</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+/* ── expanded interview question styles ── */
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+/* ===== deep-dive intuition card ===== */
+.pat{background:linear-gradient(160deg,rgba(79,70,229,.08),rgba(15,23,42,.4));border:1px solid var(--brd);border-radius:18px;padding:30px 34px;margin:24px 0 40px;}
+.pat-lead{font-size:.95rem;color:var(--t);line-height:1.85;margin-bottom:6px;}
+.pat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+@media(max-width:760px){.pat-grid{grid-template-columns:1fr;}}
+.pat-cell{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:18px 22px;}
+.pat-cell h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.pat-cell.when h4{color:var(--w);}.pat-cell.state h4{color:var(--a);}
+.pat-cell.rec h4{color:var(--pl);}.pat-cell.base h4{color:var(--s);}
+.pat-cell p,.pat-cell li{font-size:.9rem;color:var(--tm);line-height:1.8;}
+.pat-cell ul{padding-left:18px;margin-top:6px;}.pat-cell li{margin:4px 0;}
+.formula{background:var(--cbg);border:1px solid #30363d;border-radius:10px;padding:16px 20px;margin:14px 0;font-family:'Fira Code','Courier New',monospace;font-size:.9rem;color:#a5b4fc;line-height:1.9;overflow-x:auto;}
+.formula .hl{color:#67e8f9;font-weight:700;}
+.keywords{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+.kwp{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:3px 14px;font-size:.8rem;font-weight:600;}
+.pitfall{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.03));border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.pitfall .pl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#fca5a5;font-weight:700;margin-bottom:6px;}
+.pitfall p{font-size:.88rem;color:#fecaca;line-height:1.8;}
+.real{background:linear-gradient(135deg,rgba(16,185,129,.09),rgba(16,185,129,.02));border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.real .rl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#6ee7b7;font-weight:700;margin-bottom:8px;}
+.real ul{padding-left:18px;margin:0;}.real li{font-size:.88rem;color:#a7f3d0;line-height:1.85;margin:5px 0;}
+.real li b{color:#d1fae5;}
+/* ===== animated SVG figure ===== */
+.fig{background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,.06),transparent 70%),var(--cbg);border:1px solid #30363d;border-radius:14px;padding:24px;margin:22px 0;overflow-x:auto;}
+.fig svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+.fig-cap{text-align:center;font-size:.82rem;color:var(--tm);margin-top:14px;font-style:italic;}
+.fig-cap b{color:var(--a);font-style:normal;}
+.fig-title{font-size:1.02rem;color:var(--t);margin:8px 0 10px;font-weight:700;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:16px;}
+.legend span{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--tm);}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;}
+.svg-t{fill:#e2e8f0;font-family:'Fira Code',monospace;}
+.svg-tm{fill:#94a3b8;font-family:'Segoe UI',sans-serif;}
+.svg-lbl{fill:#67e8f9;font-family:'Segoe UI',sans-serif;font-weight:700;}
+.svg-acc{fill:#fcd34d;font-family:'Fira Code',monospace;}
+.svg-s{fill:#6ee7b7;font-family:'Fira Code',monospace;}
+.svg-d{fill:#fca5a5;font-family:'Fira Code',monospace;}
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 9 · Strings & Sliding Window</div><h1>Characters, Substrings,<br><span>Patterns</span></h1><p>String manipulation powers everything from autocomplete to DNA analysis. Master the sliding window and KMP patterns.</p><div class="stats"><div class="stat"><div class="sn">O(n)</div><div class="sl">Sliding window</div></div><div class="stat"><div class="sn">O(n+m)</div><div class="sl">KMP pattern match</div></div><div class="stat"><div class="sn">Two Pointers</div><div class="sl">Core tool</div></div><div class="stat"><div class="sn">FAANG ⭐⭐</div><div class="sl">Frequency: High</div></div></div></div></div><div class="wrap">
+<div class="sec">🧠 The Story — The Word Puzzle</div>
+<div class="story">
+  <div class="slabel">Real World Story — Search Engine Autocomplete</div>
+  <h3>You type "appl" in Google. In milliseconds, it returns "apple", "application", "apply". How?</h3>
+  <p>
+    Under the hood, string algorithms power everything: autocomplete (Trie), text search (KMP/Rabin-Karp), spell check (edit distance), compression (LZ77), DNA alignment (LCS).<br><br>
+    For interviews, most string problems fall into one of these patterns:<br>
+    <strong>(1) Sliding window:</strong> "longest/shortest substring satisfying condition" → two pointers shrink/expand window.<br>
+    <strong>(2) Two pointers:</strong> "palindrome check", "reverse words", "remove duplicates" → meet in middle or start-end crawl.<br>
+    <strong>(3) Hash map:</strong> "frequency check", "anagram check", "character mapping".<br>
+    <strong>(4) DP:</strong> "edit distance", "palindromic subsequence", "word break".
+  </p>
+</div>
+
+<div class="pat">
+  <p class="pat-lead">Strings feel different from arrays but they're really the same memory. The trick that unlocks almost every string problem is the <strong>sliding window</strong>: maintain two pointers <code>l</code> and <code>r</code> around a "window" that moves right. Whenever the window is invalid, shrink it from the left; whenever it's valid, record your best answer. This converts O(n²) brute-force into O(n) because the left pointer never moves left. For pattern matching, KMP does the same thing to pattern comparison: a precomputed jump table means you never re-examine a character you've already matched.</p>
+  <div class="pat-grid">
+    <div class="pat-cell when">
+      <h4>🪟 When to use sliding window</h4>
+      <ul>
+        <li>"Longest/shortest <b>substring</b> satisfying X"</li>
+        <li>"All substrings with exactly k distinct chars"</li>
+        <li>Window condition is <b>monotone</b>: shrinking the window can only make it more valid, not less</li>
+      </ul>
+    </div>
+    <div class="pat-cell state">
+      <h4>↔️ The two-pointer invariant</h4>
+      <p><code>l</code> only moves right. <code>r</code> only moves right. So the total iterations are at most 2n. Every character enters the window once and leaves once.</p>
+    </div>
+    <div class="pat-cell rec">
+      <h4>🔢 KMP — LPS as a jump table</h4>
+      <p>On mismatch at pattern[j], jump to <code>lps[j−1]</code> — the longest prefix that's also a suffix of what matched so far. The text pointer <em>never retreats</em>; the pattern pointer never goes past what's necessary.</p>
+    </div>
+    <div class="pat-cell base">
+      <h4>🔤 Hash map for frequency</h4>
+      <p>Track <em>how many</em> required characters the window currently satisfies with a <code>have</code> counter. Only when <code>have == required</code> is the window valid. Increment/decrement <code>have</code> only when a frequency crosses the threshold.</p>
+    </div>
+  </div>
+  <div class="formula"><span class="hl">sliding window template</span>: r expands → if valid, record best &amp; shrink l → repeat<br><span class="hl">KMP LPS</span>: lps[i] = len(longest proper prefix of pattern[0..i] that is also a suffix)<br><span class="hl">anagram check</span>: fixed-size window of len(t) over s; compare freq maps as window slides</div>
+  <div class="keywords">
+    <span class="kwp">sliding window</span><span class="kwp">two pointers</span><span class="kwp">frequency map</span><span class="kwp">KMP LPS</span><span class="kwp">expand &amp; shrink</span>
+  </div>
+  <div class="real">
+    <div class="rl">🌍 Where this lives in the real world</div>
+    <ul>
+      <li><b>Browser find (Ctrl+F):</b> KMP or Boyer-Moore under the hood — highlight all occurrences in one linear scan.</li>
+      <li><b>grep / awk:</b> pattern matching against millions of lines is KMP or Aho-Corasick (multi-pattern KMP).</li>
+      <li><b>Autocomplete / Trie:</b> prefix sliding through a trie; each character narrows the candidate set.</li>
+      <li><b>DNA / protein alignment:</b> "find all positions where this 20-base primer appears" is KMP on a genome.</li>
+      <li><b>Rate limiting &amp; analytics:</b> "requests in the last 60 seconds" is a sliding window over a timestamp array.</li>
+      <li><b>Spam filter:</b> longest common subsequence between a message and known templates — string DP.</li>
+    </ul>
+  </div>
+  <div class="pitfall">
+    <div class="pl">⚠️ The traps</div>
+    <p><b>Shrinking when you shouldn't:</b> only shrink when the window is invalid <em>and</em> you've already recorded the current best. If you shrink too eagerly you'll miss the answer. <b>Frequency threshold logic:</b> for min-window substring, increment <code>have</code> only when the window count equals (not exceeds) the needed count — over-counting a character doesn't add a new satisfied type. <b>KMP lps off-by-one:</b> when mismatch and <code>j &gt; 0</code>, set <code>j = lps[j−1]</code>, not <code>j -= 1</code>; the jump can be much larger than 1.</p>
+  </div>
+</div>
+
+<div class="sec">🎬 Minimum Window Substring — Sliding Window Mastery</div>
+<div class="ts">
+  <div class="sn2">🔍</div>
+  <div class="sc"><strong>Pattern:</strong> Expand right until window is valid (contains all required chars with required freq). Then shrink from left to find minimum valid window. Track result when valid.
+  <div class="mini">s="ADOBECODEBANC", t="ABC"
+need={A:1,B:1,C:1}, have=0, formed=0
+Expand r until we have all of t:
+window "ADOBEC" → have all 3 → formed=3
+Shrink l: "DOBEC" → lose A → not valid
+Expand r again... "DOBECODEBA" → A back, but need min
+Eventually: "BANC" (length 4) → minimum window ✓</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Minimum Window Substring — O(n+m)</div></div><pre><span class="kw">from</span> collections <span class="kw">import</span> Counter
+
+<span class="kw">def</span> <span class="fn">min_window</span>(s, t):
+    need = Counter(t)                    <span class="cm"># required character frequencies</span>
+    have, required = 0, len(need)        <span class="cm"># formed char types vs total needed types</span>
+    window = {}
+    best = ""
+    l = 0
+
+    <span class="kw">for</span> r, ch <span class="kw">in</span> enumerate(s):
+        window[ch] = window.get(ch, 0) + 1          <span class="cm"># expand: add s[r] to window</span>
+        <span class="kw">if</span> ch <span class="kw">in</span> need <span class="kw">and</span> window[ch] == need[ch]:
+            have += 1                               <span class="cm"># one more char type satisfied</span>
+
+        <span class="kw">while</span> have == required:                    <span class="cm"># valid window: try shrinking</span>
+            <span class="kw">if not</span> best <span class="kw">or</span> r-l+1 < len(best):
+                best = s[l:r+1]                    <span class="cm"># update minimum</span>
+            lch = s[l]; window[lch] -= 1
+            <span class="kw">if</span> lch <span class="kw">in</span> need <span class="kw">and</span> window[lch] < need[lch]:
+                have -= 1                          <span class="cm"># lost a required char type</span>
+            l += 1                                 <span class="cm"># shrink</span>
+
+    <span class="kw">return</span> best
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Sliding window — expand right until valid, shrink left until invalid, record best</div>
+  <svg viewBox="0 0 680 260" width="680" role="img" aria-label="Animated min-window sliding window on ADOBECODEBANC">
+    <text x="340" y="22" text-anchor="middle" class="svg-tm" font-size="13">s = "ADOBECODEBANC" · t = "ABC" · find shortest window containing A, B, C</text>
+    <!-- character boxes -->
+    <g text-anchor="middle" font-size="13">
+      <rect x="28" y="40" width="44" height="40" rx="6" fill="#162032" stroke="#475569"/><text x="50" y="64" class="svg-t">A</text>
+      <rect x="76" y="40" width="44" height="40" rx="6" fill="#162032" stroke="#475569"/><text x="98" y="64" class="svg-t">D</text>
+      <rect x="124" y="40" width="44" height="40" rx="6" fill="#162032" stroke="#475569"/><text x="146" y="64" class="svg-t">O</text>
+      <rect x="172" y="40" width="44" height="40" rx="6" fill="#162032" stroke="#475569"/><text x="194" y="64" class="svg-t">B</text>
+      <rect x="220" y="40" width="44" height="40" rx="6" fill="#162032" stroke="#475569"/><text x="242" y="64" class="svg-t">E</text>
+      <rect x="268" y="40" width="44" height="40" rx="6" fill="#162032" stroke="#475569"/><text x="290" y="64" class="svg-t">C</text>
+      <rect x="316" y="40" width="44" height="40" rx="6" fill="#162032" stroke="#475569"/><text x="338" y="64" class="svg-t">O</text>
+      <rect x="364" y="40" width="44" height="40" rx="6" fill="#162032" stroke="#475569"/><text x="386" y="64" class="svg-t">D</text>
+      <rect x="412" y="40" width="44" height="40" rx="6" fill="#162032" stroke="#475569"/><text x="434" y="64" class="svg-t">E</text>
+      <rect x="460" y="40" width="44" height="40" rx="6" fill="#162032" stroke="#475569"/><text x="482" y="64" class="svg-t">B</text>
+      <rect x="508" y="40" width="44" height="40" rx="6" fill="#162032" stroke="#475569"/><text x="530" y="64" class="svg-t">A</text>
+      <rect x="556" y="40" width="44" height="40" rx="6" fill="#162032" stroke="#475569"/><text x="578" y="64" class="svg-t">N</text>
+      <rect x="604" y="40" width="44" height="40" rx="6" fill="#162032" stroke="#475569"/><text x="626" y="64" class="svg-t">C</text>
+    </g>
+    <!-- window 1: ADOBEC [0..5] -->
+    <rect x="28" y="40" width="284" height="40" rx="6" fill="none" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.15;0.19;0.38;0.41" dur="12s" repeatCount="indefinite"/></rect>
+    <text x="340" y="130" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.15;0.19;0.38;0.41" dur="12s" repeatCount="indefinite"/>"ADOBEC" — has A✓ B✓ C✓ → valid! len=6, shrink left</text>
+    <!-- window 2: final BANC [9..12] -->
+    <rect x="460" y="40" width="188" height="40" rx="6" fill="rgba(16,185,129,.25)" stroke="#10b981" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.60;0.64;1" dur="12s" repeatCount="indefinite"/></rect>
+    <text x="340" y="130" text-anchor="middle" class="svg-s" font-size="14" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.60;0.64;1" dur="12s" repeatCount="indefinite"/>"BANC" — has A✓ B✓ C✓ len=4 → minimum! ✓</text>
+    <!-- l/r pointers -->
+    <text x="530" y="104" text-anchor="middle" class="svg-lbl" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.60;0.64;1" dur="12s" repeatCount="indefinite"/>↑ l</text>
+    <text x="626" y="104" text-anchor="middle" class="svg-acc" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.60;0.64;1" dur="12s" repeatCount="indefinite"/>↑ r</text>
+    <text x="340" y="168" text-anchor="middle" class="svg-tm" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.70;0.74;1" dur="12s" repeatCount="indefinite"/>have counter tracks “satisfied char types” not total chars — threshold logic prevents over-counting</text>
+    <text x="340" y="200" text-anchor="middle" class="svg-s" font-size="14" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.78;0.82;1" dur="12s" repeatCount="indefinite"/>min window = "BANC" (length 4)</text>
+  </svg>
+  <div class="fig-cap"><b>Right never stops; left only chases.</b> Whenever the window holds all required characters, record the length and push <code>l</code> one step right to see if you can do better. The window "breathes": expand until valid, shrink until invalid, expand again. Each character enters and leaves exactly once — O(n). ▶ loops every 12s.</div>
+  <div class="legend">
+    <span><i style="background:#06b6d4"></i>expanding window (valid)</span>
+    <span><i style="background:#10b981"></i>minimum answer window</span>
+  </div>
+</div>
+
+<div class="sec">🎬 KMP — Linear Time Pattern Matching</div>
+<div class="ibox">
+  <div class="lbl">The KMP Story</div>
+  <p>
+    Naive string search: for each position in text, compare all m characters of pattern. O(n*m) worst case.<br><br>
+    <strong>KMP insight:</strong> When a mismatch occurs after k successful matches, we don't need to restart from scratch. The pattern itself tells us the longest prefix that is also a suffix of the matched part — we can jump to that position.<br><br>
+    The <strong>failure function (LPS array)</strong> precomputes for each position i in pattern: the length of the longest proper prefix of pattern[0..i] that is also a suffix. This is computed in O(m). Then matching takes O(n). Total: O(n+m).
+  </p>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · KMP Pattern Matching — O(n+m)</div></div><pre><span class="kw">def</span> <span class="fn">kmp_search</span>(text, pattern):
+    n, m = len(text), len(pattern)
+    <span class="kw">if</span> m == 0: <span class="kw">return</span> [0]
+
+    <span class="cm"># Build LPS (Longest Proper Prefix = Suffix) array</span>
+    lps = [0] * m
+    length, i = 0, 1
+    <span class="kw">while</span> i < m:
+        <span class="kw">if</span> pattern[i] == pattern[length]:
+            length += 1; lps[i] = length; i += 1
+        <span class="kw">elif</span> length:
+            length = lps[length - 1]    <span class="cm"># don't increment i, try shorter prefix</span>
+        <span class="kw">else</span>:
+            lps[i] = 0; i += 1
+
+    <span class="cm"># Match using LPS</span>
+    matches, i, j = [], 0, 0
+    <span class="kw">while</span> i < n:
+        <span class="kw">if</span> text[i] == pattern[j]: i += 1; j += 1
+        <span class="kw">if</span> j == m:
+            matches.append(i - j)       <span class="cm"># found match at position i-j</span>
+            j = lps[j - 1]              <span class="cm"># look for more matches (overlap possible)</span>
+        <span class="kw">elif</span> i < n <span class="kw">and</span> text[i] != pattern[j]:
+            <span class="kw">if</span> j: j = lps[j - 1]      <span class="cm"># use LPS to skip redundant comparisons</span>
+            <span class="kw">else</span>: i += 1              <span class="cm"># no prefix match, advance text</span>
+    <span class="kw">return</span> matches
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 KMP — the LPS array lets you skip redundant comparisons</div>
+  <svg viewBox="0 0 640 260" width="640" role="img" aria-label="Animated KMP pattern search with LPS jump">
+    <text x="320" y="22" text-anchor="middle" class="svg-tm" font-size="13">text = "ABABCABABCABC" · pattern = "ABABCAB" · LPS = [0,0,1,2,0,1,2]</text>
+    <!-- LPS row -->
+    <text x="40" y="64" class="svg-tm" font-size="11">LPS</text>
+    <g text-anchor="middle" font-size="14" font-family="'Fira Code',monospace">
+      <rect x="76" y="44" width="52" height="36" rx="5" fill="#0d1117" stroke="#30363d"/><text x="102" y="67" class="svg-tm">0</text>
+      <rect x="132" y="44" width="52" height="36" rx="5" fill="#0d1117" stroke="#30363d"/><text x="158" y="67" class="svg-tm">0</text>
+      <rect x="188" y="44" width="52" height="36" rx="5" fill="#0d1117" stroke="#30363d"/><text x="214" y="67" class="svg-s">1</text>
+      <rect x="244" y="44" width="52" height="36" rx="5" fill="#0d1117" stroke="#30363d"/><text x="270" y="67" class="svg-s">2</text>
+      <rect x="300" y="44" width="52" height="36" rx="5" fill="#0d1117" stroke="#30363d"/><text x="326" y="67" class="svg-tm">0</text>
+      <rect x="356" y="44" width="52" height="36" rx="5" fill="#0d1117" stroke="#30363d"/><text x="382" y="67" class="svg-s">1</text>
+      <rect x="412" y="44" width="52" height="36" rx="5" fill="#0d1117" stroke="#30363d"/><text x="438" y="67" class="svg-s">2</text>
+    </g>
+    <text x="76" y="104" class="svg-tm" font-size="11" text-anchor="middle">A</text>
+    <text x="132" y="104" class="svg-tm" font-size="11" text-anchor="middle">B</text>
+    <text x="188" y="104" class="svg-s" font-size="11" text-anchor="middle">AB</text>
+    <text x="244" y="104" class="svg-s" font-size="11" text-anchor="middle">ABA</text>
+    <text x="300" y="104" class="svg-tm" font-size="11" text-anchor="middle">none</text>
+    <text x="356" y="104" class="svg-s" font-size="11" text-anchor="middle">A</text>
+    <text x="412" y="104" class="svg-s" font-size="11" text-anchor="middle">AB</text>
+    <!-- mismatch explanation -->
+    <text x="320" y="142" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.20;0.25;0.50;0.53" dur="12s" repeatCount="indefinite"/>matched "ABABC", mismatch at j=5: lps[4]=0 → restart j from 0</text>
+    <text x="320" y="142" text-anchor="middle" class="svg-lbl" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.53;0.57;0.76;0.79" dur="12s" repeatCount="indefinite"/>matched "ABABCAB", mismatch at j=7 doesn’t happen — full match found!</text>
+    <text x="320" y="142" text-anchor="middle" class="svg-s" font-size="14" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.79;0.83;1" dur="12s" repeatCount="indefinite"/>match at index 5; j jumps to lps[6]=2 to keep hunting</text>
+    <!-- key insight box -->
+    <text x="320" y="186" text-anchor="middle" class="svg-tm" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.84;0.88;1" dur="12s" repeatCount="indefinite"/>text pointer i never retreats — each character is examined at most twice (once as part of a match, once during a fail)</text>
+    <text x="320" y="218" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.88;0.92;1" dur="12s" repeatCount="indefinite"/>O(n + m): O(m) to build LPS, O(n) to scan text</text>
+  </svg>
+  <div class="fig-cap"><b>Never compare a character you've already matched.</b> The LPS array says: "if you fail here, the first <em>lps[j−1]</em> characters of the pattern are already confirmed to match — skip straight there." Naive search backtracks i; KMP never backtracks i. ▶ loops every 12s.</div>
+  <div class="legend">
+    <span><i style="background:#10b981"></i>non-zero LPS (reusable prefix)</span>
+    <span><i style="background:#475569"></i>no reusable prefix (restart)</span>
+  </div>
+</div>
+
+<div class="sec">🎬 String DP Problems</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Palindrome, Anagram, Valid IP</div></div><pre><span class="cm"># --- Longest Palindromic Substring (Expand Around Center) ---</span>
+<span class="kw">def</span> <span class="fn">longest_palindrome</span>(s):
+    res, best = "", 0
+    <span class="kw">for</span> i <span class="kw">in</span> range(len(s)):
+        <span class="kw">for</span> l, r <span class="kw">in</span> [(i,i), (i,i+1)]:   <span class="cm"># odd and even centers</span>
+            <span class="kw">while</span> l >= 0 <span class="kw">and</span> r < len(s) <span class="kw">and</span> s[l] == s[r]:
+                <span class="kw">if</span> r-l+1 > best: best = r-l+1; res = s[l:r+1]
+                l -= 1; r += 1
+    <span class="kw">return</span> res
+
+<span class="cm"># --- Valid Anagram ---</span>
+<span class="kw">def</span> <span class="fn">is_anagram</span>(s, t):
+    <span class="kw">return</span> Counter(s) == Counter(t)   <span class="cm"># O(n) time and space</span>
+
+<span class="cm"># --- Reverse Words in String ---</span>
+<span class="kw">def</span> <span class="fn">reverse_words</span>(s):
+    <span class="kw">return</span> ' '.join(s.split()[::-1])  <span class="cm"># split handles multiple spaces</span>
+
+<span class="cm"># --- Check if string rotation of another ---</span>
+<span class="cm"># "abcde" rotated → "cdeab". Key: s2 is always a substring of s1+s1.</span>
+<span class="kw">def</span> <span class="fn">is_rotation</span>(s1, s2):
+    <span class="kw">return</span> len(s1)==len(s2) <span class="kw">and</span> s2 <span class="kw">in</span> s1+s1
+</pre></div>
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Longest Substring Without Repeating Characters</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 3):</strong> Given a string, find the length of the longest substring without repeating characters. E.g. 'abcabcbb' → 3 ('abc').</div>
+    <div class="iq-approach"><strong>Sliding window + hash map:</strong> Track the last seen index of each character. When a duplicate is found at index r, jump left pointer directly to max(left, last_seen[char]+1). This skips all redundant shrinks and makes the window always valid.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">s = "abcabcbb"
+
+l=0  last_seen={}  max_len=0
+
+r=0 'a': last_seen={a:0}  window=[a]       len=1
+r=1 'b': last_seen={a:0,b:1}  window=[ab]  len=2
+r=2 'c': last_seen={a:0,b:1,c:2}           len=3
+r=3 'a': 'a' seen at 0, l=max(0,0+1)=1
+         window=[bca]  last_seen[a]=3      len=3
+r=4 'b': 'b' seen at 1, l=max(1,1+1)=2
+         window=[cab]  last_seen[b]=4      len=3
+r=5 'c': 'c' seen at 2, l=max(2,2+1)=3
+         window=[abc]  last_seen[c]=5      len=3
+r=6 'b': 'b' seen at 4, l=max(3,4+1)=5
+         window=[cb]                        len=2
+r=7 'b': 'b' seen at 6, l=max(5,6+1)=7
+         window=[b]                         len=1
+
+max_len = 3 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Longest Substring Without Repeating</div></div><pre><span class="kw">def</span> <span class="fn">length_of_longest_substring</span>(s):
+    last_seen = {}
+    l, max_len = 0, 0
+    <span class="kw">for</span> r, ch <span class="kw">in</span> enumerate(s):
+        <span class="kw">if</span> ch <span class="kw">in</span> last_seen <span class="kw">and</span> last_seen[ch] >= l:
+            l = last_seen[ch] + 1      <span class="cm"># jump past the duplicate</span>
+        last_seen[ch] = r
+        max_len = max(max_len, r - l + 1)
+    <span class="kw">return</span> max_len</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(min(n, charset))</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Find All Anagrams in a String</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 438):</strong> Given strings s and p, return start indices of all p's anagrams in s. An anagram of p is any permutation of p's characters.</div>
+    <div class="iq-approach"><strong>Fixed-size sliding window with frequency counter:</strong> Maintain a window of size len(p). Track how many characters currently have matching frequency ('matches' counter). Window is valid when matches==26 (all 26 letters balanced). Slide right by adding new char and removing old char.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">s="cbaebabacd"  p="abc"  p_count={a:1,b:1,c:1}
+
+Window size = 3
+w_count={} matches=0
+
+Initialize first window "cba":
+  c: w={c:1}, p[c]=1 → matches=1
+  b: w={c:1,b:1}, p[b]=1 → matches=2
+  a: w={c:1,b:1,a:1}, p[a]=1 → matches=3
+  matches==26? No. (only 3 chars so matches can be 26 only with full 26)
+
+Better: track only chars in p. matches=len(p)=3 if all match.
+
+Use p_count, w_count, have/need:
+  have=0, need=3 (distinct chars in p with correct freq)
+  
+  Window [c,b,a]: have=3, need=3 → record index 0
+  Slide to [b,a,e]: remove c, add e → have=2 (c gone)
+  ...skip...
+  Window [e,b,a]: have=2 → nope
+  Window [b,a,b]: have=2 (b freq=2 > p_count[b]=1) → nope
+  Window [a,b,a]: have=1 → nope
+  Window [b,a,c]: have=3 → record index 6 ✓
+
+Result: [0, 6]</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Find All Anagrams</div></div><pre><span class="kw">from</span> collections <span class="kw">import</span> Counter
+<span class="kw">def</span> <span class="fn">find_anagrams</span>(s, p):
+    p_count = Counter(p)
+    w_count = Counter()
+    result = []
+    have, need = 0, len(p_count)   <span class="cm"># distinct chars needing correct freq</span>
+    l = 0
+
+    <span class="kw">for</span> r, ch <span class="kw">in</span> enumerate(s):
+        w_count[ch] += 1
+        <span class="kw">if</span> ch <span class="kw">in</span> p_count <span class="kw">and</span> w_count[ch] == p_count[ch]:
+            have += 1
+
+        <span class="kw">if</span> r - l + 1 > len(p):      <span class="cm"># window too large, shrink</span>
+            lc = s[l]; l += 1
+            <span class="kw">if</span> lc <span class="kw">in</span> p_count <span class="kw">and</span> w_count[lc] == p_count[lc]:
+                have -= 1
+            w_count[lc] -= 1
+
+        <span class="kw">if</span> have == need:
+            result.append(l)
+    <span class="kw">return</span> result</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(1) — 26 char alphabet</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">Word Break II — All Sentences</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 140):</strong> Given string s and dictionary wordDict, return all ways to add spaces to form a sentence using only dictionary words. E.g. s='catsanddog' → ['cats and dog', 'cat sand dog'].</div>
+    <div class="iq-approach"><strong>DFS + memoization:</strong> Recursively try every word that starts at current index. If the remaining string s[i:] was already computed, return cached result. Without memo: exponential repeated work. With memo: polynomial since each suffix computed once.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">s="catsanddog"  dict=["cat","cats","and","sand","dog"]
+
+dfs(0) — from index 0:
+  "cat" matches → dfs(3) = ["sand dog", "and dog"] from index 3
+    "sand" matches → dfs(7) = ["dog"]
+      "dog" matches → dfs(10) = [""] → return ["dog"]
+    "and" matches → dfs(6) = ["dog"]
+      "dog" matches → return ["dog"]
+  → dfs(3) cached = ["sand dog", "and dog"]
+  prepend "cat " → ["cat sand dog", "cat and dog"]
+
+  "cats" matches → dfs(4) = ["and dog"] from index 4
+    "and" matches → dfs(7) = ["dog"] (cached!) 
+  → dfs(4) = ["and dog"]
+  prepend "cats " → ["cats and dog"]
+
+dfs(0) = ["cat sand dog","cat and dog","cats and dog"] ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Word Break II (DFS + Memo)</div></div><pre><span class="kw">def</span> <span class="fn">word_break</span>(s, wordDict):
+    word_set = set(wordDict)
+    memo = {}
+
+    <span class="kw">def</span> <span class="fn">dfs</span>(start):
+        <span class="kw">if</span> start <span class="kw">in</span> memo: <span class="kw">return</span> memo[start]
+        <span class="kw">if</span> start == len(s): <span class="kw">return</span> [<span class="nm">""</span>]   <span class="cm"># base: end of string</span>
+        result = []
+        <span class="kw">for</span> end <span class="kw">in</span> range(start+1, len(s)+1):
+            word = s[start:end]
+            <span class="kw">if</span> word <span class="kw">in</span> word_set:
+                <span class="kw">for</span> rest <span class="kw">in</span> dfs(end):
+                    result.append(word + (<span class="nm">" "</span> + rest <span class="kw">if</span> rest <span class="kw">else</span> <span class="nm">""</span>))
+        memo[start] = result
+        <span class="kw">return</span> result
+    <span class="kw">return</span> dfs(0)</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n²×2^n) worst</span>
+      <span class="iq-pill s">Space: O(2^n) for all sentences</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

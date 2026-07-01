@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binary Search Mastery — Module 5</title>
+<style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.hero-stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .stat-num{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .stat-label{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}
+.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul{padding-left:20px;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}.op{color:#f8f8f2;}
+.ts{display:flex;gap:18px;margin:14px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn{min-width:34px;height:34px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;}
+.ts .sc .mini{font-family:monospace;font-size:.88rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:6px 10px;border-radius:6px;}
+.hm{color:var(--w);font-weight:700;}
+.hf{color:var(--s);font-weight:700;}
+.he{color:var(--d);text-decoration:line-through;opacity:.6;}
+#demo{background:var(--bc2);border-radius:14px;padding:28px;margin:20px 0;}
+.av{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0;justify-content:center;padding-bottom:28px;}
+.bx{width:54px;height:54px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.05rem;border:2px solid var(--brd);background:var(--bc);color:var(--t);transition:all .4s cubic-bezier(.4,0,.2,1);position:relative;}
+.bx .lbl{position:absolute;bottom:-22px;font-size:.65rem;color:var(--tm);font-weight:600;letter-spacing:.5px;}
+.bx.mid{background:var(--w);color:#0f172a;border-color:var(--w);transform:scale(1.14);box-shadow:0 0 20px rgba(245,158,11,.4);}
+.bx.found{background:var(--s);color:white;border-color:var(--s);transform:scale(1.2);box-shadow:0 0 24px rgba(16,185,129,.45);}
+.bx.elim{background:rgba(239,68,68,.1);color:rgba(226,232,240,.25);border-color:rgba(239,68,68,.2);}
+.bx.active{border-color:var(--a);box-shadow:0 0 0 3px rgba(6,182,212,.2);}
+.cr{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;}
+.btn{padding:10px 24px;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size:.9rem;transition:all .2s;letter-spacing:.3px;}
+.bp{background:var(--p);color:white;}.bp:hover{background:var(--pd);}
+.ba{background:transparent;color:var(--a);border:1.5px solid var(--a);}.ba:hover{background:rgba(6,182,212,.1);}
+.btn:disabled{opacity:.35;cursor:not-allowed;}
+.dmsg{text-align:center;font-size:.95rem;color:var(--pl);min-height:30px;margin-top:10px;font-weight:500;padding:8px;}
+.dcnt{text-align:center;font-size:.8rem;color:var(--tm);margin-top:4px;}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.vg{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.vg{grid-template-columns:1fr;}}
+.vc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.vc h4{color:var(--a);margin-bottom:10px;}
+.vc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.st2{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.st2::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:13px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:12px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.018);}
+.tr-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:16px;}
+.tr-row label{font-size:.9rem;color:var(--tm);}
+.tr-row input[type=range]{accent-color:var(--p);width:180px;}
+.tr-row .tv{font-weight:700;color:var(--pl);min-width:26px;}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.inf .cb{color:#a5f3fc;}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+
+/* ── expanded interview question styles ── */
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+/* ===== deep-dive intuition card ===== */
+.pat{background:linear-gradient(160deg,rgba(79,70,229,.08),rgba(15,23,42,.4));border:1px solid var(--brd);border-radius:18px;padding:30px 34px;margin:24px 0 40px;}
+.pat-lead{font-size:.95rem;color:var(--t);line-height:1.85;margin-bottom:6px;}
+.pat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+@media(max-width:760px){.pat-grid{grid-template-columns:1fr;}}
+.pat-cell{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:18px 22px;}
+.pat-cell h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.pat-cell.when h4{color:var(--w);}.pat-cell.state h4{color:var(--a);}
+.pat-cell.rec h4{color:var(--pl);}.pat-cell.base h4{color:var(--s);}
+.pat-cell p,.pat-cell li{font-size:.9rem;color:var(--tm);line-height:1.8;}
+.pat-cell ul{padding-left:18px;margin-top:6px;}.pat-cell li{margin:4px 0;}
+.formula{background:var(--cbg);border:1px solid #30363d;border-radius:10px;padding:16px 20px;margin:14px 0;font-family:'Fira Code','Courier New',monospace;font-size:.9rem;color:#a5b4fc;line-height:1.9;overflow-x:auto;}
+.formula .hl{color:#67e8f9;font-weight:700;}
+.keywords{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+.kwp{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:3px 14px;font-size:.8rem;font-weight:600;}
+.pitfall{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.03));border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.pitfall .pl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#fca5a5;font-weight:700;margin-bottom:6px;}
+.pitfall p{font-size:.88rem;color:#fecaca;line-height:1.8;}
+.real{background:linear-gradient(135deg,rgba(16,185,129,.09),rgba(16,185,129,.02));border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.real .rl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#6ee7b7;font-weight:700;margin-bottom:8px;}
+.real ul{padding-left:18px;margin:0;}.real li{font-size:.88rem;color:#a7f3d0;line-height:1.85;margin:5px 0;}
+.real li b{color:#d1fae5;}
+/* ===== animated SVG figure ===== */
+.fig{background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,.06),transparent 70%),var(--cbg);border:1px solid #30363d;border-radius:14px;padding:24px;margin:22px 0;overflow-x:auto;}
+.fig svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+.fig-cap{text-align:center;font-size:.82rem;color:var(--tm);margin-top:14px;font-style:italic;}
+.fig-cap b{color:var(--a);font-style:normal;}
+.fig-title{font-size:1.02rem;color:var(--t);margin:8px 0 10px;font-weight:700;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:16px;}
+.legend span{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--tm);}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;}
+.svg-t{fill:#e2e8f0;font-family:'Fira Code',monospace;}
+.svg-tm{fill:#94a3b8;font-family:'Segoe UI',sans-serif;}
+.svg-lbl{fill:#67e8f9;font-family:'Segoe UI',sans-serif;font-weight:700;}
+.svg-acc{fill:#fcd34d;font-family:'Fira Code',monospace;}
+.svg-s{fill:#6ee7b7;font-family:'Fira Code',monospace;}
+.svg-d{fill:#fca5a5;font-family:'Fira Code',monospace;}
+
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-inner">
+    <div class="badge">Module 5 · Searching Algorithms</div>
+    <h1>Binary Search:<br><span>Think in Halves, Not in Steps</span></h1>
+    <p>From a million comparisons down to twenty — master the art of eliminating half the problem with every single guess.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-num">O(log n)</div><div class="stat-label">Time Complexity</div></div>
+      <div class="stat"><div class="stat-num">O(1)</div><div class="stat-label">Space</div></div>
+      <div class="stat"><div class="stat-num">8+</div><div class="stat-label">Patterns Covered</div></div>
+      <div class="stat"><div class="stat-num">FAANG ⭐</div><div class="stat-label">Frequency: Very High</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<div class="st2">🧠 The Story Behind Binary Search</div>
+<p class="sub">Before any code — feel the problem first. This is how you build lasting intuition.</p>
+
+<div class="story">
+  <div class="slabel">Real World Story</div>
+  <h3>You're a librarian. It's 1960. No computers. No indexes.</h3>
+  <p>
+    A student rushes in: <em>"Is the word 'serendipity' in Webster's Dictionary?"</em><br><br>
+    Webster's has <strong>1,000,000 words</strong>, sorted A–Z. You have two strategies:<br><br>
+    <strong>Strategy A — "Linear Panic":</strong> Start at the first page. Check every single word. After 600,000 checks you find 'serendipity'... but the student graduated by then.<br><br>
+    <strong>Strategy B — "Binary Wisdom":</strong> Open exactly in the middle. You land on 'M'. Since 'S' comes after 'M', the entire left half is irrelevant — 500,000 words, gone in one comparison. Open the middle of the right half. You hit 'R'. 'S' comes after 'R', discard the left. Hit 'T'. 'S' comes before 'T', discard the right. You find 'serendipity' in just <strong>20 comparisons</strong>.<br><br>
+    <em>You were doing binary search every day in your head — now let's make it formal.</em>
+  </p>
+</div>
+
+<div class="st2">💡 Building the Intuition — The "Half Power"</div>
+<p class="sub">The single idea that explains why log n beats n so dramatically.</p>
+
+<div class="ibox">
+  <div class="lbl">The Core Insight</div>
+  <p><strong>Binary search works ONLY on sorted data</strong> — and that's not a limitation. That's the entire trick.<br><br>
+  When data is sorted, each comparison doesn't just answer "yes/no". It tells you which entire <em>half</em> to discard <em>forever</em>. You're not checking one element — you're eliminating 500,000 candidates with one look.<br><br>
+  <strong>Mathematically:</strong> n → n/2 → n/4 → n/8 → ... → 1. Count the halvings: that's log₂(n). For n = 1,000,000, log₂ = 20. For n = 1,000,000,000 it's just 30. The difference is staggering.</p>
+</div>
+
+<div class="card">
+  <table>
+    <thead><tr><th>Array Size n</th><th>Linear Search</th><th>Binary Search</th><th>Speed-up</th></tr></thead>
+    <tbody>
+      <tr><td>10</td><td>10 ops</td><td>4 ops</td><td>2.5×</td></tr>
+      <tr><td>1,000</td><td>1,000 ops</td><td>10 ops</td><td style="color:#10b981;font-weight:700">100×</td></tr>
+      <tr><td>1,000,000</td><td>1,000,000 ops</td><td>20 ops</td><td style="color:#10b981;font-weight:700">50,000×</td></tr>
+      <tr><td>1,000,000,000</td><td>1 billion ops</td><td>30 ops</td><td style="color:#10b981;font-weight:700">33,000,000×</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="pat">
+  <p class="pat-lead">Here is the secret almost nobody tells you: binary search is <em>not</em> about a sorted array. It is about a <strong>yes/no question whose answer flips exactly once</strong> as you slide along a line. "Is this index ≥ target?" goes <span style="color:#fca5a5">no, no, no</span> → <span style="color:#6ee7b7">yes, yes, yes</span>. "Can the ship deliver in D days at this capacity?" goes <span style="color:#fca5a5">no… no…</span> → <span style="color:#6ee7b7">yes… yes…</span>. The sorted array is just the most common place that flip shows up. Find the flip and you've found your answer — in log n steps.</p>
+  <div class="pat-grid">
+    <div class="pat-cell when">
+      <h4>🔎 When to reach for it</h4>
+      <ul>
+        <li>Data is <b>sorted</b>, or you can phrase a <b>monotone predicate</b> <code>feasible(x)</code></li>
+        <li>"Find <b>first/last</b> position that…"</li>
+        <li>"<b>Minimize/maximize</b> X such that it still works"</li>
+        <li>Answer lives in a numeric range too big to scan</li>
+      </ul>
+    </div>
+    <div class="pat-cell state">
+      <h4>🧭 The predicate</h4>
+      <p>A boolean that is <code>F F F T T T</code> — never flips back. You are hunting the single <b>F→T</b> boundary, not a specific value. Once your problem fits this shape, the code is mechanical.</p>
+    </div>
+    <div class="pat-cell rec">
+      <h4>⚙️ The move</h4>
+      <p>Take <code>mid</code>. If <code>predicate(mid)</code> is true, the boundary is here or left → <code>hi = mid</code>. Otherwise → <code>lo = mid + 1</code>. Each step halves the candidates.</p>
+    </div>
+    <div class="pat-cell base">
+      <h4>🛑 Where it lands</h4>
+      <p>Loop with <code>while lo &lt; hi</code>; when <code>lo == hi</code> the window has collapsed onto the boundary — that index (or value) is your answer.</p>
+    </div>
+  </div>
+  <div class="formula"><span class="hl">lower_bound</span>(arr, t): first i with arr[i] ≥ t   ·   predicate = (arr[i] ≥ t)<br><span class="hl">answer search</span>: lo, hi = min_possible, max_possible; shrink toward the F→T flip<br>invariant: the answer is <span class="hl">always</span> inside [lo, hi] — that's why it's safe to discard the other half</div>
+  <div class="keywords">
+    <span class="kwp">sorted</span><span class="kwp">monotonic</span><span class="kwp">first/last position</span><span class="kwp">minimize/maximize</span><span class="kwp">feasible(x)</span><span class="kwp">O(log n)</span>
+  </div>
+  <div class="real">
+    <div class="rl">🌍 Where this lives in the real world</div>
+    <ul>
+      <li><b>Dictionary &amp; phone book:</b> open the middle, decide left or right — the original binary search, done by hand for centuries.</li>
+      <li><b>git bisect:</b> finding the first bad commit among thousands is a binary search on a monotone "is it broken yet?" predicate.</li>
+      <li><b>Database B-tree indexes:</b> every indexed lookup, range scan and <code>ORDER BY … LIMIT</code> rides on binary search inside the pages.</li>
+      <li><b>Capacity / rate tuning:</b> "smallest ship that ships in D days", "slowest speed Koko can eat bananas" — search the <em>answer</em>, not the data.</li>
+      <li><b>Release / deploy dates:</b> "when did this metric first cross the threshold?" over a time series.</li>
+      <li><b>Square roots &amp; numeric solving:</b> bisection method narrows on a root of any monotone function.</li>
+    </ul>
+  </div>
+  <div class="pitfall">
+    <div class="pl">⚠️ The traps that cause infinite loops</div>
+    <p><b>The hang:</b> writing <code>lo = mid</code> when <code>mid == lo</code> never shrinks the window — pick the <code>while lo &lt; hi</code> + <code>hi = mid</code> / <code>lo = mid + 1</code> pairing and the math can't stall. <b>Overflow:</b> use <code>lo + (hi - lo) // 2</code>, not <code>(lo + hi) // 2</code>, in fixed-width languages. <b>Non-monotone predicate:</b> if <code>feasible</code> ever flips back to false, binary search is simply the wrong tool — it assumes one clean F→T edge.</p>
+  </div>
+</div>
+
+<div class="fig">
+  <div class="fig-title">🎬 lower_bound — converge on the first element ≥ target</div>
+  <svg viewBox="0 0 640 250" width="640" role="img" aria-label="Animated lower bound binary search">
+    <text x="320" y="22" text-anchor="middle" class="svg-tm" font-size="13">arr = [2, 5, 8, 12, 16, 23, 38, 56] · find first index with arr[i] ≥ 20</text>
+    <g text-anchor="middle" font-size="16">
+      <rect x="64" y="44" width="64" height="44" rx="8" fill="#162032" stroke="#475569"/><text x="96" y="72" class="svg-t">2</text>
+      <rect x="136" y="44" width="64" height="44" rx="8" fill="#162032" stroke="#475569"/><text x="168" y="72" class="svg-t">5</text>
+      <rect x="208" y="44" width="64" height="44" rx="8" fill="#162032" stroke="#475569"/><text x="240" y="72" class="svg-t">8</text>
+      <rect x="280" y="44" width="64" height="44" rx="8" fill="#162032" stroke="#475569"/><text x="312" y="72" class="svg-t">12</text>
+      <rect x="352" y="44" width="64" height="44" rx="8" fill="#162032" stroke="#475569"/><text x="384" y="72" class="svg-t">16</text>
+      <rect x="424" y="44" width="64" height="44" rx="8" fill="#162032" stroke="#475569"/><text x="456" y="72" class="svg-t">23</text>
+      <rect x="496" y="44" width="64" height="44" rx="8" fill="#162032" stroke="#475569"/><text x="528" y="72" class="svg-t">38</text>
+      <rect x="568" y="44" width="64" height="44" rx="8" fill="#162032" stroke="#475569"/><text x="600" y="72" class="svg-t">56</text>
+    </g>
+    <!-- predicate row F/T -->
+    <g text-anchor="middle" font-size="13" font-family="'Fira Code',monospace">
+      <text x="96" y="108" class="svg-d">F</text><text x="168" y="108" class="svg-d">F</text><text x="240" y="108" class="svg-d">F</text><text x="312" y="108" class="svg-d">F</text>
+      <text x="384" y="108" class="svg-d">F</text><text x="456" y="108" class="svg-s">T</text><text x="528" y="108" class="svg-s">T</text><text x="600" y="108" class="svg-s">T</text>
+    </g>
+    <text x="320" y="128" text-anchor="middle" class="svg-tm" font-size="11">predicate: arr[i] ≥ 20  →  F F F F F | T T T  (one clean flip)</text>
+    <!-- moving mid probe -->
+    <rect y="44" width="64" height="44" rx="8" fill="none" stroke="#06b6d4" stroke-width="3">
+      <animate attributeName="x" values="280;280;136;136;352;352;424;424;424" keyTimes="0;0.10;0.12;0.30;0.32;0.50;0.52;0.70;1" dur="11s" repeatCount="indefinite"/>
+    </rect>
+    <text y="158" text-anchor="middle" class="svg-lbl" font-size="12">
+      <animate attributeName="x" values="312;312;168;168;384;384;456;456;456" keyTimes="0;0.10;0.12;0.30;0.32;0.50;0.52;0.70;1" dur="11s" repeatCount="indefinite"/>mid</text>
+    <text x="320" y="186" text-anchor="middle" class="svg-t" font-size="14">
+      <animate attributeName="opacity" values="1;1;0;0;1;0;0;1;0;0;1;0;0;1;1" keyTimes="0;0.09;0.095;0.11;0.13;0.135;0.31;0.33;0.335;0.51;0.53;0.535;0.71;0.73;1" dur="11s" repeatCount="indefinite"/></text>
+    <text x="320" y="186" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.12;0.15;0.30;0.32" dur="11s" repeatCount="indefinite"/>arr[3]=12 &lt; 20 → F → lo = 4</text>
+    <text x="320" y="186" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.32;0.35;0.50;0.52" dur="11s" repeatCount="indefinite"/>arr[1]=5 &lt; 20 → F → lo = 2 … (narrowing left bound)</text>
+    <text x="320" y="186" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.52;0.55;0.70;0.72" dur="11s" repeatCount="indefinite"/>arr[4]=16 &lt; 20 → F → lo = 5</text>
+    <text x="320" y="186" text-anchor="middle" class="svg-s" font-size="14" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.72;0.75;1" dur="11s" repeatCount="indefinite"/>arr[5]=23 ≥ 20 → T → answer = index 5</text>
+    <text x="320" y="216" text-anchor="middle" class="svg-tm" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.80;0.84;1" dur="11s" repeatCount="indefinite"/>lower_bound returns the boundary — works even when 20 isn't in the array</text>
+  </svg>
+  <div class="fig-cap"><b>Searching the flip, not the value.</b> Every probe answers one yes/no question and discards half the line. lower_bound lands on the first <code>True</code> — the insertion point — which is why it powers range queries, "count ≥ x", and dedup. ▶ loops every 11s.</div>
+  <div class="legend">
+    <span><i style="background:#06b6d4"></i>mid probe</span>
+    <span><i style="background:#ef4444"></i>predicate False</span>
+    <span><i style="background:#10b981"></i>predicate True / answer</span>
+  </div>
+</div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Binary search on the answer — minimum ship capacity</div>
+  <svg viewBox="0 0 640 230" width="640" role="img" aria-label="Animated binary search on the answer">
+    <text x="320" y="22" text-anchor="middle" class="svg-tm" font-size="13">weights sum=55, max=10, D=5 days · search capacity in [10, 55]</text>
+    <!-- number line -->
+    <line x1="60" y1="96" x2="600" y2="96" stroke="#334155" stroke-width="2"/>
+    <text x="60" y="124" text-anchor="middle" class="svg-tm" font-size="12">10</text>
+    <text x="600" y="124" text-anchor="middle" class="svg-tm" font-size="12">55</text>
+    <!-- infeasible (red) / feasible (green) zones with boundary at 15 -->
+    <rect x="60" y="86" width="60" height="20" fill="rgba(239,68,68,.18)"/>
+    <rect x="120" y="86" width="480" height="20" fill="rgba(16,185,129,.14)"/>
+    <line x1="120" y1="78" x2="120" y2="114" stroke="#10b981" stroke-width="2.5" stroke-dasharray="4 3"/>
+    <text x="120" y="72" text-anchor="middle" class="svg-s" font-size="12">cap = 15 (boundary)</text>
+    <text x="88" y="150" text-anchor="middle" class="svg-d" font-size="11">too small</text>
+    <text x="360" y="150" text-anchor="middle" class="svg-s" font-size="11">feasible: days(cap) ≤ 5</text>
+    <!-- moving probe marker -->
+    <g>
+      <polygon points="-7,-12 7,-12 0,0" fill="#06b6d4">
+        <animateTransform attributeName="transform" type="translate" values="330,84;330,84;180,84;180,84;120,84;120,84;120,84" keyTimes="0;0.12;0.20;0.40;0.48;0.70;1" dur="12s" repeatCount="indefinite"/>
+      </polygon>
+    </g>
+    <text x="320" y="180" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.05;0.09;0.18;0.21" dur="12s" repeatCount="indefinite"/>try cap=32 → 4 days ≤ 5 → feasible, shrink right bound</text>
+    <text x="320" y="180" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.21;0.25;0.40;0.43" dur="12s" repeatCount="indefinite"/>try cap=21 → 3 days ≤ 5 → feasible, keep shrinking</text>
+    <text x="320" y="180" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.43;0.47;0.68;0.71" dur="12s" repeatCount="indefinite"/>cap=12 → 6 days &gt; 5 → infeasible, raise left bound</text>
+    <text x="320" y="180" text-anchor="middle" class="svg-s" font-size="14" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.72;0.76;1" dur="12s" repeatCount="indefinite"/>lo meets hi at 15 → minimum capacity = 15</text>
+    <text x="320" y="208" text-anchor="middle" class="svg-tm" font-size="12" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.82;0.86;1" dur="12s" repeatCount="indefinite"/>we never sorted anything — we binary-searched a feasibility predicate</text>
+  </svg>
+  <div class="fig-cap"><b>The most powerful version of the trick.</b> When the answer itself is a number with a monotone "does it work?" test, search the answer range directly. Koko's bananas, splitting arrays, minimum-max-distance — all the same shape. ▶ loops every 12s.</div>
+  <div class="legend">
+    <span><i style="background:#06b6d4"></i>candidate capacity</span>
+    <span><i style="background:#ef4444"></i>infeasible</span>
+    <span><i style="background:#10b981"></i>feasible / answer</span>
+  </div>
+</div>
+
+<div class="st2">🎬 Live Animation — Watch It Eliminate Halves</div>
+<p class="sub">Use the slider to change the target. Click Step Forward to see each decision the algorithm makes.</p>
+
+<div id="demo">
+  <div class="tr-row">
+    <label>Target:</label>
+    <input type="range" id="sl" min="0" max="9" value="5" oninput="reset()">
+    <span class="tv" id="tv"></span>
+    <label style="margin-left:16px;font-size:.85rem;color:var(--tm)">Array: [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]</label>
+  </div>
+  <div class="av" id="av"></div>
+  <div class="dmsg" id="dm">Press Step Forward to begin</div>
+  <div class="dcnt" id="dc"></div>
+  <div class="cr">
+    <button class="btn bp" id="sb" onclick="step()">▶ Step Forward</button>
+    <button class="btn ba" onclick="auto()">⚡ Auto Play</button>
+    <button class="btn ba" onclick="reset()">↺ Reset</button>
+  </div>
+</div>
+
+<div class="st2">📝 The Universal Template — Memorise the Shape</div>
+<p class="sub">Three lines of logic. Every binary search problem is a variation of this.</p>
+
+<div class="callout inf"><div class="ci">⚠️</div><div class="cb"><strong>Overflow Bug:</strong> Never write <code>mid = (left + right) / 2</code> — if both are large integers, their sum overflows. Always use <code>left + (right - left) / 2</code>. This is a real bug that crashed Java's standard library in 2006.</div></div>
+
+<div class="cw">
+  <div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Classic Template</div></div>
+<pre><span class="kw">def</span> <span class="fn">binary_search</span>(arr, target):
+    left, right = 0, len(arr) - 1          <span class="cm"># search space includes both ends</span>
+
+    <span class="kw">while</span> left &lt;= right:                   <span class="cm"># ≤ is critical (not &lt;)</span>
+        mid = left + (right - left) // 2   <span class="cm"># safe midpoint calculation</span>
+
+        <span class="kw">if</span>   arr[mid] == target: <span class="kw">return</span> mid      <span class="cm"># ✅ exact match</span>
+        <span class="kw">elif</span> arr[mid] &lt; target:  left  = mid + 1   <span class="cm"># target is RIGHT of mid</span>
+        <span class="kw">else</span>:                    right = mid - 1   <span class="cm"># target is LEFT of mid</span>
+
+    <span class="kw">return</span> -1                               <span class="cm"># not found</span>
+</pre>
+</div>
+
+<div class="ibox">
+  <div class="lbl">Why left ≤ right (not &lt;)?</div>
+  <p>Because when left == right, there's still one element to check. If you use <code>&lt;</code>, you skip it. That one element could be your answer. Use <code>≤</code> for classic search.</p>
+</div>
+
+<div class="st2">🔍 Full Step-by-Step Trace</div>
+<p class="sub">Let's find <strong>23</strong> in [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]. Every single thought the algorithm has.</p>
+
+<div class="ts">
+  <div class="sn">1</div>
+  <div class="sc">
+    <p><strong>Setup:</strong> left = 0, right = 9. Search space is the entire array.</p>
+    <p class="mini">mid = 0 + (9-0)//2 = <span class="hm">4</span> → arr[4] = <span class="hm">16</span>. Is 16 == 23? No. Is 16 &lt; 23? <strong>YES</strong> → target must be right of index 4 → left = 5</p>
+  </div>
+</div>
+<div class="ts" style="border-left-color:var(--a)">
+  <div class="sn" style="background:var(--a)">2</div>
+  <div class="sc">
+    <p><strong>Narrowed:</strong> left = 5, right = 9. Left half [2,5,8,12,16] is dead — never visit again.</p>
+    <p class="mini">mid = 5 + (9-5)//2 = <span class="hm">7</span> → arr[7] = <span class="hm">56</span>. Is 56 == 23? No. Is 56 &lt; 23? <strong>NO</strong> → target must be left of index 7 → right = 6</p>
+  </div>
+</div>
+<div class="ts" style="border-left-color:var(--s)">
+  <div class="sn" style="background:var(--s)">3</div>
+  <div class="sc">
+    <p><strong>Closing in:</strong> left = 5, right = 6. Only [23, 38] remain.</p>
+    <p class="mini">mid = 5 + (6-5)//2 = <span class="hm">5</span> → arr[5] = <span class="hf">23 == 23</span> ✅ <strong>FOUND at index 5 in just 3 comparisons!</strong></p>
+  </div>
+</div>
+
+<div class="callout wrn">
+  <div class="ci">🎓</div>
+  <div class="cb"><strong>Instructor Note:</strong> Notice that at each step, we confidently discard half the remaining candidates. We never had to second-guess because the sorted order <em>guarantees</em> the element can't be in the discarded half. This confidence is the mathematical power of binary search.</div>
+</div>
+
+<div class="st2">🔀 The Four Variants — One Template, Four Flavours</div>
+<p class="sub">Understanding these four patterns is the difference between "knows binary search" and "masters binary search".</p>
+
+<div class="vg">
+  <div class="vc"><h4>① Classic</h4><p>Exact match. Returns index or -1. Uses <code>while left ≤ right</code> with <code>return mid</code> when found.</p></div>
+  <div class="vc"><h4>② Lower Bound</h4><p>First position where <code>arr[i] ≥ target</code>. Uses <code>while left &lt; right</code> with <code>right = mid</code>. Handles duplicates correctly.</p></div>
+  <div class="vc"><h4>③ Upper Bound</h4><p>First position where <code>arr[i] &gt; target</code>. Same as lower bound but condition is <code>arr[mid] ≤ target → left = mid+1</code>.</p></div>
+  <div class="vc"><h4>④ Search on Answer</h4><p>No array. Binary search over the <em>space of valid answers</em>. The key: does a candidate answer satisfy the condition? That check must be monotonic.</p></div>
+</div>
+
+<div class="cw">
+  <div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · All Four Variants</div></div>
+<pre><span class="cm"># ────────────────────────────────────────────────────────────────────</span>
+<span class="cm"># ① CLASSIC — find exact target, return -1 if not found</span>
+<span class="cm"># ────────────────────────────────────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">binary_search</span>(arr, target):
+    left, right = 0, len(arr) - 1
+    <span class="kw">while</span> left &lt;= right:
+        mid = left + (right - left) // 2
+        <span class="kw">if</span>   arr[mid] == target: <span class="kw">return</span> mid
+        <span class="kw">elif</span> arr[mid] &lt; target:  left  = mid + 1
+        <span class="kw">else</span>:                    right = mid - 1
+    <span class="kw">return</span> -1
+
+<span class="cm"># ────────────────────────────────────────────────────────────────────</span>
+<span class="cm"># ② LOWER BOUND — first index where arr[i] >= target</span>
+<span class="cm"># (also = insertion point to keep array sorted)</span>
+<span class="cm"># ────────────────────────────────────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">lower_bound</span>(arr, target):
+    left, right = 0, len(arr)    <span class="cm"># note: right = len (not len-1)</span>
+    <span class="kw">while</span> left &lt; right:          <span class="cm"># note: strict less-than</span>
+        mid = left + (right - left) // 2
+        <span class="kw">if</span> arr[mid] &lt; target:
+            left = mid + 1
+        <span class="kw">else</span>:
+            right = mid          <span class="cm"># right can itself be the answer</span>
+    <span class="kw">return</span> left
+
+<span class="cm"># ────────────────────────────────────────────────────────────────────</span>
+<span class="cm"># ③ UPPER BOUND — first index where arr[i] > target</span>
+<span class="cm"># ────────────────────────────────────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">upper_bound</span>(arr, target):
+    left, right = 0, len(arr)
+    <span class="kw">while</span> left &lt; right:
+        mid = left + (right - left) // 2
+        <span class="kw">if</span> arr[mid] &lt;= target:   <span class="cm"># ≤ is the only change from lower_bound</span>
+            left = mid + 1
+        <span class="kw">else</span>:
+            right = mid
+    <span class="kw">return</span> left
+
+<span class="cm"># Count occurrences in O(log n): upper_bound - lower_bound</span>
+<span class="kw">def</span> <span class="fn">count</span>(arr, target):
+    <span class="kw">return</span> upper_bound(arr, target) - lower_bound(arr, target)
+
+<span class="cm"># Test: arr = [1, 2, 2, 2, 3, 5]</span>
+<span class="cm"># lower_bound(arr, 2) = 1  (first index where value >= 2)</span>
+<span class="cm"># upper_bound(arr, 2) = 4  (first index where value > 2)</span>
+<span class="cm"># count(arr, 2)        = 3  ✓</span>
+</pre>
+</div>
+
+<div class="st2">🚀 Advanced: Binary Search on Answer Space</div>
+<p class="sub">This pattern shows up in almost every FAANG hard problem. There is no array — you search over possible <em>answers</em>.</p>
+
+<div class="story">
+  <div class="slabel">FAANG Problem Pattern</div>
+  <h3>The Recipe for "Binary Search on Answer"</h3>
+  <p>
+    <strong>Recognise it:</strong> The problem asks for "minimum X such that..." or "maximum X such that..."<br><br>
+    <strong>The key test:</strong> Is the check monotonic? If X = 5 works, does X = 6 also work (or fail)? If yes, you have a monotonic boundary — binary search finds it in O(log(range)).<br><br>
+    <strong>Template:</strong> left = smallest possible answer, right = largest possible answer. Each iteration: check if mid is a valid answer. Shrink accordingly.
+  </p>
+</div>
+
+<div class="cw">
+  <div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Koko Eating Bananas (LeetCode 875)</div></div>
+<pre><span class="cm"># Piles: [3,6,7,11], h=8 hours. Find MINIMUM speed k bananas/hour.</span>
+<span class="cm"># At speed k, pile p takes ceil(p/k) hours.</span>
+<span class="cm"># Monotonic: if speed k is fast enough, speed k+1 is also fast enough.</span>
+
+<span class="kw">import</span> math
+
+<span class="kw">def</span> <span class="fn">min_eating_speed</span>(piles, h):
+    left, right = 1, max(piles)          <span class="cm"># answer is in [1 .. max_pile]</span>
+
+    <span class="kw">def</span> <span class="fn">feasible</span>(speed):
+        <span class="kw">return</span> sum(math.ceil(p / speed) <span class="kw">for</span> p <span class="kw">in</span> piles) &lt;= h
+
+    <span class="kw">while</span> left &lt; right:
+        mid = left + (right - left) // 2
+        <span class="kw">if</span> feasible(mid):
+            right = mid               <span class="cm"># speed works → try even slower (lower bound)</span>
+        <span class="kw">else</span>:
+            left = mid + 1            <span class="cm"># too slow → must go faster</span>
+
+    <span class="kw">return</span> left
+
+<span class="cm"># Trace on piles=[3,6,7,11], h=8:</span>
+<span class="cm">#  Search space: [1..11]</span>
+<span class="cm">#  mid=6: hours=1+1+2+2=6 ≤ 8 → feasible → right=6</span>
+<span class="cm">#  mid=3: hours=1+2+3+4=10 > 8 → not feasible → left=4</span>
+<span class="cm">#  mid=5: hours=1+2+2+3=8 ≤ 8 → feasible → right=5</span>
+<span class="cm">#  mid=4: hours=1+2+2+3=8 ≤ 8 → feasible → right=4</span>
+<span class="cm">#  left==right=4 → answer = 4 ✓</span>
+</pre>
+</div>
+
+<div class="st2">⚡ Complexity Analysis</div>
+
+<div class="cgrid">
+  <div class="cc"><div class="bigo gr">O(log n)</div><div class="lbl2">Best · Average · Worst<br>(all identical — no bad case)</div></div>
+  <div class="cc"><div class="bigo gr">O(1)</div><div class="lbl2">Space (iterative)<br>no extra memory needed</div></div>
+  <div class="cc"><div class="bigo gd">O(log n)</div><div class="lbl2">Space (recursive)<br>call-stack depth = log n</div></div>
+</div>
+
+<div class="ibox">
+  <div class="lbl">Why worst case = O(log n) always?</div>
+  <p>Unlike linear search (worst case = element not present = n steps), binary search always halves the range. The "not found" case is not worse — it takes the same number of halvings as any other case. The element's absence is mathematically equivalent to any other search.</p>
+</div>
+
+<div class="st2">🎯 Interview Problems — Story to Solution</div>
+<p class="sub">For each problem: first identify <em>what</em> is sorted and <em>what</em> you're searching for. The code follows naturally.</p>
+
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Search in Rotated Sorted Array</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 33):</strong> Array was sorted then rotated at unknown pivot. Find target in O(log n). E.g. [4,5,6,7,0,1,2], target=0 → index 4.</div>
+    <div class="iq-approach"><strong>Modified Binary Search:</strong> At each mid, one half is always sorted. Determine which half is sorted by comparing nums[lo] with nums[mid]. If target lies in sorted half, search there; otherwise search the other half.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums = [4,5,6,7,0,1,2], target = 0
+
+lo=0 hi=6 mid=3 nums[mid]=7
+  Left half [4,5,6,7] is sorted (nums[lo]=4 <= nums[mid]=7)
+  Is target 0 in [4..7]? No → search right half
+  lo = mid+1 = 4
+
+lo=4 hi=6 mid=5 nums[mid]=1
+  Left half [0,1] is sorted (nums[lo]=0 <= nums[mid]=1)
+  Is target 0 in [0..1]? Yes → search left half
+  hi = mid-1 = 4
+
+lo=4 hi=4 mid=4 nums[mid]=0 == target
+  Return 4 ✓
+
+Key insight: exactly one of the two halves is always sorted.
+Test: nums[lo] <= nums[mid]? → left is sorted
+Test: target in [nums[lo], nums[mid])? → go left else go right</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Search Rotated Array</div></div><pre><span class="kw">def</span> <span class="fn">search</span>(nums, target):
+    lo, hi = 0, len(nums)-1
+    <span class="kw">while</span> lo &lt;= hi:
+        mid = (lo + hi) // 2
+        <span class="kw">if</span> nums[mid] == target: <span class="kw">return</span> mid
+        <span class="cm"># left half sorted</span>
+        <span class="kw">if</span> nums[lo] &lt;= nums[mid]:
+            <span class="kw">if</span> nums[lo] &lt;= target &lt; nums[mid]:
+                hi = mid - 1
+            <span class="kw">else</span>:
+                lo = mid + 1
+        <span class="kw">else</span>:  <span class="cm"># right half sorted</span>
+            <span class="kw">if</span> nums[mid] &lt; target &lt;= nums[hi]:
+                lo = mid + 1
+            <span class="kw">else</span>:
+                hi = mid - 1
+    <span class="kw">return</span> -1</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(log n)</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Find Minimum in Rotated Sorted Array</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 153):</strong> Find the minimum element in a rotated sorted array with no duplicates. E.g. [3,4,5,1,2] → 1.</div>
+    <div class="iq-approach"><strong>Binary Search on answer:</strong> The minimum is the pivot point — the only element smaller than its predecessor. If nums[mid] > nums[hi], the pivot is in the right half. Otherwise it's in the left half (or mid is the pivot).</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums = [3,4,5,1,2]
+
+lo=0 hi=4 mid=2 nums[mid]=5 nums[hi]=2
+  nums[mid]=5 > nums[hi]=2 → pivot in right half
+  lo = mid+1 = 3
+
+lo=3 hi=4 mid=3 nums[mid]=1 nums[hi]=2
+  nums[mid]=1 < nums[hi]=2 → pivot in left half (or mid IS pivot)
+  hi = mid = 3
+
+lo=3 hi=3 → return nums[3] = 1 ✓
+
+Invariant: nums[lo..hi] always contains the minimum.
+When lo==hi, that's the answer.
+Edge: already sorted → nums[mid] < nums[hi] always → converges to lo=0.</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Find Minimum in Rotated Array</div></div><pre><span class="kw">def</span> <span class="fn">find_min</span>(nums):
+    lo, hi = 0, len(nums) - 1
+    <span class="kw">while</span> lo &lt; hi:
+        mid = (lo + hi) // 2
+        <span class="kw">if</span> nums[mid] &gt; nums[hi]:
+            lo = mid + 1   <span class="cm"># pivot must be right of mid</span>
+        <span class="kw">else</span>:
+            hi = mid        <span class="cm"># mid might be the pivot</span>
+    <span class="kw">return</span> nums[lo]</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(log n)</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">Find Peak Element</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 162):</strong> A peak is where nums[i] > nums[i-1] and nums[i] > nums[i+1]. Find ANY peak in O(log n). E.g. [1,2,3,1] → index 2.</div>
+    <div class="iq-approach"><strong>Binary Search on slope:</strong> If nums[mid] < nums[mid+1], the peak is to the right (climbing slope). Otherwise the peak is to the left or at mid (we're on or past a peak). This always converges to a peak.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums = [1,2,1,3,5,6,4]
+
+lo=0 hi=6 mid=3 nums[mid]=3 nums[mid+1]=5
+  3 < 5 → climbing right → lo = mid+1 = 4
+
+lo=4 hi=6 mid=5 nums[mid]=6 nums[mid+1]=4
+  6 > 4 → peak at or left of mid → hi = mid = 5
+
+lo=4 hi=5 mid=4 nums[mid]=5 nums[mid+1]=6
+  5 < 6 → climbing right → lo = mid+1 = 5
+
+lo=5 hi=5 → return index 5, nums[5]=6 ✓
+
+Why it works: if nums[mid] < nums[mid+1], nums[mid+1]..nums[n-1]
+must contain a peak (either a local max or nums[n-1] itself which
+is a boundary peak since nums[n] = -∞ by definition).</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Find Peak Element</div></div><pre><span class="kw">def</span> <span class="fn">find_peak</span>(nums):
+    lo, hi = 0, len(nums) - 1
+    <span class="kw">while</span> lo &lt; hi:
+        mid = (lo + hi) // 2
+        <span class="kw">if</span> nums[mid] &lt; nums[mid+1]:
+            lo = mid + 1   <span class="cm"># ascending slope → peak is right</span>
+        <span class="kw">else</span>:
+            hi = mid        <span class="cm"># descending slope → peak is here or left</span>
+    <span class="kw">return</span> lo</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(log n)</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">4</div><div class="iqt">Capacity to Ship Packages Within D Days</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 1011):</strong> Given weights[], find minimum ship capacity to deliver all packages in D days — each day you load packages greedily up to capacity. E.g. weights=[1,2,3,4,5,6,7,8,9,10], D=5 → 15.</div>
+    <div class="iq-approach"><strong>Binary search on the answer:</strong> The answer (capacity) lies in [max(weights), sum(weights)]. For each candidate capacity, greedily count required days. If days &le; D, capacity is feasible — try smaller. Otherwise try larger.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">weights=[1,2,3,4,5,6,7,8,9,10], D=5
+
+Binary search: lo=10 (max weight), hi=55 (total)
+
+mid=32: days needed? [1..8]=36>32, [9,10]=19 → 4 days ✓ hi=32
+mid=21: [1..6]=21, [7,8]=15, [9,10]=19 → 3 days ✓ hi=21
+mid=15: [1..5]=15, [6,7,8]=21>15 → no → [6,7]=13,[8]=8,[9,10]=19>15
+         → days: [1-5],[6-7],[8],[9],[10] = 5 ✓ hi=15
+mid=12: [1..4]=10,[5,6]=11,[7]=7,[8]=8,[9]=9,[10]=10 → 6 days ✗ lo=13
+mid=14: [1-5]=15>14 → [1-4]=10,[5,6]=11,[7]=7,[8]=8,[9]=9,[10]=10 → 6 ✗ lo=15
+lo=hi=15 → answer = 15 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Min Capacity (Binary Search on Answer)</div></div><pre><span class="kw">def</span> <span class="fn">ship_within_days</span>(weights, days):
+    lo, hi = max(weights), sum(weights)
+    <span class="kw">while</span> lo &lt; hi:
+        mid = (lo + hi) // 2
+        needed, cur = 1, 0
+        <span class="kw">for</span> w <span class="kw">in</span> weights:
+            <span class="kw">if</span> cur + w &gt; mid:
+                needed += 1; cur = 0
+            cur += w
+        <span class="kw">if</span> needed &lt;= days:
+            hi = mid     <span class="cm"># feasible, try less capacity</span>
+        <span class="kw">else</span>:
+            lo = mid + 1 <span class="cm"># not feasible, need more capacity</span>
+    <span class="kw">return</span> lo</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n log(sum-max))</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">5</div><div class="iqt">Median of Two Sorted Arrays</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 4):</strong> Find median of two sorted arrays in O(log(m+n)). Hard. E.g. [1,3], [2] → 2.0.</div>
+    <div class="iq-approach"><strong>Binary search on partition:</strong> Partition both arrays so that the left halves combined have (m+n)/2 elements. Binary search on the smaller array's partition index. Check that maxLeft1 &le; minRight2 and maxLeft2 &le; minRight1 — if so, partition is correct.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">A=[1,3], B=[2]  total len=3, want left half of size 1 (floor((3+1)/2)=2? no, 2)
+
+Binary search on A (smaller). lo=0, hi=2
+  partA=1, partB=2-1=1
+  maxLeftA=A[0]=1, minRightA=A[1]=3
+  maxLeftB=B[0]=2, minRightB=+inf
+  Is 1<=+inf and 2<=3? Yes! Correct partition.
+  Total odd → median = max(maxLeftA, maxLeftB) = max(1,2) = 2 ✓
+
+A=[1,2], B=[3,4]  total=4 (even), want left size=2
+  partA=1, partB=1
+  maxLeftA=1, minRightA=2, maxLeftB=3, minRightB=4
+  Is 1<=4 and 3<=2? 3>2! → partA too small, lo=partA+1=2
+  partA=2, partB=0
+  maxLeftA=2, minRightA=+inf, maxLeftB=-inf, minRightB=3
+  Is 2<=3? Yes! → median=(max(2,-inf)+min(+inf,3))/2 = (2+3)/2 = 2.5 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Median of Two Sorted Arrays</div></div><pre><span class="kw">def</span> <span class="fn">find_median</span>(A, B):
+    <span class="kw">if</span> len(A) &gt; len(B): A, B = B, A  <span class="cm"># ensure A is smaller</span>
+    m, n = len(A), len(B)
+    lo, hi = 0, m
+    <span class="kw">while</span> lo &lt;= hi:
+        pA = (lo + hi) // 2
+        pB = (m + n + 1) // 2 - pA
+        maxLA = A[pA-1] <span class="kw">if</span> pA &gt; 0 <span class="kw">else</span> float(<span class="nm">'-inf'</span>)
+        minRA = A[pA]   <span class="kw">if</span> pA &lt; m <span class="kw">else</span> float(<span class="nm">'inf'</span>)
+        maxLB = B[pB-1] <span class="kw">if</span> pB &gt; 0 <span class="kw">else</span> float(<span class="nm">'-inf'</span>)
+        minRB = B[pB]   <span class="kw">if</span> pB &lt; n <span class="kw">else</span> float(<span class="nm">'inf'</span>)
+        <span class="kw">if</span> maxLA &lt;= minRB <span class="kw">and</span> maxLB &lt;= minRA:
+            <span class="kw">if</span> (m + n) % 2:
+                <span class="kw">return</span> float(max(maxLA, maxLB))
+            <span class="kw">return</span> (max(maxLA, maxLB) + min(minRA, minRB)) / 2
+        <span class="kw">elif</span> maxLA &gt; minRB:
+            hi = pA - 1
+        <span class="kw">else</span>:
+            lo = pA + 1</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(log(min(m,n)))</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div></div>
+
+<div class="st2">📌 Quick Reference — Which Template?</div>
+<div class="card">
+  <table>
+    <thead><tr><th>Problem Type</th><th>Template</th><th>Boundary Condition</th></tr></thead>
+    <tbody>
+      <tr><td>Find exact value</td><td>Classic (left ≤ right)</td><td>Return mid when arr[mid]==target</td></tr>
+      <tr><td>First occurrence / Insert position</td><td>Lower Bound (left &lt; right)</td><td>right = mid; return left</td></tr>
+      <tr><td>Last occurrence + 1</td><td>Upper Bound</td><td>arr[mid] ≤ target → left=mid+1; return left</td></tr>
+      <tr><td>Minimum X satisfying condition</td><td>Search on Answer (right=mid)</td><td>feasible(mid) → right=mid else left=mid+1</td></tr>
+      <tr><td>Maximum X satisfying condition</td><td>Search on Answer (left=mid+1)</td><td>feasible(mid) → left=mid+1 else right=mid</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+const arr=[2,5,8,12,16,23,38,56,72,91];
+const targets=[2,5,8,12,16,23,38,56,72,91,3,7,10,18,50];
+let L,R,steps,done,foundIdx,tid,target;
+
+function reset(){
+  clearInterval(tid);
+  const i=parseInt(document.getElementById('sl').value);
+  target=targets[i%targets.length];
+  document.getElementById('tv').textContent=target;
+  L=0;R=arr.length-1;steps=0;done=false;foundIdx=-1;
+  document.getElementById('dm').textContent='Press "Step Forward" to start searching for '+target;
+  document.getElementById('dc').textContent='';
+  document.getElementById('sb').disabled=false;
+  render(-1,-1,-1,new Set());
+}
+
+function render(l,r,mid,elim){
+  const el=document.getElementById('av');
+  el.innerHTML=arr.map((v,i)=>{
+    let cls='bx',lbl='';
+    if(elim.has(i)) cls+=' elim';
+    if(i===l&&i!==mid){cls+=' active';lbl='L';}
+    if(i===r&&i!==mid){cls+=' active';lbl+=(lbl?'/':'')+'R';}
+    if(i===mid){cls+=' mid';lbl='MID';}
+    if(i===foundIdx){cls='bx found';lbl='✓';}
+    return '<div class="'+cls+'">'+v+'<span class="lbl">'+lbl+'</span></div>';
+  }).join('');
+}
+
+function step(){
+  if(done)return;
+  if(L>R){
+    document.getElementById('dm').textContent='❌ '+target+' not found in array — loop exhausted';
+    document.getElementById('sb').disabled=true;
+    done=true;render(-1,-1,-1,new Set());return;
+  }
+  steps++;
+  const mid=L+Math.floor((R-L)/2);
+  const elim=new Set();
+  for(let i=0;i<L;i++)elim.add(i);
+  for(let i=R+1;i<arr.length;i++)elim.add(i);
+  render(L,R,mid,elim);
+  let msg='Step '+steps+': mid='+mid+', arr['+mid+']='+arr[mid]+'. ';
+  if(arr[mid]===target){
+    foundIdx=mid;render(L,R,-1,elim);
+    document.getElementById('av').children[mid].className='bx found';
+    document.getElementById('av').children[mid].innerHTML=arr[mid]+'<span class="lbl">✓</span>';
+    msg+='✅ Found '+target+' at index '+mid+'!';
+    done=true;clearInterval(tid);
+    document.getElementById('sb').disabled=true;
+  }else if(arr[mid]<target){
+    msg+=arr[mid]+' &lt; '+target+' → discard left → left = '+(mid+1);
+    L=mid+1;
+  }else{
+    msg+=arr[mid]+' &gt; '+target+' → discard right → right = '+(mid-1);
+    R=mid-1;
+  }
+  document.getElementById('dm').textContent=msg;
+  document.getElementById('dc').textContent=steps+' comparison'+(steps>1?'s':'');
+}
+
+function auto(){
+  tid=setInterval(()=>{if(done||L>R){clearInterval(tid);return;}step();},950);
+}
+
+reset();
+</script>
+</body>
+</html>

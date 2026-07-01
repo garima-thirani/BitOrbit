@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Advanced Algorithms — Module 22</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+/* ── expanded interview question styles ── */
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+
+/* ===== Animated SVG figure / visualization ===== */
+.fig{background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,.06),transparent 70%),var(--cbg);border:1px solid #30363d;border-radius:14px;padding:24px;margin:22px 0;overflow-x:auto;}
+.fig svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+.fig-cap{text-align:center;font-size:.82rem;color:var(--tm);margin-top:14px;font-style:italic;}
+.fig-cap b{color:var(--a);font-style:normal;}
+.fig-title{font-size:1.02rem;color:var(--t);margin:8px 0 10px;font-weight:700;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:16px;}
+.legend span{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--tm);}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;}
+.svg-t{fill:#e2e8f0;font-family:'Fira Code',monospace;}
+.svg-tm{fill:#94a3b8;font-family:'Segoe UI',sans-serif;}
+.svg-lbl{fill:#67e8f9;font-family:'Segoe UI',sans-serif;font-weight:700;}
+.svg-acc{fill:#fcd34d;font-family:'Fira Code',monospace;}
+.svg-s{fill:#6ee7b7;font-family:'Fira Code',monospace;}
+.svg-d{fill:#fca5a5;font-family:'Fira Code',monospace;}
+
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 22 · Advanced Algorithms</div><h1>Beyond the Basics:<br><span>Algorithms That Scale</span></h1><p>Rabin-Karp, A*, Bloom Filters, LSM Trees — the algorithms that power production systems at scale.</p><div class="stats"><div class="stat"><div class="sn">Rolling Hash</div><div class="sl">Rabin-Karp substring</div></div><div class="stat"><div class="sn">A* Search</div><div class="sl">Heuristic pathfinding</div></div><div class="stat"><div class="sn">Bloom Filter</div><div class="sl">Probabilistic membership</div></div><div class="stat"><div class="sn">System Design</div><div class="sl">Real-world relevance</div></div></div></div></div><div class="wrap">
+<div class="sec">🎬 Rabin-Karp — Rolling Hash for Pattern Matching</div>
+<div class="story">
+  <div class="slabel">Real World Story — DNA Sequencing</div>
+  <h3>You're searching for a known genetic marker (pattern) in a 3-billion-character genome (text). Comparing character by character at every position takes O(n*m) — too slow.</h3>
+  <p>
+    <strong>Rabin-Karp's insight:</strong> Compute a hash of the pattern and a rolling hash of the current window. Compare hashes first (O(1)). Only do character comparison if hashes match. With a good hash function, collisions are rare, making average time O(n+m).<br><br>
+    <strong>Rolling hash:</strong> hash(window[i+1..i+m]) can be computed from hash(window[i..i+m-1]) in O(1) by removing the leftmost character and adding the rightmost. Like sliding a window over hash values instead of characters.
+  </p>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Rabin-Karp — O(n+m) average</div></div><pre><span class="kw">def</span> <span class="fn">rabin_karp</span>(text, pattern):
+    n, m = len(text), len(pattern)
+    BASE, MOD = 26, 10**9 + 7
+    <span class="kw">if</span> m > n: <span class="kw">return</span> []
+
+    <span class="cm"># Precompute BASE^(m-1) % MOD</span>
+    power = pow(BASE, m-1, MOD)
+
+    <span class="cm"># Initial hashes</span>
+    pat_hash = win_hash = 0
+    <span class="kw">for</span> i <span class="kw">in</span> range(m):
+        pat_hash = (pat_hash * BASE + ord(pattern[i])) % MOD
+        win_hash = (win_hash * BASE + ord(text[i]))    % MOD
+
+    matches = []
+    <span class="kw">if</span> win_hash == pat_hash <span class="kw">and</span> text[:m] == pattern:
+        matches.append(0)
+
+    <span class="kw">for</span> i <span class="kw">in</span> range(1, n-m+1):
+        <span class="cm"># Rolling hash: remove left char, add right char</span>
+        win_hash = (win_hash - ord(text[i-1]) * power) % MOD
+        win_hash = (win_hash * BASE + ord(text[i+m-1])) % MOD
+        <span class="kw">if</span> win_hash == pat_hash <span class="kw">and</span> text[i:i+m] == pattern:  <span class="cm"># verify on match</span>
+            matches.append(i)
+
+    <span class="kw">return</span> matches
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎞️ See it: the hash window rolling across the text</div>
+  <p class="sub" style="margin-bottom:10px">Searching for pattern <code>"ABA"</code> in <code>"ABCABA"</code>. The window slides one step at a time; each move updates the hash in O(1) by dropping the left char and adding the right. Hashes are compared first — only a hash match triggers a character check.</p>
+  <svg viewBox="0 0 640 240" role="img" aria-label="Rabin-Karp rolling hash window (animated)">
+    <!-- text boxes -->
+    <g font-size="20" text-anchor="middle">
+      <rect x="70"  y="80" width="80" height="60" rx="8" fill="#162032" stroke="#334155"/><text x="110" y="118" class="svg-t">A</text>
+      <rect x="150" y="80" width="80" height="60" rx="8" fill="#162032" stroke="#334155"/><text x="190" y="118" class="svg-t">B</text>
+      <rect x="230" y="80" width="80" height="60" rx="8" fill="#162032" stroke="#334155"/><text x="270" y="118" class="svg-t">C</text>
+      <rect x="310" y="80" width="80" height="60" rx="8" fill="#162032" stroke="#334155"/><text x="350" y="118" class="svg-t">A</text>
+      <rect x="390" y="80" width="80" height="60" rx="8" fill="#162032" stroke="#334155"/><text x="430" y="118" class="svg-t">B</text>
+      <rect x="470" y="80" width="80" height="60" rx="8" fill="#162032" stroke="#334155"/><text x="510" y="118" class="svg-t">A</text>
+    </g>
+    <g font-size="11" text-anchor="middle" class="svg-tm">
+      <text x="110" y="160">0</text><text x="190" y="160">1</text><text x="270" y="160">2</text><text x="350" y="160">3</text><text x="430" y="160">4</text><text x="510" y="160">5</text>
+    </g>
+    <!-- match highlight on idx 3-5 -->
+    <rect x="310" y="80" width="240" height="60" rx="8" fill="#10312a" stroke="#10b981" stroke-width="3" opacity="0">
+      <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.74;1" dur="8s" repeatCount="indefinite"/>
+    </rect>
+    <!-- sliding window frame (3 boxes = 240 wide) -->
+    <g>
+      <rect x="70" y="74" width="240" height="72" rx="10" fill="rgba(6,182,212,.08)" stroke="#06b6d4" stroke-width="3">
+        <animate attributeName="x" values="70;150;230;310;310" keyTimes="0;0.22;0.44;0.66;1" dur="8s" calcMode="discrete" repeatCount="indefinite"/>
+      </rect>
+    </g>
+    <!-- hash badge -->
+    <text x="320" y="40" text-anchor="middle" class="svg-lbl" font-size="14">rolling hash</text>
+    <g font-size="13" text-anchor="middle">
+      <text x="190" y="58" class="svg-tm" opacity="0">hash("ABC") ≠ pat<animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.2;0.24;1" dur="8s" repeatCount="indefinite"/></text>
+      <text x="270" y="58" class="svg-tm" opacity="0">hash("BCA") ≠ pat<animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.22;0.26;0.42;0.46;1" dur="8s" repeatCount="indefinite"/></text>
+      <text x="350" y="58" class="svg-tm" opacity="0">hash("CAB") ≠ pat<animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.44;0.48;0.64;0.68;1" dur="8s" repeatCount="indefinite"/></text>
+      <text x="430" y="58" class="svg-acc" opacity="0">hash("ABA") = pat → verify ✓<animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.74;1" dur="8s" repeatCount="indefinite"/></text>
+    </g>
+    <text x="320" y="210" text-anchor="middle" class="svg-tm" font-size="12">each slide: win = (win − val(left)·base^(m-1))·base + val(right)  →  O(1) update</text>
+    <text x="320" y="230" text-anchor="middle" class="svg-s" font-size="12" opacity="0">match found at index 3<animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.74;1" dur="8s" repeatCount="indefinite"/></text>
+  </svg>
+  <div class="fig-cap"><b>O(n + m) average.</b> The hash comparison is O(1); a full character check happens only on a hash hit, so spurious collisions cost little. <b>▶ loops every 8s.</b></div>
+  <div class="legend"><span><i style="background:#06b6d4"></i> current window</span><span><i style="background:#10b981"></i> hash + chars match</span><span><i style="background:#334155"></i> text char</span></div>
+</div>
+
+<div class="sec">🎬 A* Search — Heuristic Shortest Path</div>
+<div class="ibox">
+  <div class="lbl">A* vs Dijkstra</div>
+  <p>
+    <strong>Dijkstra:</strong> Explores all neighbors by cost. No direction preference. Guaranteed optimal.<br>
+    <strong>A*:</strong> Adds a heuristic h(n) estimating distance to goal. Priority = g(n) + h(n) where g(n) = actual cost so far. With admissible heuristic (never overestimates), A* is optimal and explores far fewer nodes.<br><br>
+    <strong>Common heuristics:</strong> Manhattan distance (grids, no diagonals), Euclidean distance (grids with diagonals), 0 (= Dijkstra). Key: must never overestimate.
+  </p>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · A* Search on Grid</div></div><pre><span class="kw">import</span> heapq
+
+<span class="kw">def</span> <span class="fn">a_star</span>(grid, start, goal):
+    rows, cols = len(grid), len(grid[0])
+    <span class="kw">def</span> <span class="fn">h</span>(r, c): <span class="kw">return</span> abs(r-goal[0]) + abs(c-goal[1])   <span class="cm"># Manhattan distance</span>
+
+    dist = {start: 0}
+    heap = [(h(*start), 0, start)]  <span class="cm"># (f = g+h, g, position)</span>
+    prev = {}
+
+    <span class="kw">while</span> heap:
+        f, g, pos = heapq.heappop(heap)
+        <span class="kw">if</span> pos == goal:                    <span class="cm"># reconstruct path</span>
+            path = []
+            <span class="kw">while</span> pos <span class="kw">in</span> prev: path.append(pos); pos = prev[pos]
+            <span class="kw">return</span> path[::-1]
+        <span class="kw">if</span> g > dist.get(pos, float('inf')): <span class="kw">continue</span>  <span class="cm"># stale</span>
+        r, c = pos
+        <span class="kw">for</span> dr, dc <span class="kw">in</span> [(0,1),(0,-1),(1,0),(-1,0)]:
+            nr, nc = r+dr, c+dc
+            <span class="kw">if</span> 0 &lt;= nr < rows <span class="kw">and</span> 0 &lt;= nc < cols <span class="kw">and</span> grid[nr][nc] != 1:
+                ng = g + 1
+                <span class="kw">if</span> ng < dist.get((nr,nc), float('inf')):
+                    dist[(nr,nc)] = ng; prev[(nr,nc)] = pos
+                    heapq.heappush(heap, (ng + h(nr,nc), ng, (nr,nc)))
+    <span class="kw">return</span> []  <span class="cm"># no path</span>
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎞️ See it: A* expanding toward the goal, not in all directions</div>
+  <p class="sub" style="margin-bottom:10px">Because priority is <code>f = g + h</code>, A* favours cells whose heuristic <code>h</code> points at the goal — so it explores a narrow cone instead of a full circle (as plain Dijkstra would), then walks the reconstructed path.</p>
+  <svg viewBox="0 0 560 280" role="img" aria-label="A star search exploring toward goal (animated)">
+    <!-- grid cells -->
+    <g stroke="#334155" stroke-width="1.5">
+      <rect x="60"  y="40" width="80" height="48" fill="#0d1117"/><rect x="140" y="40" width="80" height="48" fill="#0d1117"/><rect x="220" y="40" width="80" height="48" fill="#0d1117"/><rect x="300" y="40" width="80" height="48" fill="#0d1117"/><rect x="380" y="40" width="80" height="48" fill="#0d1117"/>
+      <rect x="60"  y="88" width="80" height="48" fill="#0d1117"/><rect x="140" y="88" width="80" height="48" fill="#0d1117"/><rect x="220" y="88" width="80" height="48" fill="#1e293b"/><rect x="300" y="88" width="80" height="48" fill="#0d1117"/><rect x="380" y="88" width="80" height="48" fill="#0d1117"/>
+      <rect x="60"  y="136" width="80" height="48" fill="#0d1117"/><rect x="140" y="136" width="80" height="48" fill="#0d1117"/><rect x="220" y="136" width="80" height="48" fill="#1e293b"/><rect x="300" y="136" width="80" height="48" fill="#0d1117"/><rect x="380" y="136" width="80" height="48" fill="#0d1117"/>
+      <rect x="60"  y="184" width="80" height="48" fill="#0d1117"/><rect x="140" y="184" width="80" height="48" fill="#0d1117"/><rect x="220" y="184" width="80" height="48" fill="#0d1117"/><rect x="300" y="184" width="80" height="48" fill="#0d1117"/><rect x="380" y="184" width="80" height="48" fill="#0d1117"/>
+    </g>
+    <!-- walls -->
+    <g font-size="16" text-anchor="middle" class="svg-d"><text x="260" y="118">▦</text><text x="260" y="166">▦</text></g>
+    <!-- explored cone (cyan, sequenced) -->
+    <g fill="#06b6d4">
+      <rect x="60"  y="40" width="80" height="48" opacity="0"><animate attributeName="opacity" values="0;0;.28;.28" keyTimes="0;0.04;0.1;1" dur="9s" repeatCount="indefinite"/></rect>
+      <rect x="140" y="40" width="80" height="48" opacity="0"><animate attributeName="opacity" values="0;0;.28;.28" keyTimes="0;0.1;0.16;1" dur="9s" repeatCount="indefinite"/></rect>
+      <rect x="60"  y="88" width="80" height="48" opacity="0"><animate attributeName="opacity" values="0;0;.28;.28" keyTimes="0;0.12;0.18;1" dur="9s" repeatCount="indefinite"/></rect>
+      <rect x="220" y="40" width="80" height="48" opacity="0"><animate attributeName="opacity" values="0;0;.28;.28" keyTimes="0;0.18;0.24;1" dur="9s" repeatCount="indefinite"/></rect>
+      <rect x="300" y="40" width="80" height="48" opacity="0"><animate attributeName="opacity" values="0;0;.28;.28" keyTimes="0;0.24;0.3;1" dur="9s" repeatCount="indefinite"/></rect>
+      <rect x="300" y="88" width="80" height="48" opacity="0"><animate attributeName="opacity" values="0;0;.28;.28" keyTimes="0;0.3;0.36;1" dur="9s" repeatCount="indefinite"/></rect>
+      <rect x="300" y="136" width="80" height="48" opacity="0"><animate attributeName="opacity" values="0;0;.28;.28" keyTimes="0;0.36;0.42;1" dur="9s" repeatCount="indefinite"/></rect>
+      <rect x="300" y="184" width="80" height="48" opacity="0"><animate attributeName="opacity" values="0;0;.28;.28" keyTimes="0;0.42;0.48;1" dur="9s" repeatCount="indefinite"/></rect>
+    </g>
+    <!-- start & goal labels -->
+    <text x="100" y="69" text-anchor="middle" class="svg-s" font-size="14">S</text>
+    <text x="420" y="214" text-anchor="middle" class="svg-acc" font-size="14">G</text>
+    <!-- moving token along reconstructed path -->
+    <circle r="13" fill="#f59e0b" stroke="#fde68a" stroke-width="2" opacity="0">
+      <animate attributeName="opacity" values="0;0;1;1;1;0" keyTimes="0;0.5;0.54;0.9;0.95;1" dur="9s" repeatCount="indefinite"/>
+      <animateMotion path="M100,64 L180,64 L260,64 L340,64 L340,112 L340,160 L340,208 L420,208" keyTimes="0;0.55;0.62;0.69;0.76;0.83;0.9;1" dur="9s" calcMode="linear" repeatCount="indefinite"/>
+    </circle>
+    <text x="260" y="268" text-anchor="middle" class="svg-tm" font-size="12">priority queue ordered by f = g + h  →  fewer cells expanded than Dijkstra</text>
+  </svg>
+  <div class="fig-cap"><b>Optimal with an admissible heuristic</b> (one that never overestimates). Manhattan distance is the classic choice on a 4-directional grid. <b>▶ loops every 9s.</b></div>
+  <div class="legend"><span><i style="background:#06b6d4;opacity:.4"></i> explored (frontier)</span><span><i style="background:#f59e0b"></i> final path</span><span><i style="background:#1e293b"></i> wall</span></div>
+</div>
+
+<div class="sec">🎬 Bloom Filter — Probabilistic Set Membership</div>
+<div class="story">
+  <div class="slabel">Real World Story — Spam Detection</div>
+  <h3>Email provider wants to check if an email address is in a 10 billion spam list. A regular hash set uses 100GB. A Bloom filter uses 12GB.</h3>
+  <p>
+    <strong>Bloom Filter:</strong> A probabilistic data structure. Uses k hash functions and a bit array. To add element: set k bits. To check element: if ALL k bits are set → "probably in set". If ANY bit is clear → "definitely not in set".<br><br>
+    False positives possible (might say "in set" for something not added). False negatives impossible (if in set, will always be found).<br><br>
+    Used by: Redis, HBase, Cassandra, Chrome (safe browsing), Medium (already-read articles).
+  </p>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Bloom Filter Implementation</div></div><pre><span class="kw">import</span> hashlib
+
+<span class="kw">class</span> <span class="fn">BloomFilter</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, size, k_hashes):
+        self.size = size
+        self.k = k_hashes
+        self.bits = [0] * size
+
+    <span class="kw">def</span> <span class="fn">_positions</span>(self, item):
+        positions = []
+        <span class="kw">for</span> i <span class="kw">in</span> range(self.k):
+            h = int(hashlib.md5(f"{item}{i}".encode()).hexdigest(), 16)
+            positions.append(h % self.size)
+        <span class="kw">return</span> positions
+
+    <span class="kw">def</span> <span class="fn">add</span>(self, item):
+        <span class="kw">for</span> pos <span class="kw">in</span> self._positions(item):
+            self.bits[pos] = 1
+
+    <span class="kw">def</span> <span class="fn">contains</span>(self, item):
+        <span class="kw">return</span> all(self.bits[pos] for pos in self._positions(item))
+        <span class="cm"># True = probably in set | False = definitely NOT in set</span>
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎞️ See it: setting bits on insert, then a "definitely not" on lookup</div>
+  <p class="sub" style="margin-bottom:10px">Insert <code>"cat"</code> → its 3 hash functions set bits 2, 6, 9. Later we query <code>"dog"</code>: its hashes point at 2, 6, 10. Bit 10 is still 0 → <code>"dog"</code> is <strong>definitely not</strong> in the set (no false negatives, ever).</p>
+  <svg viewBox="0 0 600 250" role="img" aria-label="Bloom filter set bits and membership check (animated)">
+    <!-- bit cells -->
+    <g font-size="16" text-anchor="middle">
+      <rect x="40"  y="90" width="44" height="52" rx="6" fill="#162032" stroke="#334155"/><text x="62"  y="122" class="svg-t">0</text>
+      <rect x="86"  y="90" width="44" height="52" rx="6" fill="#162032" stroke="#334155"/><text x="108" y="122" class="svg-t">0</text>
+      <rect x="132" y="90" width="44" height="52" rx="6" fill="#162032" stroke="#334155"><animate attributeName="fill" values="#162032;#162032;#10312a;#10312a" keyTimes="0;0.16;0.22;1" dur="9s" repeatCount="indefinite"/><animate attributeName="stroke" values="#334155;#334155;#10b981;#10b981" keyTimes="0;0.16;0.22;1" dur="9s" repeatCount="indefinite"/></rect>
+      <text x="154" y="122" class="svg-t" opacity="1">0<animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.16;0.22;1" dur="9s" repeatCount="indefinite"/></text>
+      <text x="154" y="122" class="svg-s" opacity="0">1<animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.16;0.22;1" dur="9s" repeatCount="indefinite"/></text>
+      <rect x="178" y="90" width="44" height="52" rx="6" fill="#162032" stroke="#334155"/><text x="200" y="122" class="svg-t">0</text>
+      <rect x="224" y="90" width="44" height="52" rx="6" fill="#162032" stroke="#334155"/><text x="246" y="122" class="svg-t">0</text>
+      <rect x="270" y="90" width="44" height="52" rx="6" fill="#162032" stroke="#334155"/><text x="292" y="122" class="svg-t">0</text>
+      <rect x="316" y="90" width="44" height="52" rx="6" fill="#162032" stroke="#334155"><animate attributeName="fill" values="#162032;#162032;#10312a;#10312a" keyTimes="0;0.22;0.28;1" dur="9s" repeatCount="indefinite"/><animate attributeName="stroke" values="#334155;#334155;#10b981;#10b981" keyTimes="0;0.22;0.28;1" dur="9s" repeatCount="indefinite"/></rect>
+      <text x="338" y="122" class="svg-t" opacity="1">0<animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.22;0.28;1" dur="9s" repeatCount="indefinite"/></text>
+      <text x="338" y="122" class="svg-s" opacity="0">1<animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.22;0.28;1" dur="9s" repeatCount="indefinite"/></text>
+      <rect x="362" y="90" width="44" height="52" rx="6" fill="#162032" stroke="#334155"/><text x="384" y="122" class="svg-t">0</text>
+      <rect x="408" y="90" width="44" height="52" rx="6" fill="#162032" stroke="#334155"/><text x="430" y="122" class="svg-t">0</text>
+      <rect x="454" y="90" width="44" height="52" rx="6" fill="#162032" stroke="#334155"><animate attributeName="fill" values="#162032;#162032;#10312a;#10312a" keyTimes="0;0.28;0.34;1" dur="9s" repeatCount="indefinite"/><animate attributeName="stroke" values="#334155;#334155;#10b981;#10b981" keyTimes="0;0.28;0.34;1" dur="9s" repeatCount="indefinite"/></rect>
+      <text x="476" y="122" class="svg-t" opacity="1">0<animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.28;0.34;1" dur="9s" repeatCount="indefinite"/></text>
+      <text x="476" y="122" class="svg-s" opacity="0">1<animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.28;0.34;1" dur="9s" repeatCount="indefinite"/></text>
+      <!-- bit 10: queried, stays 0 → red flash -->
+      <rect x="500" y="90" width="44" height="52" rx="6" fill="#162032" stroke="#334155"><animate attributeName="stroke" values="#334155;#334155;#ef4444;#ef4444" keyTimes="0;0.72;0.8;1" dur="9s" repeatCount="indefinite"/><animate attributeName="fill" values="#162032;#162032;#2a1212;#2a1212" keyTimes="0;0.72;0.8;1" dur="9s" repeatCount="indefinite"/></rect><text x="522" y="122" class="svg-t">0</text>
+      <rect x="546" y="90" width="44" height="52" rx="6" fill="#162032" stroke="#334155"/><text x="568" y="122" class="svg-t">0</text>
+    </g>
+    <!-- indices -->
+    <g font-size="11" text-anchor="middle" class="svg-tm">
+      <text x="62" y="162">0</text><text x="108" y="162">1</text><text x="154" y="162">2</text><text x="200" y="162">3</text><text x="246" y="162">4</text><text x="292" y="162">5</text><text x="338" y="162">6</text><text x="384" y="162">7</text><text x="430" y="162">8</text><text x="476" y="162">9</text><text x="522" y="162">10</text><text x="568" y="162">11</text>
+    </g>
+    <!-- phase labels -->
+    <text x="300" y="40" text-anchor="middle" class="svg-lbl" font-size="14" opacity="0">add("cat") → set bits 2, 6, 9<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.08;0.42;0.48;1" dur="9s" repeatCount="indefinite"/></text>
+    <text x="300" y="40" text-anchor="middle" class="svg-acc" font-size="14" opacity="0">query("dog") → check bits 2, 6, 10<animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.5;0.56;0.7;0.74;1" dur="9s" repeatCount="indefinite"/></text>
+    <text x="300" y="40" text-anchor="middle" class="svg-d" font-size="14" opacity="0">bit 10 = 0 → DEFINITELY NOT in set<animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.78;0.84;1" dur="9s" repeatCount="indefinite"/></text>
+    <!-- probe arrows during query -->
+    <g stroke="#06b6d4" stroke-width="2.5" fill="none" marker-end="url(#bf-ar)">
+      <path d="M154 200 L154 148" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.56;0.6;1" dur="9s" repeatCount="indefinite"/></path>
+      <path d="M338 200 L338 148" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.62;0.66;1" dur="9s" repeatCount="indefinite"/></path>
+      <path d="M522 200 L522 148" stroke="#ef4444" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.72;0.78;1" dur="9s" repeatCount="indefinite"/></path>
+    </g>
+    <defs><marker id="bf-ar" markerWidth="9" markerHeight="7" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#06b6d4"/></marker></defs>
+    <text x="300" y="232" text-anchor="middle" class="svg-tm" font-size="12">if ALL k bits were 1 → "probably present" (small false-positive chance) · any 0 → certain absence</text>
+  </svg>
+  <div class="fig-cap"><b>O(k) per operation, O(m) bits.</b> No false negatives — a clear bit guarantees the item was never added. <b>▶ loops every 9s.</b></div>
+  <div class="legend"><span><i style="background:#10b981"></i> bit set to 1</span><span><i style="background:#06b6d4"></i> probe on query</span><span><i style="background:#ef4444"></i> bit 0 → absent</span></div>
+</div>
+
+<div class="sec">🎬 Skip List & LSM Tree (Conceptual)</div>
+<div class="card"><table>
+  <thead><tr><th>Structure</th><th>Use Case</th><th>Key Property</th><th>Where Used</th></tr></thead>
+  <tbody>
+    <tr><td>Skip List</td><td>Sorted set with O(log n) search</td><td>Probabilistic multi-level linked list</td><td>Redis sorted sets</td></tr>
+    <tr><td>LSM Tree</td><td>Write-heavy databases</td><td>Write to MemTable, compact to SSTable</td><td>LevelDB, RocksDB, Cassandra</td></tr>
+    <tr><td>B-Tree</td><td>Database indexes</td><td>Balanced, disk-friendly n-ary tree</td><td>PostgreSQL, MySQL indexes</td></tr>
+    <tr><td>R-Tree</td><td>Spatial queries</td><td>Group nearby objects into bounding boxes</td><td>PostGIS, Uber location</td></tr>
+    <tr><td>HyperLogLog</td><td>Count unique elements (approx)</td><td>Probabilistic, O(log log n) space</td><td>Redis PFCOUNT, analytics</td></tr>
+  </tbody>
+</table></div>
+<div class="callout inf"><div class="ci">💡</div><div class="cb"><strong>System Design Connection:</strong> These advanced data structures often appear as follow-up questions in system design interviews. "How would you handle 100M unique URLs?" → Bloom filter. "How would you support sorted leaderboard with O(log n) rank queries?" → Skip list or Segment tree. "How does Cassandra handle millions of writes/sec?" → LSM Tree.</div></div>
+
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Rabin-Karp — Repeated DNA Sequences</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 187):</strong> Given a DNA string, find all 10-letter-long sequences that appear more than once. E.g. 'AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT' → ['AAAAACCCCC','CCCCCAAAAA'].</div>
+    <div class="iq-approach"><strong>Rolling hash (Rabin-Karp):</strong> Use a hash set to store seen 10-char substrings. Slide a window of 10 across the string, compute hash of each window. If hash already seen, record the substring. Rolling hash updates in O(1) by removing the leftmost char and adding the rightmost.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">s = "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT"
+
+Slide window of size 10:
+  s[0:10]  = "AAAAACCCCC" → hash → add to seen = {h1}
+  s[1:11]  = "AAAACCCCCA" → hash → add to seen
+  s[2:12]  = "AAACCCCCAA" → ...
+  ...
+  s[10:20] = "AAAAACCCCC" → hash found! → add to result
+
+Rolling hash:
+  hash(s[i+1:i+11]) = (hash(s[i:i+10]) - val(s[i])*base^9) * base + val(s[i+10])
+  Each update: O(1) math instead of O(10) string hashing
+
+Result: ["AAAAACCCCC", "CCCCCAAAAA"] ✓
+
+Interview note: Rabin-Karp shines for multiple pattern search.
+  Single pattern: KMP is simpler; multiple patterns: Aho-Corasick.</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Repeated DNA Sequences (Rolling Hash)</div></div><pre><span class="kw">def</span> <span class="fn">find_repeated_dna</span>(s):
+    <span class="kw">if</span> len(s) &lt;= 10: <span class="kw">return</span> []
+    seen = set()
+    repeated = set()
+    <span class="kw">for</span> i <span class="kw">in</span> range(len(s)-9):
+        sub = s[i:i+10]
+        <span class="kw">if</span> sub <span class="kw">in</span> seen: repeated.add(sub)
+        <span class="kw">else</span>: seen.add(sub)
+    <span class="kw">return</span> list(repeated)
+
+<span class="cm"># Optimized: encode each char to 2 bits for faster hashing</span>
+<span class="kw">def</span> <span class="fn">find_repeated_dna_opt</span>(s):
+    encode = {<span class="nm">'A'</span>:0,<span class="nm">'C'</span>:1,<span class="nm">'G'</span>:2,<span class="nm">'T'</span>:3}
+    MASK = (1 &lt;&lt; 20) - 1  <span class="cm"># 20 bits for 10 chars × 2 bits each</span>
+    h = 0
+    <span class="kw">for</span> c <span class="kw">in</span> s[:9]: h = ((h &lt;&lt; 2) | encode[c]) &amp; MASK
+    seen = set(); repeated = set()
+    <span class="kw">for</span> i <span class="kw">in</span> range(9, len(s)):
+        h = ((h &lt;&lt; 2) | encode[s[i]]) &amp; MASK
+        <span class="kw">if</span> h <span class="kw">in</span> seen: repeated.add(s[i-9:i+1])
+        <span class="kw">else</span>: seen.add(h)
+    <span class="kw">return</span> list(repeated)</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Bloom Filter Design — System Design</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Question:</strong> Design a system that can efficiently check if a username is 'definitely not taken' or 'possibly taken' when 100 million usernames exist. Exact lookup requires too much memory.</div>
+    <div class="iq-approach"><strong>Bloom Filter:</strong> A probabilistic data structure with O(1) query and no false negatives. Use k independent hash functions mapping each item to positions in a bit array. Lookup: check all k positions — if ANY is 0, item is definitely absent. If all 1, item is probably present (small false positive rate).</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">Bloom filter: bit_array = [0]*m (m=1000), k=3 hash functions
+
+Insert "alice":
+  h1("alice")=42, h2("alice")=100, h3("alice")=571
+  Set bits[42]=bits[100]=bits[571]=1
+
+Insert "bob":
+  h1("bob")=10, h2("bob")=200, h3("bob")=42  (collision at 42!)
+  Set bits[10]=bits[200]=1  (bits[42] already 1)
+
+Check "alice":
+  bits[42]=1 ✓, bits[100]=1 ✓, bits[571]=1 ✓ → "possibly present"
+
+Check "charlie":
+  h1("charlie")=5: bits[5]=0 → DEFINITELY ABSENT (no false negative) ✓
+
+Check "dave":
+  h1=10✓, h2=42✓, h3=100✓ → "possibly present" (FALSE POSITIVE!)
+  "dave" was never inserted but all its positions happen to be 1
+
+False positive rate ≈ (1-e^(-kn/m))^k
+  With m=1B, k=7, n=100M → ~0.8% false positive rate</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Bloom Filter Implementation</div></div><pre><span class="kw">import</span> hashlib
+<span class="kw">class</span> <span class="fn">BloomFilter</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, size=1000000, num_hashes=7):
+        self.size = size
+        self.num_hashes = num_hashes
+        self.bits = [0] * size
+
+    <span class="kw">def</span> <span class="fn">_positions</span>(self, item):
+        <span class="kw">for</span> seed <span class="kw">in</span> range(self.num_hashes):
+            h = int(hashlib.md5(f<span class="nm">'{seed}:{item}'</span>.encode()).hexdigest(), 16)
+            <span class="kw">yield</span> h % self.size
+
+    <span class="kw">def</span> <span class="fn">add</span>(self, item):
+        <span class="kw">for</span> pos <span class="kw">in</span> self._positions(item):
+            self.bits[pos] = 1
+
+    <span class="kw">def</span> <span class="fn">might_contain</span>(self, item):
+        <span class="kw">return all</span>(self.bits[pos] <span class="kw">for</span> pos <span class="kw">in</span> self._positions(item))
+    <span class="cm"># False = definitely absent | True = probably present</span></pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(k) per op — k hash functions</span>
+      <span class="iq-pill s">Space: O(m) bit array</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">Implement LRU + LFU Cache Hybrid</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Question:</strong> Design a cache that evicts the least frequently used item, and among same-frequency items, evicts the least recently used. This is LFU cache (LeetCode 460).</div>
+    <div class="iq-approach"><strong>HashMap + doubly-linked list per frequency bucket:</strong> Main map: key→(value, freq). Freq map: freq→OrderedDict (maintains insertion order within same frequency). Track min_freq. On get/put: update frequency, move to higher bucket.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">capacity=2
+put(1,1): freq_map={1: {1:1}}, key_freq={1:1}, min_freq=1
+put(2,2): freq_map={1: {1:1, 2:2}}, key_freq={1:1,2:2}, min_freq=1
+get(1):   freq of key 1: 1→2
+          freq_map={1:{2:2}, 2:{1:1}}, min_freq=1 (bucket 1 still has 2)
+put(3,3): capacity reached, evict min_freq=1 bucket's LRU
+          freq_map[1]={2:2}, oldest in freq 1 = key 2 → evict key 2
+          put(3,3): freq_map={1:{3:3}, 2:{1:1}}, min_freq=1
+get(2):   key 2 was evicted → return -1
+get(3):   freq of 3: 1→2, freq_map={2:{1:1,3:3}}, min_freq=2
+put(4,4): evict from min_freq=2 → oldest key in freq 2 = key 1
+          put(4,4): min_freq=1</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · LFU Cache</div></div><pre><span class="kw">from</span> collections <span class="kw">import</span> OrderedDict
+<span class="kw">class</span> <span class="fn">LFUCache</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, capacity):
+        self.cap = capacity
+        self.min_freq = 0
+        self.key_val  = {}           <span class="cm"># key → value</span>
+        self.key_freq = {}           <span class="cm"># key → frequency</span>
+        self.freq_keys = {}          <span class="cm"># freq → OrderedDict of keys</span>
+
+    <span class="kw">def</span> <span class="fn">_touch</span>(self, key):
+        f = self.key_freq[key]
+        self.key_freq[key] += 1
+        self.freq_keys[f].pop(key)
+        <span class="kw">if not</span> self.freq_keys[f]:
+            <span class="kw">del</span> self.freq_keys[f]
+            <span class="kw">if</span> self.min_freq == f: self.min_freq += 1
+        self.freq_keys.setdefault(f+1, OrderedDict())[key] = True
+
+    <span class="kw">def</span> <span class="fn">get</span>(self, key):
+        <span class="kw">if</span> key <span class="kw">not in</span> self.key_val: <span class="kw">return</span> -1
+        self._touch(key)
+        <span class="kw">return</span> self.key_val[key]
+
+    <span class="kw">def</span> <span class="fn">put</span>(self, key, value):
+        <span class="kw">if not</span> self.cap: <span class="kw">return</span>
+        <span class="kw">if</span> key <span class="kw">in</span> self.key_val:
+            self.key_val[key] = value; self._touch(key); <span class="kw">return</span>
+        <span class="kw">if</span> len(self.key_val) >= self.cap:
+            evict = next(iter(self.freq_keys[self.min_freq]))
+            self.freq_keys[self.min_freq].pop(evict)
+            <span class="kw">del</span> self.key_val[evict], self.key_freq[evict]
+        self.key_val[key] = value
+        self.key_freq[key] = 1
+        self.freq_keys.setdefault(1, OrderedDict())[key] = True
+        self.min_freq = 1</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(1) per op</span>
+      <span class="iq-pill s">Space: O(capacity)</span>
+    </div>
+  </div>
+</div></div>
+</div></body></html>

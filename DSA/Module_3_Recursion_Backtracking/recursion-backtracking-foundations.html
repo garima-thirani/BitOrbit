@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Recursion & Backtracking — Module 3</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+/* ── expanded interview question styles ── */
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 3 · Recursion & Backtracking</div><h1>Functions Calling Themselves<br><span>to Solve Smaller Versions</span></h1><p>Recursion is the mind-bending technique that makes complex problems trivial once you trust the process.</p><div class="stats"><div class="stat"><div class="sn">Trust the recursion</div><div class="sl">Core mindset</div></div><div class="stat"><div class="sn">Base case first</div><div class="sl">Design rule</div></div><div class="stat"><div class="sn">O(branch^depth)</div><div class="sl">Backtracking cost</div></div><div class="stat"><div class="sn">Foundation ⭐⭐</div><div class="sl">Powers trees, DP, graphs</div></div></div></div></div><div class="wrap">
+<div class="sec">🧠 The Story — The Russian Dolls</div>
+<div class="story">
+  <div class="slabel">Real World Story — Matryoshka</div>
+  <h3>A Russian doll contains a smaller version of itself. To open it, you open the biggest, then the next, then the next, until you reach the smallest one with nothing inside.</h3>
+  <p>
+    This is recursion. A problem that contains a smaller version of itself.<br><br>
+    <strong>The Two Laws of Recursion:</strong><br>
+    (1) <strong>Base case:</strong> The smallest doll that doesn't open. Without this, infinite recursion (stack overflow).<br>
+    (2) <strong>Recursive case:</strong> Break current problem into smaller version + some extra work. Trust that the smaller version is already solved.<br><br>
+    <em>"Trust the recursion"</em> is the mantra. When writing factorial(n), assume factorial(n-1) already works. Your job is just: factorial(n) = n * factorial(n-1). That's it.
+  </p>
+</div>
+
+<div class="ibox">
+  <div class="lbl">The Three-Question Framework</div>
+  <p>Before writing any recursive function, answer:</p>
+  <ol>
+    <li><strong>What is the simplest case?</strong> (base case — when to stop)</li>
+    <li><strong>What does one step look like?</strong> (break the problem by 1 unit)</li>
+    <li><strong>How do I combine results?</strong> (what comes back from the recursive call)</li>
+  </ol>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Recursion Classics — Factorial, Fibonacci, Power</div></div><pre><span class="cm"># --- Factorial: n! = n * (n-1)! ---</span>
+<span class="kw">def</span> <span class="fn">factorial</span>(n):
+    <span class="kw">if</span> n &lt;= 1: <span class="kw">return</span> 1           <span class="cm"># base case: 0! = 1! = 1</span>
+    <span class="kw">return</span> n * factorial(n-1)       <span class="cm"># trust: factorial(n-1) is correct</span>
+
+<span class="cm"># --- Power: x^n = x * x^(n-1) — optimized fast power ---</span>
+<span class="kw">def</span> <span class="fn">power</span>(x, n):
+    <span class="kw">if</span> n == 0: <span class="kw">return</span> 1             <span class="cm"># base case</span>
+    <span class="kw">if</span> n % 2 == 0:
+        half = power(x, n//2)
+        <span class="kw">return</span> half * half           <span class="cm"># x^(2k) = (x^k)^2 → O(log n) multiplications</span>
+    <span class="kw">return</span> x * power(x, n-1)        <span class="cm"># x^(2k+1) = x * x^(2k)</span>
+
+<span class="cm"># --- Flatten nested list (unknown depth) ---</span>
+<span class="kw">def</span> <span class="fn">flatten</span>(lst):
+    result = []
+    <span class="kw">for</span> item <span class="kw">in</span> lst:
+        <span class="kw">if isinstance</span>(item, list): result.extend(flatten(item))  <span class="cm"># recurse on sublists</span>
+        <span class="kw">else</span>:                      result.append(item)
+    <span class="kw">return</span> result
+<span class="cm"># flatten([1,[2,[3,4]],5]) → [1,2,3,4,5]</span>
+</pre></div>
+
+<div class="sec">🎬 Backtracking — "Try → Recurse → Undo"</div>
+<div class="ibox">
+  <div class="lbl">The Backtracking Template</div>
+  <div style="font-family:monospace;background:#0d1117;padding:12px;border-radius:8px;color:#e6edf3">
+    def backtrack(state, choices):<br>
+    &nbsp;&nbsp;if is_goal(state): add result; return<br>
+    &nbsp;&nbsp;for choice in choices:<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;if is_valid(choice):<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;make_choice(choice)    # Try<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;backtrack(next_state)  # Recurse<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;undo_choice(choice)    # Undo ← this is the backtrack!
+  </div>
+  <p style="margin-top:10px">The "undo" step is what makes it backtracking. Without it, you'd contaminate future branches with choices made for the current branch.</p>
+</div>
+
+<div class="sec">🎬 Generate Parentheses — Backtracking in Action</div>
+<div class="ts">
+  <div class="sn2">🔤</div>
+  <div class="sc"><strong>Generate all valid combinations of n pairs of parentheses.</strong>
+  At each step, you can add '(' if open_count &lt; n, or ')' if close_count &lt; open_count.
+  <div class="mini">n=3: trace the recursion tree
+""() → add ( → (
+( → add ( → ((
+(( → add ( → (((
+((( → add ) only → ((()
+((() → add ) → ((())
+((() → add ) → ((()))  ADD!
+(( → backtrack, add ) → (()
+... continues to generate all 5 valid strings</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Generate Parentheses, Subsets, Permutations</div></div><pre><span class="cm"># --- Generate Parentheses ---</span>
+<span class="kw">def</span> <span class="fn">gen_parens</span>(n):
+    result = []
+    <span class="kw">def</span> <span class="fn">bt</span>(s, opens, closes):
+        <span class="kw">if</span> len(s) == 2*n: result.append(s); <span class="kw">return</span>
+        <span class="kw">if</span> opens < n:      bt(s+'(', opens+1, closes)    <span class="cm"># add '('</span>
+        <span class="kw">if</span> closes < opens: bt(s+')', opens, closes+1)    <span class="cm"># add ')'</span>
+    bt('', 0, 0)
+    <span class="kw">return</span> result
+
+<span class="cm"># --- All Subsets (Power Set) ---</span>
+<span class="kw">def</span> <span class="fn">subsets</span>(nums):
+    result = [[]]
+    <span class="kw">for</span> num <span class="kw">in</span> nums:
+        result += [sub + [num] <span class="kw">for</span> sub <span class="kw">in</span> result]   <span class="cm"># each existing subset + new element</span>
+    <span class="kw">return</span> result
+
+<span class="cm"># --- All Permutations (backtracking) ---</span>
+<span class="kw">def</span> <span class="fn">permutations</span>(nums):
+    result = []
+    <span class="kw">def</span> <span class="fn">bt</span>(path, remaining):
+        <span class="kw">if not</span> remaining: result.append(path[:]); <span class="kw">return</span>
+        <span class="kw">for</span> i, n <span class="kw">in</span> enumerate(remaining):
+            path.append(n)                              <span class="cm"># try</span>
+            bt(path, remaining[:i]+remaining[i+1:])    <span class="cm"># recurse</span>
+            path.pop()                                  <span class="cm"># undo</span>
+    bt([], nums); <span class="kw">return</span> result
+</pre></div>
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Combination Sum</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 39):</strong> Given candidates array and target, find all unique combinations where chosen numbers sum to target. Same number may be chosen unlimited times. E.g. candidates=[2,3,6,7] target=7 → [[2,2,3],[7]].</div>
+    <div class="iq-approach"><strong>Backtracking with forward-only index:</strong> Sort candidates. At each step, try adding candidate[i] (allowing reuse) or move to candidate[i+1] (no reuse). Pass current index as 'start' to avoid going backwards (prevents duplicate orderings). Prune when current sum exceeds target.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">candidates=[2,3,6,7]  target=7
+
+bt(start=0, remaining=7, path=[]):
+  try 2: bt(0, 5, [2])
+    try 2: bt(0, 3, [2,2])
+      try 2: bt(0, 1, [2,2,2])
+        try 2: remaining=1<2 → PRUNE
+        try 3: 1<3 → PRUNE (sorted, all bigger)
+      try 3: bt(1, 0, [2,2,3]) → remaining=0 → RECORD ✓
+      try 6: 0<6 → PRUNE
+    try 3: bt(1, 2, [2,3])
+      try 3: 2<3 → PRUNE
+    try 6: bt(2, -1, [2,6]) → negative → PRUNE
+  try 3: bt(1, 4, [3])
+    try 3: bt(1, 1, [3,3]) → all >= 3 > 1 → PRUNE
+  try 6: bt(2, 1, [6]) → all >= 6 > 1 → PRUNE
+  try 7: bt(3, 0, [7]) → remaining=0 → RECORD [7] ✓
+
+Result: [[2,2,3],[7]] ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Combination Sum</div></div><pre><span class="kw">def</span> <span class="fn">combination_sum</span>(candidates, target):
+    candidates.sort()
+    result = []
+    <span class="kw">def</span> <span class="fn">bt</span>(start, remaining, path):
+        <span class="kw">if</span> remaining == 0:
+            result.append(path[:]); <span class="kw">return</span>
+        <span class="kw">for</span> i <span class="kw">in</span> range(start, len(candidates)):
+            c = candidates[i]
+            <span class="kw">if</span> c > remaining: <span class="kw">break</span>   <span class="cm"># sorted: all subsequent are bigger</span>
+            path.append(c)
+            bt(i, remaining - c, path)  <span class="cm"># i (not i+1) allows reuse</span>
+            path.pop()                   <span class="cm"># BACKTRACK</span>
+    bt(0, target, [])
+    <span class="kw">return</span> result</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n^(t/m)) where t=target, m=min candidate</span>
+      <span class="iq-pill s">Space: O(t/m) depth</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Subsets (Power Set)</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 78):</strong> Return all possible subsets of an integer array. The set cannot contain duplicate subsets. E.g. nums=[1,2,3] → [[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]].</div>
+    <div class="iq-approach"><strong>Backtracking with each-element as decision:</strong> At each step, either include or exclude the current element. More elegantly: for each starting index, record the current path and try adding each subsequent element.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums = [1, 2, 3]
+
+bt(start=0, path=[]):
+  Record []
+  try 1: path=[1], bt(1,[1])
+    Record [1]
+    try 2: path=[1,2], bt(2,[1,2])
+      Record [1,2]
+      try 3: path=[1,2,3], bt(3,[1,2,3])
+        Record [1,2,3] → done
+      backtrack: [1,2]
+    backtrack: [1]
+    try 3: path=[1,3], bt(3,[1,3])
+      Record [1,3]
+    backtrack: [1]
+  backtrack: []
+  try 2: path=[2], bt(2,[2])
+    Record [2]
+    try 3: Record [2,3]
+  try 3: Record [3]
+
+All subsets: [[],[1],[1,2],[1,2,3],[1,3],[2],[2,3],[3]] ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Subsets (Power Set)</div></div><pre><span class="kw">def</span> <span class="fn">subsets</span>(nums):
+    result = []
+    <span class="kw">def</span> <span class="fn">bt</span>(start, path):
+        result.append(path[:])         <span class="cm"># record current subset</span>
+        <span class="kw">for</span> i <span class="kw">in</span> range(start, len(nums)):
+            path.append(nums[i])
+            bt(i+1, path)              <span class="cm"># move forward, no reuse</span>
+            path.pop()                 <span class="cm"># BACKTRACK</span>
+    bt(0, [])
+    <span class="kw">return</span> result</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n × 2^n)</span>
+      <span class="iq-pill s">Space: O(n × 2^n)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">Palindrome Partitioning</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 131):</strong> Partition string s into all possible lists of palindromic substrings. E.g. s='aab' → [['a','a','b'],['aa','b']].</div>
+    <div class="iq-approach"><strong>Backtracking + DP palindrome check:</strong> Precompute is_palindrome[i][j] in O(n²). In backtracking, for each start, try all end positions. If s[start..end] is a palindrome (O(1) lookup), add to path and recurse from end+1. This avoids recomputing palindromes during the search.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">s="aab"
+Precompute:
+  dp[0][0]=T, dp[1][1]=T, dp[2][2]=T
+  dp[0][1]: s[0]=s[1]='a'='a' AND len=2 → T
+  dp[0][2]: s[0]='a'!=s[2]='b' → F
+  dp[1][2]: s[1]='a'!=s[2]='b' → F
+
+Backtrack:
+  start=0: try end=0('a',T)→path=['a']
+    start=1: try end=1('a',T)→path=['a','a']
+      start=2: try end=2('b',T)→path=['a','a','b']
+        → RECORD ✓
+    try end=2('ab',F) → skip
+  try end=1('aa',T)→path=['aa']
+    start=2: try end=2('b',T)→path=['aa','b']
+      → RECORD ✓
+  try end=2('aab',F) → skip
+
+Result: [['a','a','b'],['aa','b']] ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Palindrome Partitioning</div></div><pre><span class="kw">def</span> <span class="fn">partition</span>(s):
+    n = len(s)
+    dp = [[False]*n <span class="kw">for</span> _ <span class="kw">in</span> range(n)]
+    <span class="kw">for</span> i <span class="kw">in</span> range(n): dp[i][i] = True
+    <span class="kw">for</span> length <span class="kw">in</span> range(2, n+1):
+        <span class="kw">for</span> i <span class="kw">in</span> range(n-length+1):
+            j = i+length-1
+            dp[i][j] = s[i]==s[j] <span class="kw">and</span> (length==2 <span class="kw">or</span> dp[i+1][j-1])
+
+    result, path = [], []
+    <span class="kw">def</span> <span class="fn">bt</span>(start):
+        <span class="kw">if</span> start == n: result.append(path[:])
+        <span class="kw">for</span> end <span class="kw">in</span> range(start, n):
+            <span class="kw">if</span> dp[start][end]:
+                path.append(s[start:end+1])
+                bt(end+1)
+                path.pop()           <span class="cm"># BACKTRACK</span>
+    bt(0)
+    <span class="kw">return</span> result</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n × 2^n)</span>
+      <span class="iq-pill s">Space: O(n²) DP table</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

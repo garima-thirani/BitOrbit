@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Graph Theory — Module 15</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+/* ── expanded interview question styles ── */
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+
+/* ===== deep-dive intuition card ===== */
+.pat{background:linear-gradient(160deg,rgba(79,70,229,.08),rgba(15,23,42,.4));border:1px solid var(--brd);border-radius:18px;padding:30px 34px;margin:24px 0 40px;}
+.pat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+@media(max-width:760px){.pat-grid{grid-template-columns:1fr;}}
+.pat-cell{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:18px 22px;}
+.pat-cell h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.pat-cell.when h4{color:var(--w);}.pat-cell.state h4{color:var(--a);}
+.pat-cell.rec h4{color:var(--pl);}.pat-cell.base h4{color:var(--s);}
+.pat-cell p,.pat-cell li{font-size:.9rem;color:var(--tm);line-height:1.8;}
+.pat-cell ul{padding-left:18px;margin-top:6px;}.pat-cell li{margin:4px 0;}
+.formula{background:var(--cbg);border:1px solid #30363d;border-radius:10px;padding:16px 20px;margin:14px 0;font-family:'Fira Code','Courier New',monospace;font-size:.9rem;color:#a5b4fc;line-height:1.9;overflow-x:auto;}
+.formula .hl{color:#67e8f9;font-weight:700;}
+.keywords{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+.kwp{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:3px 14px;font-size:.8rem;font-weight:600;}
+.pitfall{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.03));border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.pitfall .pl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#fca5a5;font-weight:700;margin-bottom:6px;}
+.pitfall p{font-size:.88rem;color:#fecaca;line-height:1.8;}
+/* ===== animated SVG figure ===== */
+.fig{background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,.06),transparent 70%),var(--cbg);border:1px solid #30363d;border-radius:14px;padding:24px;margin:22px 0;overflow-x:auto;}
+.fig svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+.fig-cap{text-align:center;font-size:.82rem;color:var(--tm);margin-top:14px;font-style:italic;}
+.fig-cap b{color:var(--a);font-style:normal;}
+.fig-title{font-size:1.02rem;color:var(--t);margin:8px 0 10px;font-weight:700;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:16px;}
+.legend span{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--tm);}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;}
+.svg-t{fill:#e2e8f0;font-family:'Fira Code',monospace;}
+.svg-tm{fill:#94a3b8;font-family:'Segoe UI',sans-serif;}
+.svg-lbl{fill:#67e8f9;font-family:'Segoe UI',sans-serif;font-weight:700;}
+.svg-acc{fill:#fcd34d;font-family:'Fira Code',monospace;}
+.svg-s{fill:#6ee7b7;font-family:'Fira Code',monospace;}
+.svg-d{fill:#fca5a5;font-family:'Fira Code',monospace;}
+
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 15 · Graph Theory</div><h1>Navigate Any Network:<br><span>BFS, DFS, Dijkstra & Beyond</span></h1><p>Graphs model everything — from GPS routes to social networks, from web links to dependencies.</p><div class="stats"><div class="stat"><div class="sn">V+E Nodes/Edges</div><div class="sl">Graph Structure</div></div><div class="stat"><div class="sn">O(V+E)</div><div class="sl">BFS & DFS</div></div><div class="stat"><div class="sn">O(E log V)</div><div class="sl">Dijkstra</div></div><div class="stat"><div class="sn">FAANG ⭐⭐⭐</div><div class="sl">Critical for interviews</div></div></div></div></div><div class="wrap">
+<div class="sec">🧠 The Story — Google Maps</div>
+<div class="story">
+  <div class="slabel">Real World Story — Navigation</div>
+  <h3>Every time you ask Google Maps for directions, it runs a graph algorithm on a graph with 100M+ nodes.</h3>
+  <p>
+    Cities are <strong>vertices</strong>. Roads are <strong>edges</strong>. Travel time is the <strong>weight</strong>.<br><br>
+    <strong>BFS</strong> finds the shortest path in an unweighted graph (fewest roads to cross).<br>
+    <strong>Dijkstra</strong> finds the shortest path in a weighted graph (minimum total travel time).<br>
+    <strong>DFS</strong> explores all paths (used for connectivity, cycle detection, topological sort).<br>
+    <strong>Bellman-Ford</strong> handles negative weights (like credits that reduce travel time).<br><br>
+    The graph has a direction (one-way streets) making it a <strong>directed graph (digraph)</strong>. Most road networks are weighted digraphs — and every social network, dependency tree, and web is too.
+  </p>
+</div>
+
+<div class="ibox">
+  <div class="lbl">Graph Representation: Adjacency List vs Matrix</div>
+  <p>
+    <strong>Adjacency List:</strong> graph[u] = [(v, weight), ...]. Space: O(V+E). Best for sparse graphs.<br>
+    <strong>Adjacency Matrix:</strong> matrix[u][v] = weight (0 if no edge). Space: O(V²). Best for dense graphs or when you need O(1) edge lookup.<br><br>
+    <strong>In interviews: always use adjacency list</strong> unless the problem explicitly needs matrix representation.
+  </p>
+</div>
+
+<div class="sec">🎬 BFS — Shortest Path in Unweighted Graph</div>
+<div class="ts">
+  <div class="sn2">🌊</div>
+  <div class="sc"><strong>BFS mental model:</strong> Ripples in a pond. Start from source. All distance-1 neighbors first. Then distance-2. Naturally finds shortest path.<br>
+  <strong>When to use BFS:</strong> Unweighted shortest path. Level-order traversal. Minimum steps. "Connected in K moves?" problems.
+  <div class="mini">Graph: 1-2, 1-3, 2-4, 3-4, 4-5. Find shortest path 1→5.
+Queue: [1]        visited={1}
+Pop 1 → add 2,3   queue=[2,3]  dist={1:0, 2:1, 3:1}
+Pop 2 → add 4     queue=[3,4]  dist={4:2}
+Pop 3 → 4 already visited
+Pop 4 → add 5     queue=[5]    dist={5:3}
+Pop 5 → DONE! Shortest path 1→5 = 3 steps ✓</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · BFS — Shortest Path (Unweighted)</div></div><pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">bfs_shortest_path</span>(graph, src, dst):
+    <span class="cm"># graph: adjacency list {node: [neighbors]}</span>
+    queue = deque([(src, [src])])        <span class="cm"># (current_node, path_so_far)</span>
+    visited = {src}
+
+    <span class="kw">while</span> queue:
+        node, path = queue.popleft()
+        <span class="kw">if</span> node == dst: <span class="kw">return</span> path      <span class="cm"># found! BFS guarantees shortest</span>
+        <span class="kw">for</span> nbr <span class="kw">in</span> graph[node]:
+            <span class="kw">if</span> nbr <span class="kw">not in</span> visited:
+                visited.add(nbr)
+                queue.append((nbr, path + [nbr]))
+
+    <span class="kw">return</span> []                            <span class="cm"># no path exists</span>
+
+<span class="cm"># For just the distance (more memory efficient):</span>
+<span class="kw">def</span> <span class="fn">bfs_distance</span>(graph, src, dst):
+    queue = deque([(src, 0)])
+    visited = {src}
+    <span class="kw">while</span> queue:
+        node, dist = queue.popleft()
+        <span class="kw">if</span> node == dst: <span class="kw">return</span> dist
+        <span class="kw">for</span> nbr <span class="kw">in</span> graph.get(node, []):
+            <span class="kw">if</span> nbr <span class="kw">not in</span> visited:
+                visited.add(nbr)
+                queue.append((nbr, dist+1))
+    <span class="kw">return</span> -1
+</pre></div>
+
+<div class="pat">
+  <div class="fig-title" style="font-size:1.15rem;margin-bottom:6px;">🧠 Intuition — why BFS finds the shortest path for free</div>
+  <p style="color:var(--tm);line-height:1.85;">
+    Imagine dropping a stone in a pond. The ripple reaches every point <em>exactly</em> in order of distance — distance-1 ring before distance-2, always. BFS is that ripple: the <strong>FIFO queue</strong> guarantees you finish processing <em>all</em> nodes at distance <code>d</code> before you ever touch a node at distance <code>d+1</code>. So the <strong>first time</strong> you reach the target, you reached it by the fewest edges — no shorter route can exist, because a shorter one would have surfaced in an earlier ring. That's why BFS needs no edge weights and no priority queue: the queue order <em>is</em> the distance order.
+  </p>
+  <div class="pat-grid">
+    <div class="pat-cell state"><h4>🌊 The ripple invariant</h4><p>At any moment the queue holds nodes from at most two adjacent levels (<code>d</code> and <code>d+1</code>). Pop in, push out — distances only ever grow by one.</p></div>
+    <div class="pat-cell base"><h4>🟢 Mark visited on ENQUEUE</h4><p>Mark a node the instant you add it to the queue, <strong>not</strong> when you pop it. Otherwise the same node gets queued by multiple neighbors and you revisit — turning O(V+E) into a blow-up.</p></div>
+    <div class="pat-cell when"><h4>🟠 When BFS is the tool</h4><p>Unweighted shortest path, fewest-moves puzzles, level-order traversal, "reachable in K steps?", and multi-source flood fill (01-Matrix, rotting oranges).</p></div>
+    <div class="pat-cell rec"><h4>🟣 Why not DFS here?</h4><p>DFS dives down one branch first, so it may reach the target via a long detour before the short route. Only the breadth-first ring order guarantees minimality.</p></div>
+  </div>
+
+  <div class="fig" style="margin-top:8px;">
+    <div class="fig-title">🌊 BFS ripples outward — first arrival = shortest path (1 → 5)</div>
+    <svg viewBox="0 0 640 350" width="640" role="img" aria-label="Animated BFS level expansion">
+      <!-- expanding ripples from source -->
+      <g fill="none" stroke="#06b6d4" stroke-width="2">
+        <circle cx="90" cy="175" r="24" opacity="0"><animate attributeName="r" values="24;210" dur="4s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.5;0" dur="4s" repeatCount="indefinite"/></circle>
+        <circle cx="90" cy="175" r="24" opacity="0"><animate attributeName="r" values="24;210" dur="4s" begin="1.3s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.5;0" dur="4s" begin="1.3s" repeatCount="indefinite"/></circle>
+        <circle cx="90" cy="175" r="24" opacity="0"><animate attributeName="r" values="24;210" dur="4s" begin="2.6s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.5;0" dur="4s" begin="2.6s" repeatCount="indefinite"/></circle>
+      </g>
+      <!-- edges -->
+      <g stroke="#475569" stroke-width="2.5">
+        <line x1="90" y1="175" x2="230" y2="100"/>
+        <line x1="90" y1="175" x2="230" y2="250"/>
+        <line x1="230" y1="100" x2="380" y2="175"/>
+        <line x1="230" y1="250" x2="380" y2="175"/>
+        <line x1="380" y1="175" x2="520" y2="175"/>
+      </g>
+      <!-- shortest-path edge highlight (1-2-4-5) -->
+      <g stroke="#f59e0b" stroke-width="4" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.80;0.85;1" dur="11s" repeatCount="indefinite"/>
+        <line x1="90" y1="175" x2="230" y2="100"/><line x1="230" y1="100" x2="380" y2="175"/><line x1="380" y1="175" x2="520" y2="175"/></g>
+      <!-- nodes (base) -->
+      <g font-size="18" text-anchor="middle">
+        <circle cx="90" cy="175" r="24" fill="#162032" stroke="#334155" stroke-width="2"/><text x="90" y="181" class="svg-t">1</text>
+        <circle cx="230" cy="100" r="24" fill="#162032" stroke="#334155" stroke-width="2"/><text x="230" y="106" class="svg-t">2</text>
+        <circle cx="230" cy="250" r="24" fill="#162032" stroke="#334155" stroke-width="2"/><text x="230" y="256" class="svg-t">3</text>
+        <circle cx="380" cy="175" r="24" fill="#162032" stroke="#334155" stroke-width="2"/><text x="380" y="181" class="svg-t">4</text>
+        <circle cx="520" cy="175" r="24" fill="#162032" stroke="#334155" stroke-width="2"/><text x="520" y="181" class="svg-t">5</text>
+      </g>
+      <!-- level highlights + distance badges -->
+      <g text-anchor="middle">
+        <!-- L0: node 1 -->
+        <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.10;0.15;1" dur="11s" repeatCount="indefinite"/>
+          <circle cx="90" cy="175" r="24" fill="none" stroke="#06b6d4" stroke-width="4"/><text x="90" y="142" class="svg-lbl" font-size="13">d=0</text></g>
+        <!-- L1: nodes 2,3 -->
+        <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.28;0.33;1" dur="11s" repeatCount="indefinite"/>
+          <circle cx="230" cy="100" r="24" fill="none" stroke="#06b6d4" stroke-width="4"/><text x="230" y="67" class="svg-lbl" font-size="13">d=1</text>
+          <circle cx="230" cy="250" r="24" fill="none" stroke="#06b6d4" stroke-width="4"/><text x="230" y="293" class="svg-lbl" font-size="13">d=1</text></g>
+        <!-- L2: node 4 -->
+        <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.46;0.51;1" dur="11s" repeatCount="indefinite"/>
+          <circle cx="380" cy="175" r="24" fill="none" stroke="#818cf8" stroke-width="4"/><text x="380" y="142" class="svg-lbl" font-size="13" fill="#a5b4fc">d=2</text></g>
+        <!-- L3: node 5 (target) -->
+        <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.64;0.69;1" dur="11s" repeatCount="indefinite"/>
+          <circle cx="520" cy="175" r="26" fill="none" stroke="#f59e0b" stroke-width="4.5"/><text x="520" y="142" class="svg-acc" font-size="13">d=3 ★</text></g>
+      </g>
+      <text x="320" y="333" text-anchor="middle" class="svg-acc" font-size="15" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.84;0.88;1" dur="11s" repeatCount="indefinite"/>first arrival at 5 → shortest path = 3 edges: 1 → 2 → 4 → 5</text>
+    </svg>
+    <div class="legend">
+      <span><i style="background:#06b6d4"></i>frontier (current ring)</span>
+      <span><i style="background:#818cf8"></i>explored deeper</span>
+      <span><i style="background:#f59e0b"></i>target / shortest path</span>
+    </div>
+    <div class="fig-cap">Each ring is one BFS level. Nodes light up strictly in distance order, so the <b>first time</b> node 5 is reached it is reached optimally. ▶ loops every 11s.</div>
+  </div>
+</div>
+
+<div class="sec">🎬 DFS — Connectivity, Cycles, and All Paths</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · DFS — Iterative & Recursive Templates</div></div><pre><span class="cm"># --- Recursive DFS ---</span>
+<span class="kw">def</span> <span class="fn">dfs</span>(graph, node, visited=None, path=None):
+    <span class="kw">if</span> visited <span class="kw">is</span> None: visited = set(); path = []
+    visited.add(node)
+    path.append(node)
+    <span class="kw">for</span> nbr <span class="kw">in</span> graph.get(node, []):
+        <span class="kw">if</span> nbr <span class="kw">not in</span> visited:
+            dfs(graph, nbr, visited, path)
+
+<span class="cm"># --- Cycle Detection in Directed Graph ---</span>
+<span class="cm"># Use 3 states: WHITE(0)=unvisited, GRAY(1)=in-progress, BLACK(2)=done</span>
+<span class="kw">def</span> <span class="fn">has_cycle_directed</span>(graph, n):
+    color = [0] * n                      <span class="cm"># WHITE for all</span>
+    <span class="kw">def</span> <span class="fn">dfs</span>(u):
+        color[u] = 1                     <span class="cm"># GRAY: currently exploring</span>
+        <span class="kw">for</span> v <span class="kw">in</span> graph.get(u, []):
+            <span class="kw">if</span> color[v] == 1: <span class="kw">return</span> True   <span class="cm"># back edge → cycle!</span>
+            <span class="kw">if</span> color[v] == 0 <span class="kw">and</span> dfs(v): <span class="kw">return</span> True
+        color[u] = 2                     <span class="cm"># BLACK: done</span>
+        <span class="kw">return</span> False
+    <span class="kw">return</span> any(dfs(u) <span class="kw">for</span> u <span class="kw">in</span> range(n) <span class="kw">if</span> color[u] == 0)
+
+<span class="cm"># --- Topological Sort (DFS postorder = reverse topo order) ---</span>
+<span class="kw">def</span> <span class="fn">topo_sort</span>(graph, n):
+    visited, result = set(), []
+    <span class="kw">def</span> <span class="fn">dfs</span>(u):
+        visited.add(u)
+        <span class="kw">for</span> v <span class="kw">in</span> graph.get(u, []):
+            <span class="kw">if</span> v <span class="kw">not in</span> visited: dfs(v)
+        result.append(u)                 <span class="cm"># add AFTER visiting all descendants</span>
+    <span class="kw">for</span> u <span class="kw">in</span> range(n):
+        <span class="kw">if</span> u <span class="kw">not in</span> visited: dfs(u)
+    <span class="kw">return</span> result[::-1]                  <span class="cm"># reverse postorder = topological order</span>
+</pre></div>
+
+<div class="pat">
+  <div class="fig-title" style="font-size:1.15rem;margin-bottom:6px;">🧠 Intuition — DFS and the three colors of cycle detection</div>
+  <p style="color:var(--tm);line-height:1.85;">
+    DFS commits to a path and dives as deep as it can before backing up — like exploring a maze always taking the first unexplored door, retreating only at dead ends. The magic for <strong>directed cycle detection</strong> is realizing a node has three states, not two. <span style="color:#94a3b8">WHITE</span> = never seen. <span style="color:#fbbf24">GRAY</span> = on the <em>current</em> recursion path (entered, not yet finished). <span style="color:#34d399">BLACK</span> = fully explored and popped. If DFS ever points an edge at a <strong>GRAY</strong> node, that node is an ancestor still on the stack — you've looped back onto your own path. That's a <strong>back edge</strong>, and a back edge in a directed graph means a cycle. A BLACK neighbor is harmless: it's done, you just won't revisit it.
+  </p>
+  <div class="pat-grid">
+    <div class="pat-cell state"><h4>⚪ WHITE → 🟡 GRAY → ⚫ BLACK</h4><p>GRAY on the way <em>down</em> (push), BLACK on the way <em>up</em> (pop). The GRAY set is exactly the current call stack.</p></div>
+    <div class="pat-cell base"><h4>🟢 BLACK ≠ cycle</h4><p>Revisiting a finished (BLACK) node is fine — it just means two paths converge. Only a GRAY hit is a real cycle. Two-color visited sets can't tell these apart in directed graphs.</p></div>
+    <div class="pat-cell when"><h4>🟠 What DFS unlocks</h4><p>Connected components, cycle detection, topological sort (reverse postorder), bridges/articulation points, and "all paths" enumeration.</p></div>
+    <div class="pat-cell rec"><h4>🟣 Recursion = the stack</h4><p>The implicit call stack <em>is</em> your path. Postorder (append on the way out) gives topo order because a node is finished only after all its descendants.</p></div>
+  </div>
+
+  <div class="fig" style="margin-top:8px;">
+    <div class="fig-title">🔁 3-color DFS — a back edge to a GRAY node reveals a cycle</div>
+    <svg viewBox="0 0 640 320" width="640" role="img" aria-label="Animated DFS cycle detection">
+      <defs>
+        <marker id="dfs-ar" markerWidth="9" markerHeight="7" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#64748b"/></marker>
+        <marker id="dfs-red" markerWidth="9" markerHeight="7" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#ef4444"/></marker>
+      </defs>
+      <!-- edges -->
+      <g stroke="#64748b" stroke-width="2.5" marker-end="url(#dfs-ar)">
+        <line x1="134" y1="90" x2="274" y2="90"/>
+        <line x1="300" y1="116" x2="300" y2="214"/>
+        <line x1="281" y1="105" x2="131" y2="225"/>
+      </g>
+      <!-- back edge C->A (highlights red) -->
+      <line x1="281" y1="226" x2="131" y2="106" stroke="#475569" stroke-width="2.5" marker-end="url(#dfs-ar)"/>
+      <line x1="281" y1="226" x2="131" y2="106" stroke="#ef4444" stroke-width="4" marker-end="url(#dfs-red)" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.58;0.63;1" dur="11s" repeatCount="indefinite"/></line>
+      <!-- nodes base -->
+      <g font-size="18" text-anchor="middle">
+        <circle cx="110" cy="90" r="24" fill="#162032" stroke="#334155" stroke-width="2"/><text x="110" y="96" class="svg-t">A</text>
+        <circle cx="300" cy="90" r="24" fill="#162032" stroke="#334155" stroke-width="2"/><text x="300" y="96" class="svg-t">B</text>
+        <circle cx="300" cy="240" r="24" fill="#162032" stroke="#334155" stroke-width="2"/><text x="300" y="246" class="svg-t">C</text>
+        <circle cx="110" cy="240" r="24" fill="#162032" stroke="#334155" stroke-width="2"/><text x="110" y="246" class="svg-tm">D</text>
+      </g>
+      <!-- GRAY overlays (in-progress) -->
+      <g text-anchor="middle" font-size="18">
+        <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.10;0.15;1" dur="11s" repeatCount="indefinite"/><circle cx="110" cy="90" r="24" fill="#3a2a12" stroke="#fbbf24" stroke-width="4"/><text x="110" y="96" class="svg-acc">A</text></g>
+        <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.26;0.31;1" dur="11s" repeatCount="indefinite"/><circle cx="300" cy="90" r="24" fill="#3a2a12" stroke="#fbbf24" stroke-width="4"/><text x="300" y="96" class="svg-acc">B</text></g>
+        <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.42;0.47;1" dur="11s" repeatCount="indefinite"/><circle cx="300" cy="240" r="24" fill="#3a2a12" stroke="#fbbf24" stroke-width="4"/><text x="300" y="246" class="svg-acc">C</text></g>
+      </g>
+      <!-- red pulse on A when back edge hits it -->
+      <circle cx="110" cy="90" r="27" fill="none" stroke="#ef4444" stroke-width="4" opacity="0"><animate attributeName="opacity" values="0;0;1;0.3;1" keyTimes="0;0.6;0.7;0.85;1" dur="11s" repeatCount="indefinite"/></circle>
+      <!-- recursion stack panel -->
+      <text x="470" y="62" class="svg-tm" font-size="12">DFS recursion stack (GRAY)</text>
+      <g text-anchor="middle" font-size="14">
+        <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.10;0.15;1" dur="11s" repeatCount="indefinite"/><rect x="430" y="74" width="80" height="26" rx="6" fill="#3a2a12" stroke="#fbbf24"/><text x="470" y="92" class="svg-acc">A</text></g>
+        <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.26;0.31;1" dur="11s" repeatCount="indefinite"/><rect x="430" y="104" width="80" height="26" rx="6" fill="#3a2a12" stroke="#fbbf24"/><text x="470" y="122" class="svg-acc">B</text></g>
+        <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.42;0.47;1" dur="11s" repeatCount="indefinite"/><rect x="430" y="134" width="80" height="26" rx="6" fill="#3a2a12" stroke="#fbbf24"/><text x="470" y="152" class="svg-acc">C</text></g>
+      </g>
+      <text x="320" y="305" text-anchor="middle" class="svg-d" font-size="15" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.71;1" dur="11s" repeatCount="indefinite"/>edge C → A hits a GRAY node ⇒ back edge ⇒ CYCLE detected!</text>
+    </svg>
+    <div class="legend">
+      <span><i style="background:#162032;border:1px solid #334155"></i>WHITE (unseen)</span>
+      <span><i style="background:#fbbf24"></i>GRAY (on path)</span>
+      <span><i style="background:#10b981"></i>BLACK (done)</span>
+      <span><i style="background:#ef4444"></i>back edge → cycle</span>
+    </div>
+    <div class="fig-cap">DFS turns nodes GRAY on entry and stacks them. When the edge <b>C → A</b> points at a still-GRAY ancestor, that's a back edge — proof of a directed cycle. ▶ loops every 11s.</div>
+  </div>
+</div>
+
+<div class="sec">🎬 Dijkstra's Algorithm — Weighted Shortest Path</div>
+<div class="ts">
+  <div class="sn2">🗺️</div>
+  <div class="sc"><strong>Story:</strong> GPS navigating a city. Roads have different travel times (weights). Greedily explore the currently-closest-unvisited node. Guarantee: when a node is finalized, its distance is optimal.<br>
+  <strong>Why it works:</strong> We always expand the minimum distance node. Since all weights are non-negative, no future path can improve an already-finalized node's distance.
+  <div class="mini">Graph: A→B(4), A→C(1), C→B(2), B→D(1). Find shortest from A.
+heap=[(0,A)]  dist={A:0}
+Pop (0,A): explore B(4), C(1) → heap=[(1,C),(4,B)] dist={B:4,C:1}
+Pop (1,C): explore B(1+2=3) → update B! heap=[(3,B),(4,B)] dist={B:3}
+Pop (3,B): explore D(3+1=4) → heap=[(4,B),(4,D)] dist={D:4}
+Pop (4,B): already processed, skip
+Pop (4,D): DONE. Shortest: A→C→B→D = 4 ✓</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Dijkstra — O((V+E) log V)</div></div><pre><span class="kw">import</span> heapq
+
+<span class="kw">def</span> <span class="fn">dijkstra</span>(graph, src, n):
+    <span class="cm"># graph[u] = [(weight, v), ...]  adjacency list</span>
+    dist = [float('inf')] * n
+    dist[src] = 0
+    heap = [(0, src)]           <span class="cm"># (distance, node)</span>
+
+    <span class="kw">while</span> heap:
+        d, u = heapq.heappop(heap)
+        <span class="kw">if</span> d > dist[u]: <span class="kw">continue</span>   <span class="cm"># stale entry: skip</span>
+        <span class="kw">for</span> w, v <span class="kw">in</span> graph[u]:
+            nd = dist[u] + w
+            <span class="kw">if</span> nd < dist[v]:
+                dist[v] = nd
+                heapq.heappush(heap, (nd, v))
+
+    <span class="kw">return</span> dist              <span class="cm"># dist[i] = shortest distance from src to i</span>
+
+<span class="cm"># ⚠️ Dijkstra FAILS with negative weights (use Bellman-Ford instead)
+# The "stale entry" check (if d > dist[u]) is crucial for correctness.
+# Without it, we'd re-process nodes and get wrong answers.</span>
+</pre></div>
+
+<div class="pat">
+  <div class="fig-title" style="font-size:1.15rem;margin-bottom:6px;">🧠 Intuition — Dijkstra is BFS that respects distance</div>
+  <p style="color:var(--tm);line-height:1.85;">
+    BFS expands by <em>number of edges</em> because every edge costs the same. Once edges have <strong>different weights</strong>, "fewest edges" ≠ "shortest distance" — a 3-hop highway can beat a 1-hop dirt road. Dijkstra fixes this by replacing the plain queue with a <strong>min-heap keyed on distance</strong>: instead of expanding the nearest-in-hops node, it always expands the <em>nearest-in-total-cost</em> unfinished node. Because all weights are non-negative, the moment a node is popped with the smallest tentative distance, <strong>nothing can ever make it cheaper</strong> — every other route would have to pass through a node that's already at least as far. So that distance is final. <strong>Relaxation</strong> is the one operation: for each neighbor, check if going "through me" beats its current best, and if so, lower it and push the improved entry.
+  </p>
+  <div class="pat-grid">
+    <div class="pat-cell state"><h4>🔺 The greedy guarantee</h4><p>Pop-min with non-negative weights ⇒ the popped node's distance is optimal. This breaks the instant a negative edge exists — then use Bellman-Ford.</p></div>
+    <div class="pat-cell base"><h4>🟢 Relaxation</h4><p><code>if dist[u]+w &lt; dist[v]: dist[v]=dist[u]+w; push</code>. Lowering a neighbor's best-known distance is the only update the algorithm ever makes.</p></div>
+    <div class="pat-cell when"><h4>🟠 The stale-entry skip</h4><p>We never delete old heap entries; we just push improved ones. When a node pops with <code>d &gt; dist[u]</code>, it's an outdated copy — <code>continue</code> past it. This keeps the heap simple and correct.</p></div>
+    <div class="pat-cell rec"><h4>🟣 Cost</h4><p>Each edge causes at most one push: <code>O((V+E) log V)</code> with a binary heap. The <code>log V</code> is the heap operation; lazy deletion avoids decrease-key.</p></div>
+  </div>
+
+  <div class="fig" style="margin-top:8px;">
+    <div class="fig-title">🗺️ Dijkstra from A — greedy pops, relaxation lowers B from 4 → 3</div>
+    <svg viewBox="0 0 640 330" width="640" role="img" aria-label="Animated Dijkstra relaxation">
+      <defs>
+        <marker id="dij-ar" markerWidth="9" markerHeight="7" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#64748b"/></marker>
+        <marker id="dij-rx" markerWidth="9" markerHeight="7" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#f59e0b"/></marker>
+      </defs>
+      <!-- edges -->
+      <g stroke="#64748b" stroke-width="2.5" marker-end="url(#dij-ar)">
+        <line x1="114" y1="108" x2="306" y2="92"/>
+        <line x1="106" y1="128" x2="194" y2="222"/>
+        <line x1="353" y1="97" x2="517" y2="143"/>
+      </g>
+      <!-- C->B edge (will flash amber on relax) -->
+      <line x1="225" y1="221" x2="315" y2="109" stroke="#64748b" stroke-width="2.5" marker-end="url(#dij-ar)"/>
+      <line x1="225" y1="221" x2="315" y2="109" stroke="#f59e0b" stroke-width="4" marker-end="url(#dij-rx)" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0.3" keyTimes="0;0.24;0.30;0.42;1" dur="12s" repeatCount="indefinite"/></line>
+      <!-- weight labels -->
+      <g font-size="14" text-anchor="middle">
+        <rect x="198" y="78" width="22" height="20" rx="4" fill="#0d1117"/><text x="209" y="93" class="svg-tm">4</text>
+        <rect x="139" y="176" width="22" height="20" rx="4" fill="#0d1117"/><text x="150" y="191" class="svg-tm">1</text>
+        <rect x="259" y="156" width="22" height="20" rx="4" fill="#0d1117"/><text x="270" y="171" class="svg-tm">2</text>
+        <rect x="424" y="110" width="22" height="20" rx="4" fill="#0d1117"/><text x="435" y="125" class="svg-tm">1</text>
+      </g>
+      <!-- nodes base -->
+      <g font-size="18" text-anchor="middle">
+        <circle cx="90" cy="110" r="24" fill="#162032" stroke="#334155" stroke-width="2"/><text x="90" y="116" class="svg-t">A</text>
+        <circle cx="330" cy="90" r="24" fill="#162032" stroke="#334155" stroke-width="2"/><text x="330" y="96" class="svg-t">B</text>
+        <circle cx="210" cy="240" r="24" fill="#162032" stroke="#334155" stroke-width="2"/><text x="210" y="246" class="svg-t">C</text>
+        <circle cx="540" cy="150" r="24" fill="#162032" stroke="#334155" stroke-width="2"/><text x="540" y="156" class="svg-t">D</text>
+      </g>
+      <!-- finalized (green) rings -->
+      <circle cx="90" cy="110" r="24" fill="none" stroke="#10b981" stroke-width="4" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.08;0.12;1" dur="12s" repeatCount="indefinite"/></circle>
+      <circle cx="210" cy="240" r="24" fill="none" stroke="#10b981" stroke-width="4" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.24;0.28;1" dur="12s" repeatCount="indefinite"/></circle>
+      <circle cx="330" cy="90" r="24" fill="none" stroke="#10b981" stroke-width="4" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.42;0.46;1" dur="12s" repeatCount="indefinite"/></circle>
+      <circle cx="540" cy="150" r="24" fill="none" stroke="#10b981" stroke-width="4" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.72;0.76;1" dur="12s" repeatCount="indefinite"/></circle>
+      <!-- distance badges -->
+      <g font-size="13" text-anchor="middle">
+        <text x="90" y="78" class="svg-s">0</text>
+        <text x="210" y="284" class="svg-s">1</text>
+        <!-- B tentative 4 then relaxed to 3 -->
+        <text x="330" y="54" class="svg-acc" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.10;0.14;0.28;0.32" dur="12s" repeatCount="indefinite"/>4</text>
+        <text x="330" y="54" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.30;0.34;1" dur="12s" repeatCount="indefinite"/>3 ✓</text>
+        <text x="540" y="118" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.56;0.60;1" dur="12s" repeatCount="indefinite"/>4</text>
+      </g>
+      <!-- stale skip note -->
+      <text x="320" y="312" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.50;0.54;0.66;0.70" dur="12s" repeatCount="indefinite"/>pop (4,B): 4 &gt; dist[B]=3 → stale, skip ✗</text>
+      <text x="320" y="312" text-anchor="middle" class="svg-acc" font-size="14" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.78;0.82;1" dur="12s" repeatCount="indefinite"/>shortest A → C → B → D = 4 ✓</text>
+    </svg>
+    <div class="legend">
+      <span><i style="background:#10b981"></i>finalized (optimal)</span>
+      <span><i style="background:#f59e0b"></i>relaxation / tentative</span>
+      <span><i style="background:#64748b"></i>edge weight</span>
+    </div>
+    <div class="fig-cap">Pop the closest unfinished node, then <b>relax</b> its edges. Going A→C→B (1+2=3) beats the direct A→B (4), so B drops to 3; the old (4,B) heap entry is later skipped as <b>stale</b>. ▶ loops every 12s.</div>
+  </div>
+</div>
+
+<div class="sec">🎬 Bellman-Ford & Floyd-Warshall</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Bellman-Ford (handles negatives) & Floyd-Warshall (all-pairs)</div></div><pre><span class="cm"># --- Bellman-Ford: Single Source, Handles Negative Weights ---</span>
+<span class="cm"># O(V×E) time. Relax ALL edges V-1 times. Then check for negative cycle.</span>
+<span class="kw">def</span> <span class="fn">bellman_ford</span>(n, edges, src):
+    <span class="cm"># edges = [(u, v, weight), ...]</span>
+    dist = [float('inf')] * n
+    dist[src] = 0
+
+    <span class="kw">for</span> _ <span class="kw">in</span> range(n - 1):              <span class="cm"># relax V-1 times</span>
+        <span class="kw">for</span> u, v, w <span class="kw">in</span> edges:
+            <span class="kw">if</span> dist[u] + w < dist[v]:
+                dist[v] = dist[u] + w
+
+    <span class="cm"># Check negative cycle: if any edge can still be relaxed → cycle</span>
+    <span class="kw">for</span> u, v, w <span class="kw">in</span> edges:
+        <span class="kw">if</span> dist[u] + w < dist[v]:
+            <span class="kw">return</span> None              <span class="cm"># negative cycle detected!</span>
+    <span class="kw">return</span> dist
+
+<span class="cm"># --- Floyd-Warshall: All-Pairs Shortest Path --- O(V³) time, O(V²) space</span>
+<span class="kw">def</span> <span class="fn">floyd_warshall</span>(n, edges):
+    INF = float('inf')
+    dist = [[INF]*n <span class="kw">for</span> _ <span class="kw">in</span> range(n)]
+    <span class="kw">for</span> i <span class="kw">in</span> range(n): dist[i][i] = 0
+    <span class="kw">for</span> u, v, w <span class="kw">in</span> edges: dist[u][v] = w
+
+    <span class="kw">for</span> k <span class="kw">in</span> range(n):                  <span class="cm"># try routing through each intermediate k</span>
+        <span class="kw">for</span> i <span class="kw">in</span> range(n):
+            <span class="kw">for</span> j <span class="kw">in</span> range(n):
+                <span class="kw">if</span> dist[i][k] + dist[k][j] < dist[i][j]:
+                    dist[i][j] = dist[i][k] + dist[k][j]
+    <span class="kw">return</span> dist
+</pre></div>
+
+<div class="sec">📊 When to Use Which Graph Algorithm</div>
+<div class="card"><table>
+  <thead><tr><th>Algorithm</th><th>When to Use</th><th>Time</th><th>Handles Negatives?</th></tr></thead>
+  <tbody>
+    <tr><td>BFS</td><td>Shortest path, unweighted graph</td><td>O(V+E)</td><td>N/A</td></tr>
+    <tr><td>DFS</td><td>Connectivity, cycles, topological sort, all paths</td><td>O(V+E)</td><td>N/A</td></tr>
+    <tr><td>Dijkstra</td><td>Shortest path, positive weights</td><td>O((V+E)log V)</td><td>No</td></tr>
+    <tr><td>Bellman-Ford</td><td>Shortest path, negative weights, negative cycle detection</td><td>O(V×E)</td><td>Yes</td></tr>
+    <tr><td>Floyd-Warshall</td><td>All-pairs shortest path, small graphs</td><td>O(V³)</td><td>Yes</td></tr>
+    <tr><td>Kruskal's/Prim's</td><td>Minimum Spanning Tree</td><td>O(E log E)</td><td>N/A</td></tr>
+    <tr><td>Topological Sort</td><td>DAG ordering, dependency resolution</td><td>O(V+E)</td><td>N/A</td></tr>
+  </tbody>
+</table></div>
+
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Number of Connected Components</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 323):</strong> You have n nodes (0 to n-1) and a list of undirected edges. Count the number of connected components.</div>
+    <div class="iq-approach"><strong>DFS/BFS traversal:</strong> For each unvisited node, launch a DFS that marks all reachable nodes as visited. Each launch = 1 new component. Union-Find is an alternative but BFS/DFS is simpler to explain.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">n=5, edges=[[0,1],[1,2],[3,4]]
+
+Build adjacency list:
+  0: [1]   1: [0,2]   2: [1]   3: [4]   4: [3]
+
+visited = {F,F,F,F,F}
+
+Iteration:
+  node 0: unvisited → DFS → visits {0,1,2}   components=1
+  node 1: visited, skip
+  node 2: visited, skip
+  node 3: unvisited → DFS → visits {3,4}     components=2
+  node 4: visited, skip
+
+Answer = 2 components ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Connected Components (DFS)</div></div><pre><span class="kw">def</span> <span class="fn">count_components</span>(n, edges):
+    adj = [[] <span class="kw">for</span> _ <span class="kw">in</span> range(n)]
+    <span class="kw">for</span> u, v <span class="kw">in</span> edges:
+        adj[u].append(v); adj[v].append(u)
+    visited = [False] * n
+
+    <span class="kw">def</span> <span class="fn">dfs</span>(node):
+        visited[node] = True
+        <span class="kw">for</span> nb <span class="kw">in</span> adj[node]:
+            <span class="kw">if not</span> visited[nb]: dfs(nb)
+
+    count = 0
+    <span class="kw">for</span> i <span class="kw">in</span> range(n):
+        <span class="kw">if not</span> visited[i]:
+            dfs(i); count += 1   <span class="cm"># new component found</span>
+    <span class="kw">return</span> count</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(V+E)</span>
+      <span class="iq-pill s">Space: O(V+E)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Network Delay Time (Dijkstra)</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 743):</strong> n nodes, directed weighted edges. Send signal from node k. Find time for ALL nodes to receive signal. Return -1 if any unreachable.</div>
+    <div class="iq-approach"><strong>Single-source shortest path — Dijkstra:</strong> BFS with a min-heap. dist[node] = minimum time signal takes to arrive. The last node to receive signal = max(dist). If any node has dist=∞, return -1.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">n=4, edges=[[2,1,1],[2,3,1],[3,4,1]], k=2
+
+Build adj: 2→[(1,1),(3,1)]  3→[(4,1)]
+
+Dijkstra from node 2:
+  heap: [(0,2)]    dist={2:0}
+  Pop (0,2): neighbors 1(cost=1), 3(cost=1)
+    → dist[1]=1, dist[3]=1, push (1,1),(1,3)
+  Pop (1,1): no outgoing edges
+  Pop (1,3): neighbor 4(cost=1)
+    → dist[4]=1+1=2, push (2,4)
+  Pop (2,4): no outgoing edges
+
+dist = {2:0, 1:1, 3:1, 4:2}
+max(dist.values()) = 2 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Network Delay Time — Dijkstra</div></div><pre><span class="kw">import</span> heapq
+<span class="kw">def</span> <span class="fn">network_delay_time</span>(times, n, k):
+    adj = {i:[] <span class="kw">for</span> i <span class="kw">in</span> range(1, n+1)}
+    <span class="kw">for</span> u,v,w <span class="kw">in</span> times: adj[u].append((v,w))
+
+    dist = {i: float(<span class="nm">'inf'</span>) <span class="kw">for</span> i <span class="kw">in</span> range(1, n+1)}
+    dist[k] = 0
+    heap = [(0, k)]                       <span class="cm"># (cost, node)</span>
+
+    <span class="kw">while</span> heap:
+        d, u = heapq.heappop(heap)
+        <span class="kw">if</span> d > dist[u]: <span class="kw">continue</span>  <span class="cm"># stale entry</span>
+        <span class="kw">for</span> v, w <span class="kw">in</span> adj[u]:
+            <span class="kw">if</span> dist[u] + w &lt; dist[v]:
+                dist[v] = dist[u] + w
+                heapq.heappush(heap, (dist[v], v))
+
+    ans = max(dist.values())
+    <span class="kw">return</span> ans <span class="kw">if</span> ans &lt; float(<span class="nm">'inf'</span>) <span class="kw">else</span> -1</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O((V+E) log V)</span>
+      <span class="iq-pill s">Space: O(V+E)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">Course Schedule — Cycle Detection & Topological Sort</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 207/210):</strong> numCourses courses, prerequisites pairs [a,b] mean 'take b before a'. Can you finish all? (207) / Return valid ordering (210). Essentially: detect cycle in directed graph, or find topological sort.</div>
+    <div class="iq-approach"><strong>Kahn's BFS (Topological Sort):</strong> Build indegree array. Push all nodes with indegree=0 into queue. Process each: decrement neighbors' indegree; push neighbors reaching 0. If all nodes processed → no cycle. For ordering, collect nodes as processed.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">n=4, prereqs=[[1,0],[2,0],[3,1],[3,2]]
+Dependency graph: 0→1, 0→2, 1→3, 2→3
+indegree: [0, 1, 1, 2]
+
+BFS:
+  Queue: [0]  (only node with indegree 0)
+  Pop 0: order=[0], neighbors 1,2 → indegree=[0,0,0,2]
+  Push 1,2. Queue: [1,2]
+  Pop 1: order=[0,1], neighbor 3 → indegree=[0,0,0,1]. Queue: [2]
+  Pop 2: order=[0,1,2], neighbor 3 → indegree=[0,0,0,0]. Push 3.
+  Pop 3: order=[0,1,2,3]
+
+len(order)==4==n → No cycle. Valid ordering: [0,1,2,3] ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Course Schedule II (Kahn's BFS)</div></div><pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+<span class="kw">def</span> <span class="fn">find_order</span>(numCourses, prerequisites):
+    indegree = [0] * numCourses
+    adj = [[] <span class="kw">for</span> _ <span class="kw">in</span> range(numCourses)]
+    <span class="kw">for</span> a, b <span class="kw">in</span> prerequisites:
+        adj[b].append(a)              <span class="cm"># b must come before a</span>
+        indegree[a] += 1
+
+    q = deque([i <span class="kw">for</span> i <span class="kw">in</span> range(numCourses) <span class="kw">if</span> indegree[i]==0])
+    order = []
+    <span class="kw">while</span> q:
+        node = q.popleft()
+        order.append(node)
+        <span class="kw">for</span> nb <span class="kw">in</span> adj[node]:
+            indegree[nb] -= 1
+            <span class="kw">if</span> indegree[nb] == 0: q.append(nb)
+    <span class="kw">return</span> order <span class="kw">if</span> len(order)==numCourses <span class="kw">else</span> []</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(V+E)</span>
+      <span class="iq-pill s">Space: O(V+E)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">4</div><div class="iqt">01 Matrix — Multi-Source BFS</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 542):</strong> Given an m×n binary matrix, return a matrix where each cell contains its distance to the nearest 0.</div>
+    <div class="iq-approach"><strong>Multi-source BFS (reverse thinking):</strong> Instead of BFS from each 1 to find nearest 0 (O(m²n²)), add ALL 0-cells to the queue at once and BFS outward. Each 1-cell gets updated the first time it's reached (shortest distance). This is O(mn).</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">Matrix:
+  [[0,0,0],
+   [0,1,0],
+   [1,1,1]]
+
+Init: Add all 0-cells to queue with dist=0
+  Queue: [(0,0),(0,1),(0,2),(1,0),(1,2)]
+  dist matrix:
+  [[0,0,0],
+   [0,?,0],
+   [?,?,?]]
+
+BFS step 1 (process all level-0 cells):
+  From (1,0)→(2,0): dist=1
+  From (1,2)→(2,2): dist=1
+  dist[1][1]=1 (reached from (1,0) or (0,1))
+
+BFS step 2:
+  From (2,0)→(2,1): dist=2
+  From (2,2)→(2,1): min already set to 2
+  From (1,1)→(2,1): dist=2 (already found)
+
+Result:
+  [[0,0,0],
+   [0,1,0],
+   [1,2,1]] ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · 01 Matrix — Multi-Source BFS</div></div><pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+<span class="kw">def</span> <span class="fn">update_matrix</span>(mat):
+    m, n = len(mat), len(mat[0])
+    dist = [[float(<span class="nm">'inf'</span>)] * n <span class="kw">for</span> _ <span class="kw">in</span> range(m)]
+    q = deque()
+
+    <span class="kw">for</span> r <span class="kw">in</span> range(m):            <span class="cm"># seed all 0-cells</span>
+        <span class="kw">for</span> c <span class="kw">in</span> range(n):
+            <span class="kw">if</span> mat[r][c] == 0:
+                dist[r][c] = 0; q.append((r,c))
+
+    dirs = [(1,0),(-1,0),(0,1),(0,-1)]
+    <span class="kw">while</span> q:
+        r, c = q.popleft()
+        <span class="kw">for</span> dr, dc <span class="kw">in</span> dirs:
+            nr, nc = r+dr, c+dc
+            <span class="kw">if</span> 0 &lt;= nr &lt; m <span class="kw">and</span> 0 &lt;= nc &lt; n <span class="kw">and</span> dist[nr][nc] > dist[r][c]+1:
+                dist[nr][nc] = dist[r][c] + 1
+                q.append((nr,nc))
+    <span class="kw">return</span> dist</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(m×n)</span>
+      <span class="iq-pill s">Space: O(m×n)</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

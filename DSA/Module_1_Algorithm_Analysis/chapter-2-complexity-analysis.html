@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Complexity Analysis</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;
+  background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;
+  border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.defbox{background:rgba(79,70,229,.09);border-left:3px solid #4f46e5;
+  padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0;font-size:.92rem;line-height:1.8;}
+.defbox strong{color:#818cf8;}
+.tag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:16px 0;}
+.tag-card{background:var(--bc2);border:1px solid var(--brd);border-radius:10px;padding:14px 16px;}
+.tag-card .tc{font-weight:700;font-size:.85rem;color:#fca5a5;margin-bottom:4px;}
+.tag-card .td{font-size:.82rem;color:var(--tm);}
+.cmp-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.88rem;}
+.cmp-table th{background:rgba(79,70,229,.15);color:#818cf8;padding:10px 14px;text-align:left;border-bottom:1px solid var(--brd);}
+.cmp-table td{padding:9px 14px;border-bottom:1px solid rgba(51,65,85,.5);color:var(--tm);}
+.cmp-table tr:hover td{background:rgba(79,70,229,.05);}
+.cmp-table .h{color:#fca5a5;font-weight:600;}
+.cmp-table .g{color:#6ee7b7;font-weight:600;}
+.cmp-table .y{color:#fcd34d;font-weight:600;}
+.step-list{counter-reset:step;list-style:none;padding:0;margin:14px 0;}
+.step-list li{counter-increment:step;display:flex;gap:14px;margin-bottom:14px;align-items:flex-start;}
+.step-list li::before{content:counter(step);min-width:28px;height:28px;background:var(--p);
+  color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:.78rem;font-weight:700;flex-shrink:0;margin-top:2px;}
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;
+  background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);
+  padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 1 · Chapter 2</div><h1>Big O Notation<br><span>Time & Space Complexity</span></h1><p>The universal language for describing algorithm performance. Master this and you can evaluate any algorithm at a glance.</p><div class="stats"><div class="stat"><div class="sn">O(1)</div><div class="sl">Constant</div></div><div class="stat"><div class="sn">O(log n)</div><div class="sl">Logarithmic</div></div><div class="stat"><div class="sn">O(n log n)</div><div class="sl">Linearithmic</div></div><div class="stat"><div class="sn">O(2^n)</div><div class="sl">Exponential</div></div></div></div></div><div class="wrap">
+
+<div class="sec">&#129504; The Story &#8212; Measuring without a Stopwatch</div>
+<div class="story">
+  <div class="slabel">Why Big O?</div>
+  <h3>You can't benchmark on every possible computer with every possible input. Big O gives you a machine-independent, input-size-based measure of growth.</h3>
+  <p>
+    Two computers run your sort. One is 10× faster. But when n grows from 1,000 to 1,000,000, an O(n²) algorithm gets 1,000,000× slower while an O(n log n) algorithm gets only 20,000× slower. <strong>The algorithm matters far more than the hardware.</strong>
+  </p>
+</div>
+
+<div class="sec">&#128200; Complexity Growth &#8212; Visual Comparison</div>
+<div class="card">
+<div class="viz-box">n = 1, 10, 100, 1000, 10000
+
+     n │ O(1)  │ O(log n) │ O(n)  │ O(n log n) │ O(n²)      │ O(2ⁿ)
+───────┼───────┼──────────┼───────┼────────────┼────────────┼──────────────────
+     1 │  1    │  0       │  1    │  0         │  1         │  2
+    10 │  1    │  3       │  10   │  33        │  100       │  1,024
+   100 │  1    │  7       │  100  │  664       │  10,000    │  1.27 × 10³⁰
+  1000 │  1    │  10      │  1000 │  9,966     │  1,000,000 │  ≈ 10³⁰¹
+ 10000 │  1    │  13      │ 10000 │ 132,877    │  10⁸       │  UNCOMPUTABLE
+
+Growth chart (each ■ = 1,000 operations at n=1000):
+  O(1)         ■
+  O(log n)     ■■■■■■■■■■
+  O(n)         ■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■ × 25 blocks
+  O(n log n)   ███████████████████████████████████████ × 249 blocks
+  O(n²)        ███████████████████████████ × 1,000,000 blocks (off chart!)
+  O(2ⁿ)        ∞  (universe would end first)</div>
+</div>
+
+<div class="sec">&#128218; Worked Examples &#8212; One for Each Class</div>
+<div class="card">
+  <table class="cmp-table">
+    <tr><th>Class</th><th>Example</th><th>Why</th><th>Practical limit</th></tr>
+    <tr><td class="g">O(1)</td><td>Array access arr[i], HashMap.get(k)</td><td>Direct address calculation, no loops</td><td>Any n</td></tr>
+    <tr><td class="g">O(log n)</td><td>Binary search, tree height, pow(b,e,m)</td><td>Input halved each step</td><td>n ≈ 10¹⁸</td></tr>
+    <tr><td class="g">O(n)</td><td>Linear scan, hash table build</td><td>Visit each element once</td><td>n ≈ 10⁸</td></tr>
+    <tr><td class="y">O(n log n)</td><td>Merge sort, heap sort, most sorts</td><td>Sort + merge or heap operations</td><td>n ≈ 10⁶–10⁷</td></tr>
+    <tr><td class="y">O(n²)</td><td>Bubble/selection/insertion sort, all pairs</td><td>Nested loops over input</td><td>n ≈ 5,000</td></tr>
+    <tr><td class="h">O(n³)</td><td>Floyd-Warshall, naive matrix multiply</td><td>Triple nested loop</td><td>n ≈ 500</td></tr>
+    <tr><td class="h">O(2ⁿ)</td><td>Subsets, power set, some DP states</td><td>Every subset of input</td><td>n ≤ 20</td></tr>
+    <tr><td class="h">O(n!)</td><td>Permutations, brute-force TSP</td><td>All orderings</td><td>n ≤ 10</td></tr>
+  </table>
+</div>
+
+<div class="sec">&#128260; Space-Time Tradeoff</div>
+<div class="card">
+  <p style="color:var(--tm);margin-bottom:14px">Most optimisations trade memory for speed. Recognising this tradeoff is a key interview skill.</p>
+  <table class="cmp-table">
+    <tr><th>Problem</th><th>Slow &amp; Cheap</th><th>Fast &amp; Expensive</th><th>Tradeoff</th></tr>
+    <tr><td>Contains duplicate</td><td>O(n²) time, O(1) space — check all pairs</td><td>O(n) time, O(n) space — HashSet</td><td>n space for n speed</td></tr>
+    <tr><td>Fibonacci(n)</td><td>O(2ⁿ) time — naive recursion</td><td>O(n) time, O(n) space — memoize</td><td>n cache entries eliminate re-computation</td></tr>
+    <tr><td>Range sum query</td><td>O(n) per query — scan each time</td><td>O(1) per query, O(n) build — prefix sum</td><td>O(n) precompute → O(1) all future queries</td></tr>
+    <tr><td>String search</td><td>O(nm) — naive</td><td>O(n+m) — KMP with O(m) table</td><td>Failure table eliminates re-comparison</td></tr>
+  </table>
+</div>
+
+<div class="sec">&#128295; Rules for Calculating Complexity</div>
+<div class="card">
+<div class="viz-box">Rule 1 — Drop constants:     3n + 7 = O(n),  not O(3n+7)
+Rule 2 — Drop lower terms:   n² + n = O(n²),  not O(n²+n)
+Rule 3 — Sequential code adds: O(n) + O(n²) = O(n²)
+Rule 4 — Nested loops multiply: O(n) inside O(n) = O(n²)
+Rule 5 — Recursion: use recurrence relation
+  T(n) = 2T(n/2) + O(n)  →  O(n log n)  [Master Theorem, case 2]
+  T(n) = T(n-1) + O(1)   →  O(n)        [linear recursion]
+  T(n) = 2T(n-1) + O(1)  →  O(2ⁿ)       [exponential!]
+
+Master Theorem (for T(n) = a·T(n/b) + O(nᶜ)):
+  If c &lt; log_b(a) → O(n^log_b(a))   [recursion dominates]
+  If c = log_b(a) → O(nᶜ log n)       [equal work at every level]
+  If c &gt; log_b(a) → O(nᶜ)           [combination step dominates]</div>
+</div>
+
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Analyse Binary Search Complexity</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem:</strong> Prove that binary search is O(log n). Why is the base of the log irrelevant in Big O notation?</div>
+    <div class="iq-approach"><strong>Recurrence:</strong> Each step halves the search space. T(n) = T(n/2) + O(1). Solving: after k steps, space = n/2^k = 1, so k = log₂(n). For Big O, log₂n and log₁₀n differ by a constant factor log₂(10) ≈ 3.32 — constants are dropped.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">Binary search on n=1024 elements:
+  Step 1: 1024 candidates
+  Step 2:  512 candidates  (halved)
+  Step 3:  256 candidates
+  Step 4:  128 candidates
+  Step 5:   64 candidates
+  Step 6:   32 candidates
+  Step 7:   16 candidates
+  Step 8:    8 candidates
+  Step 9:    4 candidates
+  Step 10:   2 candidates
+  Step 11:   1 candidate  → found or not found
+
+Total steps = log₂(1024) = 10 comparisons
+
+Recurrence: T(n) = T(n/2) + 1
+  Expand: 1 + 1 + 1 + ... = log₂(n) times → T(n) = O(log n)
+
+Base change: log₂n = log₁₀n / log₁₀2 = (constant) × log₁₀n
+→ In Big O, all log bases are equivalent.</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Binary search with step counter</div></div><pre><span class="kw">def</span> <span class="fn">binary_search</span>(arr, target):
+    lo, hi, steps = 0, len(arr)-1, 0
+    <span class="kw">while</span> lo &lt;= hi:
+        steps += 1
+        mid = (lo + hi) // 2
+        <span class="kw">if</span>   arr[mid] == target: print(f<span class="nm">"Found in {steps} steps"</span>); <span class="kw">return</span> mid
+        <span class="kw">elif</span> arr[mid] &lt;  target: lo = mid + 1
+        <span class="kw">else</span>:                    hi = mid - 1
+    <span class="kw">return</span> -1
+<span class="cm"># n=1024: ~10 steps.  n=1M: ~20 steps.  n=1B: ~30 steps.</span></pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(log n)</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Amortized Analysis: Dynamic Array Append</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Question:</strong> Python's list.append() is O(1) amortized but sometimes O(n). Explain amortized analysis and why the average is O(1).</div>
+    <div class="iq-approach"><strong>Doubling strategy:</strong> When capacity is exceeded, double the array and copy all elements — O(n). But this happens so rarely that the cost, spread over all insertions, is O(1) per insertion. Total cost for n insertions = n + (copies at capacity) ≤ 2n → amortized O(1).</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">Start with capacity=1, fill with n=8 elements:
+
+Insert 1: no resize. cost=1
+Insert 2: resize (cap=1→2), copy 1. cost=1+1=2
+Insert 3: resize (cap=2→4), copy 2. cost=1+2=3
+Insert 4: no resize. cost=1
+Insert 5: resize (cap=4→8), copy 4. cost=1+4=5
+Insert 6: no resize. cost=1
+Insert 7: no resize. cost=1
+Insert 8: no resize. cost=1
+
+Total cost = 1+2+3+1+5+1+1+1 = 15 for 8 inserts
+Average    = 15/8 ≈ 1.875 ≈ O(1) amortized ✓
+
+Copy costs = 1+2+4 = 7  (each is half the previous capacity)
+Sum of geometric series = 1+2+4+8+...+n ≤ 2n
+So total ≤ n (inserts) + 2n (copies) = 3n = O(n) total → O(1) amortized</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Simulate dynamic array growth</div></div><pre><span class="kw">class</span> <span class="fn">DynArray</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.data, self.size, self.cap = [], 0, 1
+    <span class="kw">def</span> <span class="fn">append</span>(self, x):
+        <span class="kw">if</span> self.size == self.cap:        <span class="cm"># resize!</span>
+            self.data = self.data + [None] * self.cap
+            self.cap *= 2
+        self.data[self.size] = x; self.size += 1
+
+<span class="cm"># Verify: count total operations for n appends</span>
+total = 0; cap = 1; size = 0
+<span class="kw">for</span> i <span class="kw">in</span> range(1, 1025):
+    <span class="kw">if</span> size == cap: total += size; cap *= 2  <span class="cm"># copy cost</span>
+    total += 1; size += 1                              <span class="cm"># insert cost</span>
+print(f<span class="nm">"1024 inserts: {total} ops, avg={total/1024:.2f}"</span>)
+<span class="cm"># → 1024 inserts: 2046 ops, avg=1.999 ✓</span></pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(1) amortized</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">Space Complexity: Recursion Stack</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Question:</strong> A recursive Fibonacci implementation fib(n) = fib(n-1) + fib(n-2) has O(2ⁿ) time complexity. What is its space complexity?</div>
+    <div class="iq-approach"><strong>Stack frames, not total nodes.</strong> Space = maximum depth of recursion stack at any one time. The call tree has O(2ⁿ) nodes but the deepest path is n levels (always goes left before right). So space = O(n) stack frames.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">fib(5) call tree:
+             fib(5)
+           /       \
+        fib(4)     fib(3)
+        /    \     /    \
+    fib(3) fib(2) fib(2) fib(1)
+    /    \
+fib(2) fib(1)
+
+At any moment, only ONE root-to-leaf path is on the call stack.
+Max depth = n (the leftmost path fib(5)→fib(4)→fib(3)→fib(2)→fib(1))
+
+Stack at deepest: [fib(5), fib(4), fib(3), fib(2), fib(1)] = 5 frames
+
+Space = O(n) — only the current active branch
+Time  = O(2ⁿ) — total calls made
+
+Key insight: time counts ALL work ever done;
+             space counts work IN PROGRESS simultaneously</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Verify with sys.setrecursionlimit</div></div><pre><span class="kw">import</span> sys
+sys.setrecursionlimit(1000)
+depth_tracker = 0; max_depth = 0
+
+<span class="kw">def</span> <span class="fn">fib</span>(n):
+    <span class="kw">global</span> depth_tracker, max_depth
+    depth_tracker += 1
+    max_depth = max(max_depth, depth_tracker)
+    <span class="kw">if</span> n &lt;= 1: result = n
+    <span class="kw">else</span>: result = fib(n-1) + fib(n-2)
+    depth_tracker -= 1
+    <span class="kw">return</span> result
+
+fib(10)
+print(f<span class="nm">"Max stack depth for fib(10): {max_depth}"</span>)
+<span class="cm"># → Max stack depth for fib(10): 10 = O(n) ✓</span></pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(2ⁿ) time</span>
+      <span class="iq-pill s">Space: O(n) stack</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

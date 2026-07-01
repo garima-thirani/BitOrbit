@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Binary Search Tree — Module 13</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+/* ── expanded interview question styles ── */
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+/* ===== deep-dive intuition card ===== */
+.pat{background:linear-gradient(160deg,rgba(79,70,229,.08),rgba(15,23,42,.4));border:1px solid var(--brd);border-radius:18px;padding:30px 34px;margin:24px 0 40px;}
+.pat-lead{font-size:.95rem;color:var(--t);line-height:1.85;margin-bottom:6px;}
+.pat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+@media(max-width:760px){.pat-grid{grid-template-columns:1fr;}}
+.pat-cell{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:18px 22px;}
+.pat-cell h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.pat-cell.when h4{color:var(--w);}.pat-cell.state h4{color:var(--a);}
+.pat-cell.rec h4{color:var(--pl);}.pat-cell.base h4{color:var(--s);}
+.pat-cell p,.pat-cell li{font-size:.9rem;color:var(--tm);line-height:1.8;}
+.pat-cell ul{padding-left:18px;margin-top:6px;}.pat-cell li{margin:4px 0;}
+.formula{background:var(--cbg);border:1px solid #30363d;border-radius:10px;padding:16px 20px;margin:14px 0;font-family:'Fira Code','Courier New',monospace;font-size:.9rem;color:#a5b4fc;line-height:1.9;overflow-x:auto;}
+.formula .hl{color:#67e8f9;font-weight:700;}
+.keywords{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+.kwp{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:3px 14px;font-size:.8rem;font-weight:600;}
+.pitfall{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.03));border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.pitfall .pl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#fca5a5;font-weight:700;margin-bottom:6px;}
+.pitfall p{font-size:.88rem;color:#fecaca;line-height:1.8;}
+.real{background:linear-gradient(135deg,rgba(16,185,129,.09),rgba(16,185,129,.02));border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.real .rl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#6ee7b7;font-weight:700;margin-bottom:8px;}
+.real ul{padding-left:18px;margin:0;}.real li{font-size:.88rem;color:#a7f3d0;line-height:1.85;margin:5px 0;}
+.real li b{color:#d1fae5;}
+/* ===== animated SVG figure ===== */
+.fig{background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,.06),transparent 70%),var(--cbg);border:1px solid #30363d;border-radius:14px;padding:24px;margin:22px 0;overflow-x:auto;}
+.fig svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+.fig-cap{text-align:center;font-size:.82rem;color:var(--tm);margin-top:14px;font-style:italic;}
+.fig-cap b{color:var(--a);font-style:normal;}
+.fig-title{font-size:1.02rem;color:var(--t);margin:8px 0 10px;font-weight:700;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:16px;}
+.legend span{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--tm);}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;}
+.svg-t{fill:#e2e8f0;font-family:'Fira Code',monospace;}
+.svg-tm{fill:#94a3b8;font-family:'Segoe UI',sans-serif;}
+.svg-lbl{fill:#67e8f9;font-family:'Segoe UI',sans-serif;font-weight:700;}
+.svg-acc{fill:#fcd34d;font-family:'Fira Code',monospace;}
+.svg-s{fill:#6ee7b7;font-family:'Fira Code',monospace;}
+.svg-d{fill:#fca5a5;font-family:'Fira Code',monospace;}
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 13 · Binary Search Tree</div><h1>A Sorted Data Structure<br><span>You Can Walk Through</span></h1><p>BST organizes data so every lookup, insert, and delete is O(h) — and in a balanced tree, h = O(log n).</p><div class="stats"><div class="stat"><div class="sn">O(log n)</div><div class="sl">Balanced BST</div></div><div class="stat"><div class="sn">In-order = Sorted</div><div class="sl">Key property</div></div><div class="stat"><div class="sn">AVL/Red-Black</div><div class="sl">Self-balancing</div></div><div class="stat"><div class="sn">FAANG ⭐⭐</div><div class="sl">Frequency: Medium</div></div></div></div></div><div class="wrap">
+<div class="sec">🧠 The Story — The Phone Book</div>
+<div class="story">
+  <div class="slabel">Real World Story — Binary Search Meets Tree</div>
+  <h3>A sorted phone book lets you jump to the middle, decide "before or after?", and recurse on the right half.</h3>
+  <p>
+    BST materializes this process as a tree. Every node satisfies: <strong>all values in left subtree &lt; node.val &lt; all values in right subtree</strong>.<br><br>
+    Searching: start at root. If target &lt; current → go left. If target &gt; current → go right. If equal → found. O(h) where h = tree height.<br><br>
+    <strong>The catch:</strong> An unbalanced BST (e.g., inserting sorted data into a plain BST) degrades to a linked list: h = O(n), all operations O(n). Self-balancing trees (AVL, Red-Black, Python's <code>sortedcontainers.SortedList</code>) maintain h = O(log n) automatically.
+  </p>
+</div>
+
+<div class="ibox">
+  <div class="lbl">Key BST Property: In-order = Sorted</div>
+  <p>In-order traversal of a BST always produces elements in sorted ascending order. This means:<br>
+  — "Find kth smallest" = do in-order traversal, return kth element.<br>
+  — "Validate BST" = check that in-order output is strictly increasing.<br>
+  — "Convert BST to sorted array" = in-order traversal.</p>
+</div>
+
+<div class="sec">💡 The Deep Intuition — Binary Search, Frozen Into Pointers</div>
+<div class="pat">
+  <p class="pat-lead">You already know binary search on a sorted array: look at the middle, decide "too big or too small", throw away half. A BST is that idea made <b>permanent</b>. Instead of recomputing the middle every time, each node <em>remembers</em> who is smaller (left) and who is bigger (right). So a search is just "walk down, at each step throw away one whole subtree." The price you pay over an array is pointers; the reward is that <b>insert and delete are also O(h)</b> — no shifting elements like a sorted array forces.</p>
+  <div class="pat-grid">
+    <div class="pat-cell when">
+      <h4>🟡 The one invariant</h4>
+      <p>For <em>every</em> node: everything in the left subtree is strictly smaller, everything in the right subtree is strictly larger. Not just the direct children — the <b>whole</b> subtree. This is the rule that makes "go left or go right" a correct decision and is exactly the rule a "validate BST" question tests.</p>
+    </div>
+    <div class="pat-cell state">
+      <h4>🔵 Why O(h), not O(log n)</h4>
+      <p>Each comparison drops you one level and discards a subtree, so the cost is the <em>height</em> h. In a balanced tree h ≈ log n — wonderful. But the tree's shape depends on insertion order; nothing in a plain BST forces balance.</p>
+    </div>
+    <div class="pat-cell rec">
+      <h4>🟣 The magic property</h4>
+      <p>An <b>in-order</b> traversal (Left → Node → Right) always emits values in sorted order. This single fact answers a whole family of questions for free:</p>
+      <div class="formula">in-order(BST) → <span class="hl">fully sorted</span><br>kth smallest = kth emitted<br>validate = strictly increasing?</div>
+    </div>
+    <div class="pat-cell base">
+      <h4>🟢 Deleting is the hard part</h4>
+      <p>Removing a leaf or a one-child node is trivial. A two-child node can't just vanish — you replace its value with its <b>in-order successor</b> (the smallest value in its right subtree), then delete that successor, which always has at most one child.</p>
+    </div>
+  </div>
+  <div class="keywords">
+    <span class="kwp">sorted order</span><span class="kwp">O(h) lookup</span><span class="kwp">in-order = sorted</span><span class="kwp">successor / predecessor</span><span class="kwp">range queries</span><span class="kwp">self-balancing</span>
+  </div>
+  <div class="real">
+    <div class="rl">🌍 Where BSTs (and their balanced cousins) run the world</div>
+    <ul>
+      <li><b>Database indexes:</b> the B-tree behind a SQL index is a fat, disk-friendly BST. <code>WHERE age BETWEEN 30 AND 40</code> is a BST range walk — that's why an index makes the query fast.</li>
+      <li><b>The "guess my number 1–100" game:</b> each "higher / lower" is one BST comparison; you win in ~7 guesses because log₂(100) ≈ 7.</li>
+      <li><b>A leaderboard or order book:</b> "who is ranked just above me?" / "best ask price" is a successor query, kept fast by a balanced BST.</li>
+      <li><b>Auto-complete &amp; spell-checkers:</b> ordered maps (C++ <code>std::map</code>, Java <code>TreeMap</code>) are red-black trees — BSTs that rebalance on every insert.</li>
+      <li><b>File-system &amp; memory allocators:</b> finding the smallest free block ≥ a size is a BST lookup.</li>
+    </ul>
+  </div>
+  <div class="pitfall">
+    <div class="pl">⚠️ The two classic traps</div>
+    <p><b>1. Validation by neighbours.</b> Checking only <code>left.val &lt; node.val &lt; right.val</code> is wrong — a deep descendant can still violate the rule. You must carry a <code>(low, high)</code> bound down the tree. <b>2. The degenerate tree.</b> Insert already-sorted data (1, 2, 3, 4, 5…) into a plain BST and it becomes a straight line: h = n, every operation O(n). That is why production code uses self-balancing trees, not a hand-rolled BST.</p>
+  </div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · BST — Search, Insert, Delete</div></div><pre><span class="kw">class</span> <span class="fn">BST</span>:
+    <span class="kw">def</span> <span class="fn">search</span>(self, root, val):
+        <span class="kw">if not</span> root <span class="kw">or</span> root.val == val: <span class="kw">return</span> root
+        <span class="kw">if</span> val < root.val: <span class="kw">return</span> self.search(root.left,  val)
+        <span class="kw">return</span>                   self.search(root.right, val)
+
+    <span class="kw">def</span> <span class="fn">insert</span>(self, root, val):
+        <span class="kw">if not</span> root: <span class="kw">return</span> TreeNode(val)
+        <span class="kw">if</span> val < root.val: root.left  = self.insert(root.left,  val)
+        <span class="kw">else</span>:              root.right = self.insert(root.right, val)
+        <span class="kw">return</span> root
+
+    <span class="kw">def</span> <span class="fn">delete</span>(self, root, val):
+        <span class="kw">if not</span> root: <span class="kw">return</span> None
+        <span class="kw">if</span>   val < root.val: root.left  = self.delete(root.left,  val)
+        <span class="kw">elif</span> val > root.val: root.right = self.delete(root.right, val)
+        <span class="kw">else</span>:  <span class="cm"># found: 3 cases</span>
+            <span class="kw">if not</span> root.left:  <span class="kw">return</span> root.right   <span class="cm"># no left child</span>
+            <span class="kw">if not</span> root.right: <span class="kw">return</span> root.left    <span class="cm"># no right child</span>
+            <span class="cm"># Two children: replace with in-order successor (min of right subtree)</span>
+            successor = root.right
+            <span class="kw">while</span> successor.left: successor = successor.left
+            root.val   = successor.val                <span class="cm"># copy successor value</span>
+            root.right = self.delete(root.right, root.val)  <span class="cm"># delete successor</span>
+        <span class="kw">return</span> root
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 search(7) — at every node, throw away an entire subtree</div>
+  <svg viewBox="0 0 560 360" width="560" role="img" aria-label="Animated BST search">
+    <g stroke="#334155" stroke-width="2">
+      <line x1="290" y1="50" x2="170" y2="125"/><line x1="290" y1="50" x2="410" y2="125"/>
+      <line x1="170" y1="125" x2="100" y2="200"/><line x1="170" y1="125" x2="240" y2="200"/>
+      <line x1="410" y1="125" x2="470" y2="200"/>
+      <line x1="240" y1="200" x2="190" y2="275"/><line x1="240" y1="200" x2="290" y2="275"/>
+    </g>
+    <!-- discarded subtree shading (right of root) -->
+    <rect x="372" y="98" width="160" height="130" rx="14" fill="rgba(239,68,68,.06)" stroke="#7f1d1d" stroke-dasharray="5 4" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.14;0.18;1" dur="10s" repeatCount="indefinite"/></rect>
+    <!-- visited rings -->
+    <circle cx="290" cy="50" r="27" fill="none" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.10;0.14;1" dur="10s" repeatCount="indefinite"/></circle>
+    <circle cx="170" cy="125" r="27" fill="none" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.28;0.32;1" dur="10s" repeatCount="indefinite"/></circle>
+    <circle cx="240" cy="200" r="27" fill="none" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.46;0.50;1" dur="10s" repeatCount="indefinite"/></circle>
+    <circle cx="290" cy="275" r="29" fill="rgba(16,185,129,.2)" stroke="#10b981" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.64;0.68;1" dur="10s" repeatCount="indefinite"/></circle>
+    <g text-anchor="middle">
+      <circle cx="290" cy="50" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="290" y="57" class="svg-t" font-size="18">8</text>
+      <circle cx="170" cy="125" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="170" y="132" class="svg-t" font-size="18">3</text>
+      <circle cx="410" cy="125" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="410" y="132" class="svg-t" font-size="18">10</text>
+      <circle cx="100" cy="200" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="100" y="207" class="svg-t" font-size="18">1</text>
+      <circle cx="240" cy="200" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="240" y="207" class="svg-t" font-size="18">6</text>
+      <circle cx="470" cy="200" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="470" y="207" class="svg-t" font-size="18">14</text>
+      <circle cx="190" cy="275" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="190" y="282" class="svg-t" font-size="18">4</text>
+      <circle cx="290" cy="275" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="290" y="282" class="svg-t" font-size="18">7</text>
+    </g>
+    <!-- narration -->
+    <g font-family="'Fira Code',monospace" font-size="13" text-anchor="start">
+      <text x="30" y="318" class="svg-tm" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.10;0.14;0.26;0.28" dur="10s" repeatCount="indefinite"/>7 &lt; 8 → go left, drop the entire right subtree</text>
+      <text x="30" y="318" class="svg-tm" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.28;0.32;0.44;0.46" dur="10s" repeatCount="indefinite"/>7 &gt; 3 → go right</text>
+      <text x="30" y="318" class="svg-tm" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.46;0.50;0.62;0.64" dur="10s" repeatCount="indefinite"/>7 &gt; 6 → go right</text>
+      <text x="30" y="318" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.64;0.68;1" dur="10s" repeatCount="indefinite"/>7 == 7 → found in 4 steps (height of path)</text>
+    </g>
+  </svg>
+  <div class="fig-cap"><b>Each comparison halves the problem.</b> Going left at the root instantly eliminates 10, 14 and everything under them — no need to look. In a balanced tree this is O(log n); the path length is exactly the tree's height. ▶ loops every 10s.</div>
+</div>
+
+<div class="fig">
+  <div class="fig-title">🎬 delete(3) with two children — promote the in-order successor</div>
+  <svg viewBox="0 0 560 320" width="560" role="img" aria-label="Animated BST delete with successor">
+    <defs>
+      <marker id="bst-suc" markerWidth="9" markerHeight="7" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#f59e0b"/></marker>
+    </defs>
+    <g stroke="#334155" stroke-width="2">
+      <line x1="170" y1="60" x2="100" y2="140"/><line x1="170" y1="60" x2="270" y2="140"/>
+      <line x1="270" y1="140" x2="210" y2="220"/><line x1="270" y1="140" x2="340" y2="220"/>
+    </g>
+    <!-- node to delete -->
+    <circle cx="170" cy="60" r="28" fill="rgba(239,68,68,.16)" stroke="#ef4444" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.06;0.10;0.55;1" dur="11s" repeatCount="indefinite"/></circle>
+    <!-- path to successor: right then left -->
+    <line x1="170" y1="60" x2="270" y2="140" stroke="#f59e0b" stroke-width="4" marker-end="url(#bst-suc)" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.18;0.22;1" dur="11s" repeatCount="indefinite"/></line>
+    <line x1="270" y1="140" x2="210" y2="220" stroke="#f59e0b" stroke-width="4" marker-end="url(#bst-suc)" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.30;0.34;1" dur="11s" repeatCount="indefinite"/></line>
+    <!-- successor ring -->
+    <circle cx="210" cy="220" r="28" fill="rgba(16,185,129,.18)" stroke="#10b981" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.40;0.44;1" dur="11s" repeatCount="indefinite"/></circle>
+    <g text-anchor="middle">
+      <circle cx="170" cy="60" r="24" fill="#162032" stroke="#475569" stroke-width="2"/>
+      <text x="170" y="67" class="svg-d" font-size="18" opacity="1"><animate attributeName="opacity" values="1;1;0" keyTimes="0;0.56;0.60" dur="11s" repeatCount="indefinite"/>3</text>
+      <text x="170" y="67" class="svg-s" font-size="18" opacity="0"><animate attributeName="opacity" values="0;0;1" keyTimes="0;0.60;0.64" dur="11s" repeatCount="indefinite"/>4</text>
+      <circle cx="100" cy="140" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="100" y="147" class="svg-t" font-size="18">1</text>
+      <circle cx="270" cy="140" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="270" y="147" class="svg-t" font-size="18">6</text>
+      <!-- successor node 4 fades out after promotion -->
+      <g opacity="1"><animate attributeName="opacity" values="1;1;0.2" keyTimes="0;0.62;0.72" dur="11s" repeatCount="indefinite"/>
+        <circle cx="210" cy="220" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="210" y="227" class="svg-t" font-size="18">4</text>
+      </g>
+      <circle cx="340" cy="220" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="340" y="227" class="svg-t" font-size="18">7</text>
+    </g>
+    <g font-family="'Fira Code',monospace" font-size="13" text-anchor="start">
+      <text x="370" y="70" class="svg-d" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.06;0.10;1" dur="11s" repeatCount="indefinite"/>delete 3</text>
+      <text x="370" y="96" class="svg-acc" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.30;0.34;1" dur="11s" repeatCount="indefinite"/>successor =</text>
+      <text x="370" y="116" class="svg-acc" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.30;0.34;1" dur="11s" repeatCount="indefinite"/>min(right) = 4</text>
+      <text x="370" y="142" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.60;0.64;1" dur="11s" repeatCount="indefinite"/>copy 4 up,</text>
+      <text x="370" y="162" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.62;0.66;1" dur="11s" repeatCount="indefinite"/>delete old 4</text>
+    </g>
+  </svg>
+  <div class="fig-cap"><b>Why the successor?</b> The smallest value in the right subtree is larger than everything on the left and smaller than everything else on the right — so dropping it into the hole keeps the BST invariant intact. And because it's the leftmost node, it has no left child, making its own deletion the easy one-child case. ▶ loops every 11s.</div>
+  <div class="legend">
+    <span><i style="background:#ef4444"></i>node to delete</span>
+    <span><i style="background:#f59e0b"></i>walk to successor</span>
+    <span><i style="background:#10b981"></i>promoted value</span>
+  </div>
+</div>
+
+<div class="sec">🎬 Validate BST & Kth Smallest</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Validate BST and Kth Smallest</div></div><pre><span class="cm"># --- Validate BST (correct approach: pass min/max bounds) ---</span>
+<span class="kw">def</span> <span class="fn">is_valid_bst</span>(root, lo=float('-inf'), hi=float('inf')):
+    <span class="kw">if not</span> root: <span class="kw">return</span> True
+    <span class="kw">if not</span> (lo < root.val < hi): <span class="kw">return</span> False
+    <span class="kw">return</span> (is_valid_bst(root.left,  lo, root.val) <span class="kw">and</span>
+            is_valid_bst(root.right, root.val, hi))
+<span class="cm"># ⚠️ Common mistake: only checking root.val > root.left.val is WRONG.
+# Counter-example:  [5, 1, 7, null, null, 6, null] → 6 is right child of 7 which
+# is right child of 5... but 6 < 5 is impossible so this is invalid. Need the bounds!</span>
+
+<span class="cm"># --- Kth Smallest: in-order + early exit ---</span>
+<span class="kw">def</span> <span class="fn">kth_smallest</span>(root, k):
+    stack, count = [], 0
+    <span class="kw">while</span> stack <span class="kw">or</span> root:
+        <span class="kw">while</span> root: stack.append(root); root = root.left  <span class="cm"># go left</span>
+        root = stack.pop()
+        count += 1
+        <span class="kw">if</span> count == k: <span class="kw">return</span> root.val    <span class="cm"># found kth in-order = kth smallest</span>
+        root = root.right
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 In-order traversal — the BST "unrolls" itself into a sorted line</div>
+  <svg viewBox="0 0 560 372" width="560" role="img" aria-label="Animated in-order traversal yields sorted order">
+    <g stroke="#334155" stroke-width="2">
+      <line x1="290" y1="50" x2="170" y2="125"/><line x1="290" y1="50" x2="410" y2="125"/>
+      <line x1="170" y1="125" x2="100" y2="200"/><line x1="170" y1="125" x2="240" y2="200"/>
+      <line x1="410" y1="125" x2="470" y2="200"/>
+      <line x1="240" y1="200" x2="190" y2="275"/><line x1="240" y1="200" x2="290" y2="275"/>
+    </g>
+    <!-- visit rings, in-order: 1,3,4,6,7,8,10,14 -->
+    <circle cx="100" cy="200" r="27" fill="none" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.06;0.10;1" dur="12s" repeatCount="indefinite"/></circle>
+    <circle cx="170" cy="125" r="27" fill="none" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.16;0.20;1" dur="12s" repeatCount="indefinite"/></circle>
+    <circle cx="190" cy="275" r="27" fill="none" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.26;0.30;1" dur="12s" repeatCount="indefinite"/></circle>
+    <circle cx="240" cy="200" r="27" fill="none" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.36;0.40;1" dur="12s" repeatCount="indefinite"/></circle>
+    <circle cx="290" cy="275" r="27" fill="none" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.46;0.50;1" dur="12s" repeatCount="indefinite"/></circle>
+    <circle cx="290" cy="50" r="27" fill="none" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.56;0.60;1" dur="12s" repeatCount="indefinite"/></circle>
+    <circle cx="410" cy="125" r="27" fill="none" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.70;1" dur="12s" repeatCount="indefinite"/></circle>
+    <circle cx="470" cy="200" r="27" fill="none" stroke="#06b6d4" stroke-width="3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.76;0.80;1" dur="12s" repeatCount="indefinite"/></circle>
+    <g text-anchor="middle">
+      <circle cx="290" cy="50" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="290" y="57" class="svg-t" font-size="18">8</text>
+      <circle cx="170" cy="125" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="170" y="132" class="svg-t" font-size="18">3</text>
+      <circle cx="410" cy="125" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="410" y="132" class="svg-t" font-size="18">10</text>
+      <circle cx="100" cy="200" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="100" y="207" class="svg-t" font-size="18">1</text>
+      <circle cx="240" cy="200" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="240" y="207" class="svg-t" font-size="18">6</text>
+      <circle cx="470" cy="200" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="470" y="207" class="svg-t" font-size="18">14</text>
+      <circle cx="190" cy="275" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="190" y="282" class="svg-t" font-size="18">4</text>
+      <circle cx="290" cy="275" r="24" fill="#162032" stroke="#475569" stroke-width="2"/><text x="290" y="282" class="svg-t" font-size="18">7</text>
+    </g>
+    <!-- sorted strip -->
+    <text x="30" y="338" class="svg-tm" font-size="12">sorted →</text>
+    <g text-anchor="middle" font-size="16">
+      <rect x="110" y="320" width="38" height="34" rx="6" fill="#0d1117" stroke="#30363d"/><text x="129" y="343" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.06;0.10;1" dur="12s" repeatCount="indefinite"/>1</text>
+      <rect x="154" y="320" width="38" height="34" rx="6" fill="#0d1117" stroke="#30363d"/><text x="173" y="343" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.16;0.20;1" dur="12s" repeatCount="indefinite"/>3</text>
+      <rect x="198" y="320" width="38" height="34" rx="6" fill="#0d1117" stroke="#30363d"/><text x="217" y="343" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.26;0.30;1" dur="12s" repeatCount="indefinite"/>4</text>
+      <rect x="242" y="320" width="38" height="34" rx="6" fill="#0d1117" stroke="#30363d"/><text x="261" y="343" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.36;0.40;1" dur="12s" repeatCount="indefinite"/>6</text>
+      <rect x="286" y="320" width="38" height="34" rx="6" fill="#0d1117" stroke="#30363d"/><text x="305" y="343" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.46;0.50;1" dur="12s" repeatCount="indefinite"/>7</text>
+      <rect x="330" y="320" width="38" height="34" rx="6" fill="#0d1117" stroke="#30363d"/><text x="349" y="343" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.56;0.60;1" dur="12s" repeatCount="indefinite"/>8</text>
+      <rect x="374" y="320" width="38" height="34" rx="6" fill="#0d1117" stroke="#30363d"/><text x="393" y="343" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.70;1" dur="12s" repeatCount="indefinite"/>10</text>
+      <rect x="418" y="320" width="38" height="34" rx="6" fill="#0d1117" stroke="#30363d"/><text x="437" y="343" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.76;0.80;1" dur="12s" repeatCount="indefinite"/>14</text>
+    </g>
+  </svg>
+  <div class="fig-cap"><b>Left · Node · Right, recursively</b> ⇒ 1·3·4·6·7·8·10·14, perfectly sorted. This is the single most useful BST fact: "kth smallest" stops at the kth box; "validate BST" just checks each box is bigger than the last; "two-sum in a BST" walks this line from both ends. ▶ loops every 12s.</div>
+</div>
+
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Convert Sorted Array to BST</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 108):</strong> Given an integer array sorted in ascending order, convert it to a height-balanced BST (where the depth of any two leaf nodes differs by at most 1).</div>
+    <div class="iq-approach"><strong>Recursive mid-selection:</strong> Always pick the middle element of current range as the root. The left half becomes the left subtree, right half becomes the right subtree. This guarantees balance because each side has equal (or ±1) number of elements.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums = [-10,-3,0,5,9]   Indices: 0,1,2,3,4
+
+build(0,4): mid=2, root=0
+  build(0,1): mid=0, root=-10
+    build(0,-1): return None
+    build(1,1): mid=1, root=-3
+      → leaf node -3
+  Left subtree: 0 → (-10) → (-3)
+               (-10)
+                                    -3
+
+  build(3,4): mid=3, root=5
+    build(3,2): return None
+    build(4,4): mid=4, root=9 (leaf)
+  Right subtree: 5
+                                     9
+
+Final BST:      0
+              /              -10     5
+              \                   -3     9
+Height: 3 (balanced ✓)</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Sorted Array to BST</div></div><pre><span class="kw">def</span> <span class="fn">sorted_array_to_bst</span>(nums):
+    <span class="kw">def</span> <span class="fn">build</span>(l, r):
+        <span class="kw">if</span> l > r: <span class="kw">return</span> None
+        mid = (l + r) // 2
+        node = TreeNode(nums[mid])
+        node.left  = build(l, mid-1)   <span class="cm"># left half</span>
+        node.right = build(mid+1, r)   <span class="cm"># right half</span>
+        <span class="kw">return</span> node
+    <span class="kw">return</span> build(0, len(nums)-1)</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(log n) stack</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Inorder Successor in BST</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 285):</strong> Given a BST and a node p, find the in-order successor (smallest value greater than p.val).</div>
+    <div class="iq-approach"><strong>Two cases:</strong> (1) If p has a right child, successor = leftmost node in right subtree. (2) If no right child, successor = the last ancestor where you went LEFT. Iterative traversal: if current node > target, save as candidate and go left; if ≤ target, go right.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">BST:    20
+         /            8      22
+       /       4   12
+         /          10   14
+
+Find successor of p=8:
+  Case 1: p=8 has right child (12).
+  Leftmost of right subtree: 12 → 10
+  Successor = 10 ✓
+
+Find successor of p=14:
+  Case 2: p=14 has no right child.
+  Traverse from root:
+    node=20: 20>14 → candidate=20, go left
+    node=8:  8<14  → go right (no candidate here, went right)
+    node=12: 12<14 → go right (no candidate here)
+    node=14: 14=14 → no right child, done
+  Last candidate where we went left = 20 ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Inorder Successor in BST</div></div><pre><span class="kw">def</span> <span class="fn">inorder_successor</span>(root, p):
+    successor = None
+    node = root
+    <span class="kw">while</span> node:
+        <span class="kw">if</span> node.val > p.val:
+            successor = node       <span class="cm"># candidate: went left here</span>
+            node = node.left
+        <span class="kw">else</span>:
+            node = node.right      <span class="cm"># p's successor must be further right</span>
+    <span class="kw">return</span> successor</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(h) where h=height</span>
+      <span class="iq-pill s">Space: O(1)</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

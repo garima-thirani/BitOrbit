@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Stack, Queue & Deque — Module 11</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+/* ── expanded interview question styles ── */
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+/* ===== deep-dive intuition card ===== */
+.pat{background:linear-gradient(160deg,rgba(79,70,229,.08),rgba(15,23,42,.4));border:1px solid var(--brd);border-radius:18px;padding:30px 34px;margin:24px 0 40px;}
+.pat-lead{font-size:.95rem;color:var(--t);line-height:1.85;margin-bottom:6px;}
+.pat-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0;}
+@media(max-width:760px){.pat-grid{grid-template-columns:1fr;}}
+.pat-cell{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:18px 22px;}
+.pat-cell h4{font-size:.78rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.pat-cell.when h4{color:var(--w);}.pat-cell.state h4{color:var(--a);}
+.pat-cell.rec h4{color:var(--pl);}.pat-cell.base h4{color:var(--s);}
+.pat-cell p,.pat-cell li{font-size:.9rem;color:var(--tm);line-height:1.8;}
+.pat-cell ul{padding-left:18px;margin-top:6px;}.pat-cell li{margin:4px 0;}
+.formula{background:var(--cbg);border:1px solid #30363d;border-radius:10px;padding:16px 20px;margin:14px 0;font-family:'Fira Code','Courier New',monospace;font-size:.9rem;color:#a5b4fc;line-height:1.9;overflow-x:auto;}
+.formula .hl{color:#67e8f9;font-weight:700;}
+.keywords{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;}
+.kwp{background:rgba(245,158,11,.12);color:#fcd34d;border:1px solid rgba(245,158,11,.3);border-radius:16px;padding:3px 14px;font-size:.8rem;font-weight:600;}
+.pitfall{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.03));border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.pitfall .pl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#fca5a5;font-weight:700;margin-bottom:6px;}
+.pitfall p{font-size:.88rem;color:#fecaca;line-height:1.8;}
+.real{background:linear-gradient(135deg,rgba(16,185,129,.09),rgba(16,185,129,.02));border:1px solid rgba(16,185,129,.25);border-radius:10px;padding:14px 20px;margin:16px 0;}
+.real .rl{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:#6ee7b7;font-weight:700;margin-bottom:8px;}
+.real ul{padding-left:18px;margin:0;}.real li{font-size:.88rem;color:#a7f3d0;line-height:1.85;margin:5px 0;}
+.real li b{color:#d1fae5;}
+/* ===== animated SVG figure ===== */
+.fig{background:radial-gradient(ellipse at 50% 0%,rgba(6,182,212,.06),transparent 70%),var(--cbg);border:1px solid #30363d;border-radius:14px;padding:24px;margin:22px 0;overflow-x:auto;}
+.fig svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+.fig-cap{text-align:center;font-size:.82rem;color:var(--tm);margin-top:14px;font-style:italic;}
+.fig-cap b{color:var(--a);font-style:normal;}
+.fig-title{font-size:1.02rem;color:var(--t);margin:8px 0 10px;font-weight:700;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:16px;}
+.legend span{display:flex;align-items:center;gap:7px;font-size:.78rem;color:var(--tm);}
+.legend i{width:14px;height:14px;border-radius:4px;display:inline-block;}
+.svg-t{fill:#e2e8f0;font-family:'Fira Code',monospace;}
+.svg-tm{fill:#94a3b8;font-family:'Segoe UI',sans-serif;}
+.svg-lbl{fill:#67e8f9;font-family:'Segoe UI',sans-serif;font-weight:700;}
+.svg-acc{fill:#fcd34d;font-family:'Fira Code',monospace;}
+.svg-s{fill:#6ee7b7;font-family:'Fira Code',monospace;}
+.svg-d{fill:#fca5a5;font-family:'Fira Code',monospace;}
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 11 · Stack, Queue & Deque</div><h1>Order Matters:<br><span>Three Ways to Process Data</span></h1><p>LIFO vs FIFO vs Double-ended — choosing the right abstract data structure cuts complex problems to simple ones.</p><div class="stats"><div class="stat"><div class="sn">O(1)</div><div class="sl">All Stack/Queue ops</div></div><div class="stat"><div class="sn">Monotonic Stack</div><div class="sl">Key interview pattern</div></div><div class="stat"><div class="sn">BFS backbone</div><div class="sl">Queue powers it</div></div><div class="stat"><div class="sn">FAANG ⭐⭐</div><div class="sl">Frequency: High</div></div></div></div></div><div class="wrap">
+<div class="sec">🧠 The Story — The Kitchen</div>
+<div class="story">
+  <div class="slabel">Real World Story — Plate Stack & Order Queue</div>
+  <h3>A restaurant: plates are stacked (last in, first out — LIFO). Orders are queued (first in, first out — FIFO).</h3>
+  <p>
+    <strong>Stack (LIFO):</strong> Push a plate on top. Take from top. The plate you just placed is the one you grab. Used for: undo/redo, browser back button, function call stack, expression evaluation, DFS.<br><br>
+    <strong>Queue (FIFO):</strong> Customer orders arrive in sequence. First order served first. Used for: BFS, print spooler, task scheduler, streaming data.<br><br>
+    <strong>Deque (Double-ended):</strong> Plates you can add/remove from BOTH ends. Used for: sliding window maximum, palindrome check, monotonic deque problems.
+  </p>
+</div>
+
+<div class="pat">
+  <p class="pat-lead">Stack and queue are the same ingredient cooked two different ways. Both store a sequence; the only difference is <em>which end you eat from</em>. <strong>LIFO (stack)</strong> says: the last thing in is the first thing out — the call stack, undo history, browser back button, and DFS all live here. <strong>FIFO (queue)</strong> says: the first thing in is the first thing out — BFS, task schedulers, and print spoolers live here. The <strong>monotonic stack</strong> is the most powerful interview pattern: it answers “next/previous greater or smaller element” for every position in a single O(n) pass, by guaranteeing the stack is always sorted.</p>
+  <div class="pat-grid">
+    <div class="pat-cell when">
+      <h4>📖 Stack (LIFO) use-cases</h4>
+      <ul>
+        <li>Valid parentheses, expression evaluation</li>
+        <li>DFS, recursion simulation</li>
+        <li>Undo/redo, browser history</li>
+        <li><b>Monotonic stack:</b> next greater element, histogram, buildings with views</li>
+      </ul>
+    </div>
+    <div class="pat-cell state">
+      <h4>📤 Queue (FIFO) use-cases</h4>
+      <ul>
+        <li>BFS level-order traversal</li>
+        <li>Task scheduler, rate limiter</li>
+        <li>Sliding window max (monotonic deque)</li>
+        <li>Two-stack queue: amortized O(1) enqueue &amp; dequeue</li>
+      </ul>
+    </div>
+    <div class="pat-cell rec">
+      <h4>📉 Monotonic stack template</h4>
+      <p>For each element: pop all stack elements that <em>violate</em> the monotone property. The popped element found its answer (“next greater” = current element). Then push current index.</p>
+    </div>
+    <div class="pat-cell base">
+      <h4>⚡ Python choices</h4>
+      <p>Stack: <code>list</code> (<code>append</code>/<code>pop</code>). Queue: <code>collections.deque</code> (<code>append</code>/<code>popleft</code>). Never <code>list.pop(0)</code> for a queue — O(n) shift.</p>
+    </div>
+  </div>
+  <div class="formula"><span class="hl">next greater element</span>: while stack and a[stack[-1]] &lt; current: pop and record → push index<br><span class="hl">histogram max rect</span>: monotonic increasing stack of indices; pop when shorter bar found, width = gap to new top<br><span class="hl">sliding window max</span>: monotonic decreasing deque of indices; remove expired (front) and smaller (back) on each step</div>
+  <div class="keywords">
+    <span class="kwp">LIFO</span><span class="kwp">FIFO</span><span class="kwp">monotonic stack</span><span class="kwp">next greater</span><span class="kwp">deque</span><span class="kwp">amortized O(1)</span>
+  </div>
+  <div class="real">
+    <div class="rl">🌍 Where this lives in the real world</div>
+    <ul>
+      <li><b>CPU call stack:</b> every function call pushes a frame; return pops it. Stack overflow is a literal stack overflow.</li>
+      <li><b>Undo in editors:</b> Ctrl+Z pops the last action; Ctrl+Y pushes it to a redo stack.</li>
+      <li><b>Web server request queue:</b> incoming requests are enqueued; workers dequeue FIFO to avoid starvation.</li>
+      <li><b>Stock span / price analysis:</b> “how many consecutive days was the price lower than today?” — monotonic stack in financial data.</li>
+      <li><b>Browser back button:</b> each page visit pushes to a stack; “back” pops it.</li>
+      <li><b>Compiler syntax checking:</b> balanced parentheses / brackets / braces is the classic stack validity check.</li>
+    </ul>
+  </div>
+  <div class="pitfall">
+    <div class="pl">⚠️ The traps</div>
+    <p><b>list.pop(0) for a queue:</b> shifting all elements left is O(n) per dequeue — use <code>deque.popleft()</code> which is O(1). <b>Forgetting indices in monotonic stack:</b> you need to store <em>indices</em>, not values, because the width calculation (<code>i - stack[-1] - 1</code>) requires knowing where the previous shorter bar was. <b>Histogram sentinel:</b> append a <code>0</code> bar at the end to flush all remaining stack entries — otherwise elements that never found a shorter right neighbour are silently ignored.</p>
+  </div>
+</div>
+
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Stack, Queue, Deque — API</div></div><pre><span class="cm"># --- Stack: use list ---</span>
+stack = []
+stack.append(1)         <span class="cm"># push</span>
+stack.append(2)
+top = stack[-1]         <span class="cm"># peek: O(1)</span>
+val = stack.pop()       <span class="cm"># pop: O(1)</span>
+
+<span class="cm"># --- Queue: use collections.deque ---</span>
+<span class="kw">from</span> collections <span class="kw">import</span> deque
+queue = deque()
+queue.append(1)         <span class="cm"># enqueue: O(1)</span>
+queue.append(2)
+front = queue[0]        <span class="cm"># peek front: O(1)</span>
+val = queue.popleft()   <span class="cm"># dequeue: O(1)  ← use deque, NOT list.pop(0) which is O(n)!</span>
+
+<span class="cm"># --- Deque ---</span>
+dq = deque()
+dq.appendleft(1)        <span class="cm"># add to front</span>
+dq.append(2)            <span class="cm"># add to back</span>
+dq.popleft()            <span class="cm"># remove from front</span>
+dq.pop()                <span class="cm"># remove from back</span>
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 LIFO vs FIFO — the same push, a different exit door</div>
+  <svg viewBox="0 0 600 260" width="600" role="img" aria-label="Animated LIFO stack vs FIFO queue comparison">
+    <text x="300" y="22" text-anchor="middle" class="svg-tm" font-size="13">push A, B, C in order · then pop/dequeue 3 times</text>
+    <!-- STACK label -->
+    <text x="130" y="54" text-anchor="middle" class="svg-lbl" font-size="14">STACK (LIFO)</text>
+    <!-- QUEUE label -->
+    <text x="460" y="54" text-anchor="middle" class="svg-acc" font-size="14">QUEUE (FIFO)</text>
+    <!-- stack filled A,B,C (bottom to top) -->
+    <g text-anchor="middle" font-size="17">
+      <rect x="90" y="164" width="80" height="44" rx="7" fill="rgba(79,70,229,.18)" stroke="#818cf8"/><text x="130" y="191" class="svg-t">A</text>
+      <rect x="90" y="114" width="80" height="44" rx="7" fill="rgba(79,70,229,.22)" stroke="#818cf8"/><text x="130" y="141" class="svg-t">B</text>
+      <rect x="90" y="64" width="80" height="44" rx="7" fill="rgba(79,70,229,.28)" stroke="#818cf8"/><text x="130" y="91" class="svg-t">C</text>
+    </g>
+    <text x="130" y="220" text-anchor="middle" class="svg-lbl" font-size="11">↑ push</text>
+    <!-- stack pop order: C, B, A -->
+    <text x="130" y="238" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.40;0.44;1" dur="11s" repeatCount="indefinite"/>pop order: C → B → A (reverse)</text>
+    <!-- queue: A at front, C at back -->
+    <g text-anchor="middle" font-size="17">
+      <rect x="350" y="104" width="80" height="44" rx="7" fill="rgba(6,182,212,.28)" stroke="#06b6d4"/><text x="390" y="131" class="svg-t">A</text>
+      <rect x="436" y="104" width="80" height="44" rx="7" fill="rgba(6,182,212,.22)" stroke="#06b6d4"/><text x="476" y="131" class="svg-t">B</text>
+      <rect x="522" y="104" width="80" height="44" rx="7" fill="rgba(6,182,212,.18)" stroke="#06b6d4"/><text x="562" y="131" class="svg-t">C</text>
+    </g>
+    <text x="350" y="164" text-anchor="middle" class="svg-acc" font-size="11">← dequeue</text>
+    <text x="562" y="164" text-anchor="middle" class="svg-acc" font-size="11">enqueue →</text>
+    <text x="460" y="238" text-anchor="middle" class="svg-s" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.58;0.62;1" dur="11s" repeatCount="indefinite"/>dequeue order: A → B → C (same)</text>
+    <!-- divider -->
+    <line x1="300" y1="50" x2="300" y2="240" stroke="#334155" stroke-width="1.5" stroke-dasharray="6 4"/>
+    <text x="300" y="186" text-anchor="middle" class="svg-tm" font-size="11" transform="rotate(-90 300 186)">both store A,B,C</text>
+  </svg>
+  <div class="fig-cap"><b>Same data, opposite order.</b> A stack exits from the top (where you entered), so the newest item comes out first. A queue exits from the other end, so the oldest item comes out first. Which door you exit through changes everything about the traversal order. ▶ loops every 11s.</div>
+  <div class="legend">
+    <span><i style="background:#818cf8"></i>stack (LIFO)</span>
+    <span><i style="background:#06b6d4"></i>queue (FIFO)</span>
+  </div>
+</div>
+
+<div class="sec">🎬 Monotonic Stack — The Power Pattern</div>
+<div class="ibox">
+  <div class="lbl">The Core Insight</div>
+  <p>
+    A monotonic stack is a stack that maintains elements in monotonically increasing or decreasing order.<br><br>
+    <strong>When to use:</strong> "Find the nearest greater/smaller element to the left/right of each element." Any problem with "next greater", "previous smaller", "span", "buildings with views", "histogram".<br><br>
+    <strong>Template:</strong> For each element, pop all elements from stack that are smaller (or larger). The element you're about to push found its "previous greater" in the current stack top. The popped elements found their "next greater" in the current element.
+  </p>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Monotonic Stack — Daily Temperatures</div></div><pre><span class="cm"># Problem: for each day, how many days until a warmer temperature?
+# temperatures=[73,74,75,71,69,72,76,73] → [1,1,4,2,1,1,0,0]</span>
+<span class="kw">def</span> <span class="fn">daily_temperatures</span>(T):
+    result = [0] * len(T)
+    stack = []  <span class="cm"># stack of indices (decreasing temperatures)</span>
+
+    <span class="kw">for</span> i, temp <span class="kw">in</span> enumerate(T):
+        <span class="kw">while</span> stack <span class="kw">and</span> T[stack[-1]] < temp:   <span class="cm"># found warmer day for stack top</span>
+            j = stack.pop()
+            result[j] = i - j                    <span class="cm"># days to wait</span>
+        stack.append(i)                          <span class="cm"># push current day's index</span>
+
+    <span class="kw">return</span> result
+
+<span class="cm"># Trace: T=[73,74,75,71,69,72,76,73]
+# i=0: stack=[0]
+# i=1: T[0]=73 < 74 → result[0]=1, stack=[1]
+# i=2: T[1]=74 < 75 → result[1]=1, stack=[2]
+# i=3: 71 < 75? No → stack=[2,3]
+# i=4: 69 < 71? No → stack=[2,3,4]
+# i=5: T[4]=69 < 72 → result[4]=1. T[3]=71 < 72 → result[3]=2. stack=[2,5]
+# i=6: T[5]=72 < 76 → result[5]=1. T[2]=75 < 76 → result[2]=4. stack=[6]
+# i=7: stack=[6,7]. Result: [1,1,4,2,1,1,0,0] ✓</span>
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Monotonic stack — each popped index found its "next warmer day"</div>
+  <svg viewBox="0 0 660 290" width="660" role="img" aria-label="Animated daily temperatures monotonic stack">
+    <text x="330" y="22" text-anchor="middle" class="svg-tm" font-size="13">T = [73, 74, 75, 71, 69, 72, 76, 73] · result = [1,1,4,2,1,1,0,0]</text>
+    <g text-anchor="middle" font-size="13">
+      <rect x="30" y="50" width="72" height="44" rx="6" fill="#162032" stroke="#475569"/><text x="66" y="77" class="svg-t">73</text>
+      <rect x="108" y="50" width="72" height="44" rx="6" fill="#162032" stroke="#475569"/><text x="144" y="77" class="svg-t">74</text>
+      <rect x="186" y="50" width="72" height="44" rx="6" fill="#162032" stroke="#475569"/><text x="222" y="77" class="svg-t">75</text>
+      <rect x="264" y="50" width="72" height="44" rx="6" fill="#162032" stroke="#475569"/><text x="300" y="77" class="svg-t">71</text>
+      <rect x="342" y="50" width="72" height="44" rx="6" fill="#162032" stroke="#475569"/><text x="378" y="77" class="svg-t">69</text>
+      <rect x="420" y="50" width="72" height="44" rx="6" fill="#162032" stroke="#475569"/><text x="456" y="77" class="svg-t">72</text>
+      <rect x="498" y="50" width="72" height="44" rx="6" fill="#162032" stroke="#475569"/><text x="534" y="77" class="svg-t">76</text>
+      <rect x="576" y="50" width="72" height="44" rx="6" fill="#162032" stroke="#475569"/><text x="612" y="77" class="svg-t">73</text>
+    </g>
+    <g text-anchor="middle" font-size="10" fill="#64748b">
+      <text x="66" y="106">i=0</text><text x="144" y="106">i=1</text><text x="222" y="106">i=2</text>
+      <text x="300" y="106">i=3</text><text x="378" y="106">i=4</text><text x="456" y="106">i=5</text>
+      <text x="534" y="106">i=6</text><text x="612" y="106">i=7</text>
+    </g>
+    <g text-anchor="middle" font-size="12">
+      <text x="66" y="132" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.14;0.18;1" dur="13s" repeatCount="indefinite"/>+1</text>
+      <text x="144" y="132" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.20;0.24;1" dur="13s" repeatCount="indefinite"/>+1</text>
+      <text x="300" y="132" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.55;0.59;1" dur="13s" repeatCount="indefinite"/>+2</text>
+      <text x="378" y="132" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.50;0.54;1" dur="13s" repeatCount="indefinite"/>+1</text>
+      <text x="456" y="132" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.62;0.66;1" dur="13s" repeatCount="indefinite"/>+1</text>
+      <text x="222" y="132" class="svg-s" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.70;0.74;1" dur="13s" repeatCount="indefinite"/>+4</text>
+    </g>
+    <text x="330" y="175" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.04;0.08;0.13;0.15" dur="13s" repeatCount="indefinite"/>i=0: push 0 · stack=[0]</text>
+    <text x="330" y="175" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.15;0.19;0.25;0.27" dur="13s" repeatCount="indefinite"/>i=1: T[0]=73&lt;74 → pop 0, result[0]=1 · push 1 · stack=[1]</text>
+    <text x="330" y="175" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.27;0.31;0.38;0.40" dur="13s" repeatCount="indefinite"/>i=2: T[1]=74&lt;75 → pop 1, result[1]=1 · stack=[2]</text>
+    <text x="330" y="175" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.40;0.44;0.52;0.54" dur="13s" repeatCount="indefinite"/>i=5: 72&gt;T[4]=69 → pop 4 (result[4]=1); 72&gt;T[3]=71 → pop 3 (result[3]=2)</text>
+    <text x="330" y="175" text-anchor="middle" class="svg-lbl" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.62;0.66;0.76;0.78" dur="13s" repeatCount="indefinite"/>i=6: 76&gt;T[5]=72 → result[5]=1; 76&gt;T[2]=75 → result[2]=4 ✨</text>
+    <text x="330" y="200" text-anchor="middle" class="svg-s" font-size="14" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.80;0.84;1" dur="13s" repeatCount="indefinite"/>result = [1, 1, 4, 2, 1, 1, 0, 0] ✓</text>
+  </svg>
+  <div class="fig-cap"><b>The stack keeps "unanswered questions".</b> Each index on the stack is waiting for a warmer day. When a warmer day arrives it answers all the questions it can and then queues itself as a new unanswered question. Every index enters and exits the stack at most once — O(n) total. ▶ loops every 13s.</div>
+  <div class="legend">
+    <span><i style="background:#10b981"></i>answer found (+days)</span>
+    <span><i style="background:#818cf8"></i>still waiting (result=0)</span>
+  </div>
+</div>
+
+<div class="sec">🎬 Largest Rectangle in Histogram</div>
+<div class="ts">
+  <div class="sn2">📏</div>
+  <div class="sc"><strong>Story:</strong> For each bar, find the maximum width rectangle that can be formed using this bar as the SHORTEST bar. That width = (first shorter bar to right) - (first shorter bar to left) - 1.
+  <strong>Monotonic stack gives both boundaries in O(n).</strong>
+  <div class="mini">heights=[2,1,5,6,2,3]
+When we pop 6 (because 2 is shorter): right_bound=4(index of 2), left_bound=2(stack top=5's index)
+Area = 6*(4-2-1)=6*1=6
+When we pop 5: right_bound=4, left_bound=1(index of 1)
+Area = 5*(4-1-1)=5*2=10 ← MAXIMUM
+Final answer = 10 ✓</div></div>
+</div>
+<div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Largest Rectangle & Valid Parentheses</div></div><pre><span class="cm"># --- Largest Rectangle in Histogram ---</span>
+<span class="kw">def</span> <span class="fn">largest_rectangle</span>(heights):
+    stack, max_area = [], 0
+    heights.append(0)                        <span class="cm"># sentinel 0 to flush stack at end</span>
+    <span class="kw">for</span> i, h <span class="kw">in</span> enumerate(heights):
+        <span class="kw">while</span> stack <span class="kw">and</span> heights[stack[-1]] > h:
+            height = heights[stack.pop()]
+            width  = i <span class="kw">if not</span> stack <span class="kw">else</span> i - stack[-1] - 1
+            max_area = max(max_area, height * width)
+        stack.append(i)
+    <span class="kw">return</span> max_area
+
+<span class="cm"># --- Valid Parentheses ---</span>
+<span class="kw">def</span> <span class="fn">is_valid</span>(s):
+    stack = []
+    pairs = {')':'(', ']':'[', '}':'{'}
+    <span class="kw">for</span> ch <span class="kw">in</span> s:
+        <span class="kw">if</span> ch <span class="kw">in</span> '([{': stack.append(ch)
+        <span class="kw">elif not</span> stack <span class="kw">or</span> stack[-1] != pairs[ch]: <span class="kw">return</span> False
+        <span class="kw">else</span>: stack.pop()
+    <span class="kw">return not</span> stack
+
+<span class="cm"># --- Implement Queue Using Two Stacks ---</span>
+<span class="kw">class</span> <span class="fn">MyQueue</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self): self.inbox = []; self.outbox = []
+    <span class="kw">def</span> <span class="fn">push</span>(self, x): self.inbox.append(x)
+    <span class="kw">def</span> <span class="fn">pop</span>(self):
+        self.peek()
+        <span class="kw">return</span> self.outbox.pop()
+    <span class="kw">def</span> <span class="fn">peek</span>(self):
+        <span class="kw">if not</span> self.outbox:              <span class="cm"># transfer all at once: amortized O(1)</span>
+            <span class="kw">while</span> self.inbox: self.outbox.append(self.inbox.pop())
+        <span class="kw">return</span> self.outbox[-1]
+    <span class="kw">def</span> <span class="fn">empty</span>(self): <span class="kw">return not</span> self.inbox <span class="kw">and not</span> self.outbox
+</pre></div>
+
+<div class="fig">
+  <div class="fig-title">🎬 Largest rectangle in histogram — monotonic stack pins each bar’s left boundary</div>
+  <svg viewBox="0 0 600 280" width="600" role="img" aria-label="Animated largest rectangle histogram">
+    <text x="300" y="22" text-anchor="middle" class="svg-tm" font-size="13">heights = [2, 1, 5, 6, 2, 3] · max area = 10 (bars 2 and 3)</text>
+    <!-- draw bars (scale: 1 unit = 28px, base at y=220) -->
+    <rect x="70" y="164" width="60" height="56" fill="rgba(79,70,229,.3)" stroke="#818cf8" stroke-width="2"/>
+    <rect x="140" y="192" width="60" height="28" fill="rgba(79,70,229,.3)" stroke="#818cf8" stroke-width="2"/>
+    <rect x="210" y="80" width="60" height="140" fill="rgba(79,70,229,.3)" stroke="#818cf8" stroke-width="2"/>
+    <rect x="280" y="52" width="60" height="168" fill="rgba(79,70,229,.3)" stroke="#818cf8" stroke-width="2"/>
+    <rect x="350" y="164" width="60" height="56" fill="rgba(79,70,229,.3)" stroke="#818cf8" stroke-width="2"/>
+    <rect x="420" y="136" width="60" height="84" fill="rgba(79,70,229,.3)" stroke="#818cf8" stroke-width="2"/>
+    <!-- heights labels -->
+    <g text-anchor="middle" font-size="12" fill="#94a3b8">
+      <text x="100" y="216">2</text><text x="170" y="216">1</text><text x="240" y="216">5</text>
+      <text x="310" y="216">6</text><text x="380" y="216">2</text><text x="450" y="216">3</text>
+    </g>
+    <!-- max rect highlight 5*2=10 -->
+    <rect x="210" y="80" width="120" height="140" fill="rgba(16,185,129,.2)" stroke="#10b981" stroke-width="3" stroke-dasharray="6 3" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.48;0.52;1" dur="12s" repeatCount="indefinite"/></rect>
+    <text x="270" y="160" text-anchor="middle" class="svg-s" font-size="15" font-weight="bold" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.52;0.56;1" dur="12s" repeatCount="indefinite"/>5×2=10</text>
+    <!-- baseline -->
+    <line x1="60" y1="220" x2="500" y2="220" stroke="#475569" stroke-width="2"/>
+    <!-- stack state -->
+    <text x="300" y="250" text-anchor="middle" class="svg-tm" font-size="13" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.10;0.14;0.40;0.43" dur="12s" repeatCount="indefinite"/>push h=6; then h=2 pops 6 → area=6×1=6; pops 5 → area=5×2=10 ✨</text>
+    <text x="300" y="250" text-anchor="middle" class="svg-s" font-size="14" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.62;0.66;1" dur="12s" repeatCount="indefinite"/>maximum area = 10 (height 5, width 2)</text>
+  </svg>
+  <div class="fig-cap"><b>Every bar is a rectangle waiting to know its width.</b> A monotone-increasing stack keeps track of bars whose left boundary is confirmed. When a shorter bar arrives it triggers all taller pending bars to compute their area (right boundary = current index, left boundary = new stack top). The sentinel <code>0</code> at the end flushes any remaining bars. ▶ loops every 12s.</div>
+  <div class="legend">
+    <span><i style="background:#818cf8"></i>bar height</span>
+    <span><i style="background:#10b981"></i>maximum rectangle</span>
+  </div>
+</div>
+
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Min Stack — O(1) getMin</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 155):</strong> Design a stack that supports push, pop, top, and getMin operations all in O(1) time.</div>
+    <div class="iq-approach"><strong>Auxiliary min stack:</strong> Keep a secondary stack that tracks the running minimum. When pushing a value ≤ current min, push it to min_stack too. When popping, if the popped value equals min_stack's top, pop min_stack too. The min_stack always has the minimum for the current state of the main stack.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">Operations: push(5), push(3), push(7), push(2), pop(), getMin()
+
+push(5): stack=[5], min_stack=[5]   (5 <= empty, push to min)
+push(3): stack=[5,3], min_stack=[5,3] (3 <= 5, push to min)
+push(7): stack=[5,3,7], min_stack=[5,3] (7 > 3, DON'T push to min)
+push(2): stack=[5,3,7,2], min_stack=[5,3,2] (2 <= 3, push to min)
+
+pop():   remove 2, 2==min_stack.top(2) → pop min_stack too
+         stack=[5,3,7], min_stack=[5,3]
+
+getMin(): min_stack.top() = 3 ✓
+
+Alternative: store (val, min_at_this_point) tuples:
+  push(5) → (5,5), push(3) → (3,3), push(7) → (7,3), push(2) → (2,2)
+  getMin() = current tuple's second value = 2</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Min Stack</div></div><pre><span class="kw">class</span> <span class="fn">MinStack</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.stack = []
+        self.min_stack = []
+
+    <span class="kw">def</span> <span class="fn">push</span>(self, val):
+        self.stack.append(val)
+        <span class="cm"># Track min: push if min_stack empty OR val is new min</span>
+        cur_min = self.min_stack[-1] <span class="kw">if</span> self.min_stack <span class="kw">else</span> float(<span class="nm">'inf'</span>)
+        self.min_stack.append(min(val, cur_min))
+
+    <span class="kw">def</span> <span class="fn">pop</span>(self):
+        self.stack.pop()
+        self.min_stack.pop()
+
+    <span class="kw">def</span> <span class="fn">top</span>(self): <span class="kw">return</span> self.stack[-1]
+    <span class="kw">def</span> <span class="fn">getMin</span>(self): <span class="kw">return</span> self.min_stack[-1]</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(1) all ops</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Decode String</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 394):</strong> Given an encoded string like '3[a2[c]]', decode it to 'accaccacc'. Numbers can be multi-digit. Brackets can be nested arbitrarily deep.</div>
+    <div class="iq-approach"><strong>Stack models nested scope:</strong> Maintain a stack of (current_count, string_built_so_far). When '[' is encountered, push state and reset. When ']' is encountered, pop and multiply. Current number and current string are tracked as running state.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">Input: "3[a2[c]]"
+
+curr_str=""  curr_num=0  stack=[]
+
+'3': curr_num=3
+'[': push ("", 3) to stack, reset: curr_str="", curr_num=0
+     stack=[("",3)]
+'a': curr_str="a"
+'2': curr_num=2
+'[': push ("a",2) to stack, reset: curr_str="", curr_num=0
+     stack=[("",3),("a",2)]
+'c': curr_str="c"
+']': pop ("a",2): curr_str = "a" + "c"*2 = "acc"
+     stack=[("",3)]
+']': pop ("",3): curr_str = "" + "acc"*3 = "accaccacc"
+     stack=[]
+
+Result: "accaccacc" ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Decode String</div></div><pre><span class="kw">def</span> <span class="fn">decode_string</span>(s):
+    stack = []
+    curr_str = <span class="nm">""</span>
+    curr_num = 0
+
+    <span class="kw">for</span> ch <span class="kw">in</span> s:
+        <span class="kw">if</span> ch.isdigit():
+            curr_num = curr_num * 10 + int(ch)  <span class="cm"># handle multi-digit</span>
+        <span class="kw">elif</span> ch == <span class="nm">'['</span>:
+            stack.append((curr_str, curr_num))  <span class="cm"># save state</span>
+            curr_str, curr_num = <span class="nm">""</span>, 0
+        <span class="kw">elif</span> ch == <span class="nm">']'</span>:
+            prev_str, count = stack.pop()
+            curr_str = prev_str + curr_str * count  <span class="cm"># expand</span>
+        <span class="kw">else</span>:
+            curr_str += ch
+    <span class="kw">return</span> curr_str</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n × max_repeat)</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">Sliding Window Maximum</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 239):</strong> Given an array and integer k, return the maximum value in each sliding window of size k. E.g. [1,3,-1,-3,5,3,6,7] k=3 → [3,3,5,5,6,7].</div>
+    <div class="iq-approach"><strong>Monotonic decreasing deque:</strong> Deque stores indices in decreasing order of their values. Invariant: front = index of current window's max. Before adding element i: remove from BACK all indices whose values are smaller (they can never be the future max). Remove from FRONT any index that's outside the window.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">nums=[1,3,-1,-3,5,3,6,7]  k=3
+
+i=0 v=1: deque=[0]
+i=1 v=3: 3>nums[0]=1 → pop 0, deque=[1]
+i=2 v=-1: -1<3, just append. deque=[1,2]
+  Window [0,2] full → max=nums[deque[0]]=nums[1]=3 ✓
+
+i=3 v=-3: append. deque=[1,2,3]
+  Front=1 still in window [1,3] → max=nums[1]=3 ✓
+
+i=4 v=5: 5>nums[3]=-3 → pop 3
+          5>nums[2]=-1 → pop 2
+          5>nums[1]=3  → pop 1
+          deque=[4]
+  max=nums[4]=5 ✓
+
+i=5 v=3: append. deque=[4,5]. max=nums[4]=5 ✓
+i=6 v=6: 6>nums[5]=3→pop5, 6>nums[4]=5→pop4. deque=[6]. max=6 ✓
+i=7 v=7: 7>nums[6]=6→pop6. deque=[7]. max=7 ✓
+
+Result: [3,3,5,5,6,7] ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Sliding Window Maximum (Monotonic Deque)</div></div><pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+<span class="kw">def</span> <span class="fn">max_sliding_window</span>(nums, k):
+    dq = deque()             <span class="cm"># stores indices, decreasing by value</span>
+    result = []
+
+    <span class="kw">for</span> i, n <span class="kw">in</span> enumerate(nums):
+        <span class="cm"># Remove indices outside window</span>
+        <span class="kw">if</span> dq <span class="kw">and</span> dq[0] &lt; i - k + 1: dq.popleft()
+        <span class="cm"># Maintain decreasing invariant</span>
+        <span class="kw">while</span> dq <span class="kw">and</span> nums[dq[-1]] &lt; n: dq.pop()
+        dq.append(i)
+        <span class="cm"># Window is full</span>
+        <span class="kw">if</span> i >= k - 1:
+            result.append(nums[dq[0]])  <span class="cm"># front = max</span>
+    <span class="kw">return</span> result</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n)</span>
+      <span class="iq-pill s">Space: O(k)</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>

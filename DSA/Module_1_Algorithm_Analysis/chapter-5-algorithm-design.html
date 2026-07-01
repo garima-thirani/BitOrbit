@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Algorithm Design Paradigms</title><style>
+:root{--p:#4f46e5;--pl:#818cf8;--pd:#3730a3;--a:#06b6d4;--s:#10b981;--w:#f59e0b;--d:#ef4444;--st:#f97316;--bg:#0f172a;--bc:#1e293b;--bc2:#162032;--t:#e2e8f0;--tm:#94a3b8;--brd:#334155;--cbg:#0d1117;--ct:#e6edf3;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.8;font-size:16px;}
+.hero{background:linear-gradient(135deg,#1a1050 0%,#0f172a 40%,#061025 100%);border-bottom:1px solid var(--brd);padding:60px 40px 50px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(79,70,229,.25) 0%,transparent 65%),radial-gradient(ellipse at 80% 20%,rgba(6,182,212,.18) 0%,transparent 55%);}
+.hero-inner{max-width:900px;margin:0 auto;position:relative;}
+.badge{display:inline-block;background:rgba(79,70,229,.25);color:var(--pl);border:1px solid rgba(79,70,229,.4);border-radius:20px;padding:4px 16px;font-size:13px;letter-spacing:.5px;margin-bottom:20px;}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;margin-bottom:18px;}
+.hero h1 span{background:linear-gradient(90deg,#818cf8,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero p{font-size:1.15rem;color:var(--tm);max-width:680px;}
+.stats{display:flex;gap:40px;margin-top:36px;flex-wrap:wrap;}
+.stat .sn{font-size:1.7rem;font-weight:700;color:var(--pl);}
+.stat .sl{font-size:.8rem;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;}
+.wrap{max-width:960px;margin:0 auto;padding:40px 24px;}
+.card{background:var(--bc);border:1px solid var(--brd);border-radius:16px;padding:32px;margin:28px 0;}
+.story{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(249,115,22,.04));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:28px 32px;margin:28px 0;position:relative;overflow:hidden;}
+.story::before{content:'📖';position:absolute;right:24px;top:20px;font-size:3rem;opacity:.12;}
+.story .slabel{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--st);margin-bottom:10px;}
+.story h3{font-size:1.1rem;color:#fed7aa;margin-bottom:12px;}
+.story p{color:#fde68a;line-height:1.9;}
+.story em{color:#fb923c;}.story strong{color:#fdba74;}
+.ibox{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.03));border:1px solid rgba(16,185,129,.25);border-radius:12px;padding:22px 26px;margin:20px 0;}
+.ibox .lbl{font-size:.75rem;font-weight:700;letter-spacing:1px;color:var(--s);text-transform:uppercase;margin-bottom:10px;}
+.ibox p,.ibox li{color:#a7f3d0;line-height:1.85;}
+.ibox ul,.ibox ol{padding-left:22px;margin-top:8px;}
+.ibox li{margin:6px 0;}
+.cw{background:var(--cbg);border:1px solid #30363d;border-radius:12px;overflow:hidden;margin:20px 0;}
+.ch{display:flex;align-items:center;gap:8px;background:#161b22;padding:12px 20px;border-bottom:1px solid #30363d;}
+.dot{width:12px;height:12px;border-radius:50%;}
+.dr{background:#ff5f57;}.dy{background:#ffbd2e;}.dg{background:#28ca41;}
+.clang{margin-left:auto;font-size:.75rem;color:#8b949e;background:#21262d;padding:2px 10px;border-radius:4px;}
+pre{background:var(--cbg)!important;color:var(--ct)!important;padding:24px!important;font-family:'Fira Code','Courier New',monospace!important;font-size:.87rem!important;line-height:1.85!important;overflow-x:auto;white-space:pre;margin:0!important;border:none!important;}
+.kw{color:#ff7b72;}.fn{color:#d2a8ff;}.cm{color:#8b949e;font-style:italic;}.nm{color:#79c0ff;}.vr{color:#ffa657;}
+.ts{display:flex;gap:16px;margin:12px 0;padding:18px 22px;background:var(--bc2);border-radius:12px;border-left:3px solid var(--p);align-items:flex-start;}
+.ts .sn2{min-width:32px;height:32px;border-radius:50%;background:var(--p);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.84rem;flex-shrink:0;}
+.ts .sc{font-size:.92rem;line-height:1.8;color:var(--t);}
+.ts .sc .mini{font-family:monospace;font-size:.87rem;color:var(--pl);margin-top:8px;background:rgba(79,70,229,.08);padding:8px 12px;border-radius:6px;}
+.ts .sc strong{color:var(--t);}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px;margin:20px 0;}
+.cc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:22px;text-align:center;}
+.bigo{font-size:1.6rem;font-weight:800;margin-bottom:6px;}
+.bigo.gr{color:var(--s);}.bigo.gd{color:var(--pl);}.bigo.bd{color:var(--d);}
+.cc .lbl2{font-size:.8rem;color:var(--tm);line-height:1.5;}
+.igrid{display:grid;gap:14px;}
+.iq{background:linear-gradient(135deg,rgba(239,68,68,.07),rgba(239,68,68,.02));border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:20px 24px;}
+.iqh{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.iqn{background:var(--d);color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0;}
+.iqt{font-weight:700;color:#fca5a5;font-size:1rem;}
+.iqb{font-size:.9rem;color:var(--tm);line-height:1.75;}
+.iqh2{margin-top:12px;padding:10px 14px;background:rgba(79,70,229,.1);border-radius:6px;font-size:.85rem;color:var(--pl);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:640px){.g2{grid-template-columns:1fr;}}
+.gc{background:var(--bc2);border:1px solid var(--brd);border-radius:12px;padding:20px;}
+.gc h4{color:var(--a);margin-bottom:10px;font-size:1rem;}
+.gc p{font-size:.88rem;color:var(--tm);line-height:1.75;}
+.sec{font-size:1.5rem;font-weight:800;margin:52px 0 6px;display:flex;align-items:center;gap:14px;}
+.sec::after{content:'';flex:1;height:1px;background:var(--brd);}
+.sub{color:var(--tm);margin-bottom:24px;font-size:.95rem;}
+table{width:100%;border-collapse:collapse;margin:20px 0;}
+thead tr{background:rgba(79,70,229,.18);}
+th{padding:12px 16px;text-align:left;font-size:.82rem;color:var(--pl);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+td{padding:11px 16px;border-bottom:1px solid var(--brd);font-size:.9rem;color:var(--tm);}
+tbody tr:hover{background:rgba(255,255,255,.02);}
+.callout{display:flex;gap:14px;padding:18px 22px;border-radius:10px;margin:18px 0;}
+.callout.inf{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.callout.wrn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);}
+.callout .ci{font-size:1.4rem;}
+.callout .cb{font-size:.9rem;line-height:1.8;color:#a5f3fc;}
+.callout.wrn .cb{color:#fde68a;}
+code{background:rgba(79,70,229,.15);color:var(--pl);padding:2px 6px;border-radius:4px;font-family:monospace;font-size:.88em;}
+h3{color:var(--t);margin:24px 0 10px;font-size:1.05rem;}
+
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;
+  background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;
+  border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.defbox{background:rgba(79,70,229,.09);border-left:3px solid #4f46e5;
+  padding:14px 18px;border-radius:0 8px 8px 0;margin:16px 0;font-size:.92rem;line-height:1.8;}
+.defbox strong{color:#818cf8;}
+.tag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin:16px 0;}
+.tag-card{background:var(--bc2);border:1px solid var(--brd);border-radius:10px;padding:14px 16px;}
+.tag-card .tc{font-weight:700;font-size:.85rem;color:#fca5a5;margin-bottom:4px;}
+.tag-card .td{font-size:.82rem;color:var(--tm);}
+.cmp-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.88rem;}
+.cmp-table th{background:rgba(79,70,229,.15);color:#818cf8;padding:10px 14px;text-align:left;border-bottom:1px solid var(--brd);}
+.cmp-table td{padding:9px 14px;border-bottom:1px solid rgba(51,65,85,.5);color:var(--tm);}
+.cmp-table tr:hover td{background:rgba(79,70,229,.05);}
+.cmp-table .h{color:#fca5a5;font-weight:600;}
+.cmp-table .g{color:#6ee7b7;font-weight:600;}
+.cmp-table .y{color:#fcd34d;font-weight:600;}
+.step-list{counter-reset:step;list-style:none;padding:0;margin:14px 0;}
+.step-list li{counter-increment:step;display:flex;gap:14px;margin-bottom:14px;align-items:flex-start;}
+.step-list li::before{content:counter(step);min-width:28px;height:28px;background:var(--p);
+  color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:.78rem;font-weight:700;flex-shrink:0;margin-top:2px;}
+.iq-body{padding:0 2px;}
+.iq-problem{font-size:.92rem;color:var(--t);line-height:1.8;margin:10px 0 14px;}
+.iq-problem strong{color:#fca5a5;}
+.iq-approach{font-size:.9rem;color:var(--tm);line-height:1.8;margin-bottom:10px;}
+.iq-approach strong{color:var(--pl);}
+.iq-section-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin:14px 0 6px;}
+.iq-section-label.trc{color:#f97316;}
+.iq-section-label.cod{color:#10b981;}
+.iq-section-label.cpx{color:#818cf8;}
+.iq-trace{font-family:'Fira Code','Courier New',monospace;font-size:.83rem;color:#c4b5fd;
+  background:rgba(79,70,229,.09);border:1px solid rgba(79,70,229,.2);
+  padding:12px 16px;border-radius:8px;line-height:1.8;white-space:pre;overflow-x:auto;}
+.iq-cpx{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 2px;}
+.iq-pill{padding:3px 12px;border-radius:20px;font-size:.78rem;font-weight:600;}
+.iq-pill.t{background:rgba(16,185,129,.12);color:#6ee7b7;border:1px solid rgba(16,185,129,.25);}
+.iq-pill.s{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25);}
+.iq-divider{border:none;border-top:1px solid rgba(239,68,68,.15);margin:14px 0 10px;}
+
+</style></head>
+<body><div class="hero"><div class="hero-inner"><div class="badge">Module 1 · Chapter 5</div><h1>Algorithm Design Paradigms<br><span>Divide, Conquer & Optimize</span></h1><p>Divide & Conquer, Greedy, Dynamic Programming, Randomization — the four master strategies.</p><div class="stats"><div class="stat"><div class="sn">D&C</div><div class="sl">Split → Solve → Merge</div></div><div class="stat"><div class="sn">Greedy</div><div class="sl">Local optimum → global</div></div><div class="stat"><div class="sn">DP</div><div class="sl">Memoize subproblems</div></div><div class="stat"><div class="sn">Randomized</div><div class="sl">Expected performance</div></div></div></div></div><div class="wrap">
+
+<div class="sec">&#9889; The Story &#8212; The Four Weapons</div>
+<div class="story">
+  <div class="slabel">Choosing your approach</div>
+  <h3>Every algorithmic problem solution belongs to one of four paradigms: Divide &amp; Conquer, Greedy, Dynamic Programming, or Backtracking. The hardest skill is knowing which weapon to pick.</h3>
+  <p>An experienced engineer doesn't solve every problem from scratch. They recognise the pattern, apply the paradigm, and customise. This chapter builds that pattern-matching muscle.</p>
+</div>
+
+<div class="sec">&#128268; Decision Tree &#8212; Which Paradigm?</div>
+<div class="viz-box">Can you break the problem into INDEPENDENT subproblems?
+  YES → Do subproblems repeat (overlapping)?
+          YES → Dynamic Programming  (e.g. Fibonacci, LCS, Knapsack)
+          NO  → Divide &amp; Conquer    (e.g. Merge Sort, Binary Search)
+  NO  → Do you need ALL solutions or one optimal?
+          ONE OPTIMAL → Can a local greedy choice always lead to global optimum?
+                          YES → Greedy  (e.g. Coin Change with canonical coins, Activity Selection)
+                          NO  → Dynamic Programming
+          ALL SOLUTIONS → Backtracking  (e.g. N-Queens, Sudoku, Permutations)
+
+Quick checklist:
+  ✓ "Optimal substructure" + "overlapping subproblems" → DP
+  ✓ "Locally optimal = globally optimal" (provable) → Greedy
+  ✓ "Split into equal halves" → Divide &amp; Conquer
+  ✓ "All possible combinations/permutations" → Backtracking</div>
+
+<div class="sec">&#128200; Divide &amp; Conquer &#8212; Split, Solve, Merge</div>
+<div class="card">
+  <p style="color:var(--tm);margin-bottom:12px">Break problem into k subproblems of size n/b. Solve independently. Combine results. Time: T(n) = k·T(n/b) + O(combine).</p>
+<div class="viz-box">Merge Sort — canonical D&amp;C example:
+  Split:    [38,27,43,3,9,82,10]
+              ↙               ↘
+          [38,27,43]        [3,9,82,10]
+          ↙     ↘           ↙        ↘
+      [38]   [27,43]    [3,9]       [82,10]
+               ↙  ↘      ↙  ↘       ↙   ↘
+            [27] [43]  [3] [9]  [82]  [10]
+
+  Merge back up:
+  [27,43]  →  [27,38,43]   ←  [38]
+  [3,9]    →  [3,9,82,10]  ←  [82,10]
+  Both     →  [3,9,10,27,38,43,82]
+
+Key insight: sorting is trivially easy for 1 element.
+Merge of two sorted arrays is O(n). log n levels × O(n) = O(n log n).</div>
+</div>
+
+<div class="sec">&#127381; Greedy &#8212; Take the Local Best</div>
+<div class="card">
+  <p style="color:var(--tm);margin-bottom:12px">A greedy algorithm makes the locally optimal choice at each step and never reconsiders. Works when the greedy choice property holds — proven by exchange argument or contradiction.</p>
+<div class="viz-box">Activity Selection — greedy by earliest finish time:
+  Activities: [(1,4), (3,5), (0,6), (5,7), (8,9), (5,9), (6,10), (8,11), (2,13), (12,14)]
+               start, finish
+
+  Sort by finish: (1,4),(3,5),(0,6),(5,7),(8,9),(5,9),(6,10),(8,11),(2,13),(12,14)
+
+  Select (1,4)   ← first to finish
+  Skip   (3,5)   ← overlaps with (1,4)
+  Skip   (0,6)   ← overlaps with (1,4)
+  Select (5,7)   ← starts after 4
+  Select (8,9)   ← starts after 7
+  Skip   (5,9)   ← overlaps
+  Skip   (6,10)  ← overlaps
+  Skip   (8,11)  ← overlaps
+  Skip   (2,13)  ← overlaps
+  Select (12,14) ← starts after 9
+
+  Selected: (1,4), (5,7), (8,9), (12,14) = 4 activities ← maximum!
+
+Why greedy works here: selecting the activity that finishes earliest
+leaves the most time for subsequent activities — proven by exchange argument.</div>
+</div>
+
+<div class="sec">&#128200; Dynamic Programming &#8212; Remember to Avoid Recomputing</div>
+<div class="card">
+  <p style="color:var(--tm);margin-bottom:12px">DP applies when: (1) optimal substructure — optimal solution contains optimal sub-solutions, and (2) overlapping subproblems — same subproblem is solved multiple times in naive recursion.</p>
+<div class="viz-box">Fibonacci — why naive recursion is O(2ⁿ):
+  fib(5)
+  ├── fib(4)
+  │   ├── fib(3)               ← computed AGAIN below!
+  │   │   ├── fib(2) ← again!
+  │   │   └── fib(1)
+  │   └── fib(2)
+  └── fib(3)                   ← duplicate work
+      ├── fib(2)               ← duplicate work
+      └── fib(1)
+
+With memoization (top-down DP):
+  @cache def fib(n): return n if n&lt;=1 else fib(n-1)+fib(n-2)
+  Each fib(k) computed ONCE. O(n) time, O(n) space.
+
+With tabulation (bottom-up DP):
+  dp = [0,1,1,2,3,5,8,...]  build left to right
+  dp[i] = dp[i-1] + dp[i-2]  O(n) time, O(n) space.
+  Optimise: only need last two → O(1) space.</div>
+</div>
+
+<div class="sec">&#9889; Backtracking &#8212; Explore with the Ability to Undo</div>
+<div class="card">
+  <p style="color:var(--tm);margin-bottom:12px">Backtracking systematically explores all possibilities by building candidates and abandoning ("pruning") branches that can't lead to a valid solution. It's DFS on the implicit solution space tree.</p>
+<div class="viz-box">N-Queens (n=4) — backtracking tree fragment:
+  Place queen in row 0:
+    Col 0: Q . . .
+    Try row 1, col 2: . . Q .  (attacks? no)
+    Try row 2: must avoid col 0,2 and diagonals
+      Col 1: check — diagonal conflict with (0,0)? no. With (1,2)? check |1-2|=|0-3|? 1≠3 ok
+             → . Q . .
+      Row 3: avoid cols 0,2,1 and diagonals
+        Col 3: check all conflicts → no conflict → . . . Q
+        SOLUTION FOUND: [0,2,3,1] ← column positions per row ✓
+
+Backtracking template:
+  def backtrack(state):
+    if is_complete(state): record(state); return
+    for choice in get_choices(state):
+      if is_valid(state, choice):       ← pruning
+        make(state, choice)
+        backtrack(state)
+        undo(state, choice)             ← undo! key operation</div>
+</div>
+
+<div class="sec">&#127919; Interview Questions &#8212; Detailed Walkthroughs</div>
+<div class="igrid"><div class="iq">
+  <div class="iqh"><div class="iqn">1</div><div class="iqt">Classify: Coin Change</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Question:</strong> Given coin denominations and a target amount, find the minimum number of coins to make the amount. E.g. coins=[1,5,6,9], amount=11 → 2 (coins 5+6). Is this greedy or DP?</div>
+    <div class="iq-approach"><strong>DP — not greedy.</strong> Greedy (always take largest coin ≤ remaining) fails here: greedy picks 9 then two 1s = 3 coins. DP finds 5+6=2 coins. Greedy only works with canonical coin systems (e.g., US denominations). DP recurrence: dp[i] = min(dp[i-c]+1 for c in coins if c≤i).</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">coins=[1,5,6,9], amount=11
+
+Greedy (fails!): take 9 → remaining 2 → take 1+1 = 3 coins
+
+DP bottom-up:
+  dp = [0, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF, INF]
+       [0   1    2    3    4    5    6    7    8    9   10   11]
+
+  amount=1: dp[1-1]+1=1 → dp[1]=1
+  amount=2: dp[2-1]+1=2 → dp[2]=2
+  amount=5: dp[5-5]+1=1 → dp[5]=1  (use coin 5)
+  amount=6: dp[6-6]+1=1 → dp[6]=1  (use coin 6)
+             dp[6-5]+1=2 → dp[6]=min(1,2)=1
+  amount=9: dp[9-9]+1=1 → dp[9]=1  (use coin 9)
+  amount=10: dp[10-9]+1=2, dp[10-5]+1=2 → dp[10]=2
+  amount=11: dp[11-5]+1=dp[6]+1=2 → dp[11]=2 ✓
+             dp[11-6]+1=dp[5]+1=2 → same
+
+Answer: 2  (coins 5+6)</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Coin Change (DP)</div></div><pre><span class="kw">def</span> <span class="fn">coin_change</span>(coins, amount):
+    dp = [float(<span class="nm">'inf'</span>)] * (amount + 1)
+    dp[0] = 0
+    <span class="kw">for</span> a <span class="kw">in</span> range(1, amount+1):
+        <span class="kw">for</span> c <span class="kw">in</span> coins:
+            <span class="kw">if</span> c &lt;= a:
+                dp[a] = min(dp[a], dp[a-c] + 1)
+    <span class="kw">return</span> dp[amount] <span class="kw">if</span> dp[amount] != float(<span class="nm">'inf'</span>) <span class="kw">else</span> -1</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(amount × coins)</span>
+      <span class="iq-pill s">Space: O(amount)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">2</div><div class="iqt">Merge Sort — Implement and Analyse</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 912):</strong> Sort an array using merge sort. Trace the algorithm on [5,3,8,1,9,2,7,4] and explain why it's Θ(n log n) while QuickSort is O(n log n) average.</div>
+    <div class="iq-approach"><strong>Split at midpoint, sort both halves recursively, merge in O(n).</strong> The key insight: merge of two sorted arrays is linear. There are log n levels of recursion. Work at each level is O(n). Total: Θ(n log n) regardless of input — no pivot choice involved.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">[5,3,8,1,9,2,7,4]
+         ↓ split
+[5,3,8,1]    [9,2,7,4]
+    ↓              ↓
+[5,3] [8,1]   [9,2] [7,4]
+  ↓     ↓       ↓     ↓
+[5][3] [8][1] [9][2] [7][4]
+  ↓     ↓       ↓     ↓
+[3,5] [1,8]   [2,9] [4,7]
+    ↓              ↓
+[1,3,5,8]    [2,4,7,9]
+         ↓ merge
+[1,2,3,4,5,7,8,9]
+
+Merge two sorted arrays — pointer technique:
+  L=[1,3,5,8]  R=[2,4,7,9]  result=[]
+  compare 1 vs 2: take 1 → [1]
+  compare 3 vs 2: take 2 → [1,2]
+  compare 3 vs 4: take 3 → [1,2,3]
+  ...continue → [1,2,3,4,5,7,8,9] ✓</div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · Merge Sort</div></div><pre><span class="kw">def</span> <span class="fn">merge_sort</span>(arr):
+    <span class="kw">if</span> len(arr) &lt;= 1: <span class="kw">return</span> arr
+    mid = len(arr) // 2
+    L = merge_sort(arr[:mid])
+    R = merge_sort(arr[mid:])
+    <span class="kw">return</span> merge(L, R)
+
+<span class="kw">def</span> <span class="fn">merge</span>(L, R):
+    result = []; i = j = 0
+    <span class="kw">while</span> i &lt; len(L) <span class="kw">and</span> j &lt; len(R):
+        <span class="kw">if</span> L[i] &lt;= R[j]: result.append(L[i]); i += 1
+        <span class="kw">else</span>:            result.append(R[j]); j += 1
+    <span class="kw">return</span> result + L[i:] + R[j:]</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: Θ(n log n)</span>
+      <span class="iq-pill s">Space: O(n)</span>
+    </div>
+  </div>
+</div><div class="iq">
+  <div class="iqh"><div class="iqn">3</div><div class="iqt">Backtracking Template: N-Queens</div></div>
+  <div class="iq-body">
+    <div class="iq-problem"><strong>Problem (LeetCode 51):</strong> Place n queens on n×n board so no two queens attack each other. Return all valid board configurations.</div>
+    <div class="iq-approach"><strong>Backtracking row by row:</strong> Place one queen per row (since each row needs exactly one). For each row, try each column. Check if placing there is safe (no conflict with any previously placed queen). If safe, place and recurse. Undo (backtrack) after exploring.</div>
+    <hr class="iq-divider">
+    <div class="iq-section-label trc">&#128269; Step-by-Step Trace</div>
+    <div class="iq-trace">n=4: place queens row by row
+
+Row 0: try col 0
+  Row 1: try col 0 → conflict (same col). col 1 → conflict (diagonal). col 2 → ok
+    Row 2: try col 0 → diagonal conflict with (1,2). col 1 → ok? (1,2)-(2,1): |1-2|=|2-1|=1 diagonal! col 2 → col conflict. col 3 → conflict with (0,0) diagonal
+    → No valid placement in row 2. BACKTRACK.
+  Row 1: col 3 → ok
+    Row 2: col 0 → check: (0,0)col conflict; col 1 → ok
+      Row 3: need col not 0,1,3 and not diag of (0,0),(1,3),(2,1)
+        col 2: check (2,1)-(3,2): |2-1|=|3-2|=1 diagonal! → conflict
+        → Backtrack
+    Row 2: col 2 → check (1,3): |3-2|=|2-1|=1 diagonal! → conflict
+    → No valid. BACKTRACK.
+Row 0: col 1 → ...eventually finds solution [1,3,0,2]
+
+Total solutions for n=4: 2</span></div>
+    <div class="iq-section-label cod">&#128187; Solution</div>
+    <div class="cw"><div class="ch"><div class="dot dr"></div><div class="dot dy"></div><div class="dot dg"></div><div class="clang">Python · N-Queens Backtracking</div></div><pre><span class="kw">def</span> <span class="fn">solve_n_queens</span>(n):
+    results = []
+    cols = set(); diag1 = set(); diag2 = set()  <span class="cm"># attack sets</span>
+    board = [<span class="nm">'.'</span>*n] * n
+
+    <span class="kw">def</span> <span class="fn">backtrack</span>(row):
+        <span class="kw">if</span> row == n: results.append(board[:]); <span class="kw">return</span>
+        <span class="kw">for</span> col <span class="kw">in</span> range(n):
+            <span class="kw">if</span> col <span class="kw">in</span> cols <span class="kw">or</span> (row-col) <span class="kw">in</span> diag1 <span class="kw">or</span> (row+col) <span class="kw">in</span> diag2:
+                <span class="kw">continue</span>
+            cols.add(col); diag1.add(row-col); diag2.add(row+col)
+            board[row] = <span class="nm">'.'</span>*col + <span class="nm">'Q'</span> + <span class="nm">'.'</span>*(n-col-1)
+            backtrack(row + 1)
+            cols.discard(col); diag1.discard(row-col); diag2.discard(row+col)
+            board[row] = <span class="nm">'.'</span>*n
+
+    backtrack(0)
+    <span class="kw">return</span> results</pre></div>
+    <div class="iq-section-label cpx">&#8987; Complexity</div>
+    <div class="iq-cpx">
+      <span class="iq-pill t">Time: O(n!)</span>
+      <span class="iq-pill s">Space: O(n²)</span>
+    </div>
+  </div>
+</div></div>
+</div>
+</body></html>
