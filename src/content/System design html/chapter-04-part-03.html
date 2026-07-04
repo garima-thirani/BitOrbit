@@ -1,7 +1,153 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Primary-Replica Separation | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 4 Part 3 - Primary-Replica Separation</div><h1>Primary-Replica Separation<br><span>Scaling Reads</span></h1><p>Separating read and write operations. Writes go to primary, reads go to replicas.</p><div class="stats"><div class="stat"><div class="sn">Scaling</div><div class="sl">Database</div></div><div class="stat"><div class="sn">Shards</div><div class="sl">Horizontal</div></div><div class="stat"><div class="sn">Replicas</div><div class="sl">Reads</div></div><div class="stat"><div class="sn">Learn</div><div class="sl"></div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Primary-Replica Separation</div><h3>Database Scaling Decisions</h3><p>Database scaling is one of the hardest challenges in system design. Separating read and write operations. Writes go to primary, reads go to replicas.</p></div>
-<div class="defbox"><strong>Primary-Replica Separation:</strong> Separating read and write operations. Writes go to primary, reads go to replicas.</div>
-<div class="sec">Primary-Replica Architecture</div>
-<div class="card"><p style="color:var(--tm)"><strong>Primary:</strong> Handles all writes. <strong>Replicas:</strong> Handle read-only queries. This separation allows read-heavy systems to scale horizontally.</p></div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Primary-Replica Separation - what is the key benefit?</div><div class="quiz-opt" onclick="ck(this,false)">A) Makes the database smaller</div><div class="quiz-opt" onclick="ck(this,true)">B) Enables horizontal scaling of database workloads</div><div class="quiz-opt" onclick="ck(this,false)">C) Eliminates indexes</div><div class="quiz-opt" onclick="ck(this,false)">D) Makes queries faster automatically</div><div class="quiz-feedback">Database scaling distributes data across multiple machines.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Next topic</h3><p>Continue building your knowledge.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Primary-Replica & Read-Write Separation | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 4 · Part 3 · Primary-Replica & Read-Write Separation</div>
+<h1>Primary-Replica & Read-Write Separation<br><span>Scaling Reads</span></h1>
+<p>Most production systems receive far more reads than writes. Read/Write Separation distributes this workload so the primary database handles writes while replicas serve reads.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Primary</div><div class="sl">Writes</div></div>
+<div class="stat"><div class="sn">Replica</div><div class="sl">Reads</div></div>
+<div class="stat"><div class="sn">Replication</div><div class="sl">Copies changes</div></div>
+<div class="stat"><div class="sn">Lag</div><div class="sl">Delay</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Famous Restaurant</div>
+<div class="story">
+<div class="slabel">Why Read/Write Separation Exists</div>
+<h3>The chef should focus on cooking, not answering questions.</h3>
+<p>Imagine a famous restaurant. There is only one head chef who prepares every dish. Customers don't just place orders — they also constantly ask: "Can I see the menu?", "What are today's specials?", "How many desserts do you have?" Soon, the chef spends more time answering questions than cooking. The owner hires several assistants. The assistants answer customer questions while the chef focuses only on cooking. The restaurant becomes much more efficient. This is exactly how read/write separation works.</p>
+</div>
+
+<div class="sec">🎯 Why Read/Write Separation?</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">In many applications, 90-99% of operations are <strong>reads</strong>, only 1-10% are <strong>writes</strong>. Examples: Social media feeds, E-commerce product browsing, News websites, Blogs, Video platforms. Sending every request to one database wastes resources.</p>
+</div>
+
+<div class="sec">📐 What is the Primary-Replica Pattern?</div>
+<div class="defbox">
+<strong>Primary (Leader):</strong> Accepts all write operations.<br>
+<strong>Replicas (Followers):</strong> Continuously copy data from the primary. Serve read-only queries.<br><br>
+Applications send: <strong>Writes → Primary</strong> · <strong>Reads → Replicas</strong>
+</div>
+
+<div class="sec">🏛 Basic Architecture</div>
+<div class="fig">
+<svg viewBox="0 0 700 300" width="100%">
+<defs>
+<linearGradient id="pg"><stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#6366f1"/></linearGradient>
+<marker id="pa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="250" y="10" width="200" height="50" rx="10" fill="url(#pg)"/>
+<text x="350" y="42" fill="white" font-size="18" font-weight="700" text-anchor="middle">📱 Application</text>
+<line x1="250" y1="60" x2="120" y2="100" stroke="#64748b" stroke-width="3" marker-end="url(#pa)"/>
+<line x1="450" y1="60" x2="580" y2="100" stroke="#64748b" stroke-width="3" marker-end="url(#pa)"/>
+<rect x="20" y="110" width="200" height="50" rx="10" fill="#ef4444"/>
+<text x="120" y="140" fill="white" font-size="16" font-weight="700" text-anchor="middle">🗄 Primary (Writes)</text>
+<rect x="480" y="110" width="200" height="50" rx="10" fill="#10b981"/>
+<text x="580" y="140" fill="white" font-size="16" font-weight="700" text-anchor="middle">📖 Replica (Reads)</text>
+<line x1="120" y1="160" x2="120" y2="200" stroke="#64748b" stroke-width="2" marker-end="url(#pa)"/>
+<line x1="120" y1="200" x2="580" y2="200" stroke="#64748b" stroke-width="2" stroke-dasharray="6 3"/>
+<rect x="480" y="200" width="200" height="40" rx="8" fill="#10b981"/>
+<text x="580" y="226" fill="white" font-size="14" font-weight="700" text-anchor="middle">📖 Replica 2</text>
+<line x1="120" y1="200" x2="580" y2="250" stroke="#64748b" stroke-width="2" stroke-dasharray="6 3"/>
+<rect x="480" y="250" width="200" height="40" rx="8" fill="#10b981"/>
+<text x="580" y="276" fill="white" font-size="14" font-weight="700" text-anchor="middle">📖 Replica 3</text>
+</svg>
+<div class="fig-cap">Primary handles writes. Replicas handle reads. Replication copies changes from primary to replicas.</div>
+</div>
+
+<div class="sec">📋 Write Flow</div>
+<div class="card">
+<div class="viz-box">Client → Primary Database → Write Successful → Replication → Replicas Updated</div>
+<p style="color:var(--tm);margin-top:12px;">Only the primary accepts writes. This ensures consistency and avoids conflicts.</p>
+</div>
+
+<div class="sec">📋 Read Flow</div>
+<div class="card">
+<div class="viz-box">Client → Application → Replica Database → Result Returned</div>
+<p style="color:var(--tm);margin-top:12px;">The primary remains free to process writes while replicas handle read traffic.</p>
+</div>
+
+<div class="sec">📈 Why This Improves Scalability</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Without replicas: Primary handles 15,500 req/s (500 writes + 15,000 reads). With three replicas: Primary handles 500 writes, each replica handles 5,000 reads. <strong>Load is distributed efficiently.</strong></p>
+</div>
+
+<div class="sec">⏱ Replication Lag</div>
+<div class="story">
+<div class="slabel">The Lag Problem</div>
+<h3>Replication is rarely instantaneous.</h3>
+<p>Example: Primary shows Balance = ₹500 after a deposit. User reads from Replica — Balance = ₹600 (old value). The replica has not yet processed the latest update. This delay is called <strong>replication lag</strong>.</p>
+</div>
+
+<div class="sec">🔄 Handling Replication Lag</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📖 Read Your Own Writes</div><div class="td">After updating data, temporarily read from the primary</div></div>
+<div class="tag-card"><div class="tc">🔑 Critical Reads</div><div class="td">Important operations (payments, profile updates) read from primary</div></div>
+<div class="tag-card"><div class="tc">⏱ Eventual Consistency</div><div class="td">Accept temporary stale data for non-critical info (view counts, ratings)</div></div>
+</div>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="card">
+<p style="color:var(--tm)">An online shopping platform: Product browsing goes to replicas. Checkout always goes to the primary. This ensures product pages load fast while payment processing has the latest data.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"A user updates their profile but immediately sees the old value. Why?"</strong><div class="mini">"The application probably read from a replica before replication completed. This is a classic replication lag issue."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Primary Writes. Replicas Read.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. Who accepts writes in a primary-replica setup?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Any replica</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) The primary database only</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Both primary and replicas</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) The load balancer</div>
+<div class="quiz-feedback" id="q1">Only the primary accepts writes. Replicas are read-only copies that receive updates via replication.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. What is the main challenge with read replicas?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) They are expensive</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Replication lag — replicas may not have the latest data</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) They cannot handle reads</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) They require more CPU</div>
+<div class="quiz-feedback" id="q2">Replication lag means replicas may serve slightly stale data. This must be handled carefully for critical reads.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 4: Read Replicas & Scaling Read-Heavy Workloads</h3><p>Learn about replica routing, load balancing reads, read-after-write consistency, and production architectures.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

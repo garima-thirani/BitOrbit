@@ -1,7 +1,242 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CAP Theorem | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 3 · Part 4 · CAP Theorem</div><h1>CAP Theorem<br><span>Database Fundamentals</span></h1><p>Consistency, Availability, Partition Tolerance — choose two. Learn why this theorem is essential for distributed database design.</p><div class="stats"><div class="stat"><div class="sn">CAP</div><div class="sl">CP vs AP</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">CAP Theorem</div><h3>Database Decisions Drive Architecture</h3><p>The choice of database technology is one of the most consequential decisions in system design. Consistency, Availability, Partition Tolerance — choose two. Learn why this theorem is essential for distributed database design.</p></div>
-<div class="defbox"><strong>CAP Theorem:</strong> Consistency, Availability, Partition Tolerance — choose two. Learn why this theorem is essential for distributed database design.</div>
-<div class="sec">🧠 CAP Theorem Recap</div>
-<div class="defbox"><strong>Consistency:</strong> Every read gets the latest write. <strong>Availability:</strong> Every request gets a response. <strong>Partition Tolerance:</strong> System works despite network failures. In distributed systems, partitions happen — so choose CP or AP.</div>
-<div class="sec">🧪 Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. CAP Theorem — which statement is correct?</div><div class="quiz-opt" onclick="ck(this,false)">A) All databases work the same way</div><div class="quiz-opt" onclick="ck(this,true)">B) Understanding your data model and access patterns determines the right database choice</div><div class="quiz-opt" onclick="ck(this,false)">C) NoSQL is always better</div><div class="quiz-opt" onclick="ck(this,false)">D) SQL is outdated</div><div class="quiz-feedback">The database choice depends on your data structure, consistency needs, and scaling requirements.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>PACELC Theorem</h3><p>Continue building your database knowledge.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAP Theorem | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 3 · Part 4 · CAP Theorem</div>
+<h1>The CAP Theorem<br><span>Consistency, Availability, Partition Tolerance</span></h1>
+<p>In a distributed system, network failures are inevitable. CAP helps us reason about what a system should do when communication between machines breaks down.</p>
+<div class="stats">
+<div class="stat"><div class="sn">C</div><div class="sl">Consistency</div></div>
+<div class="stat"><div class="sn">A</div><div class="sl">Availability</div></div>
+<div class="stat"><div class="sn">P</div><div class="sl">Partition Tolerance</div></div>
+<div class="stat"><div class="sn">CP/AP</div><div class="sl">The Real Choice</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — Two Bank Branches</div>
+<div class="story">
+<div class="slabel">Why CAP Exists</div>
+<h3>Should Mumbai refuse requests when the network is cut?</h3>
+<p>
+Imagine a bank has branches in Delhi and Mumbai. Both branches keep a copy of account balances. Normally they synchronize continuously. One day, the network cable between the cities is cut. A customer withdraws ₹5,000 in Delhi while another checks the same account in Mumbai. Should Mumbai refuse requests until communication is restored? Or should it continue serving customers, even if its balance might be outdated? This is the exact problem CAP addresses.
+</p>
+</div>
+
+<div class="sec">🎯 Why CAP Exists</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Single-server databases don't face this problem. Distributed databases do. Whenever machines communicate over a network, messages can be:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">⏱ Delayed</div><div class="td">Network congestion can slow message delivery</div></div>
+<div class="tag-card"><div class="tc">❌ Lost</div><div class="td">Packets can be dropped entirely</div></div>
+<div class="tag-card"><div class="tc">📋 Duplicated</div><div class="td">The same message may arrive multiple times</div></div>
+<div class="tag-card"><div class="tc">🔄 Reordered</div><div class="td">Messages may arrive in a different order than sent</div></div>
+</div>
+<div class="defbox"><strong>Key Insight:</strong> A network partition is not hypothetical — it is expected. Good distributed systems are designed to survive it.</div>
+</div>
+
+<div class="sec">📐 What is the CAP Theorem?</div>
+<div class="defbox">
+<strong>CAP Theorem</strong> (proposed by Eric Brewer, formalized by Gilbert and Lynch): During a network partition, a distributed system can provide <strong>either Consistency or Availability</strong>, but not both simultaneously.<br><br>
+<strong>Critical point:</strong> Partition Tolerance is not optional in modern distributed systems. The real decision during a partition is between <strong>Consistency</strong> and <strong>Availability</strong>.
+</div>
+
+<div class="sec">🟣 C — Consistency</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">All clients see the same data after a successful write.</p>
+<div class="viz-box">Replica A = 10
+Write +1
+Replica B immediately also shows 11
+
+No stale reads are allowed.</div>
+</div>
+
+<div class="sec">🟢 A — Availability</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Every request receives a response. The response may not always contain the latest data. The system continues operating despite failures.</p>
+</div>
+
+<div class="sec">🟡 P — Partition Tolerance</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">The system continues functioning even when nodes cannot communicate.</p>
+<div class="viz-box">Region A
+    XXXX Network Failure XXXX
+Region B
+
+The partition may last seconds or minutes.</div>
+</div>
+
+<div class="sec">🎯 Visualizing CAP</div>
+<div class="fig">
+<svg viewBox="0 0 700 400" width="100%">
+<defs>
+<linearGradient id="cg"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#818cf8"/></linearGradient>
+<linearGradient id="ca"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#6ee7b7"/></linearGradient>
+<linearGradient id="cp"><stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fcd34d"/></linearGradient>
+</defs>
+<circle cx="350" cy="200" r="180" fill="none" stroke="#334155" stroke-width="2" stroke-dasharray="6 4"/>
+<circle cx="205" cy="140" r="95" fill="url(#cg)" opacity=".25"/>
+<text x="205" y="145" fill="#a5b4fc" font-size="18" font-weight="700" text-anchor="middle">Consistency</text>
+<text x="205" y="170" fill="#94a3b8" font-size="12" text-anchor="middle">Same data everywhere</text>
+<circle cx="495" cy="140" r="95" fill="url(#ca)" opacity=".25"/>
+<text x="495" y="145" fill="#6ee7b7" font-size="18" font-weight="700" text-anchor="middle">Availability</text>
+<text x="495" y="170" fill="#94a3b8" font-size="12" text-anchor="middle">Every request gets a response</text>
+<circle cx="350" cy="290" r="95" fill="url(#cp)" opacity=".25"/>
+<text x="350" y="295" fill="#fcd34d" font-size="18" font-weight="700" text-anchor="middle">Partition Tolerance</text>
+<text x="350" y="320" fill="#94a3b8" font-size="12" text-anchor="middle">Works despite network failures</text>
+</svg>
+<div class="fig-cap">During a partition you must choose between Consistency and Availability. Partition Tolerance is required.</div>
+</div>
+
+<div class="sec">🔵 CP Systems (Consistency + Partition Tolerance)</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">CP systems prioritize correctness. Behavior during a partition: <strong>Reject or delay requests if consistency cannot be guaranteed.</strong></p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">Examples</div><div class="td">ZooKeeper, etcd, HBase (many operations)</div></div>
+<div class="tag-card"><div class="tc">Best For</div><div class="td">Configuration management, leader election, financial metadata</div></div>
+</div>
+</div>
+
+<div class="sec">🟢 AP Systems (Availability + Partition Tolerance)</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">AP systems prioritize availability. Behavior during a partition: <strong>Continue accepting requests. Synchronize data later.</strong></p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">Examples</div><div class="td">Cassandra, Riak, Dynamo-inspired systems</div></div>
+<div class="tag-card"><div class="tc">Best For</div><div class="td">Social media, product catalogs, user activity feeds</div></div>
+</div>
+</div>
+
+<div class="sec">🌍 Real-World Examples</div>
+<div class="g2">
+<div class="gc">
+<h4>🏦 Banking</h4>
+<p>Money transfers generally prefer consistency. Showing stale balances can lead to financial errors. <strong>CP system.</strong></p>
+</div>
+<div class="gc">
+<h4>❤️ Instagram Likes</h4>
+<p>Temporary inconsistency is acceptable. A like count changing from 999 to 1000 a second later rarely impacts users. <strong>AP system.</strong></p>
+</div>
+</div>
+
+<div class="sec">⚠ CAP vs ACID — Important Distinction</div>
+<table>
+<thead><tr><th>ACID</th><th>CAP</th></tr></thead>
+<tbody>
+<tr><td>Transaction guarantees</td><td>Distributed system trade-offs</td></tr>
+<tr><td>Single or distributed DB</td><td>Distributed systems only</td></tr>
+<tr><td>Atomicity, Consistency, Isolation, Durability</td><td>Consistency, Availability, Partition Tolerance</td></tr>
+</tbody>
+</table>
+<div class="defbox"><strong>The "Consistency" in ACID is NOT the same as the "Consistency" in CAP.</strong> ACID consistency is about database rules. CAP consistency is about all nodes seeing the same data.</div>
+
+<div class="sec">❌ Common Interview Misconception</div>
+<div class="story">
+<div class="slabel">Myth Busted</div>
+<h3>"Pick any two" is outdated and misleading.</h3>
+<p>
+The correct explanation: <strong>Partition tolerance is required in distributed systems.</strong> When a partition occurs, choose between consistency and availability. No partition → you often have both consistency and availability.
+</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card">
+<div class="ts">
+<div class="sn2">Q</div>
+<div class="sc">
+<strong>"Would you choose a CP or AP database for a payment system?"</strong>
+<div class="mini">"I would generally prioritize consistency because financial correctness is more important than serving every request during a partition."</div>
+</div>
+</div>
+</div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox">
+<strong>CAP matters only when the network breaks.</strong><br>
+No partition → you often have both consistency and availability.<br>
+Partition → choose one.
+</div>
+
+<div class="sec">🚨 Common Mistakes</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Thinking CAP Applies to Single-Node Databases</div><div class="td">CAP is only relevant for distributed systems</div></div>
+<div class="tag-card"><div class="tc">❌ Saying "Pick Any Two"</div><div class="td">Partition tolerance is required. The real choice is CP vs AP</div></div>
+<div class="tag-card"><div class="tc">❌ Confusing ACID Consistency with CAP Consistency</div><div class="td">They are different concepts entirely</div></div>
+<div class="tag-card"><div class="tc">❌ Assuming AP Means Incorrect Forever</div><div class="td">AP systems eventually become consistent</div></div>
+</div>
+</div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card">
+<div class="quiz-q">1. During a network partition, what does a CP system do?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Continue serving all requests with stale data</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Reject requests until the partition heals — consistency over availability</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Automatically shard the database</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Ignore the partition and serve normally</div>
+<div class="quiz-feedback" id="q1">CP systems choose consistency over availability during partitions. Banking systems use CP.</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">2. Which of the following is a CP database system?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Cassandra</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) ZooKeeper — prioritizes consistency during partitions</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) DynamoDB</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Riak</div>
+<div class="quiz-feedback" id="q2">ZooKeeper is a CP system — it will reject requests if consistency cannot be guaranteed during a partition.</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">3. What is the common misconception about CAP Theorem?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) It only applies to SQL databases</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) "Pick any two" — but Partition Tolerance is required, so the real choice is CP vs AP</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) It was invented by Amazon</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) It only applies during normal operation</div>
+<div class="quiz-feedback" id="q3">The "pick any two" framing is misleading. In distributed systems, partitions are inevitable, so you must choose between CP and AP.</div>
+</div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story">
+<div class="slabel">Coming Up</div>
+<h3>Part 5: PACELC Theorem</h3>
+<p>
+CAP explains what happens during a network partition. PACELC explains the trade-offs even when the network is perfectly healthy — latency vs consistency.
+</p>
+</div>
+
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => {
+    o.style.pointerEvents = 'none';
+    if (o === el && correct) o.classList.add('correct');
+    else if (o === el && !correct) o.classList.add('wrong');
+    else if (correct && o !== el) o.classList.add('correct');
+  });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+
+</body>
+</html>

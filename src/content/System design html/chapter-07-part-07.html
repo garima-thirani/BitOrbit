@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Messaging Patterns & Why Kafka Was Created | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 7 · Part 7 · Messaging Patterns</div>
+<h1>Messaging Patterns & Why Kafka Was Created<br><span>From RabbitMQ to Event Streaming</span></h1>
+<p>Different problems require different messaging patterns. Understanding when to use Work Queues, Pub/Sub, and Event Streaming explains why Kafka was invented at LinkedIn.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Work</div><div class="sl">Queue</div></div>
+<div class="stat"><div class="sn">Pub</div><div class="sl">Sub</div></div>
+<div class="stat"><div class="sn">Event</div><div class="sl">Stream</div></div>
+<div class="stat"><div class="sn">Kafka</div><div class="sl">Scale</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Growing City</div>
+<div class="story">
+<div class="slabel">Why Kafka Was Invented</div>
+<h3>From small town to global metropolis.</h3>
+<p>Imagine a small town where every shop owner calls every supplier directly. Everything works. Then the town grows into a global city with millions of deliveries daily. Direct calling becomes impossible. Distribution centers (RabbitMQ) appear. But the city also wants to analyze every package, every route, every pattern forever. Distribution centers weren't built for storage and analysis. This is exactly what happened at LinkedIn. RabbitMQ solved delivery. But LinkedIn needed event history and replay. Kafka was born.</p>
+</div>
+
+<div class="sec">🎯 Why Messaging Patterns Matter</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Different applications have different communication needs: Banking transactions need exactly-once processing, Stock prices need broadcast to all, Background jobs need work distribution, Analytics need event replay. One pattern doesn't fit all.</p>
+<div class="defbox"><strong>Key Insight:</strong> Choosing the right messaging pattern is as important as choosing the right technology.</div>
+</div>
+
+<div class="sec">📐 Pattern 1: Work Queue</div>
+<div class="defbox">
+<strong>Work Queue:</strong> One producer, one queue, multiple competing consumers. Each message processed exactly once by one worker.
+</div>
+<div class="card">
+<div class="viz-box">Restaurant Kitchen:
+10 Waiters → Order Queue → 5 Chefs
+Each order cooked exactly once
+Load balanced across chefs</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Use Case</div><div class="td">Image processing, email sending, background jobs</div></div>
+<div class="tag-card"><div class="tc">📊 Benefit</div><div class="td">Load balancing, parallel processing</div></div>
+</div>
+</div>
+
+<div class="sec">📐 Pattern 2: Publish/Subscribe (Pub/Sub)</div>
+<div class="defbox">
+<strong>Pub/Sub:</strong> One producer, multiple consumers. Every interested consumer receives a copy of the message.
+</div>
+<div class="card">
+<div class="viz-box">TV Broadcasting:
+One TV Station → Broadcast → Millions of TVs
+Everyone receives the same content</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Use Case</div><div class="td">Notifications, cache invalidation, broadcast events</div></div>
+<div class="tag-card"><div class="tc">📊 Benefit</div><div class="td">Loose coupling, easy extensibility</div></div>
+</div>
+</div>
+
+<div class="sec">📐 Pattern 3: Competing Consumers</div>
+<div class="defbox">
+<strong>Competing Consumers:</strong> Multiple consumers compete for messages from a single queue. Each message processed once.
+</div>
+<div class="card">
+<div class="viz-box">Food Delivery:
+1M Orders → Queue → 10,000 Delivery Workers
+Only one worker accepts each order
+Parallel processing</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Use Case</div><div class="td">Scalable task processing, load distribution</div></div>
+</div>
+</div>
+
+<div class="sec">📐 Pattern 4: Request-Reply</div>
+<div class="defbox">
+<strong>Request-Reply:</strong> Asynchronous request with synchronous response. Uses temporary reply queues.
+</div>
+<div class="card">
+<div class="viz-box">Order Service → Inventory Queue → Inventory Service
+                                    ↓
+                            Reply Queue → Order Service
+Looks async, behaves sync</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Use Case</div><div class="td">When direct APIs aren't possible but response needed</div></div>
+</div>
+</div>
+
+<div class="sec">📐 Pattern 5: Event Notification</div>
+<div class="defbox">
+<strong>Event Notification:</strong> Announce something happened instead of commanding action. "OrderCreated" vs "SendEmail()".
+</div>
+<div class="card">
+<div class="viz-box">Command: "Do something" (SendEmail)
+Event: "Something happened" (OrderCreated)
+Multiple services can react to one event</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Benefit</div><div class="td">Loose coupling, multiple consumers, extensible</div></div>
+</div>
+</div>
+
+<div class="sec">📐 Pattern 6: Event-Carried State Transfer</div>
+<div class="defbox">
+<strong>Event-Carried State Transfer:</strong> Send complete data in event, not just ID. Consumer doesn't need additional API calls.
+</div>
+<div class="card">
+<div class="viz-box">Instead of: {orderId: 123}
+Send: {orderId: 123, amount: 499, customer: "John", items: [...]}
+Consumer has everything needed</div>
+</div>
+
+<div class="sec">🔄 Why RabbitMQ Wasn't Enough</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">RabbitMQ excels at routing and delivery. But imagine LinkedIn's scale: Every click, view, search, message, like, connection - millions per second. Different teams need these events: Search, Recommendations, Ads, Analytics, ML, Fraud. RabbitMQ deletes messages after ACK. LinkedIn needed to keep every event forever for replay and analysis.</p>
+<div class="defbox"><strong>Key Insight:</strong> RabbitMQ answers "How do I deliver messages?" Kafka answers "How do I store and distribute an endless stream of events?"</div>
+</div>
+
+<div class="sec">⚡ The Kafka Philosophy</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">RabbitMQ</div><div class="td">Deliver message → Delete message</div></div>
+<div class="tag-card"><div class="tc">Kafka</div><div class="td">Store event → Keep forever → Everyone reads independently</div></div>
+</div>
+<p style="color:var(--tm);margin-top:12px;">This single philosophical difference changed distributed systems forever. Kafka is not a message queue. It's a distributed commit log.</p>
+</div>
+
+<div class="sec">📊 Pattern Comparison</div>
+<table>
+<thead><tr><th>Pattern</th><th>Consumers</th><th>Use Case</th></tr></thead>
+<tbody>
+<tr><td class="h">Work Queue</td><td>One (competing)</td><td>Background jobs, task processing</td></tr>
+<tr><td class="h">Pub/Sub</td><td>All (broadcast)</td><td>Notifications, cache invalidation</td></tr>
+<tr><td class="h">Competing Consumers</td><td>One (load balanced)</td><td>Scalable processing</td></tr>
+<tr><td class="h">Request-Reply</td><td>One (with response)</td><td>Async request-response</td></tr>
+<tr><td class="h">Event Streaming</td><td>Multiple (independent)</td><td>Analytics, ML, Kafka</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Netflix, Uber, LinkedIn</h3>
+<p><strong>Netflix:</strong> Playback events streamed via Kafka to Recommendations, Billing, Analytics, ML. Each service has own Consumer Group.<br><br>
+<strong>Uber:</strong> RideCompleted event → Kafka → Pricing, Receipts, Analytics, Fraud, ML, Heat Maps. Every consumer processes independently.<br><br>
+<strong>LinkedIn:</strong> Every profile view, search, message → Kafka → Search Ranking, Ads, Feed, Recommendations, Notifications. This was Kafka's original use case.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why wasn't RabbitMQ sufficient for LinkedIn?"</strong><div class="mini">"RabbitMQ is optimized for reliable message delivery and routing. LinkedIn needed a distributed event log capable of storing billions of events, replaying them later, and allowing multiple consumers to read independently. Kafka was designed specifically for these requirements - it's an append-only log that never deletes events immediately."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>One worker? Work Queue. Everyone? Pub/Sub. Need history? Kafka. Need routing? RabbitMQ.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. When should you use Work Queue pattern?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) When everyone needs the message</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) When exactly one worker should process each task</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) When you need event replay</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) When broadcasting to all</div>
+<div class="quiz-feedback" id="q1">Work Queue ensures each task is processed exactly once by one worker, enabling load balancing across multiple consumers.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. Why did LinkedIn create Kafka?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) RabbitMQ was too slow</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) They needed better routing</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) They needed to store billions of events forever and allow multiple independent consumers to replay them</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) They needed lower latency</div>
+<div class="quiz-feedback" id="q2">LinkedIn needed event storage and replay capabilities that traditional message brokers couldn't provide. Kafka was built as a distributed event log.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 8: Apache Kafka Deep Dive</h3><p>Complete Kafka architecture: Brokers, Topics, Partitions, Offsets, Consumer Groups, Leader/Follower, ISR, and why Kafka is so fast.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

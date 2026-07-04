@@ -1,5 +1,230 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>BASE Model | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 3 · Part 3 · BASE Model</div><h1>BASE Model<br><span>Database Fundamentals</span></h1><p>Basically Available, Soft state, Eventually consistent — the NoSQL approach to distributed data.</p><div class="stats"><div class="stat"><div class="sn">BASE</div><div class="sl">Key Concept</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">BASE Model</div><h3>Database Decisions Drive Architecture</h3><p>The choice of database technology is one of the most consequential decisions in system design. Basically Available, Soft state, Eventually consistent — the NoSQL approach to distributed data.</p></div>
-<div class="defbox"><strong>BASE Model:</strong> Basically Available, Soft state, Eventually consistent — the NoSQL approach to distributed data.</div>
-<div class="sec">🧪 Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. BASE Model — which statement is correct?</div><div class="quiz-opt" onclick="ck(this,false)">A) All databases work the same way</div><div class="quiz-opt" onclick="ck(this,true)">B) Understanding your data model and access patterns determines the right database choice</div><div class="quiz-opt" onclick="ck(this,false)">C) NoSQL is always better</div><div class="quiz-opt" onclick="ck(this,false)">D) SQL is outdated</div><div class="quiz-feedback">The database choice depends on your data structure, consistency needs, and scaling requirements.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>CAP Theorem</h3><p>Continue building your database knowledge.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BASE Model | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 3 · Part 3 · BASE Model</div>
+<h1>BASE Model<br><span>Basically Available, Soft State, Eventually Consistent</span></h1>
+<p>ACID prioritizes correctness. BASE prioritizes scalability and availability. Modern distributed systems often choose BASE when perfect consistency is too expensive.</p>
+<div class="stats">
+<div class="stat"><div class="sn">BA</div><div class="sl">Basically Available</div></div>
+<div class="stat"><div class="sn">S</div><div class="sl">Soft State</div></div>
+<div class="stat"><div class="sn">E</div><div class="sl">Eventually Consistent</div></div>
+<div class="stat"><div class="sn">vs ACID</div><div class="sl">Trade-offs</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Global Inventory Problem</div>
+<div class="story">
+<div class="slabel">Why BASE Exists</div>
+<h3>Should Tokyo wait for London before accepting an order?</h3>
+<p>
+Imagine an e-commerce company with warehouses in New York, London, and Tokyo. A customer in London buys the last gaming console. At the exact same time, another customer in Tokyo also buys it. Should the Tokyo customer wait until London confirms the purchase? If every warehouse waits for every other warehouse before accepting orders, the website becomes slow or unavailable whenever networks have problems. Instead, many distributed systems accept temporary inconsistency and synchronize later. This philosophy is the foundation of BASE.
+</p>
+</div>
+
+<div class="sec">🎯 Why BASE Exists</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Relational databases excel at strong consistency, but internet-scale systems introduced new challenges:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">👥 Millions of Concurrent Users</div><div class="td">Traditional ACID transactions become bottlenecks under massive concurrency</div></div>
+<div class="tag-card"><div class="tc">🌍 Multiple Regions</div><div class="td">Global deployment requires data replication across continents</div></div>
+<div class="tag-card"><div class="tc">🔌 Network Partitions</div><div class="td">Networks fail. Systems must remain available despite disconnections</div></div>
+<div class="tag-card"><div class="tc">📈 Massive Write Traffic</div><div class="td">Billions of writes per day require horizontal scaling</div></div>
+</div>
+<div class="defbox"><strong>Key Insight:</strong> Companies like Amazon needed systems that remained available even when communication between regions became unreliable. The answer was to relax some guarantees provided by ACID.</div>
+</div>
+
+<div class="sec">📐 What is BASE?</div>
+<div class="defbox">
+<strong>BASE</strong> stands for: <strong>B</strong>asically <strong>A</strong>vailable, <strong>S</strong>oft state, <strong>E</strong>ventually consistent. Unlike ACID, BASE is not a strict transaction model. It is a <strong>design philosophy</strong> for distributed systems that prioritizes availability and scalability over immediate consistency.
+</div>
+
+<div class="sec">🟢 Basically Available</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;"><strong>Intuition:</strong> The system should continue serving requests even during failures.</p>
+<p style="color:var(--tm)">Example: A social media application may continue loading posts even if the "Like Count" service is temporarily unavailable. The application is degraded — but still usable. <strong>Availability is prioritized.</strong></p>
+</div>
+
+<div class="sec">🔄 Soft State</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Traditional databases assume committed data remains immediately stable. Distributed systems often do not. Data may temporarily differ between replicas while synchronization occurs.</p>
+<div class="viz-box">Region A: Likes = 100
+Region B: Likes = 98
+
+For a short period, both values may exist simultaneously.
+This temporary inconsistency is acceptable.</div>
+</div>
+
+<div class="sec">⏱ Eventual Consistency</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;"><strong>Intuition:</strong> Given enough time — and no new updates — all replicas eventually converge to the same value.</p>
+<div class="viz-box">Time T0: Replica A = 100, Replica B = 98
+    ↓ Replication
+Time T1: Replica A = 100, Replica B = 100
+
+The system is temporarily inconsistent but eventually becomes consistent.</div>
+</div>
+
+<div class="sec">🌍 Real-World Examples</div>
+<div class="g2">
+<div class="gc">
+<h4>✅ Social Media Likes</h4>
+<p>If a post displays 1,000 likes in New York and 998 likes in Singapore, most users will never notice. Eventual consistency is perfectly acceptable.</p>
+</div>
+<div class="gc">
+<h4>❌ Banking</h4>
+<p>Would eventual consistency be acceptable for your account balance? Absolutely not. Financial systems usually require stronger guarantees.</p>
+</div>
+</div>
+
+<div class="sec">⚖ ACID vs BASE</div>
+<table>
+<thead><tr><th>Property</th><th>ACID</th><th>BASE</th></tr></thead>
+<tbody>
+<tr><td class="h">Consistency</td><td>Strong</td><td>Eventual</td></tr>
+<tr><td class="h">Transactions</td><td>Guaranteed</td><td>High availability</td></tr>
+<tr><td class="h">Correctness</td><td>Immediate</td><td>Temporary inconsistency allowed</td></tr>
+<tr><td class="h">Reasoning</td><td>Easier</td><td>Better horizontal scalability</td></tr>
+<tr><td class="h">Best For</td><td>Banking, ERP</td><td>Social media, analytics, catalogs</td></tr>
+</tbody>
+</table>
+
+<div class="sec">📋 Where BASE Works Well</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Small Delays Acceptable</div><div class="td">Product catalogs, user activity feeds</div></div>
+<div class="tag-card"><div class="tc">✅ Availability Critical</div><div class="td">More important than immediate consistency</div></div>
+<div class="tag-card"><div class="tc">✅ Global Replication</div><div class="td">Systems that must work across continents</div></div>
+<div class="tag-card"><div class="tc">✅ Massive Write Throughput</div><div class="td">Metrics collection, DNS, recommendation systems</div></div>
+</div>
+</div>
+
+<div class="sec">📋 Where BASE Is a Poor Choice</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Financial Transactions</div><div class="td">Money must never disappear or double-count</div></div>
+<div class="tag-card"><div class="tc">❌ Inventory with Strict Guarantees</div><div class="td">Overselling is unacceptable</div></div>
+<div class="tag-card"><div class="tc">❌ Medical Records</div><div class="td">Patient safety depends on data accuracy</div></div>
+<div class="tag-card"><div class="tc">❌ Airline Seat Booking</div><div class="td">Without safeguards, double-booking occurs</div></div>
+</div>
+</div>
+
+<div class="sec">🏭 Production Example — Amazon Shopping Cart</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon Favors Availability for Shopping Carts</h3>
+<p>
+Amazon has historically favored availability for some shopping cart operations. If a cart update briefly appears on one device before another, the user experience remains acceptable. The cart eventually converges. <strong>Losing the ability to add items entirely would be a worse experience.</strong>
+</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card">
+<div class="ts">
+<div class="sn2">Q</div>
+<div class="sc">
+<strong>"Should every distributed system use eventual consistency?"</strong>
+<div class="mini">"No. It depends on business requirements. Systems handling payments or banking often require stronger consistency, while social feeds and analytics can tolerate temporary inconsistency."</div>
+</div>
+</div>
+</div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox">
+<strong>BASE = Available Now, Consistent Eventually.</strong>
+</div>
+
+<div class="sec">📋 Quick Summary</div>
+<table>
+<thead><tr><th>Letter</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td class="h">B</td><td>Basically Available — system continues serving requests during failures</td></tr>
+<tr><td class="h">A</td><td>Soft State — data may temporarily differ between replicas</td></tr>
+<tr><td class="h">S</td><td>Eventual Consistency — all replicas converge over time</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🚨 Common Mistakes</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Assuming BASE Means "Inconsistent Forever"</div><div class="td">Eventual consistency means convergence, not permanent inconsistency</div></div>
+<div class="tag-card"><div class="tc">❌ Thinking NoSQL Never Provides Strong Consistency</div><div class="td">Many NoSQL databases offer configurable consistency levels</div></div>
+<div class="tag-card"><div class="tc">❌ Using Eventual Consistency for Financial Transactions</div><div class="td">Money requires strong guarantees</div></div>
+</div>
+</div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card">
+<div class="quiz-q">1. What does "Eventually Consistent" mean in BASE?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Data is never consistent</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Given enough time without updates, all replicas will converge to the same value</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Consistency is guaranteed immediately</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Data is always available</div>
+<div class="quiz-feedback" id="q1">Eventual consistency means that if no new updates are made, all nodes will eventually agree on the same data.</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">2. Which system is a poor fit for BASE?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Social media likes</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Product catalogs</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Banking transactions — require strong consistency</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Recommendation systems</div>
+<div class="quiz-feedback" id="q2">Banking requires ACID guarantees. Temporary inconsistency in financial data can lead to serious errors.</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">3. What does the "S" in BASE stand for?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Strong consistency</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Synchronous</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Soft State — data may temporarily differ between replicas</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Structured</div>
+<div class="quiz-feedback" id="q3">Soft State means the system does not assume data is immediately consistent across all nodes.</div>
+</div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story">
+<div class="slabel">Coming Up</div>
+<h3>Part 4: CAP Theorem</h3>
+<p>
+Learn about Brewer's CAP Theorem — Consistency, Availability, and Partition Tolerance. Understand why you must choose between CP and AP during network partitions.
+</p>
+</div>
+
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => {
+    o.style.pointerEvents = 'none';
+    if (o === el && correct) o.classList.add('correct');
+    else if (o === el && !correct) o.classList.add('wrong');
+    else if (correct && o !== el) o.classList.add('correct');
+  });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+
+</body>
+</html>

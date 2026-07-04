@@ -1,5 +1,169 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Cache Invalidation | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 5 Part 5 - Cache Invalidation</div><h1>Cache Invalidation<br><span>Keeping Stale Data Out</span></h1><p>How to ensure users see fresh data.</p><div class="stats"><div class="stat"><div class="sn">Cache</div><div class="sl">Performance</div></div><div class="stat"><div class="sn">Hit Rate</div><div class="sl">>90%</div></div><div class="stat"><div class="sn">Pattern</div><div class="sl">Design</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Cache Invalidation</div><h3>The Cache Mindset</h3><p>Caching stores expensive-to-compute results in fast memory. How to ensure users see fresh data.</p></div>
-<div class="defbox"><strong>Cache Invalidation:</strong> How to ensure users see fresh data.</div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Cache Invalidation - what is the primary goal?</div><div class="quiz-opt" onclick="ck(this,false)">A) Reduce storage costs</div><div class="quiz-opt" onclick="ck(this,true)">B) Improve read performance by reducing database load</div><div class="quiz-opt" onclick="ck(this,false)">C) Increase write throughput</div><div class="quiz-opt" onclick="ck(this,false)">D) Simplify code</div><div class="quiz-feedback">Caching avoids expensive database queries.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>When NOT to Cache</h3><p>Continue learning.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cache Invalidation Strategies | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 5 · Part 5 · Cache Invalidation</div>
+<h1>Cache Invalidation Strategies<br><span>Keeping Cache Fresh</span></h1>
+<p>Caching is easy. Keeping cached data synchronized with the source of truth is hard. Invalidation determines when cached data should be removed or updated after the underlying data changes.</p>
+<div class="stats">
+<div class="stat"><div class="sn">TTL</div><div class="sl">Time-Based</div></div>
+<div class="stat"><div class="sn">Event</div><div class="sl">Triggered</div></div>
+<div class="stat"><div class="sn">Write</div><div class="sl">Through</div></div>
+<div class="stat"><div class="sn">Stale</div><div class="sl">Data Risk</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Outdated Menu</div>
+<div class="story">
+<div class="slabel">Why Invalidation Matters</div>
+<h3>A cached menu that shows old prices creates problems.</h3>
+<p>Imagine a restaurant updates its menu prices. The website caches the menu for 24 hours. Customers see old prices for an entire day. Some order at the old price. The restaurant loses money. This is a <strong>cache invalidation problem</strong>. The cache served fast responses, but the data was wrong. Great engineers design invalidation strategies that balance freshness with performance.</p>
+</div>
+
+<div class="sec">🎯 The Cache Invalidation Problem</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Phil Karlton famously said: <strong>"There are only two hard things in Computer Science: cache invalidation and naming things."</strong></p>
+<p style="color:var(--tm);margin-bottom:12px;">The challenge: The database is the source of truth. The cache is a copy. When the database changes, the cache must eventually reflect that change. But how? When? Who decides?</p>
+</div>
+
+<div class="sec">📐 What is Cache Invalidation?</div>
+<div class="defbox">
+<strong>Cache Invalidation:</strong> The process of removing or updating stale cache entries when the underlying data changes. Goal: Keep cache fresh without sacrificing performance.
+</div>
+
+<div class="sec">🔄 Common Invalidation Strategies</div>
+
+<div class="card">
+<h3 style="color:#a5b4fc;">1. TTL-Based Invalidation</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Set a time-to-live. The entry automatically expires after the TTL.</p>
+<div class="viz-box">Cache Entry: Product #123
+TTL: 1 hour
+Result: Automatically removed after 1 hour.
+Next request fetches fresh data.</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Advantages</div><div class="td">Simple, automatic, no application logic needed</div></div>
+<div class="tag-card"><div class="tc">❌ Disadvantages</div><div class="td">Data may be stale until TTL expires</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#6ee7b7;">2. Event-Based Invalidation</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Invalidate cache when data changes. The application explicitly removes or updates the cache entry.</p>
+<div class="viz-box">User updates profile
+   ↓
+Database updated
+   ↓
+Application deletes cache entry
+   ↓
+Next request fetches fresh data</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Advantages</div><div class="td">Fresh data, immediate consistency</div></div>
+<div class="tag-card"><div class="tc">❌ Disadvantages</div><div class="td">Requires application logic, more complex</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#fcd34d;">3. Write-Through Invalidation</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Every write updates both cache and database simultaneously.</p>
+<div class="viz-box">Application → Update Cache → Update Database
+Cache always has latest data.</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Advantages</div><div class="td">Strong consistency, cache always fresh</div></div>
+<div class="tag-card"><div class="tc">❌ Disadvantages</div><div class="td">Higher write latency, more complex</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#fca5a5;">4. Write-Behind (Write-Back) Invalidation</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Writes go to cache first. Cache asynchronously updates database.</p>
+<div class="viz-box">Application → Update Cache → Async → Database
+Cache is immediately fresh. Database catches up later.</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Advantages</div><div class="td">Fast writes, smooth traffic spikes</div></div>
+<div class="tag-card"><div class="tc">❌ Disadvantages</div><div class="td">Risk of data loss if cache fails</div></div>
+</div>
+</div>
+
+<div class="sec">⚖ Strategy Comparison</div>
+<table>
+<thead><tr><th>Strategy</th><th>Freshness</th><th>Write Latency</th><th>Complexity</th><th>Best For</th></tr></thead>
+<tbody>
+<tr><td class="h">TTL-Based</td><td>Eventual</td><td>Low</td><td>Low</td><td>General use</td></tr>
+<tr><td class="h">Event-Based</td><td>Strong</td><td>Medium</td><td>Medium</td><td>Critical data</td></tr>
+<tr><td class="h">Write-Through</td><td>Strong</td><td>Higher</td><td>Medium</td><td>Consistency-critical</td></tr>
+<tr><td class="h">Write-Behind</td><td>Eventual</td><td>Very Low</td><td>High</td><td>High write throughput</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🎯 Choosing the Right Strategy</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">Use TTL</div><div class="td">Data changes infrequently, eventual consistency acceptable</div></div>
+<div class="tag-card"><div class="tc">Use Event-Based</div><div class="td">Data changes frequently, freshness critical</div></div>
+<div class="tag-card"><div class="tc">Use Write-Through</div><div class="td">Strong consistency required, write volume manageable</div></div>
+<div class="tag-card"><div class="tc">Use Write-Behind</div><div class="td">Extreme write throughput, can tolerate eventual consistency</div></div>
+</div>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Social Media Post</h3>
+<p>When a user edits a post: 1) Event-based invalidation removes the old cached post. 2) Next request fetches the updated version. 3) The new version is cached with a TTL. This combines immediate invalidation with periodic refresh.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How do you keep cache consistent with the database?"</strong><div class="mini">"I use event-based invalidation for critical data and TTL for less critical data. The choice depends on how fresh the data must be and how often it changes."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>TTL = Time-Based. Event = Change-Based. Write-Through = Immediate. Write-Behind = Async.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. Which invalidation strategy provides the strongest consistency?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) TTL-Based</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Write-Behind</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Event-Based or Write-Through — immediately update cache on changes</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Jitter</div>
+<div class="quiz-feedback" id="q1">Event-based and write-through invalidation update the cache immediately when data changes, providing strong consistency.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. What is the main trade-off of TTL-based invalidation?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) It is too complex</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Data may be stale until the TTL expires</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) It requires application logic</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) It is too expensive</div>
+<div class="quiz-feedback" id="q2">TTL-based invalidation is simple but data can remain stale until the TTL expires. This is acceptable for data that doesn't change frequently.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 6: When NOT to Cache</h3><p>Not all data benefits from caching. Learn when caching hurts more than it helps.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,5 +1,171 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>News Aggregator Case Study | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 4 Part 7 - News Aggregator Case Study</div><h1>News Aggregator Case Study<br><span>Database Scaling in Practice</span></h1><p>Applying database scaling patterns to design the data layer for a global news aggregator.</p><div class="stats"><div class="stat"><div class="sn">Scaling</div><div class="sl">Database</div></div><div class="stat"><div class="sn">Shards</div><div class="sl">Horizontal</div></div><div class="stat"><div class="sn">Replicas</div><div class="sl">Reads</div></div><div class="stat"><div class="sn">Case</div><div class="sl">Study</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">News Aggregator Case Study</div><h3>Database Scaling Decisions</h3><p>Database scaling is one of the hardest challenges in system design. Applying database scaling patterns to design the data layer for a global news aggregator.</p></div>
-<div class="defbox"><strong>News Aggregator Case Study:</strong> Applying database scaling patterns to design the data layer for a global news aggregator.</div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. News Aggregator Case Study - what is the key benefit?</div><div class="quiz-opt" onclick="ck(this,false)">A) Makes the database smaller</div><div class="quiz-opt" onclick="ck(this,true)">B) Enables horizontal scaling of database workloads</div><div class="quiz-opt" onclick="ck(this,false)">C) Eliminates indexes</div><div class="quiz-opt" onclick="ck(this,false)">D) Makes queries faster automatically</div><div class="quiz-feedback">Database scaling distributes data across multiple machines.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Next topic</h3><p>Continue building your knowledge.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>News Aggregator Case Study | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 4 · Part 7 · News Aggregator Case Study</div>
+<h1>News Aggregator Case Study<br><span>Applying Database Scaling Techniques</span></h1>
+<p>News platforms receive enormous read traffic while ingesting articles continuously. This case study combines sharding, replication, caching, and read scaling into one practical architecture.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Sharding</div><div class="sl">Scale</div></div>
+<div class="stat"><div class="sn">Replicas</div><div class="sl">Read</div></div>
+<div class="stat"><div class="sn">Redis</div><div class="sl">Cache</div></div>
+<div class="stat"><div class="sn">Search</div><div class="sl">Engine</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 Problem Statement</div>
+<div class="story">
+<div class="slabel">Design Challenge</div>
+<h3>Design a backend similar to Google News or Flipboard.</h3>
+<p>Design a backend similar to Google News or Flipboard where users can: Read articles, Search news, Follow topics, Save bookmarks, Receive personalized feeds. The platform serves millions of users globally with high read traffic and continuous article ingestion.</p>
+</div>
+
+<div class="sec">📋 Requirements</div>
+<div class="g2">
+<div class="gc"><h4>✅ Functional</h4><p>Article ingestion, Search, Personalized feed, Bookmarks, Categories, Trending stories, Publisher management</p></div>
+<div class="gc"><h4>📊 Non-Functional</h4><p>Low read latency, High availability, Horizontal scalability, Durable storage, Fast search, Eventual consistency for feeds</p></div>
+</div>
+
+<div class="sec">🏛 High-Level Architecture</div>
+<div class="fig">
+<svg viewBox="0 0 700 400" width="100%">
+<defs>
+<linearGradient id="ng"><stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="na" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="250" y="10" width="200" height="40" rx="8" fill="url(#ng)"/>
+<text x="350" y="36" fill="white" font-size="15" font-weight="700" text-anchor="middle">📰 Publishers</text>
+<line x1="350" y1="50" x2="350" y2="70" stroke="#64748b" stroke-width="2" marker-end="url(#na)"/>
+<rect x="230" y="75" width="240" height="40" rx="8" fill="#06b6d4"/>
+<text x="350" y="100" fill="white" font-size="14" font-weight="700" text-anchor="middle">Ingestion Service</text>
+<line x1="350" y1="115" x2="350" y2="135" stroke="#64748b" stroke-width="2" marker-end="url(#na)"/>
+<rect x="230" y="140" width="240" height="40" rx="8" fill="#f59e0b"/>
+<text x="350" y="165" fill="white" font-size="14" font-weight="700" text-anchor="middle">Message Queue</text>
+<line x1="280" y1="180" x2="150" y2="210" stroke="#64748b" stroke-width="2" marker-end="url(#na)"/>
+<line x1="420" y1="180" x2="550" y2="210" stroke="#64748b" stroke-width="2" marker-end="url(#na)"/>
+<rect x="30" y="215" width="240" height="40" rx="8" fill="#10b981"/>
+<text x="150" y="240" fill="white" font-size="14" font-weight="700" text-anchor="middle">Indexing Workers</text>
+<rect x="430" y="215" width="240" height="40" rx="8" fill="#10b981"/>
+<text x="550" y="240" fill="white" font-size="14" font-weight="700" text-anchor="middle">Feed Workers</text>
+<line x1="150" y1="255" x2="150" y2="285" stroke="#64748b" stroke-width="2" marker-end="url(#na)"/>
+<line x1="550" y1="255" x2="550" y2="285" stroke="#64748b" stroke-width="2" marker-end="url(#na)"/>
+<rect x="30" y="290" width="240" height="40" rx="8" fill="#ef4444"/>
+<text x="150" y="315" fill="white" font-size="14" font-weight="700" text-anchor="middle">Search Index</text>
+<rect x="430" y="290" width="240" height="40" rx="8" fill="#ef4444"/>
+<text x="550" y="315" fill="white" font-size="14" font-weight="700" text-anchor="middle">Feed Database</text>
+<line x1="350" y1="355" x2="350" y2="385" stroke="#64748b" stroke-width="2" marker-end="url(#na)"/>
+<rect x="230" y="385" width="240" height="40" rx="8" fill="#7c3aed"/>
+<text x="350" y="410" fill="white" font-size="14" font-weight="700" text-anchor="middle">Users</text>
+</svg>
+<div class="fig-cap">News Aggregator Architecture: Ingestion → Queue → Workers → Search/Feed → Users</div>
+</div>
+
+<div class="sec">🗄 Data Model</div>
+<div class="g2">
+<div class="gc"><h4>📋 Relational Database</h4><p>Users, Publishers, Articles (metadata), Bookmarks, Topics. PostgreSQL for ACID guarantees and relationships.</p></div>
+<div class="gc"><h4>🔍 Search Engine</h4><p>Article body and full-text search in dedicated search engine. Relational databases are not optimized for large-scale full-text search.</p></div>
+</div>
+
+<div class="sec">⚡ Caching Strategy</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Cache frequently accessed content:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">🏠 Homepage</div><div class="td">Most visited page</div></div>
+<div class="tag-card"><div class="tc">📈 Trending Articles</div><div class="td">High traffic, low update frequency</div></div>
+<div class="tag-card"><div class="tc">📂 Category Pages</div><div class="td">Sports, Tech, Politics</div></div>
+<div class="tag-card"><div class="tc">📰 Publisher Metadata</div><div class="td">Name, logo, description</div></div>
+</div>
+<div class="viz-box">Client → Redis (Cache Hit?) → Yes → Return
+                              → No → Database → Store in Cache → Return</div>
+</div>
+
+<div class="sec">📊 Database Scaling</div>
+<div class="g2">
+<div class="gc"><h4>🗄 Primary Database</h4><p>Handles: Article creation, User bookmarks, Preferences. Write operations are relatively small.</p></div>
+<div class="gc"><h4>📖 Read Replicas</h4><p>Serve: Homepage, Category pages, User profiles. Reads greatly outnumber writes.</p></div>
+</div>
+
+<div class="sec">🔀 Sharding Strategy</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">As the article table grows into billions of rows:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">Article ID</div><div class="td">Hash-based sharding</div></div>
+<div class="tag-card"><div class="tc">Region</div><div class="td">Geographic sharding</div></div>
+<div class="tag-card"><div class="tc">Publication Date</div><div class="td">Time-based sharding for archival</div></div>
+</div>
+</div>
+
+<div class="sec">🔍 Search Pipeline</div>
+<div class="card">
+<div class="viz-box">Publisher → Queue → Indexer → Search Cluster
+
+Indexing becomes asynchronous so article publication is fast.</div>
+</div>
+
+<div class="sec">📈 Feed Generation</div>
+<div class="card">
+<p style="color:var(--tm)">Instead of computing every user's feed on demand: Precompute trending feeds, Cache personalized feeds, Refresh asynchronously. This reduces database load dramatically.</p>
+</div>
+
+<div class="sec">🎯 Interview Walkthrough</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">A strong interview flow:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">1️⃣ Clarify requirements</div><div class="td">Understand the business problem</div></div>
+<div class="tag-card"><div class="tc">2️⃣ Estimate read/write ratio</div><div class="td">Reads dominate in news</div></div>
+<div class="tag-card"><div class="tc">3️⃣ Design APIs</div><div class="td">RESTful endpoints</div></div>
+<div class="tag-card"><div class="tc">4️⃣ Draw HLD</div><div class="td">Show all components</div></div>
+<div class="tag-card"><div class="tc">5️⃣ Explain ingestion</div><div class="td">Async pipeline with queues</div></div>
+<div class="tag-card"><div class="tc">6️⃣ Explain search</div><div class="td">Dedicated search engine</div></div>
+<div class="tag-card"><div class="tc">7️⃣ Explain feed generation</div><div class="td">Precompute and cache</div></div>
+<div class="tag-card"><div class="tc">8️⃣ Discuss scaling</div><div class="td">Replicas, sharding, caching</div></div>
+<div class="tag-card"><div class="tc">9️⃣ Identify bottlenecks</div><div class="td">Hot topics, cache misses</div></div>
+<div class="tag-card"><div class="tc">🔟 Explain trade-offs</div><div class="td">Consistency vs performance</div></div>
+</div>
+</div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Store → Index → Cache → Serve</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. Why use a separate search engine instead of SQL LIKE queries for article search?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Search engines are cheaper</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Full-text search requires inverted indexes that SQL doesn't provide efficiently</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) SQL cannot search text</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Search engines are easier to use</div>
+<div class="quiz-feedback" id="q1">Full-text search needs inverted indexes for fast keyword matching, relevance scoring, and fuzzy search — all provided by dedicated search engines like Elasticsearch.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 8: Chapter 4 Revision</h3><p>Comprehensive review of all database scaling concepts with cheat sheets, flashcards, mind maps, and interview questions.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

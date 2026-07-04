@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Message Brokers - Why They Exist | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 7 · Part 4 · Message Brokers</div>
+<h1>Message Brokers<br><span>The Post Office of Distributed Systems</span></h1>
+<p>Message brokers solve the fundamental problem of direct service-to-service communication. They decouple producers from consumers, buffer traffic, and enable reliable message delivery across distributed systems.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Decouple</div><div class="sl">Independent</div></div>
+<div class="stat"><div class="sn">Buffer</div><div class="sl">Absorb Spikes</div></div>
+<div class="stat"><div class="sn">Route</div><div class="sl">Smart Delivery</div></div>
+<div class="stat"><div class="sn">Reliable</div><div class="sl">Guaranteed</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Logistics Company</div>
+<div class="story">
+<div class="slabel">Why Message Brokers Were Invented</div>
+<h3>The fulfillment center that changed everything.</h3>
+<p>Imagine thousands of sellers shipping products every minute. If every seller had to contact every delivery truck driver directly, chaos would ensue. Instead, Amazon introduced fulfillment centers - a central broker that receives all packages and distributes them to delivery trucks. Sellers don't know about drivers. Drivers don't know about sellers. The fulfillment center is the message broker.</p>
+</div>
+
+<div class="sec">🎯 The Problem with Direct Communication</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Direct service-to-service communication creates: Tight coupling (every service knows about every other), Cascading failures (one down = all down), Complex dependency graphs, No buffering (traffic spikes overwhelm services), Difficult scaling, Version compatibility nightmares.</p>
+<div class="defbox"><strong>Key Insight:</strong> Direct communication works for 2-3 services. Beyond that, it becomes unmaintainable.</div>
+</div>
+
+<div class="sec">📐 What is a Message Broker?</div>
+<div class="defbox">
+<strong>Message Broker:</strong> Middleware that sits between producers and consumers. It receives messages, stores them, routes them to appropriate queues, and delivers them to consumers. Producers and consumers never communicate directly.
+</div>
+
+<div class="sec">🔄 Architecture</div>
+<div class="fig">
+<svg viewBox="0 0 700 280" width="100%">
+<defs>
+<linearGradient id="bg"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="ba" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="50" y="10" width="140" height="40" rx="8" fill="#10b981"/>
+<text x="120" y="36" fill="white" font-size="14" font-weight="700" text-anchor="middle">Producer</text>
+<line x1="190" y1="30" x2="280" y2="30" stroke="#64748b" stroke-width="2" marker-end="url(#ba)"/>
+<rect x="280" y="10" width="140" height="40" rx="8" fill="url(#bg)"/>
+<text x="350" y="36" fill="white" font-size="14" font-weight="700" text-anchor="middle">Message Broker</text>
+<line x1="350" y1="50" x2="350" y2="80" stroke="#64748b" stroke-width="2" marker-end="url(#ba)"/>
+<rect x="280" y="85" width="240" height="60" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="400" y="110" fill="#a5b4fc" font-size="13" font-weight="700" text-anchor="middle">Queue</text>
+<text x="400" y="130" fill="#94a3b8" font-size="11" text-anchor="middle">Buffers messages</text>
+<line x1="350" y1="145" x2="350" y2="175" stroke="#64748b" stroke-width="2" marker-end="url(#ba)"/>
+<rect x="510" y="180" width="140" height="40" rx="8" fill="#f59e0b"/>
+<text x="580" y="206" fill="white" font-size="14" font-weight="700" text-anchor="middle">Consumer</text>
+<text x="350" y="240" fill="#94a3b8" font-size="13" text-anchor="middle">Producer and Consumer are completely decoupled</text>
+</svg>
+<div class="fig-cap">Producer → Broker → Queue → Consumer</div>
+</div>
+
+<div class="sec">📋 Core Components</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📤 Producer</div><div class="td">Creates and publishes messages to the broker</div></div>
+<div class="tag-card"><div class="tc">🔄 Broker</div><div class="td">Receives, stores, routes, and delivers messages</div></div>
+<div class="tag-card"><div class="tc">📥 Queue</div><div class="td">Buffers messages until consumers process them</div></div>
+<div class="tag-card"><div class="tc">👂 Consumer</div><div class="td">Reads and processes messages from queues</div></div>
+</div>
+</div>
+
+<div class="sec">⚡ Key Benefits</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">🔓 Loose Coupling</div><div class="td">Producers don't know about consumers. Add new consumers without changing producers.</div></div>
+<div class="tag-card"><div class="tc">🛡️ Fault Tolerance</div><div class="td">Messages survive consumer failures. Processed when consumer recovers.</div></div>
+<div class="tag-card"><div class="tc">📈 Scalability</div><div class="td">Producers and consumers scale independently.</div></div>
+<div class="tag-card"><div class="tc">📊 Buffering</div><div class="td">Absorbs traffic spikes. Queue grows when consumers are slow.</div></div>
+</div>
+</div>
+
+<div class="sec">🔄 Message Lifecycle</div>
+<div class="card">
+<div class="viz-box">1. Producer creates message
+2. Sends to Broker
+3. Broker stores in Queue
+4. Consumer reads message
+5. Consumer processes
+6. Consumer sends ACK
+7. Broker deletes message
+
+If no ACK: Broker redelivers message</div>
+</div>
+
+<div class="sec">⚖ Direct vs Broker Communication</div>
+<table>
+<thead><tr><th>Aspect</th><th>Direct API Calls</th><th>Message Broker</th></tr></thead>
+<tbody>
+<tr><td class="h">Coupling</td><td>Tight</td><td>Loose</td></tr>
+<tr><td class="h">Buffering</td><td>None</td><td>Yes</td></tr>
+<tr><td class="h">Retry</td><td>Manual</td><td>Built-in</td></tr>
+<tr><td class="h">Scaling</td><td>Coupled</td><td>Independent</td></tr>
+<tr><td class="h">Failure Impact</td><td>Cascading</td><td>Isolated</td></tr>
+<tr><td class="h">Complexity</td><td>Low</td><td>Medium</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon Order Processing</h3>
+<p>Order Service publishes OrderCreated event to broker. Multiple consumers process it: Email Service sends confirmation, Inventory Service reserves stock, Analytics Service tracks metrics, Recommendation Engine updates suggestions. If Email Service crashes, orders still work. When it recovers, it processes queued events. No service knows about others.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why do we need a message broker?"</strong><div class="mini">"Message brokers decouple producers from consumers. Instead of services calling each other directly, they publish events to a broker. This enables independent scaling, fault tolerance, buffering for traffic spikes, and easier maintenance. Adding a new consumer requires no changes to existing producers."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Broker = Middleman. Producer sends to broker. Consumer reads from broker. Neither knows about the other.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is the main benefit of using a message broker?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Makes services faster</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Decouples producers and consumers for independent scaling</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Reduces network latency</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Simplifies debugging</div>
+<div class="quiz-feedback" id="q1">Message brokers enable loose coupling, allowing services to evolve and scale independently without knowing about each other.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. What happens if a consumer crashes after receiving a message?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Message is lost forever</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Broker deletes the message</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Broker redelivers the message when consumer recovers (if no ACK sent)</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Producer must resend</div>
+<div class="quiz-feedback" id="q2">Without ACK, the broker assumes processing failed and redelivers the message, ensuring no data loss.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 5: RabbitMQ & AMQP Fundamentals</h3><p>Deep dive into RabbitMQ architecture, AMQP protocol, Exchanges, Queues, Bindings, and routing strategies.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

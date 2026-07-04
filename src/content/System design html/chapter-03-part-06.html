@@ -1,5 +1,142 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Database Indexing | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 3 · Part 6 · Database Indexing</div><h1>Database Indexing<br><span>Database Fundamentals</span></h1><p>How indexes work under the hood: B-Trees, hash indexes, covering indexes, and query optimization.</p><div class="stats"><div class="stat"><div class="sn">B-Tree</div><div class="sl">Key Concept</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Database Indexing</div><h3>Database Decisions Drive Architecture</h3><p>The choice of database technology is one of the most consequential decisions in system design. How indexes work under the hood: B-Trees, hash indexes, covering indexes, and query optimization.</p></div>
-<div class="defbox"><strong>Database Indexing:</strong> How indexes work under the hood: B-Trees, hash indexes, covering indexes, and query optimization.</div>
-<div class="sec">🧪 Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Database Indexing — which statement is correct?</div><div class="quiz-opt" onclick="ck(this,false)">A) All databases work the same way</div><div class="quiz-opt" onclick="ck(this,true)">B) Understanding your data model and access patterns determines the right database choice</div><div class="quiz-opt" onclick="ck(this,false)">C) NoSQL is always better</div><div class="quiz-opt" onclick="ck(this,false)">D) SQL is outdated</div><div class="quiz-feedback">The database choice depends on your data structure, consistency needs, and scaling requirements.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Schema Design & Query Optimization</h3><p>Continue building your database knowledge.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Database Indexing | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 3 · Part 6 · Database Indexing</div>
+<h1>Database Indexing<br><span>B-Trees, Hash Indexes, Query Optimization</span></h1>
+<p>Indexes are like the index at the back of a book. Without them, the database must read everything. With them, it knows exactly where to look.</p>
+<div class="stats">
+<div class="stat"><div class="sn">B-Tree</div><div class="sl">Range Queries</div></div>
+<div class="stat"><div class="sn">Hash</div><div class="sl">Equality Lookups</div></div>
+<div class="stat"><div class="sn">Covering</div><div class="sl">All Columns</div></div>
+<div class="stat"><div class="sn">Composite</div><div class="sl">Multi-Column</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — Finding a Name in a Phone Book</div>
+<div class="story">
+<div class="slabel">Why Indexes Exist</div>
+<h3>Without an index, you'd read every page.</h3>
+<p>
+Imagine a phone book with 10 million names. Without an index, you'd start from page one and read until you found "John Smith." Now imagine the names are sorted alphabetically. You immediately jump near "J" and quickly narrow your search. That alphabetical organization is exactly what a database index provides.
+</p>
+</div>
+
+<div class="sec">🎯 Why Indexes Exist</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">When a table is small, scanning every row is acceptable. As data grows into millions of rows, full table scans become expensive. Indexes reduce the amount of data the database must inspect.</p>
+<div class="g2">
+<div class="gc"><h4>❌ Without Index</h4><p>Query → Read Every Row → Slow</p></div>
+<div class="gc"><h4>✅ With Index</h4><p>Query → Index → Matching Rows → Fast</p></div>
+</div>
+</div>
+
+<div class="sec">📐 What is an Index?</div>
+<div class="defbox">
+<strong>Database Index:</strong> An auxiliary data structure that stores searchable information about one or more columns, allowing the database to locate matching rows efficiently. Think of it as a map pointing to where the real data lives.
+</div>
+
+<div class="sec">🌳 B-Tree Index</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Most relational databases use B-Trees because they remain balanced as data grows. Instead of searching linearly through 1,000,000 rows, the tree repeatedly eliminates large portions of the search space.</p>
+<div class="viz-box">B-Tree Structure:
+          50
+        /    \
+      25      75
+     /  \    /  \
+   10   30  60   90
+
+Searching becomes O(log n) rather than O(n).</div>
+<p style="color:var(--tm);margin-top:12px;">B-Trees efficiently support: equality lookups (<code>WHERE age = 25</code>), range queries (<code>WHERE age > 30</code>), sorting (<code>ORDER BY age</code>), and prefix searches.</p>
+</div>
+
+<div class="sec">🔑 Hash Index</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">A hash index computes a hash from the key and jumps directly to the bucket.</p>
+<div class="g2">
+<div class="gc"><h4>✅ Excellent For</h4><p><code>WHERE id = 42</code> — equality lookups are instant</p></div>
+<div class="gc"><h4>❌ Poor For</h4><p><code>WHERE id > 42</code> or <code>ORDER BY id</code> — cannot preserve ordering</p></div>
+</div>
+</div>
+
+<div class="sec">⚖ B-Tree vs Hash</div>
+<table>
+<thead><tr><th>Feature</th><th>B-Tree</th><th>Hash</th></tr></thead>
+<tbody>
+<tr><td class="h">Equality</td><td>Excellent</td><td>Excellent</td></tr>
+<tr><td class="h">Range Queries</td><td>Excellent</td><td>Poor</td></tr>
+<tr><td class="h">ORDER BY</td><td>Yes</td><td>No</td></tr>
+<tr><td class="h">Prefix Search</td><td>Yes</td><td>No</td></tr>
+<tr><td class="h">Most Common</td><td>Yes</td><td>Less Common</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🔗 Composite Index</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Sometimes queries filter on multiple columns. A composite index on <code>(customer_id, status)</code> allows both conditions to be evaluated efficiently.</p>
+<div class="defbox"><strong>Leftmost Prefix Rule:</strong> Given index <code>(customer_id, status, created_at)</code>, efficient queries include: customer_id alone, customer_id + status, customer_id + status + created_at. Searching only by <strong>status</strong> usually cannot fully use this index.</div>
+</div>
+
+<div class="sec">📋 Clustered vs Non-Clustered Index</div>
+<div class="g2">
+<div class="gc"><h4>📦 Clustered Index</h4><p>The table's rows are physically stored in index order. Fast range scans, good locality. A table generally has only one clustered index.</p></div>
+<div class="gc"><h4>📋 Non-Clustered Index</h4><p>Stores keys separately from table data. Index → Pointer → Actual Row. A table can have many non-clustered indexes.</p></div>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why not create an index on every column?"</strong><div class="mini">"Indexes improve reads but increase storage and write costs. Each additional index must be maintained whenever data changes."</div></div></div>
+</div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Indexes speed up reads. Indexes slow down writes.</strong> Everything is a trade-off.</div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is the main trade-off of adding a database index?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Indexes have no downsides</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Faster reads but slower writes (index must be maintained)</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Indexes use less storage</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Indexes only work for integers</div>
+<div class="quiz-feedback" id="q1">Indexes speed up SELECT queries but slow down INSERT/UPDATE/DELETE because the index structure must be updated.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. Which index type is best for range queries like <code>WHERE age > 30</code>?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Hash Index</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) B-Tree Index — supports range queries efficiently</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Bitmap Index</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Full-Text Index</div>
+<div class="quiz-feedback" id="q2">B-Tree indexes maintain ordering, making them ideal for range queries, sorting, and prefix searches.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 7: Schema Design & Query Optimization</h3><p>Designing efficient schemas, normalization, denormalization, and writing performant queries.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

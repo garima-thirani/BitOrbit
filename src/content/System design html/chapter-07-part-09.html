@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kafka Internals - Replication, ISR, Log Segments | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 7 · Part 9 · Kafka Internals</div>
+<h1>Kafka Internals<br><span>Replication, ISR, Log Segments & Retention</span></h1>
+<p>Kafka's internal architecture enables high throughput and fault tolerance. Understanding log segments, replication, ISR, and retention policies is key to mastering Kafka.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Log</div><div class="sl">Append</div></div>
+<div class="stat"><div class="sn">Replicate</div><div class="sl">Fault-Tolerant</div></div>
+<div class="stat"><div class="sn">Retain</div><div class="sl">Replay</div></div>
+<div class="stat"><div class="sn">ISR</div><div class="sl">Sync</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Library That Never Throws Away Books</div>
+<div class="story">
+<div class="slabel">Kafka's Storage Philosophy</div>
+<h3>Every book stays on the shelf forever.</h3>
+<p>Imagine a library where books are never removed, only added. Readers bookmark their page and return later. This is Kafka's append-only log. Unlike databases that update rows, Kafka never modifies events. It only appends new ones. This design makes Kafka incredibly fast because hard drives love sequential writes.</p>
+</div>
+
+<div class="sec">🎯 Why Kafka Internals Matter</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Understanding Kafka internals helps you: Design better partition strategies, Tune performance, Ensure durability, Handle failures, Optimize storage, Answer senior-level interview questions.</p>
+<div class="defbox"><strong>Key Insight:</strong> Kafka's speed comes from its storage architecture, not better hardware.</div>
+</div>
+
+<div class="sec">📝 Append-Only Log</div>
+<div class="defbox">
+<strong>Append-Only Log:</strong> Every partition is a log file where new events are always appended to the end. No updates, no inserts in the middle, no immediate deletions.
+</div>
+<div class="card">
+<div class="viz-box">Partition 0 (Log File):
+Offset 0: OrderCreated
+Offset 1: OrderPaid
+Offset 2: OrderShipped
+Offset 3: OrderDelivered
+...
+Offset N: [New event appended here]
+
+Only appends. No modifications.</div>
+</div>
+
+<div class="sec">📄 Log Segments</div>
+<div class="defbox">
+<strong>Log Segment:</strong> A partition is divided into multiple segment files (e.g., 1GB each). When one segment fills, Kafka creates a new one.
+</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Why segments? A 20TB partition as one file would be impossible to manage. Segments enable efficient indexing, deletion, and retention.</p>
+<div class="viz-box">Partition 0:
+├── Segment 1 (1GB) - offsets 0-500K
+├── Segment 2 (1GB) - offsets 500K-1M
+├── Segment 3 (1GB) - offsets 1M-1.5M
+└── Segment 4 (1GB) - offsets 1.5M-2M
+
+Each segment has index file for fast lookup</div>
+</div>
+
+<div class="sec">🔄 Replication</div>
+<div class="defbox">
+<strong>Replication:</strong> Each partition is copied to multiple brokers. One Leader handles writes, Followers replicate data.
+</div>
+<div class="card">
+<div class="viz-box">Partition 0 (Replication Factor = 3):
+├── Leader (Broker 1) - accepts writes
+├── Follower (Broker 2) - replicates
+└── Follower (Broker 3) - replicates
+
+If Leader crashes → Follower becomes Leader</div>
+</div>
+
+<div class="sec">✅ In-Sync Replicas (ISR)</div>
+<div class="defbox">
+<strong>ISR:</strong> Replicas that are fully synchronized with the Leader. Only ISR members can become Leader during failover.
+</div>
+<div class="card">
+<div class="viz-box">Partition 0:
+├── Leader (Broker 1)
+├── Follower A (Broker 2) ✅ In Sync
+└── Follower B (Broker 3) ❌ Slow (not in ISR)
+
+ISR = [Leader, Follower A]
+Only ISR members can become new Leader</div>
+</div>
+
+<div class="sec">🌊 High Watermark</div>
+<div class="defbox">
+<strong>High Watermark:</strong> The highest offset that has been successfully replicated to all ISR members. Consumers can only read up to this offset.
+</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Why it matters: Prevents consumers from reading data that might be lost if Leader crashes before followers replicate it.</p>
+<div class="viz-box">Offset: 0 1 2 3 4 5 6 7 8
+                    ↑
+              High Watermark
+Consumers can only read up to offset 7</div>
+</div>
+
+<div class="sec">⏱ Retention Policies</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Kafka doesn't store events forever by default. Retention policies control how long data is kept.</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📅 Time-Based</div><div class="td">Keep events for 7 days, 30 days, etc.</div></div>
+<div class="tag-card"><div class="tc">💾 Size-Based</div><div class="td">Keep max 100GB per partition</div></div>
+<div class="tag-card"><div class="tc">🗜 Log Compaction</div><div class="td">Keep only latest value per key</div></div>
+</div>
+</div>
+
+<div class="sec">🗜 Log Compaction</div>
+<div class="defbox">
+<strong>Log Compaction:</strong> Instead of deleting by time/size, keeps only the latest value for each key. Useful for state restoration.
+</div>
+<div class="card">
+<div class="viz-box">Without Compaction:
+Offset 0: {userId: 1, name: "John"}
+Offset 1: {userId: 1, name: "Johnny"}
+Offset 2: {userId: 1, name: "Jonathan"}
+
+With Compaction:
+Offset 2: {userId: 1, name: "Jonathan"} ← Only latest kept</div>
+</div>
+
+<div class="sec">⚡ Why Kafka is Fast</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📝 Sequential Writes</div><div class="td">Append-only = sequential disk I/O (extremely fast)</div></div>
+<div class="tag-card"><div class="tc">📦 Batching</div><div class="td">Sends multiple events together</div></div>
+<div class="tag-card"><div class="tc">🗜 Compression</div><div class="td">Compresses batches (gzip, snappy, lz4)</div></div>
+<div class="tag-card"><div class="tc">💨 Zero Copy</div><div class="td">Minimizes data copying between kernel and app</div></div>
+<div class="tag-card"><div class="tc">📄 Index Files</div><div class="td">Jump directly to any offset without scanning</div></div>
+</div>
+</div>
+
+<div class="sec">📊 Replication Flow</div>
+<div class="card">
+<div class="viz-box">Producer → Leader (Broker 1)
+                    ↓
+          Follower pulls data
+                    ↓
+    ┌──────────────┼──────────────┐
+    ↓              ↓              ↓
+Follower A    Follower B    Follower C
+(Broker 2)    (Broker 3)    (Broker 4)
+    ↓              ↓              ↓
+          All acknowledge
+                    ↓
+          Leader increments HW</div>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Netflix Playback Events</h3>
+<p>Netflix uses Kafka with: Replication factor 3 for durability, Retention 30 days for analytics, Log compaction for user preferences, ISR for leader election. When a broker crashes, ISR promotes a follower. No data loss. Consumers continue from last offset. New ML models can replay 30 days of playback history.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the High Watermark and why does it matter?"</strong><div class="mini">"The High Watermark is the highest offset replicated to all ISR members. It prevents consumers from reading uncommitted data that could be lost during leader failure. Only data below the watermark is considered committed and safe to read."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Append → Segment → Replicate → ISR → High Watermark → Retain → Replay. Kafka never modifies, only appends.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is the purpose of Log Segments?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) To make Kafka slower</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) To encrypt data</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) To divide large partitions into manageable files for efficient indexing and deletion</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) To compress data</div>
+<div class="quiz-feedback" id="q1">Log Segments make large partitions manageable by dividing them into smaller files with separate indexes.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. What is the High Watermark in Kafka?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Maximum partition size</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Maximum number of consumers</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Highest offset replicated to all ISR members - consumers can only read up to this point</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Maximum retention period</div>
+<div class="quiz-feedback" id="q2">High Watermark ensures consumers only read committed data that won't be lost during leader failover.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 10: Kafka vs RabbitMQ - Complete Comparison</h3><p>Feature-by-feature comparison, performance benchmarks, and decision framework for choosing between Kafka and RabbitMQ.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

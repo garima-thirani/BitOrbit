@@ -1,7 +1,156 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Cache Fundamentals | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 5 Part 1 - Cache Fundamentals</div><h1>Cache Fundamentals<br><span>Why Caching Matters</span></h1><p>Caching is the most impactful performance optimization.</p><div class="stats"><div class="stat"><div class="sn">Cache</div><div class="sl">Performance</div></div><div class="stat"><div class="sn">Hit Rate</div><div class="sl">>90%</div></div><div class="stat"><div class="sn">Pattern</div><div class="sl">Design</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Cache Fundamentals</div><h3>The Cache Mindset</h3><p>Caching stores expensive-to-compute results in fast memory. Caching is the most impactful performance optimization.</p></div>
-<div class="defbox"><strong>Cache Fundamentals:</strong> Caching is the most impactful performance optimization.</div>
-<div class="sec">Where Caching Helps</div>
-<div class="tag-grid"><div class="tag-card"><div class="tc">Read-Heavy Workloads</div><div class="td">90%+ reads benefit most.</div></div><div class="tag-card"><div class="tc">Repeated Computations</div><div class="td">Expensive calculations with same result.</div></div><div class="tag-card"><div class="tc">Database Results</div><div class="td">Frequently accessed data.</div></div><div class="tag-card"><div class="tc">Static Assets</div><div class="td">Images, CSS, JS.</div></div></div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Cache Fundamentals - what is the primary goal?</div><div class="quiz-opt" onclick="ck(this,false)">A) Reduce storage costs</div><div class="quiz-opt" onclick="ck(this,true)">B) Improve read performance by reducing database load</div><div class="quiz-opt" onclick="ck(this,false)">C) Increase write throughput</div><div class="quiz-opt" onclick="ck(this,false)">D) Simplify code</div><div class="quiz-feedback">Caching avoids expensive database queries.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Caching Patterns</h3><p>Continue learning.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cache Fundamentals | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 5 · Part 1 · Cache Fundamentals</div>
+<h1>Cache Fundamentals<br><span>Why Caching Exists & How It Works</span></h1>
+<p>Computers are fast. Memory is faster. The closer your data is to the CPU and the user, the faster your application becomes. Caching is the art of avoiding unnecessary work.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Cache</div><div class="sl">Fast Storage</div></div>
+<div class="stat"><div class="sn">Hit</div><div class="sl">Data Found</div></div>
+<div class="stat"><div class="sn">Miss</div><div class="sl">Fetch DB</div></div>
+<div class="stat"><div class="sn">Ratio</div><div class="sl">Performance</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Neighborhood Grocery Store</div>
+<div class="story">
+<div class="slabel">Why Caching Exists</div>
+<h3>The nearby shop is your cache. The wholesale market is your database.</h3>
+<p>Imagine your house is next to a small grocery shop. For daily essentials like milk and bread, you visit the nearby shop. Only when you need something unusual do you travel to the large wholesale market across town. The nearby shop is your <strong>cache</strong>. The wholesale market is your <strong>database</strong>. The shop keeps only frequently used items because visiting the wholesale market every time would waste time. Software systems work exactly the same way.</p>
+</div>
+
+<div class="sec">🎯 Why Caching Exists</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Databases are powerful but expensive compared to memory. Every database request involves: Network latency, Query execution, Disk/storage access, Serialization, Response transfer. If thousands of users repeatedly request the same data, the database performs identical work again and again. <strong>Caching stores frequently accessed data closer to the application.</strong></p>
+</div>
+
+<div class="sec">📐 What is a Cache?</div>
+<div class="defbox">
+<strong>Cache:</strong> A temporary storage layer that keeps frequently accessed data so future requests can be served faster. Caches trade <strong>memory</strong> for <strong>speed</strong>.
+</div>
+
+<div class="sec">🏛 Basic Architecture</div>
+<div class="fig">
+<svg viewBox="0 0 700 250" width="100%">
+<defs>
+<linearGradient id="cg"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="ca" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="250" y="10" width="200" height="50" rx="10" fill="url(#cg)"/>
+<text x="350" y="42" fill="white" font-size="18" font-weight="700" text-anchor="middle">📱 Application</text>
+<line x1="300" y1="60" x2="150" y2="100" stroke="#64748b" stroke-width="3" marker-end="url(#ca)"/>
+<line x1="400" y1="60" x2="550" y2="100" stroke="#64748b" stroke-width="3" marker-end="url(#ca)"/>
+<rect x="50" y="110" width="200" height="50" rx="10" fill="#10b981"/>
+<text x="150" y="140" fill="white" font-size="16" font-weight="700" text-anchor="middle">⚡ Cache</text>
+<rect x="450" y="110" width="200" height="50" rx="10" fill="#f59e0b"/>
+<text x="550" y="140" fill="white" font-size="16" font-weight="700" text-anchor="middle">🗄 Database</text>
+</svg>
+<div class="fig-cap">Application checks cache first. On miss, loads from database and stores in cache.</div>
+</div>
+
+<div class="sec">✅ Cache Hit vs ❌ Cache Miss</div>
+<div class="g2">
+<div class="gc"><h4>✅ Cache Hit</h4><p>Data found in cache. Return immediately. Fast response. No database access.</p></div>
+<div class="gc"><h4>❌ Cache Miss</h4><p>Data missing. Fetch from database. Store in cache. Return response. First request is slower.</p></div>
+</div>
+
+<div class="sec">⚡ Why Memory Is Faster Than Disk</div>
+<table>
+<thead><tr><th>Storage</th><th>Relative Speed</th></tr></thead>
+<tbody>
+<tr><td class="h">CPU Cache</td><td>Fastest</td></tr>
+<tr><td class="h">RAM</td><td>Very Fast</td></tr>
+<tr><td class="h">SSD</td><td>Slower</td></tr>
+<tr><td class="h">HDD</td><td>Much Slower</td></tr>
+<tr><td class="h">Remote Database</td><td>Slowest (includes network)</td></tr>
+</tbody>
+</table>
+<div class="defbox"><strong>Key Insight:</strong> Even modern SSDs are significantly slower than RAM. This is why Redis and Memcached store data in memory.</div>
+
+<div class="sec">🌍 Where Caches Exist</div>
+<div class="viz-box">Browser Cache
+      ↓
+CDN Cache
+      ↓
+Load Balancer
+      ↓
+Application Cache
+      ↓
+Redis / Memcached
+      ↓
+Database Buffer Cache
+      ↓
+Disk
+
+Multiple cache layers reduce latency even further.</div>
+
+<div class="sec">📋 What Should Be Cached?</div>
+<div class="g2">
+<div class="gc"><h4>✅ Good Candidates</h4><p>Product details, User profiles, Configuration, Trending content, Search results, Homepage data</p></div>
+<div class="gc"><h4>❌ Poor Candidates</h4><p>Frequently changing financial balances, One-time passwords, Highly sensitive short-lived information</p></div>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>E-commerce Platform: 50,000 Requests/Second</h3>
+<p><strong>Without caching:</strong> 50,000 requests → Database. The database becomes overloaded.<br><br>
+<strong>With Redis:</strong> 50,000 requests → Redis → Database (only on cache misses). Database traffic drops dramatically.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why not cache everything?"</strong><div class="mini">"Caching consumes memory, introduces consistency challenges, and some data changes too frequently to benefit from caching."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Cache = Copy, Not Truth.</strong> The database remains the authoritative source.</div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is a cache hit?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) The cache is full</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) The requested data is already available in cache</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) The database is down</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) The cache has expired</div>
+<div class="quiz-feedback" id="q1">A cache hit means the data was found in cache, avoiding a slower database query.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. Why is Redis faster than PostgreSQL for read-heavy workloads?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Redis is newer technology</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Redis stores data in memory (RAM), which is much faster than disk-based databases</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) PostgreSQL is not optimized</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Redis has better indexes</div>
+<div class="quiz-feedback" id="q2">Redis is an in-memory data store. RAM access is orders of magnitude faster than disk I/O.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 2: Caching Patterns</h3><p>Learn the four major caching patterns: Cache-Aside, Read-Through, Write-Through, and Write-Behind. Understand when to use each pattern.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

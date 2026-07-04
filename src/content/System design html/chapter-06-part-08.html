@@ -1,5 +1,185 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Chapter 6 Revision | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 6 Part 8 - Chapter 6 Revision</div><h1>Chapter 6 Revision<br><span>Advanced Caching Summary</span></h1><p>Review of advanced caching concepts.</p><div class="stats"><div class="stat"><div class="sn">CDN</div><div class="sl">Tech</div></div><div class="stat"><div class="sn">Edge</div><div class="sl">Setup</div></div><div class="stat"><div class="sn">Cache</div><div class="sl">Layer</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Chapter 6 Revision</div><h3>Advanced Caching</h3><p>Review of advanced caching concepts.</p></div>
-<div class="defbox"><strong>Chapter 6 Revision:</strong> Review of advanced caching concepts.</div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Chapter 6 Revision - why is this important?</div><div class="quiz-opt" onclick="ck(this,false)">A) It replaces databases</div><div class="quiz-opt" onclick="ck(this,true)">B) It reduces latency and improves UX globally</div><div class="quiz-opt" onclick="ck(this,false)">C) Eliminates servers</div><div class="quiz-opt" onclick="ck(this,false)">D) Only for videos</div><div class="quiz-feedback">Advanced caching brings content closer to users.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Chapter 7: Communication</h3><p>Continue learning.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 6 Revision | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 6 · Part 8 · Revision</div>
+<h1>Advanced Caching & CDN — Revision<br><span>Complete Chapter Summary</span></h1>
+<p>Consolidate all advanced caching concepts from Chapter 6. Includes cheat sheets, flashcards, mind map, common mistakes, and interview questions.</p>
+<div class="stats">
+<div class="stat"><div class="sn">7</div><div class="sl">Parts</div></div>
+<div class="stat"><div class="sn">Redis</div><div class="sl">Cluster</div></div>
+<div class="stat"><div class="sn">CDN</div><div class="sl">Edge</div></div>
+<div class="stat"><div class="sn">Multi</div><div class="sl">Tier</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📋 Quick Revision Notes</div>
+
+<div class="card">
+<h3 style="color:#a5b4fc;">Redis Cluster & Data Structures</h3>
+<p style="color:var(--tm)">Redis Cluster distributes data across multiple masters using 16,384 hash slots. Each master handles a subset of data. Replicas provide high availability. Redis supports rich data structures: Strings, Hashes, Lists, Sets, Sorted Sets, Bitmaps. <strong>Redis Cluster = Multiple Masters + Replicas + Hash Slots.</strong></p>
+</div>
+
+<div class="card">
+<h3 style="color:#6ee7b7;">Redis vs Memcached</h3>
+<p style="color:var(--tm)">Redis: Rich features, persistence, replication, multiple data structures. Memcached: Simple, fast, multi-threaded, memory-efficient. <strong>Redis has largely replaced Memcached</strong> in modern systems due to its versatility. Choose Memcached only for pure, simple caching.</p>
+</div>
+
+<div class="card">
+<h3 style="color:#fcd34d;">CDN Fundamentals</h3>
+<p style="color:var(--tm)">CDNs cache content at edge locations worldwide. Benefits: Lower latency, global reach, DDoS protection, cost savings. Cache control headers (Cache-Control, Expires, ETag) control how CDNs cache content. <strong>CDN = Content at the Edge.</strong></p>
+</div>
+
+<div class="card">
+<h3 style="color:#fca5a5;">Edge Caching & Optimization</h3>
+<p style="color:var(--tm)">Advanced CDN strategies: Edge computing (run code at edge), Cache warming (preload content), Smart invalidation (purge by URL/tag), Geographic routing. Modern CDNs are distributed computing platforms, not just file servers.</p>
+</div>
+
+<div class="card">
+<h3 style="color:#c4b5fd;">Multi-Tier Caching</h3>
+<p style="color:var(--tm)">Four cache layers: L1 Browser, L2 CDN, L3 Redis, L4 Database. Each layer reduces load on deeper layers. Multi-tier caching is essential for high-performance systems. <strong>L1 → L2 → L3 → L4. Each layer catches what the previous one misses.</strong></p>
+</div>
+
+<div class="card">
+<h3 style="color:#6ee7b7;">Cache Warming</h3>
+<p style="color:var(--tm)">Preload data into cache before users request it. Warm at: Application startup, before traffic spikes, after restarts, periodically. Strategies: Analytics-based, predictive, scheduled, event-driven. <strong>Warm Before Traffic. Predict Demand. Monitor Hit Rates.</strong></p>
+</div>
+
+<div class="card">
+<h3 style="color:#fcd34d;">Facebook News Feed</h3>
+<p style="color:var(--tm)">Multi-tier caching: Browser, CDN, Redis, Database. Fanout: Push for normal users, pull for celebrities. Ranking: Recency, engagement, relationship, user behavior. Handle viral content with dedicated caches and CDN. <strong>Feed = Cache + Fanout + Rank.</strong></p>
+</div>
+
+<div class="sec">📋 Cheat Sheet</div>
+<table>
+<thead><tr><th>Topic</th><th>Key Takeaway</th></tr></thead>
+<tbody>
+<tr><td class="h">Redis Cluster</td><td>Distributed Redis with masters, replicas, hash slots</td></tr>
+<tr><td class="h">Redis Data Structures</td><td>String, Hash, List, Set, Sorted Set, Bitmap</td></tr>
+<tr><td class="h">Redis vs Memcached</td><td>Redis = features, Memcached = simplicity</td></tr>
+<tr><td class="h">CDN</td><td>Edge caching for global users</td></tr>
+<tr><td class="h">Cache Control</td><td>Headers: Cache-Control, Expires, ETag</td></tr>
+<tr><td class="h">Edge Caching</td><td>Cache warming, invalidation, optimization</td></tr>
+<tr><td class="h">Multi-Tier</td><td>L1 Browser → L2 CDN → L3 Redis → L4 DB</td></tr>
+<tr><td class="h">Cache Warming</td><td>Preload before traffic, monitor hit rates</td></tr>
+<tr><td class="h">News Feed</td><td>Cache + Fanout + Rank</td></tr>
+</tbody>
+</table>
+
+<div class="sec">💡 Flashcards</div>
+<div class="card">
+<div class="quiz-card">
+<div class="quiz-q">Q: What is Redis Cluster?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">A: Distributed Redis with multiple masters, replicas, and hash slots for horizontal scaling</div>
+<div class="quiz-feedback" id="f1">Redis Cluster distributes data across masters using 16,384 hash slots, enabling horizontal scaling.</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">Q: Which Redis data structure is best for a leaderboard?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">A: Sorted Set — maintains elements sorted by score</div>
+<div class="quiz-feedback" id="f2">Sorted Sets automatically maintain elements in score order, perfect for rankings.</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">Q: What is the main benefit of a CDN?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">A: Reduces latency by serving content from nearby edge locations</div>
+<div class="quiz-feedback" id="f3">CDNs cache content at edge locations worldwide, reducing distance and improving response times.</div>
+</div>
+</div>
+
+<div class="sec">🧠 Mind Map</div>
+<div class="viz-box">Advanced Caching
+│
+├── Redis
+│   ├── Cluster (Masters, Replicas, Hash Slots)
+│   ├── Data Structures (String, Hash, List, Set, Sorted Set)
+│   └── vs Memcached
+│
+├── CDN
+│   ├── Edge Caching
+│   ├── Cache Control Headers
+│   └── Providers (Cloudflare, CloudFront, Fastly)
+│
+├── Edge Optimization
+│   ├── Cache Warming
+│   ├── Invalidation Strategies
+│   └── Geographic Routing
+│
+├── Multi-Tier Caching
+│   ├── L1 Browser
+│   ├── L2 CDN
+│   ├── L3 Redis
+│   └── L4 Database
+│
+└── Case Studies
+    └── Facebook News Feed</div>
+
+<div class="sec">🚨 Common Mistakes</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Single Cache Layer</div><div class="td">Multi-tier caching is more effective</div></div>
+<div class="tag-card"><div class="tc">❌ No Cache Warming</div><div class="td">Cold caches cause poor performance</div></div>
+<div class="tag-card"><div class="tc">❌ Wrong Redis Choice</div><div class="td">Choose based on requirements, not just speed</div></div>
+<div class="tag-card"><div class="tc">❌ Ignoring CDN</div><div class="td">Global users need edge caching</div></div>
+<div class="tag-card"><div class="tc">❌ No Invalidation Strategy</div><div class="td">Stale data creates bugs</div></div>
+</div>
+</div>
+
+<div class="sec">🧪 Final Quiz</div>
+<div class="quiz-card">
+<div class="quiz-q">1. Why would you choose Redis over Memcached for a modern application?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Redis is faster</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Redis offers more features: data structures, persistence, replication</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Redis uses less memory</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Redis is simpler</div>
+<div class="quiz-feedback" id="q1">Redis provides rich data structures, persistence, replication, and more — making it more versatile than Memcached for most use cases.</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">2. What is the main benefit of multi-tier caching?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Reduces code complexity</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Each layer reduces load on deeper layers, improving overall performance</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Eliminates need for databases</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Increases memory usage</div>
+<div class="quiz-feedback" id="q2">Multi-tier caching distributes load across layers. Each layer serves what it can, reducing database pressure and improving latency.</div>
+</div>
+
+<div class="sec">➡ Chapter 7 Preview</div>
+<div class="story">
+<div class="slabel">Coming Next</div>
+<h3>Chapter 7: Communication in Distributed Systems</h3>
+<p>
+Learn about synchronous vs asynchronous communication, REST, GraphQL, gRPC, message queues, Kafka, event-driven architecture, and the WhatsApp messaging system case study.
+</p>
+</div>
+
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

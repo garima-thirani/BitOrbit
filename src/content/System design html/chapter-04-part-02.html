@@ -1,7 +1,255 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Consistent Hashing | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 4 Part 2 - Consistent Hashing</div><h1>Consistent Hashing<br><span>Distributed Key Mapping</span></h1><p>A technique that minimizes data movement when the number of shards changes.</p><div class="stats"><div class="stat"><div class="sn">Scaling</div><div class="sl">Database</div></div><div class="stat"><div class="sn">Shards</div><div class="sl">Horizontal</div></div><div class="stat"><div class="sn">Replicas</div><div class="sl">Reads</div></div><div class="stat"><div class="sn">Learn</div><div class="sl"></div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Consistent Hashing</div><h3>Database Scaling Decisions</h3><p>Database scaling is one of the hardest challenges in system design. A technique that minimizes data movement when the number of shards changes.</p></div>
-<div class="defbox"><strong>Consistent Hashing:</strong> A technique that minimizes data movement when the number of shards changes.</div>
-<div class="sec">How Consistent Hashing Works</div>
-<div class="card"><p style="color:var(--tm)">Imagine a circle with all possible hash values. Servers and keys are placed on this circle. Each key is assigned to the nearest server clockwise. When a server is added or removed, only its immediate neighbors are affected.</p></div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Consistent Hashing - what is the key benefit?</div><div class="quiz-opt" onclick="ck(this,false)">A) Makes the database smaller</div><div class="quiz-opt" onclick="ck(this,true)">B) Enables horizontal scaling of database workloads</div><div class="quiz-opt" onclick="ck(this,false)">C) Eliminates indexes</div><div class="quiz-opt" onclick="ck(this,false)">D) Makes queries faster automatically</div><div class="quiz-feedback">Database scaling distributes data across multiple machines.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Next topic</h3><p>Continue building your knowledge.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consistent Hashing | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.fig{background:var(--bc2);border:1px solid var(--brd);border-radius:16px;padding:30px;margin:28px 0;}
+.fig-cap{text-align:center;color:var(--tm);font-size:.85rem;margin-top:16px;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 4 · Part 2 · Consistent Hashing</div>
+<h1>Consistent Hashing<br><span>Minimizing Data Movement When Nodes Change</span></h1>
+<p>Traditional hashing works well until the number of servers changes. Consistent hashing was invented to minimize data movement when nodes are added or removed.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Hash Ring</div><div class="sl">Logical circle</div></div>
+<div class="stat"><div class="sn">vNodes</div><div class="sl">Virtual nodes</div></div>
+<div class="stat"><div class="sn">Minimal</div><div class="sl">Data movement</div></div>
+<div class="stat"><div class="sn">CDN</div><div class="sl">Use case</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — Lockers in a Train Station</div>
+<div class="story">
+<div class="slabel">Why Modulo Hashing Fails</div>
+<h3>Adding one locker forces everyone to move.</h3>
+<p>
+Imagine 1,000 passengers storing luggage in 10 lockers. Each passenger uses: <code>Locker = Ticket Number % 10</code>. Now the station adds one more locker. The rule becomes <code>Ticket Number % 11</code>. Almost every passenger must move luggage to a different locker. This creates chaos. Traditional hashing behaves exactly like this.
+</p>
+</div>
+
+<div class="sec">❌ The Problem with Modulo Hashing</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Suppose we distribute users across 4 servers:</p>
+<div class="viz-box">Server = hash(user_id) % 4</div>
+<p style="color:var(--tm);margin:12px 0;">Adding a fifth server changes the formula to <code>hash(user_id) % 5</code>. Result:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📦 Most Keys Move</div><div class="td">Nearly all data must be redistributed when N changes</div></div>
+<div class="tag-card"><div class="tc">💥 Cache Misses Spike</div><div class="td">All cache entries become invalid, causing a thundering herd</div></div>
+<div class="tag-card"><div class="tc">🚚 Massive Data Migration</div><div class="td">Terabytes of data may need to move across the network</div></div>
+</div>
+<div class="defbox"><strong>For large systems, this is unacceptable.</strong> Consistent hashing solves this.</div>
+</div>
+
+<div class="sec">🎯 What is Consistent Hashing?</div>
+<div class="defbox">
+<strong>Consistent Hashing</strong> places both <strong>servers</strong> and <strong>keys</strong> on the same logical hash ring. Instead of recalculating every key when servers change, only keys near the affected server move. This dramatically reduces rebalancing.
+</div>
+
+<div class="sec">🔄 The Hash Ring</div>
+<div class="fig">
+<svg viewBox="0 0 500 500" width="100%">
+<defs>
+<linearGradient id="hr1"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<linearGradient id="hr2"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#34d399"/></linearGradient>
+<linearGradient id="hr3"><stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#fbbf24"/></linearGradient>
+</defs>
+<circle cx="250" cy="250" r="200" fill="none" stroke="#334155" stroke-width="3" stroke-dasharray="8 4"/>
+<circle cx="250" cy="50" r="30" fill="url(#hr1)"/>
+<text x="250" y="58" fill="white" font-size="16" font-weight="700" text-anchor="middle">A</text>
+<text x="250" y="30" fill="#94a3b8" font-size="12" text-anchor="middle">0°</text>
+<circle cx="450" cy="250" r="30" fill="url(#hr2)"/>
+<text x="450" y="258" fill="white" font-size="16" font-weight="700" text-anchor="middle">B</text>
+<text x="480" y="250" fill="#94a3b8" font-size="12" text-anchor="middle">90°</text>
+<circle cx="250" cy="450" r="30" fill="url(#hr3)"/>
+<text x="250" y="458" fill="white" font-size="16" font-weight="700" text-anchor="middle">C</text>
+<text x="250" y="490" fill="#94a3b8" font-size="12" text-anchor="middle">180°</text>
+<circle cx="50" cy="250" r="12" fill="#ef4444"/>
+<text x="30" y="250" fill="#fca5a5" font-size="11" text-anchor="end">Key X</text>
+<path d="M62,250 L220,250" stroke="#fca5a5" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#ha)"/>
+<text x="250" y="150" fill="#94a3b8" font-size="13" text-anchor="middle">Each key belongs to the</text>
+<text x="250" y="170" fill="#94a3b8" font-size="13" text-anchor="middle">next server clockwise</text>
+</svg>
+<div class="fig-cap">Servers A, B, C are placed on the hash ring. Key X is assigned to the next server clockwise — Server A.</div>
+</div>
+
+<div class="sec">📋 How It Works</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Imagine hash values arranged in a circle from 0 to 2³²-1:</p>
+<div class="viz-box">Hash Ring (0 to 2³²-1)
+
+Servers placed on ring: hash(server_ip) → position
+Keys placed on ring: hash(key) → position
+Each key → next server clockwise
+
+Example:
+  Server A at 100°, Server B at 200°, Server C at 300°
+  Key X at 150° → next clockwise server = B</div>
+</div>
+
+<div class="sec">➕ Adding a New Server</div>
+<div class="card">
+<div class="g2">
+<div class="gc">
+<h4>Before</h4>
+<div class="viz-box">A ---- B ---- C</div>
+</div>
+<div class="gc">
+<h4>After adding D</h4>
+<div class="viz-box">A ---- B ---- D ---- C</div>
+</div>
+</div>
+<p style="color:var(--tm);margin-top:12px;">Only keys between B and C move to D. <strong>No global reshuffling is required.</strong></p>
+</div>
+
+<div class="sec">➖ Removing a Server</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">If Server C fails:</p>
+<div class="viz-box">Before: A ---- B ---- C ---- D
+After:  A ---- B ---- D</div>
+<p style="color:var(--tm);margin-top:12px;">Only C's keys move to D. This enables graceful recovery from failures.</p>
+</div>
+
+<div class="sec">🔷 Virtual Nodes (vNodes)</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Real servers rarely have identical capacity. Instead of placing one point per server on the ring, each physical server owns multiple <strong>virtual nodes</strong>.</p>
+<div class="viz-box">Server A → A1, A2, A3 (3 virtual nodes on ring)
+Server B → B1, B2, B3
+Server C → C1, C2, C3</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📊 Better Load Distribution</div><div class="td">Virtual nodes spread data more evenly across physical servers</div></div>
+<div class="tag-card"><div class="tc">⚖ Easier Balancing</div><div class="td">Different servers can have different numbers of vNodes based on capacity</div></div>
+<div class="tag-card"><div class="tc">🔄 Smoother Scaling</div><div class="td">Adding/removing servers causes minimal disruption</div></div>
+</div>
+<div class="defbox"><strong>Modern systems almost always use virtual nodes.</strong></div>
+</div>
+
+<div class="sec">🏭 Production Use Cases</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">⚡ Distributed Caches</div><div class="td">Redis Cluster and Memcached use consistent hashing to distribute keys across nodes</div></div>
+<div class="tag-card"><div class="tc">🗄 Distributed Databases</div><div class="td">Cassandra, DynamoDB use consistent hashing to partition data across nodes</div></div>
+<div class="tag-card"><div class="tc">🌐 CDNs</div><div class="td">Edge servers use consistent hashing to route content while minimizing cache invalidation</div></div>
+</div>
+</div>
+
+<div class="sec">⚖ Advantages & Disadvantages</div>
+<div class="g2">
+<div class="gc">
+<h4>✅ Advantages</h4>
+<p>• Minimal data movement when nodes change<br>• Easy horizontal scaling<br>• Better fault tolerance<br>• Improved cache hit ratios<br>• Reduced operational cost during expansion</p>
+</div>
+<div class="gc">
+<h4>❌ Disadvantages</h4>
+<p>• More complex than modulo hashing<br>• Requires metadata about the ring<br>• Poor implementation can still create hotspots</p>
+</div>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card">
+<div class="ts">
+<div class="sn2">Q</div>
+<div class="sc">
+<strong>"Why is consistent hashing preferred over hash(key) % N?"</strong>
+<div class="mini">"Because adding or removing a server only redistributes a small subset of keys instead of forcing nearly all keys to move."</div>
+</div>
+</div>
+</div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox">
+<strong>Modulo Hashing = Move Almost Everything</strong><br>
+<strong>Consistent Hashing = Move Only What's Necessary</strong>
+</div>
+
+<div class="sec">📋 Quick Summary</div>
+<table>
+<thead><tr><th>Concept</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td class="h">Hash Ring</td><td>Logical placement of keys and servers on a circle</td></tr>
+<tr><td class="h">Clockwise Lookup</td><td>Finds the owning server for a given key</td></tr>
+<tr><td class="h">Virtual Nodes</td><td>Multiple ring positions per physical server for better balance</td></tr>
+<tr><td class="h">Rebalancing</td><td>Minimal key movement when servers join or leave</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🚨 Common Mistakes</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Forgetting Clockwise Lookup</div><div class="td">The rule is always "next server clockwise" from the key's position</div></div>
+<div class="tag-card"><div class="tc">❌ Ignoring Virtual Nodes</div><div class="td">Without vNodes, load distribution can be highly uneven</div></div>
+<div class="tag-card"><div class="tc">❌ Assuming Perfect Balance</div><div class="td">Consistent hashing improves distribution but doesn't guarantee perfect balance</div></div>
+</div>
+</div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card">
+<div class="quiz-q">1. What happens to keys when a server is removed in consistent hashing?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) All keys are redistributed across all servers</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Only the removed server's keys move to the next server clockwise</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) All keys must be rehashed</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) The system stops until rebalancing completes</div>
+<div class="quiz-feedback" id="q1">In consistent hashing, only keys belonging to the removed server are reassigned. All other keys remain untouched.</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">2. What problem do virtual nodes (vNodes) solve?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) They make the hash ring smaller</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) They improve load distribution when servers have different capacities</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) They eliminate the need for hashing</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) They double the storage capacity</div>
+<div class="quiz-feedback" id="q2">Virtual nodes allow each physical server to appear at multiple positions on the ring, creating a more even distribution of keys.</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">3. Which system uses consistent hashing for key distribution?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) PostgreSQL</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Redis Cluster — uses consistent hashing to distribute keys across nodes</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) MySQL</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) SQLite</div>
+<div class="quiz-feedback" id="q3">Redis Cluster uses consistent hashing to distribute keys across its nodes, minimizing data movement when the cluster scales.</div>
+</div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story">
+<div class="slabel">Coming Up</div>
+<h3>Part 3: Primary-Replica & Read-Write Separation</h3>
+<p>
+Learn about the primary-replica pattern, how to separate read and write operations, replication lag, and scaling read-heavy systems.
+</p>
+</div>
+
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => {
+    o.style.pointerEvents = 'none';
+    if (o === el && correct) o.classList.add('correct');
+    else if (o === el && !correct) o.classList.add('wrong');
+    else if (correct && o !== el) o.classList.add('correct');
+  });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+
+</body>
+</html>

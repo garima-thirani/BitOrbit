@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 7 Revision & Case Study | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 7 · Part 14 · Final Revision</div>
+<h1>Chapter 7 Revision & Case Study<br><span>Complete Messaging Systems Review</span></h1>
+<p>Comprehensive review of all messaging concepts with a complete case study on Amazon's order processing system using RabbitMQ, Kafka, Saga, and advanced patterns.</p>
+<div class="stats">
+<div class="stat"><div class="sn">14</div><div class="sl">Parts</div></div>
+<div class="stat"><div class="sn">RabbitMQ</div><div class="sl">Routing</div></div>
+<div class="stat"><div class="sn">Kafka</div><div class="sl">Streaming</div></div>
+<div class="stat"><div class="sn">Complete</div><div class="sl">Mastery</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📋 Complete Chapter Summary</div>
+
+<div class="card">
+<h3 style="color:#a5b4fc;">Communication Patterns</h3>
+<p style="color:var(--tm)"><strong>Sync:</strong> Wait for response. Simple but couples services. <strong>Async:</strong> Fire and forget. Scalable but complex. <strong>REST:</strong> Simple HTTP APIs. <strong>gRPC:</strong> High-performance binary protocol. <strong>GraphQL:</strong> Flexible queries.</p>
+</div>
+
+<div class="card">
+<h3 style="color:#6ee7b7;">Message Brokers</h3>
+<p style="color:var(--tm)"><strong>RabbitMQ:</strong> Smart routing via Exchanges. Deletes after ACK. Excellent for background jobs and complex routing. <strong>Kafka:</strong> Distributed event log. Retains events. Built for high-throughput streaming and replay.</p>
+</div>
+
+<div class="card">
+<h3 style="color:#fcd34d;">RabbitMQ Deep Dive</h3>
+<p style="color:var(--tm)"><strong>Exchange:</strong> Routes messages (Direct, Fanout, Topic, Headers). <strong>Queue:</strong> Stores messages. <strong>Binding:</strong> Connects Exchange to Queue. <strong>ACK/NACK:</strong> Reliability mechanisms. <strong>Durable Queues + Persistent Messages:</strong> Survive crashes. <strong>Publisher Confirms:</strong> Producer confidence.</p>
+</div>
+
+<div class="card">
+<h3 style="color:#fca5a5;">Kafka Deep Dive</h3>
+<p style="color:var(--tm)"><strong>Broker:</strong> Kafka server. <strong>Topic:</strong> Event category. <strong>Partition:</strong> Parallelism unit. <strong>Offset:</strong> Position in partition. <strong>Consumer Group:</strong> Load balancing. <strong>Leader/Follower:</strong> Replication. <strong>ISR:</strong> In-sync replicas. <strong>Log Segments:</strong> Storage files. <strong>Retention:</strong> Time/size-based deletion. <strong>Compaction:</strong> Keep latest per key.</p>
+</div>
+
+<div class="card">
+<h3 style="color:#c4b5fd;">Delivery Guarantees</h3>
+<p style="color:var(--tm)"><strong>At-Most-Once:</strong> May lose, never duplicate. <strong>At-Least-Once:</strong> Never lose, may duplicate (industry standard). <strong>Exactly-Once:</strong> Perfect but expensive. <strong>Idempotency:</strong> Makes duplicates safe. <strong>DLQ:</strong> For permanent failures.</p>
+</div>
+
+<div class="card">
+<h3 style="color:#6ee7b7;">Advanced Patterns</h3>
+<p style="color:var(--tm)"><strong>Saga:</strong> Distributed transactions via compensating actions. <strong>Transactional Outbox:</strong> Reliable event publishing. <strong>Inbox:</strong> Duplicate detection. <strong>CDC:</strong> Database change streaming. <strong>Event Sourcing:</strong> Store all state changes.</p>
+</div>
+
+<div class="sec">📊 Quick Reference Cheat Sheet</div>
+<table>
+<thead><tr><th>Concept</th><th>Key Takeaway</th></tr></thead>
+<tbody>
+<tr><td class="h">Async Communication</td><td>Producer publishes and continues. Consumer processes later.</td></tr>
+<tr><td class="h">Message Broker</td><td>Decouples producers from consumers. Enables scaling.</td></tr>
+<tr><td class="h">RabbitMQ Exchange</td><td>Routes messages. Producer never sends directly to queue.</td></tr>
+<tr><td class="h">Kafka Topic</td><td>Append-only log. Events retained for replay.</td></tr>
+<tr><td class="h">Partition</td><td>Parallelism unit. Ordering guaranteed within partition only.</td></tr>
+<tr><td class="h">Consumer Group</td><td>Load balances partitions across consumers.</td></tr>
+<tr><td class="h">ACK</td><td>Consumer confirms successful processing.</td></tr>
+<tr><td class="h">Idempotency</td><td>Safe retries. Same operation multiple times = same result.</td></tr>
+<tr><td class="h">Saga</td><td>Distributed transactions via compensation.</td></tr>
+<tr><td class="h">Outbox</td><td>Reliable event publishing within database transaction.</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🏭 Complete Case Study - Amazon Order Processing</div>
+<div class="story">
+<div class="slabel">Real-World Architecture</div>
+<h3>End-to-end order processing with all patterns</h3>
+<p><strong>1. Customer places order:</strong> Order Service receives request via REST API.<br><br>
+<strong>2. Synchronous operations:</strong> Payment authorization (immediate feedback needed).<br><br>
+<strong>3. Transactional Outbox:</strong> Order Service saves order + OrderCreated event to Outbox table in same transaction.<br><br>
+<strong>4. Event publishing:</strong> Outbox Publisher reliably sends OrderCreated to Kafka.<br><br>
+<strong>5. Kafka consumers (async):</strong><br>
+- Inventory Service: Reserves stock<br>
+- Shipping Service: Prepares shipment<br>
+- Email Service (RabbitMQ): Sends confirmation<br>
+- Analytics Service: Tracks metrics<br>
+- Recommendation Engine: Updates suggestions<br>
+- Fraud Detection: Monitors for fraud<br><br>
+<strong>6. Saga for failures:</strong> If Shipping fails, orchestrator executes compensation:<br>
+- Refund payment<br>
+- Release inventory<br>
+- Cancel order<br>
+- Send cancellation email<br><br>
+<strong>7. Idempotency:</strong> All consumers use Inbox pattern + Order ID to prevent duplicates.<br><br>
+<strong>8. Monitoring:</strong> Track Kafka lag, RabbitMQ queue depth, DLQ size, retry counts.</p>
+</div>
+
+<div class="sec">🔄 Complete Architecture Diagram</div>
+<div class="fig">
+<svg viewBox="0 0 700 400" width="100%">
+<defs>
+<linearGradient id="cg"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="ca" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="250" y="10" width="200" height="40" rx="8" fill="url(#cg)"/>
+<text x="350" y="36" fill="white" font-size="15" font-weight="700" text-anchor="middle">Customer</text>
+<line x1="350" y1="50" x2="350" y2="70" stroke="#64748b" stroke-width="2" marker-end="url(#ca)"/>
+<rect x="250" y="75" width="200" height="40" rx="8" fill="#10b981"/>
+<text x="350" y="100" fill="white" font-size="14" font-weight="700" text-anchor="middle">Order Service (REST)</text>
+<line x1="350" y1="115" x2="350" y2="135" stroke="#64748b" stroke-width="2" marker-end="url(#ca)"/>
+<rect x="250" y="140" width="200" height="40" rx="8" fill="#f59e0b"/>
+<text x="350" y="165" fill="white" font-size="14" font-weight="700" text-anchor="middle">Transactional Outbox</text>
+<line x1="350" y1="180" x2="350" y2="200" stroke="#64748b" stroke-width="2" marker-end="url(#ca)"/>
+<rect x="230" y="205" width="240" height="35" rx="8" fill="#ef4444"/>
+<text x="350" y="228" fill="white" font-size="13" font-weight="700" text-anchor="middle">Kafka (OrderCreated Event)</text>
+<line x1="350" y1="240" x2="350" y2="260" stroke="#64748b" stroke-width="2" marker-end="url(#ca)"/>
+<rect x="230" y="265" width="240" height="60" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="288" fill="#a5b4fc" font-size="12" font-weight="700" text-anchor="middle">Consumers</text>
+<text x="350" y="305" fill="#94a3b8" font-size="10" text-anchor="middle">Inventory | Shipping | Email (RabbitMQ)</text>
+<text x="350" y="318" fill="#94a3b8" font-size="10" text-anchor="middle">Analytics | Recommendations | Fraud</text>
+<line x1="280" y1="325" x2="150" y2="355" stroke="#64748b" stroke-width="2" marker-end="url(#ca)"/>
+<line x1="420" y1="325" x2="550" y2="355" stroke="#64748b" stroke-width="2" marker-end="url(#ca)"/>
+<rect x="50" y="360" width="200" height="35" rx="8" fill="#8b5cf6"/>
+<text x="150" y="383" fill="white" font-size="12" font-weight="700" text-anchor="middle">Saga Orchestrator</text>
+<rect x="450" y="360" width="200" height="35" rx="8" fill="#06b6d4"/>
+<text x="550" y="383" fill="white" font-size="12" font-weight="700" text-anchor="middle">RabbitMQ (Email/SMS)</text>
+</svg>
+<div class="fig-cap">Complete flow: REST → Outbox → Kafka → Multiple Consumers → RabbitMQ for operational tasks</div>
+</div>
+
+<div class="sec">🎯 Technology Decision Matrix</div>
+<table>
+<thead><tr><th>Requirement</th><th>Technology</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td class="h">Payment Authorization</td><td>REST (Sync)</td><td>User needs immediate feedback</td></tr>
+<tr><td class="h">Order Events</td><td>Kafka</td><td>Multiple consumers, replay, analytics</td></tr>
+<tr><td class="h">Email/SMS</td><td>RabbitMQ</td><td>Background jobs, reliable delivery</td></tr>
+<tr><td class="h">Event Publishing</td><td>Transactional Outbox</td><td>No events lost</td></tr>
+<tr><td class="h">Distributed Transactions</td><td>Saga</td><td>Compensating actions instead of 2PC</td></tr>
+<tr><td class="h">Duplicate Prevention</td><td>Idempotency Keys + Inbox</td><td>Safe retries</td></tr>
+<tr><td class="h">Database Streaming</td><td>CDC (Debezium)</td><td>No application changes</td></tr>
+<tr><td class="h">Search</td><td>Elasticsearch</td><td>Full-text search optimized</td></tr>
+<tr><td class="h">Caching</td><td>Redis</td><td>Low latency lookups</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🧠 Memory Tricks</div>
+<div class="defbox">
+<strong>RabbitMQ vs Kafka:</strong> Need routing or background jobs? RabbitMQ. Need streaming or replay? Kafka. Large systems use both.<br><br>
+<strong>Delivery Guarantees:</strong> At-Most-Once (fast, may lose), At-Least-Once (reliable, may duplicate - use this), Exactly-Once (perfect, expensive).<br><br>
+<strong>Reliability Stack:</strong> Outbox → Kafka → Inbox → Idempotency. This combination ensures no lost events and no duplicates.<br><br>
+<strong>Saga:</strong> Local transactions + compensating actions = distributed transactions without 2PC.
+</div>
+
+<div class="sec">🚨 Common Mistakes</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Using Kafka for emails</div><div class="td">RabbitMQ is simpler for background jobs</div></div>
+<div class="tag-card"><div class="tc">❌ Publishing events before DB commit</div><div class="td">Use Transactional Outbox</div></div>
+<div class="tag-card"><div class="tc">❌ Assuming Kafka guarantees exactly-once</div><div class="td">Need idempotent consumers too</div></div>
+<div class="tag-card"><div class="tc">❌ Using synchronous for everything</div><div class="td">Async for background work</div></div>
+<div class="tag-card"><div class="tc">❌ Ignoring partition strategy</div><div class="td">Affects ordering and throughput</div></div>
+<div class="tag-card"><div class="tc">❌ No DLQ</div><div class="td">Poison messages block processing</div></div>
+</div>
+</div>
+
+<div class="sec">🧪 Final Quiz</div>
+<div class="quiz-card">
+<div class="quiz-q">1. When should you use RabbitMQ vs Kafka?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Always use Kafka - it's newer</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Always use RabbitMQ - it's simpler</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) RabbitMQ for routing/background jobs, Kafka for event streaming/analytics, often both</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) It doesn't matter</div>
+<div class="quiz-feedback" id="q1">They solve different problems. Production systems commonly use both together.</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">2. What is the Transactional Outbox pattern?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) A way to speed up Kafka</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) A database optimization technique</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Storing events in the same DB transaction as business data to ensure reliable publishing</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) A Kafka configuration</div>
+<div class="quiz-feedback" id="q2">Outbox ensures events are never lost by storing them atomically with business data.</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">3. Why does Kafka store events instead of deleting them?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) To waste disk space</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Because deletion is difficult</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) To enable replay, analytics, and multiple independent consumers</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Kafka doesn't actually store events</div>
+<div class="quiz-feedback" id="q3">Kafka's append-only log enables event replay, which is essential for analytics, ML, and debugging.</div>
+</div>
+
+<div class="sec">➡ Chapter 8 Preview</div>
+<div class="story">
+<div class="slabel">Coming Next</div>
+<h3>Chapter 8: Microservices Architecture</h3>
+<p>Learn about microservices principles, service boundaries, API design, service discovery, load balancing, fault tolerance, and how to design scalable microservice architectures.</p>
+</div>
+
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

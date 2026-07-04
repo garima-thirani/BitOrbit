@@ -1,5 +1,167 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Cache Eviction Policies | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 5 Part 3 - Cache Eviction Policies</div><h1>Cache Eviction Policies<br><span>LRU, LFU, FIFO, TTL</span></h1><p>What stays and what goes when cache is full.</p><div class="stats"><div class="stat"><div class="sn">Cache</div><div class="sl">Performance</div></div><div class="stat"><div class="sn">Hit Rate</div><div class="sl">>90%</div></div><div class="stat"><div class="sn">Pattern</div><div class="sl">Design</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Cache Eviction Policies</div><h3>The Cache Mindset</h3><p>Caching stores expensive-to-compute results in fast memory. What stays and what goes when cache is full.</p></div>
-<div class="defbox"><strong>Cache Eviction Policies:</strong> What stays and what goes when cache is full.</div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Cache Eviction Policies - what is the primary goal?</div><div class="quiz-opt" onclick="ck(this,false)">A) Reduce storage costs</div><div class="quiz-opt" onclick="ck(this,true)">B) Improve read performance by reducing database load</div><div class="quiz-opt" onclick="ck(this,false)">C) Increase write throughput</div><div class="quiz-opt" onclick="ck(this,false)">D) Simplify code</div><div class="quiz-feedback">Caching avoids expensive database queries.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Cache Stampede</h3><p>Continue learning.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cache Eviction Policies | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 5 · Part 3 · Cache Eviction Policies</div>
+<h1>Cache Eviction Policies<br><span>LRU, LFU, FIFO — When to Remove Data</span></h1>
+<p>Caches have limited memory. When the cache is full, something must leave. Eviction policies decide which data stays and which goes — and this decision directly affects hit rates and performance.</p>
+<div class="stats">
+<div class="stat"><div class="sn">LRU</div><div class="sl">Recent</div></div>
+<div class="stat"><div class="sn">LFU</div><div class="sl">Frequent</div></div>
+<div class="stat"><div class="sn">FIFO</div><div class="sl">Order</div></div>
+<div class="stat"><div class="sn">TTL</div><div class="sl">Time</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Full Bookshelf</div>
+<div class="story">
+<div class="slabel">Why Eviction Is Necessary</div>
+<h3>You must remove old books to make room for new ones.</h3>
+<p>Imagine a bookshelf that holds exactly 50 books. When you buy a new book, you must decide which existing book to remove. Do you remove the book you read most recently? The book you've read most often? The book you bought first? The book that hasn't been touched in years? Each strategy produces a different result. Cache eviction policies work the same way.</p>
+</div>
+
+<div class="sec">🎯 Why Eviction Matters</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">A cache with infinite memory would never need eviction. But real caches have limits. Poor eviction choices lead to: Low cache hit rates, Wasted memory on rarely-used data, Frequent misses for popular data, Poor application performance.</p>
+<div class="defbox"><strong>Key Insight:</strong> The right eviction policy can dramatically improve hit rates without increasing cache size.</div>
+</div>
+
+<div class="sec">📐 What is Cache Eviction?</div>
+<div class="defbox">
+<strong>Cache Eviction:</strong> The process of removing data from a full cache to make room for new entries. The eviction policy determines which entries are removed.
+</div>
+
+<div class="sec">🔄 Common Eviction Policies</div>
+
+<div class="card">
+<h3 style="color:#a5b4fc;">1. LRU — Least Recently Used</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Remove the item that hasn't been accessed for the longest time.</p>
+<div class="viz-box">Access Order: A → B → C → D → E
+Cache Full? Remove A (oldest access).</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Best For</div><div class="td">General purpose, temporal locality</div></div>
+<div class="tag-card"><div class="tc">❌ Weakness</div><div class="td">Doesn't consider frequency</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#6ee7b7;">2. LFU — Least Frequently Used</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Remove the item accessed least often.</p>
+<div class="viz-box">Access Counts: A(100), B(50), C(10), D(5), E(1)
+Cache Full? Remove E (fewest accesses).</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Best For</div><div class="td">Stable access patterns, popularity-based</div></div>
+<div class="tag-card"><div class="tc">❌ Weakness</div><div class="td">Old popular items may block new trends</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#fcd34d;">3. FIFO — First In First Out</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Remove the oldest entry regardless of usage.</p>
+<div class="viz-box">Insert Order: A → B → C → D → E
+Cache Full? Remove A (inserted first).</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Best For</div><div class="td">Simple, predictable, streaming data</div></div>
+<div class="tag-card"><div class="tc">❌ Weakness</div><div class="td">Ignores access patterns entirely</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#fca5a5;">4. TTL — Time To Live</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Remove entries after a fixed time period.</p>
+<div class="viz-box">Entry inserted at 10:00 AM with TTL = 1 hour
+Automatically removed at 11:00 AM.</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Best For</div><div class="td">Data with known freshness requirements</div></div>
+<div class="tag-card"><div class="tc">❌ Weakness</div><div class="td">May remove still-popular data</div></div>
+</div>
+</div>
+
+<div class="sec">⚖ Policy Comparison</div>
+<table>
+<thead><tr><th>Policy</th><th>Considers Recency</th><th>Considers Frequency</th><th>Complexity</th><th>Common Use</th></tr></thead>
+<tbody>
+<tr><td class="h">LRU</td><td>Yes</td><td>No</td><td>Medium</td><td>General purpose</td></tr>
+<tr><td class="h">LFU</td><td>No</td><td>Yes</td><td>High</td><td>Popularity-based</td></tr>
+<tr><td class="h">FIFO</td><td>No</td><td>No</td><td>Low</td><td>Simple streaming</td></tr>
+<tr><td class="h">TTL</td><td>Yes</td><td>No</td><td>Low</td><td>Time-sensitive data</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🎯 Choosing the Right Policy</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">Use LRU</div><div class="td">Most general-purpose workloads. Recent data is likely to be accessed again soon.</div></div>
+<div class="tag-card"><div class="tc">Use LFU</div><div class="td">When some items are consistently popular regardless of recency.</div></div>
+<div class="tag-card"><div class="tc">Use FIFO</div><div class="td">When simplicity matters more than optimization.</div></div>
+<div class="tag-card"><div class="tc">Use TTL</div><div class="td">When data freshness is critical (sessions, OTPs).</div></div>
+</div>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Redis Default: LRU</h3>
+<p>Redis uses an LRU-like eviction policy by default. When memory is full, it evicts the least recently used keys. This works well for most workloads because recently accessed data is likely to be accessed again. For session data, TTL is often combined with LRU.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What eviction policy would you use for a social media feed?"</strong><div class="mini">"LRU is usually best because recent posts are more likely to be viewed again. However, if certain posts go viral and remain popular for weeks, LFU might be better."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox">
+<strong>LRU = Recently Used</strong><br>
+<strong>LFU = Frequently Used</strong><br>
+<strong>FIFO = First In, First Out</strong><br>
+<strong>TTL = Time-Based Expiry</strong>
+</div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. Which eviction policy removes the least recently used item?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) LFU</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) LRU — Least Recently Used</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) FIFO</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) TTL</div>
+<div class="quiz-feedback" id="q1">LRU evicts the item that hasn't been accessed for the longest time, assuming recent access predicts future access.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. When would LFU be better than LRU?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) When all items are accessed equally</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) When some items are consistently popular regardless of recency</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) When simplicity is most important</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) When data expires quickly</div>
+<div class="quiz-feedback" id="q2">LFU keeps frequently accessed items longer, which is useful when popularity is more important than recency.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 4: Cache Stampede & Thundering Herd</h3><p>Learn what happens when cache entries expire simultaneously and how to prevent cascading failures.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

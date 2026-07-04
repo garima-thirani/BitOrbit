@@ -1,5 +1,244 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>PACELC Theorem | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 3 · Part 5 · PACELC Theorem</div><h1>PACELC Theorem<br><span>Database Fundamentals</span></h1><p>An extension of CAP that considers trade-offs even when the network is healthy (Else — Latency vs Consistency).</p><div class="stats"><div class="stat"><div class="sn">PACELC</div><div class="sl">Key Concept</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">PACELC Theorem</div><h3>Database Decisions Drive Architecture</h3><p>The choice of database technology is one of the most consequential decisions in system design. An extension of CAP that considers trade-offs even when the network is healthy (Else — Latency vs Consistency).</p></div>
-<div class="defbox"><strong>PACELC Theorem:</strong> An extension of CAP that considers trade-offs even when the network is healthy (Else — Latency vs Consistency).</div>
-<div class="sec">🧪 Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. PACELC Theorem — which statement is correct?</div><div class="quiz-opt" onclick="ck(this,false)">A) All databases work the same way</div><div class="quiz-opt" onclick="ck(this,true)">B) Understanding your data model and access patterns determines the right database choice</div><div class="quiz-opt" onclick="ck(this,false)">C) NoSQL is always better</div><div class="quiz-opt" onclick="ck(this,false)">D) SQL is outdated</div><div class="quiz-feedback">The database choice depends on your data structure, consistency needs, and scaling requirements.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Database Indexing</h3><p>Continue building your database knowledge.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PACELC Theorem | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 3 · Part 5 · PACELC Theorem</div>
+<h1>PACELC Theorem<br><span>Extending CAP for Real-World Systems</span></h1>
+<p>CAP explains what happens during a network partition. PACELC explains the trade-offs even when the network is perfectly healthy — latency vs consistency.</p>
+<div class="stats">
+<div class="stat"><div class="sn">P</div><div class="sl">Partition</div></div>
+<div class="stat"><div class="sn">A/C</div><div class="sl">Trade-off</div></div>
+<div class="stat"><div class="sn">E</div><div class="sl">Else</div></div>
+<div class="stat"><div class="sn">L/C</div><div class="sl">Trade-off</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — Two Hospitals</div>
+<div class="story">
+<div class="slabel">Why CAP Wasn't Enough</div>
+<h3>Even without network failures, engineers face trade-offs.</h3>
+<p>
+Imagine two hospitals in different cities sharing patient records. Normally, the network is healthy. A doctor updates a patient's allergy information. Should the second hospital wait until the update reaches every replica before responding? Waiting ensures correctness but delays treatment. Responding immediately improves speed but risks showing stale data. Even <strong>without a network failure</strong>, engineers face a trade-off. This is what PACELC explains.
+</p>
+</div>
+
+<div class="sec">🎯 Why CAP Wasn't Enough</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">CAP only discusses systems <strong>during a partition</strong>. But partitions are relatively rare. Most of the time, networks are healthy. Engineers still need to choose between:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">⚡ Lower Latency</div><div class="td">Respond immediately without waiting for all replicas</div></div>
+<div class="tag-card"><div class="tc">✅ Stronger Consistency</div><div class="td">Wait for confirmation from all replicas before responding</div></div>
+</div>
+<div class="defbox"><strong>Key Insight:</strong> PACELC extends CAP by describing this everyday trade-off that exists even when the network is healthy.</div>
+</div>
+
+<div class="sec">📐 What is PACELC?</div>
+<div class="defbox">
+<strong>PACELC</strong> stands for:<br><br>
+<strong>P</strong> — If there is a <strong>P</strong>artition<br>
+<strong>A</strong> — choose between <strong>A</strong>vailability<br>
+<strong>C</strong> — or <strong>C</strong>onsistency<br><br>
+<strong>E</strong> — <strong>E</strong>lse (when network is healthy)<br>
+<strong>L</strong> — choose between <strong>L</strong>atency<br>
+<strong>C</strong> — or <strong>C</strong>onsistency
+</div>
+
+<div class="sec">🧠 Understanding the "ELC" Part</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Suppose a write reaches Region A. Should Region A:</p>
+<div class="g2">
+<div class="gc">
+<h4>Option 1: Wait for Confirmation</h4>
+<p>Wait until Region B confirms the write. <strong>Pros:</strong> Strong consistency. <strong>Cons:</strong> Higher latency.</p>
+</div>
+<div class="gc">
+<h4>Option 2: Respond Immediately</h4>
+<p>Respond without waiting. <strong>Pros:</strong> Fast response. <strong>Cons:</strong> Region B may temporarily be behind.</p>
+</div>
+</div>
+</div>
+
+<div class="sec">🎯 Visual Model</div>
+<div class="fig">
+<svg viewBox="0 0 700 300" width="100%">
+<defs>
+<linearGradient id="pg"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="pa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="250" y="10" width="200" height="50" rx="10" fill="url(#pg)"/>
+<text x="350" y="42" fill="white" font-size="18" font-weight="700" text-anchor="middle">Partition?</text>
+<line x1="300" y1="60" x2="200" y2="100" stroke="#64748b" stroke-width="3" marker-end="url(#pa)"/>
+<line x1="400" y1="60" x2="500" y2="100" stroke="#64748b" stroke-width="3" marker-end="url(#pa)"/>
+<rect x="80" y="110" width="240" height="50" rx="10" fill="#10b981"/>
+<text x="200" y="140" fill="white" font-size="16" font-weight="700" text-anchor="middle">Yes → A vs C</text>
+<rect x="380" y="110" width="240" height="50" rx="10" fill="#f59e0b"/>
+<text x="500" y="140" fill="white" font-size="16" font-weight="700" text-anchor="middle">No → L vs C</text>
+<text x="200" y="190" fill="#94a3b8" font-size="13" text-anchor="middle">Availability vs Consistency</text>
+<text x="500" y="190" fill="#94a3b8" font-size="13" text-anchor="middle">Latency vs Consistency</text>
+</svg>
+<div class="fig-cap">PACELC: During partitions choose A vs C. During normal operation choose L vs C.</div>
+</div>
+
+<div class="sec">🗄 Database Examples</div>
+<table>
+<thead><tr><th>Database</th><th>Typical PACELC Preference</th></tr></thead>
+<tbody>
+<tr><td class="h">Cassandra</td><td>PA / EL — prioritizes availability and low latency</td></tr>
+<tr><td class="h">DynamoDB</td><td>PA / EL — prioritizes availability and low latency</td></tr>
+<tr><td class="h">MongoDB</td><td>Configurable — depends on write concern</td></tr>
+<tr><td class="h">PostgreSQL (single node)</td><td>Not typically discussed using PACELC</td></tr>
+</tbody>
+</table>
+<div class="defbox"><strong>Note:</strong> Many modern databases allow tuning these behaviors. The PACELC classification depends on configuration.</div>
+
+<div class="sec">🌍 Real-World Examples</div>
+<div class="g2">
+<div class="gc">
+<h4>💬 WhatsApp</h4>
+<p>Message delivery should feel instant. A tiny delay in synchronization is acceptable. <strong>Latency is prioritized</strong> for many interactions.</p>
+</div>
+<div class="gc">
+<h4>🏦 Banking</h4>
+<p>Updating an account balance usually waits for durable confirmation. Correctness outweighs raw speed. <strong>Consistency is prioritized.</strong></p>
+</div>
+</div>
+
+<div class="sec">⏱ Why Latency Matters</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Users notice latency quickly. Approximate human perception:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">< 100 ms</div><div class="td">Instant — feels immediate</div></div>
+<div class="tag-card"><div class="tc">100-300 ms</div><div class="td">Responsive — slight but acceptable delay</div></div>
+<div class="tag-card"><div class="tc">1 second</div><div class="td">Noticeable delay — user may lose focus</div></div>
+<div class="tag-card"><div class="tc">5 seconds</div><div class="td">Frustrating — user may abandon the task</div></div>
+</div>
+<div class="defbox"><strong>Key Insight:</strong> Reducing latency often improves user satisfaction more than adding new features.</div>
+</div>
+
+<div class="sec">📋 Trade-off Framework</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Before choosing a database, ask:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">1️⃣ Is stale data acceptable?</div><div class="td">Can users tolerate slightly outdated information?</div></div>
+<div class="tag-card"><div class="tc">2️⃣ How much latency is acceptable?</div><div class="td">What is the response time SLA?</div></div>
+<div class="tag-card"><div class="tc">3️⃣ What happens during partitions?</div><div class="td">Should the system reject requests or serve stale data?</div></div>
+<div class="tag-card"><div class="tc">4️⃣ Business impact of inconsistency?</div><div class="td">Does stale data cause financial or safety issues?</div></div>
+</div>
+</div>
+
+<div class="sec">⚖ CAP vs PACELC</div>
+<table>
+<thead><tr><th>CAP</th><th>PACELC</th></tr></thead>
+<tbody>
+<tr><td>Focuses on partitions</td><td>Covers partitions and normal operation</td></tr>
+<tr><td>C vs A during failures</td><td>L vs C when healthy</td></tr>
+<tr><td>Simpler model</td><td>More practical for modern systems</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card">
+<div class="ts">
+<div class="sn2">Q</div>
+<div class="sc">
+<strong>"Why was PACELC introduced if CAP already exists?"</strong>
+<div class="mini">"CAP explains behavior during network partitions, but most systems spend most of their time operating normally. PACELC adds the everyday trade-off between latency and consistency."</div>
+</div>
+</div>
+</div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox">
+<strong>CAP = Failure Mode</strong><br>
+<strong>PACELC = Everyday Design Decisions</strong>
+</div>
+
+<div class="sec">📋 Quick Summary</div>
+<div class="viz-box">Partition?
+    Yes → Availability or Consistency
+    No  → Latency or Consistency</div>
+
+<div class="sec">🚨 Common Mistakes</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Treating PACELC as a Replacement for CAP</div><div class="td">PACELC extends CAP, it doesn't replace it</div></div>
+<div class="tag-card"><div class="tc">❌ Ignoring Latency in Distributed Systems</div><div class="td">Latency is a critical design constraint</div></div>
+<div class="tag-card"><div class="tc">❌ Assuming All Databases Make the Same Trade-offs</div><div class="td">Different databases optimize for different goals</div></div>
+</div>
+</div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card">
+<div class="quiz-q">1. What does PACELC add beyond CAP?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Nothing, it is the same</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) It considers trade-offs even when the network is healthy (Latency vs Consistency)</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) It removes Partition Tolerance</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) It adds Security</div>
+<div class="quiz-feedback" id="q1">PACELC acknowledges that even without partitions, there are trade-offs between latency and consistency.</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">2. In PACELC, what does "E" stand for?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Error</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Eventually</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Else — when the network is healthy (no partition)</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Encryption</div>
+<div class="quiz-feedback" id="q2">E stands for "Else" — the scenario when there is no network partition and the system is operating normally.</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">3. A messaging app prioritizes fast delivery over immediate consistency. What PACELC choice does this represent?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) PC (Partition + Consistency)</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) EL (Else + Latency) — prioritize low latency during normal operation</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) EC (Else + Consistency)</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) PA (Partition + Availability)</div>
+<div class="quiz-feedback" id="q3">WhatsApp prioritizes low latency (EL) for message delivery. A tiny delay in synchronization is acceptable for better user experience.</div>
+</div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story">
+<div class="slabel">Coming Up</div>
+<h3>Part 6: Database Indexing</h3>
+<p>
+Learn how indexes work under the hood: B-Trees, hash indexes, covering indexes, composite indexes, and query optimization.
+</p>
+</div>
+
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => {
+    o.style.pointerEvents = 'none';
+    if (o === el && correct) o.classList.add('correct');
+    else if (o === el && !correct) o.classList.add('wrong');
+    else if (correct && o !== el) o.classList.add('correct');
+  });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+
+</body>
+</html>

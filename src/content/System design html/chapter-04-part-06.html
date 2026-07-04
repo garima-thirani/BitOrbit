@@ -1,5 +1,172 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Connection Pooling | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 4 Part 6 - Connection Pooling</div><h1>Connection Pooling<br><span>Database Optimization</span></h1><p>Managing database connections efficiently.</p><div class="stats"><div class="stat"><div class="sn">Scaling</div><div class="sl">Database</div></div><div class="stat"><div class="sn">Shards</div><div class="sl">Horizontal</div></div><div class="stat"><div class="sn">Replicas</div><div class="sl">Reads</div></div><div class="stat"><div class="sn">Learn</div><div class="sl"></div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Connection Pooling</div><h3>Database Scaling Decisions</h3><p>Database scaling is one of the hardest challenges in system design. Managing database connections efficiently.</p></div>
-<div class="defbox"><strong>Connection Pooling:</strong> Managing database connections efficiently.</div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Connection Pooling - what is the key benefit?</div><div class="quiz-opt" onclick="ck(this,false)">A) Makes the database smaller</div><div class="quiz-opt" onclick="ck(this,true)">B) Enables horizontal scaling of database workloads</div><div class="quiz-opt" onclick="ck(this,false)">C) Eliminates indexes</div><div class="quiz-opt" onclick="ck(this,false)">D) Makes queries faster automatically</div><div class="quiz-feedback">Database scaling distributes data across multiple machines.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Next topic</h3><p>Continue building your knowledge.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connection Pooling & Database Optimization | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 4 · Part 6 · Connection Pooling</div>
+<h1>Connection Pooling & Database Optimization<br><span>Reusing Connections for Better Performance</span></h1>
+<p>Opening a database connection is expensive. Connection pools reuse existing connections so applications spend time executing queries instead of repeatedly establishing new connections.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Pool</div><div class="sl">Reuse</div></div>
+<div class="stat"><div class="sn">Borrow</div><div class="sl">Use</div></div>
+<div class="stat"><div class="sn">Return</div><div class="sl">Recycle</div></div>
+<div class="stat"><div class="sn">Size</div><div class="sl">Tune</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Toll Booth</div>
+<div class="story">
+<div class="slabel">Why Connection Pooling Exists</div>
+<h3>Reuse toll booths instead of building new ones for each car.</h3>
+<p>Imagine a toll plaza. If every car had to build a brand-new toll booth before paying, traffic would never move. Instead, fixed toll booths are reused by thousands of cars. Database connections work the same way. Creating a new connection for every request wastes time and resources.</p>
+</div>
+
+<div class="sec">🎯 Why Database Connections Are Expensive</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Creating a connection requires:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">🤝 TCP Handshake</div><div class="td">Three-way handshake for every new connection</div></div>
+<div class="tag-card"><div class="tc">🔐 Authentication</div><div class="td">Verify credentials with the database</div></div>
+<div class="tag-card"><div class="tc">⚙ Session Initialization</div><div class="td">Set up session state, variables, timezone</div></div>
+<div class="tag-card"><div class="tc">💾 Resource Allocation</div><div class="td">Allocate memory and file descriptors</div></div>
+</div>
+<div class="defbox"><strong>Key Insight:</strong> Doing this for every request increases latency and CPU usage. Connection pooling eliminates this overhead.</div>
+</div>
+
+<div class="sec">📐 What is Connection Pooling?</div>
+<div class="defbox">
+<strong>Connection Pool:</strong> Maintains a reusable set of open database connections. Application threads borrow a connection, execute queries, and return it to the pool. Connections are recycled instead of recreated.
+</div>
+
+<div class="sec">🔄 Connection Lifecycle</div>
+<div class="fig">
+<svg viewBox="0 0 700 250" width="100%">
+<defs>
+<linearGradient id="cpg"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="cpa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="250" y="10" width="200" height="50" rx="10" fill="url(#cpg)"/>
+<text x="350" y="42" fill="white" font-size="18" font-weight="700" text-anchor="middle">Application</text>
+<line x1="300" y1="60" x2="150" y2="100" stroke="#64748b" stroke-width="3" marker-end="url(#cpa)"/>
+<line x1="400" y1="60" x2="550" y2="100" stroke="#64748b" stroke-width="3" marker-end="url(#cpa)"/>
+<rect x="50" y="110" width="200" height="50" rx="10" fill="#10b981"/>
+<text x="150" y="140" fill="white" font-size="16" font-weight="700" text-anchor="middle">Borrow Connection</text>
+<rect x="450" y="110" width="200" height="50" rx="10" fill="#f59e0b"/>
+<text x="550" y="140" fill="white" font-size="16" font-weight="700" text-anchor="middle">Execute Query</text>
+<line x1="150" y1="160" x2="150" y2="200" stroke="#64748b" stroke-width="2" marker-end="url(#cpa)"/>
+<line x1="550" y1="160" x2="550" y2="200" stroke="#64748b" stroke-width="2" marker-end="url(#cpa)"/>
+<rect x="250" y="200" width="200" height="40" rx="8" fill="#6366f1"/>
+<text x="350" y="226" fill="white" font-size="14" font-weight="700" text-anchor="middle">Return Connection</text>
+</svg>
+<div class="fig-cap">Borrow → Execute → Return. Connections are recycled instead of recreated.</div>
+</div>
+
+<div class="sec">📏 Pool Sizing</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">A pool that is too small causes waiting. A pool that is too large overwhelms the database.</p>
+<div class="viz-box">Example: 200 App Threads → 20 Database Connections
+Requests share connections efficiently.</div>
+<p style="color:var(--tm);margin-top:12px;">Pool size should be based on: Database capacity, CPU cores, Query latency, Concurrent workload. <strong>Bigger is not always better.</strong></p>
+</div>
+
+<div class="sec">💥 Connection Exhaustion</div>
+<div class="g2">
+<div class="gc"><h4>❌ Without Pooling</h4><p>1000 Requests → 1000 Connections → Database Overloaded</p></div>
+<div class="gc"><h4>✅ With Pooling</h4><p>1000 Requests → 50 Reusable Connections → Stable Database</p></div>
+</div>
+
+<div class="sec">⏱ Timeouts</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Important settings to prevent stale connections:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">Connection Timeout</div><div class="td">Max time to wait for a connection from pool</div></div>
+<div class="tag-card"><div class="tc">Idle Timeout</div><div class="td">Remove connections unused for too long</div></div>
+<div class="tag-card"><div class="tc">Query Timeout</div><div class="td">Max time for a single query</div></div>
+<div class="tag-card"><div class="tc">Max Lifetime</div><div class="td">Replace connections after certain age</div></div>
+</div>
+</div>
+
+<div class="sec">🛠 Popular Connection Pool Libraries</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">HikariCP</div><div class="td">Java — lightweight, fast</div></div>
+<div class="tag-card"><div class="tc">PgBouncer</div><div class="td">PostgreSQL — connection pooler</div></div>
+<div class="tag-card"><div class="tc">ProxySQL</div><div class="td">MySQL — proxy with pooling</div></div>
+<div class="tag-card"><div class="tc">SQLAlchemy Pool</div><div class="td">Python — ORM with pooling</div></div>
+</div>
+</div>
+
+<div class="sec">📈 Database Optimization Beyond Pooling</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Connection pooling alone is not enough. Also optimize:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📊 Queries</div><div class="td">Avoid SELECT *, use indexes, filter early, batch operations</div></div>
+<div class="tag-card"><div class="tc">📐 Schema</div><div class="td">Normalize appropriately, denormalize when justified</div></div>
+<div class="tag-card"><div class="tc">⚡ Caching</div><div class="td">Reduce unnecessary DB traffic with Redis</div></div>
+<div class="tag-card"><div class="tc">📖 Read Replicas</div><div class="td">Route read-heavy workloads away from primary</div></div>
+<div class="tag-card"><div class="tc">📊 Monitoring</div><div class="td">Track slow queries, active connections, lock waits, cache hit ratio</div></div>
+</div>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>E-commerce Platform with 300 API Servers</h3>
+<p><strong>Without pooling:</strong> Every request opens a new database connection. Database reaches its connection limit. Requests begin timing out.<br><br>
+<strong>After introducing PgBouncer:</strong> Connections are reused. Database load drops. Throughput increases without changing application logic.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why can't we simply allow unlimited database connections?"</strong><div class="mini">"Each connection consumes memory and CPU. Too many concurrent connections reduce throughput because the database spends more time managing sessions than executing queries."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Connections are expensive. Queries are cheap. Reuse the connections.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. Why is connection pooling important?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) It makes the database faster</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) It reuses connections, avoiding the overhead of creating new ones for every request</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) It increases the number of connections</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) It replaces the need for indexes</div>
+<div class="quiz-feedback" id="q1">Connection pooling eliminates the TCP handshake, authentication, and session initialization overhead for every request.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. What happens if a connection pool is too large?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Queries execute faster</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) The database can become overwhelmed managing too many connections</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Nothing, larger is always better</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) The pool becomes more efficient</div>
+<div class="quiz-feedback" id="q2">Each database connection consumes memory and CPU. Too many connections can overwhelm the database server.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 7: News Aggregator Case Study</h3><p>A complete case study combining sharding, replication, caching, and read replicas to design a large-scale news aggregation platform.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

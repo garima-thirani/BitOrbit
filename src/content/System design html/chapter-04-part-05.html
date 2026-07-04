@@ -1,5 +1,139 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Multi-Leader Replication | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 4 Part 5 - Multi-Leader Replication</div><h1>Multi-Leader Replication<br><span>Conflict Resolution</span></h1><p>Multiple nodes accept writes and replicate to each other.</p><div class="stats"><div class="stat"><div class="sn">Scaling</div><div class="sl">Database</div></div><div class="stat"><div class="sn">Shards</div><div class="sl">Horizontal</div></div><div class="stat"><div class="sn">Replicas</div><div class="sl">Reads</div></div><div class="stat"><div class="sn">Learn</div><div class="sl"></div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Multi-Leader Replication</div><h3>Database Scaling Decisions</h3><p>Database scaling is one of the hardest challenges in system design. Multiple nodes accept writes and replicate to each other.</p></div>
-<div class="defbox"><strong>Multi-Leader Replication:</strong> Multiple nodes accept writes and replicate to each other.</div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Multi-Leader Replication - what is the key benefit?</div><div class="quiz-opt" onclick="ck(this,false)">A) Makes the database smaller</div><div class="quiz-opt" onclick="ck(this,true)">B) Enables horizontal scaling of database workloads</div><div class="quiz-opt" onclick="ck(this,false)">C) Eliminates indexes</div><div class="quiz-opt" onclick="ck(this,false)">D) Makes queries faster automatically</div><div class="quiz-feedback">Database scaling distributes data across multiple machines.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Next topic</h3><p>Continue building your knowledge.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-Leader Replication & Conflict Resolution | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 4 · Part 5 · Multi-Leader Replication</div>
+<h1>Multi-Leader Replication & Conflict Resolution<br><span>Multiple Writable Databases</span></h1>
+<p>A single primary database eventually becomes a bottleneck for globally distributed write-heavy applications. Multi-leader replication allows multiple databases to accept writes simultaneously — but introduces the challenge of conflicting updates.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Multi</div><div class="sl">Writers</div></div>
+<div class="stat"><div class="sn">Conflict</div><div class="sl">Resolution</div></div>
+<div class="stat"><div class="sn">Global</div><div class="sl">Low Latency</div></div>
+<div class="stat"><div class="sn">LWW</div><div class="sl">Strategy</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — Two Bank Branches</div>
+<div class="story">
+<div class="slabel">Why Multi-Leader Exists</div>
+<h3>Both branches should process deposits independently.</h3>
+<p>Imagine a bank with one branch in London and another in Singapore. If only the London branch can update account balances, every transaction from Singapore must travel across the world. Customers experience unnecessary latency. Instead, suppose both branches can process deposits independently. Performance improves dramatically. But what happens if both branches update the same account at the same time? Both changes are valid. Which one should win? This is the central problem of multi-leader replication.</p>
+</div>
+
+<div class="sec">🎯 Why Multi-Leader Replication?</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Single-primary systems are simple but have limitations:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">🌍 Higher Write Latency</div><div class="td">Distant users must write to a remote primary</div></div>
+<div class="tag-card"><div class="tc">🚧 Primary Bottleneck</div><div class="td">All writes flow through one database</div></div>
+<div class="tag-card"><div class="tc">💥 Regional Outages Impact Writes</div><div class="td">If primary region fails, writes stop</div></div>
+</div>
+<div class="defbox"><strong>Key Insight:</strong> Multi-leader replication distributes write traffic across multiple writable databases, reducing global write latency.</div>
+</div>
+
+<div class="sec">📐 Single-Leader vs Multi-Leader</div>
+<div class="g2">
+<div class="gc"><h4>Single-Leader</h4><p>Only one database accepts writes. All others are read-only replicas. Simple but creates a write bottleneck.</p></div>
+<div class="gc"><h4>Multi-Leader</h4><p>Multiple databases accept writes. Each leader asynchronously replicates changes to others. Lower latency, more complex.</p></div>
+</div>
+
+<div class="sec">🔄 Replication Flow</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Example: Customer in Europe updates profile.</p>
+<div class="viz-box">Europe Client → Leader A → Replication → Leader B
+
+Customers in Asia update Leader B directly.
+Latency is reduced for both regions.</div>
+</div>
+
+<div class="sec">⚠ The Conflict Problem</div>
+<div class="story">
+<div class="slabel">When Both Leaders Update the Same Data</div>
+<h3>Both changes are valid. Which one should win?</h3>
+<p>Suppose two users edit the same document. Leader A: Name = Alice. Leader B: Name = Alicia. Both updates occur before replication completes. Now each leader contains different values. This is a <strong>conflict</strong>.</p>
+</div>
+
+<div class="sec">🛠 Conflict Resolution Strategies</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">1️⃣ Last Write Wins (LWW)</div><div class="td">The newest timestamp wins. Simple, fast. Earlier updates may be lost.</div></div>
+<div class="tag-card"><div class="tc">2️⃣ Application-Level Resolution</div><div class="td">The application decides. Example: Git merge. Humans resolve conflicts manually.</div></div>
+<div class="tag-card"><div class="tc">3️⃣ Version Vectors</div><div class="td">Each update carries version metadata. Conflicting versions detected explicitly. Applications decide how to merge.</div></div>
+<div class="tag-card"><div class="tc">4️⃣ CRDTs</div><div class="td">Conflict-Free Replicated Data Types. Specialized data structures that automatically merge concurrent updates. Common in collaborative editing.</div></div>
+</div>
+</div>
+
+<div class="sec">✅ Where Multi-Leader Works Well</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">Collaborative Editing</div><div class="td">Google Docs, Figma</div></div>
+<div class="tag-card"><div class="tc">Global Applications</div><div class="td">Multi-region deployments</div></div>
+<div class="tag-card"><div class="tc">Offline-First Apps</div><div class="td">Mobile apps that sync later</div></div>
+<div class="tag-card"><div class="tc">Distributed Retail</div><div class="td">Multiple stores updating inventory</div></div>
+</div>
+</div>
+
+<div class="sec">❌ Where It Is Dangerous</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">Banking</div><div class="td">Incorrect conflict resolution can create financial errors</div></div>
+<div class="tag-card"><div class="tc">Stock Trading</div><div class="td">Requires strict consistency and ordering</div></div>
+<div class="tag-card"><div class="tc">Inventory</div><div class="td">Overselling is unacceptable</div></div>
+</div>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"When would you choose multi-leader replication?"</strong><div class="mini">"When users write from multiple geographic regions and low write latency is more important than strict global consistency. I would avoid it for financial systems because conflict resolution becomes difficult."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Multiple Writers = Multiple Conflicts</strong><br>Always explain how conflicts are resolved.</div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is the main challenge with multi-leader replication?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) It is too expensive</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Write conflicts — multiple leaders may update the same data simultaneously</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) It cannot scale reads</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) It requires more storage</div>
+<div class="quiz-feedback" id="q1">Multi-leader replication introduces conflict resolution complexity when the same data is modified in multiple locations.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. Which conflict resolution strategy is best for collaborative editing (Google Docs)?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Last Write Wins</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Application-level manual merge</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) CRDTs — automatically merge concurrent updates</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Ignore conflicts</div>
+<div class="quiz-feedback" id="q2">CRDTs (Conflict-Free Replicated Data Types) are designed for collaborative editing where multiple users edit simultaneously.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 6: Connection Pooling & Database Optimization</h3><p>Learn why connection pools exist, pool sizing, connection lifecycle, and production database optimization techniques.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

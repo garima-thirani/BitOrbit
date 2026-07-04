@@ -1,5 +1,186 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Chapter 3 Revision | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 3 · Part 10 · Chapter 3 Revision</div><h1>Chapter 3 Revision<br><span>Database Fundamentals</span></h1><p>Comprehensive review of all database fundamentals covered in Chapter 3.</p><div class="stats"><div class="stat"><div class="sn">Review</div><div class="sl">Key Concept</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Chapter 3 Revision</div><h3>Database Decisions Drive Architecture</h3><p>The choice of database technology is one of the most consequential decisions in system design. Comprehensive review of all database fundamentals covered in Chapter 3.</p></div>
-<div class="defbox"><strong>Chapter 3 Revision:</strong> Comprehensive review of all database fundamentals covered in Chapter 3.</div>
-<div class="sec">🧪 Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Chapter 3 Revision — which statement is correct?</div><div class="quiz-opt" onclick="ck(this,false)">A) All databases work the same way</div><div class="quiz-opt" onclick="ck(this,true)">B) Understanding your data model and access patterns determines the right database choice</div><div class="quiz-opt" onclick="ck(this,false)">C) NoSQL is always better</div><div class="quiz-opt" onclick="ck(this,false)">D) SQL is outdated</div><div class="quiz-feedback">The database choice depends on your data structure, consistency needs, and scaling requirements.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Chapter 4: Database Scaling</h3><p>Continue building your database knowledge.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 3 Revision | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 3 · Part 10 · Revision</div>
+<h1>Database Fundamentals — Revision<br><span>Complete Chapter Summary</span></h1>
+<p>Consolidate every important concept from Chapter 3 into one interview-focused revision guide. Includes cheat sheets, flashcards, mind map, and practice questions.</p>
+<div class="stats">
+<div class="stat"><div class="sn">10</div><div class="sl">Parts</div></div>
+<div class="stat"><div class="sn">ACID</div><div class="sl">Guarantees</div></div>
+<div class="stat"><div class="sn">BASE</div><div class="sl">Flexibility</div></div>
+<div class="stat"><div class="sn">CAP</div><div class="sl">Theorem</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📋 Quick Revision Notes</div>
+
+<div class="card">
+<h3 style="color:#a5b4fc;">RDBMS vs NoSQL</h3>
+<div class="g2">
+<div class="gc"><h4>RDBMS</h4><p>Structured schema, SQL, ACID transactions, Strong consistency. Best for financial and transactional systems.</p></div>
+<div class="gc"><h4>NoSQL</h4><p>Flexible schema, Horizontal scalability, High write throughput, Often follows BASE principles. Best for large-scale distributed workloads.</p></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#6ee7b7;">ACID Properties</h3>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">Atomicity</div><div class="td">All or Nothing — transaction completes fully or rolls back completely</div></div>
+<div class="tag-card"><div class="tc">Consistency</div><div class="td">Valid State — database moves from one valid state to another</div></div>
+<div class="tag-card"><div class="tc">Isolation</div><div class="td">No Interference — concurrent transactions don't interfere</div></div>
+<div class="tag-card"><div class="tc">Durability</div><div class="td">Survives Crash — committed data persists even after failure</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#fcd34d;">BASE Model</h3>
+<p style="color:var(--tm)"><strong>Basically Available</strong> — system continues serving during failures. <strong>Soft State</strong> — data may differ between replicas temporarily. <strong>Eventual Consistency</strong> — all replicas converge over time. Used when availability and scalability are more important than immediate consistency.</p>
+</div>
+
+<div class="card">
+<h3 style="color:#fca5a5;">CAP Theorem</h3>
+<p style="color:var(--tm)">During a network partition, choose between <strong>Consistency</strong> and <strong>Availability</strong>. Partition Tolerance is assumed in distributed systems. The real choice is <strong>CP vs AP</strong>.</p>
+</div>
+
+<div class="card">
+<h3 style="color:#c4b5fd;">PACELC Theorem</h3>
+<p style="color:var(--tm)"><strong>If Partition:</strong> Choose Availability or Consistency. <strong>Else:</strong> Choose Latency or Consistency. PACELC extends CAP by explaining trade-offs during normal operation.</p>
+</div>
+
+<div class="card">
+<h3 style="color:#6ee7b7;">Database Indexing</h3>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">B-Tree</div><div class="td">General purpose — range queries, sorting, equality</div></div>
+<div class="tag-card"><div class="tc">Hash</div><div class="td">Equality lookups only — fast but no ordering</div></div>
+<div class="tag-card"><div class="tc">Composite</div><div class="td">Multi-column — leftmost prefix rule applies</div></div>
+</div>
+<div class="defbox"><strong>Indexes improve reads. Indexes slow writes.</strong></div>
+</div>
+
+<div class="sec">📋 Cheat Sheet</div>
+<table>
+<thead><tr><th>Topic</th><th>Key Takeaway</th></tr></thead>
+<tbody>
+<tr><td class="h">RDBMS</td><td>Structured, ACID, relationships</td></tr>
+<tr><td class="h">NoSQL</td><td>Flexible, scalable, distributed</td></tr>
+<tr><td class="h">ACID</td><td>Correctness — All or Nothing, Valid State, No Interference, Survives Crash</td></tr>
+<tr><td class="h">BASE</td><td>Availability & eventual consistency</td></tr>
+<tr><td class="h">CAP</td><td>Partition-time trade-offs — CP vs AP</td></tr>
+<tr><td class="h">PACELC</td><td>Everyday latency vs consistency</td></tr>
+<tr><td class="h">Indexes</td><td>Faster reads, slower writes</td></tr>
+<tr><td class="h">Schema</td><td>Normalize for correctness, denormalize for performance</td></tr>
+<tr><td class="h">Query Optimization</td><td>Avoid SELECT *, filter early, use EXPLAIN, fix N+1</td></tr>
+<tr><td class="h">Bottlenecks</td><td>Measure first, then optimize</td></tr>
+</tbody>
+</table>
+
+<div class="sec">💡 Flashcards</div>
+<div class="card">
+<div class="quiz-card">
+<div class="quiz-q">Q: Difference between sharding and replication?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">A: Sharding distributes data. Replication copies data.</div>
+<div class="quiz-feedback" id="f1">Replication keeps copies for redundancy. Sharding splits data for horizontal scaling.</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">Q: When should you choose an RDBMS?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">A: When strong consistency, transactions, and relationships are important.</div>
+<div class="quiz-feedback" id="f2">RDBMS excels at ACID transactions and complex relationships via JOINs.</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">Q: What causes the N+1 query problem?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">A: One parent query followed by one query for every child record.</div>
+<div class="quiz-feedback" id="f3">Solution: Use JOINs or batch loading via DataLoader pattern.</div>
+</div>
+</div>
+
+<div class="sec">🧠 Mind Map</div>
+<div class="viz-box">Database Fundamentals
+│
+├── SQL vs NoSQL
+│
+├── ACID vs BASE
+│
+├── CAP vs PACELC
+│
+├── Indexes (B-Tree, Hash, Composite)
+│
+├── Schema Design (Normalize vs Denormalize)
+│
+├── Query Optimization (EXPLAIN, N+1)
+│
+├── Bottlenecks (Measure → Fix)
+│
+└── Case Studies (Delivery Service)</div>
+
+<div class="sec">🚨 Common Mistakes</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Choosing DB Based on Popularity</div><div class="td">Choose based on requirements, not trends</div></div>
+<div class="tag-card"><div class="tc">❌ Ignoring Access Patterns</div><div class="td">Your queries determine the optimal schema and indexes</div></div>
+<div class="tag-card"><div class="tc">❌ Indexing Every Column</div><div class="td">Indexes slow writes — be selective</div></div>
+<div class="tag-card"><div class="tc">❌ Confusing ACID Consistency with CAP Consistency</div><div class="td">They are different concepts entirely</div></div>
+<div class="tag-card"><div class="tc">❌ Optimizing Before Measuring</div><div class="td">Always measure first — the bottleneck may surprise you</div></div>
+</div>
+</div>
+
+<div class="sec">🧪 Final Quiz</div>
+<div class="quiz-card">
+<div class="quiz-q">1. A social media app needs user profiles (structured), posts (flexible schema), and friend relationships (graph). What database strategy?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Use PostgreSQL for everything</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Polyglot persistence — RDBMS for profiles, document DB for posts, graph DB for relationships</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Use MongoDB for everything</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Use only NoSQL databases</div>
+<div class="quiz-feedback" id="q1">Different data models benefit from different database types. Polyglot persistence chooses the best tool for each job.</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">2. Your e-commerce site is slow during checkout. CPU (35%), Memory (healthy), Disk (low). Thousands of transactions wait on the same inventory row. What's the bottleneck?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Missing indexes</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Lock contention — many transactions waiting on the same row</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Need more RAM</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Network bandwidth</div>
+<div class="quiz-feedback" id="q2">When CPU, memory, and disk are healthy but transactions are slow, lock contention is a likely cause — especially during flash sales.</div>
+</div>
+
+<div class="sec">➡ Chapter 4 Preview</div>
+<div class="story">
+<div class="slabel">Coming Next</div>
+<h3>Chapter 4: Database Scaling</h3>
+<p>
+Learn about Database Sharding, Consistent Hashing, Primary-Replica Architecture, Read Replicas, Multi-Leader Replication, and Connection Pooling — the techniques that allow databases to scale beyond a single machine.
+</p>
+</div>
+
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

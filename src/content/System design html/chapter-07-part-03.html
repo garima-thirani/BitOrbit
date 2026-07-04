@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asynchronous Communication | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 7 · Part 3 · Asynchronous Communication</div>
+<h1>Asynchronous Communication<br><span>The Postal Service Model</span></h1>
+<p>Asynchronous communication allows services to work independently without waiting for responses. Like sending a letter instead of making a phone call, it enables massive scalability and resilience.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Async</div><div class="sl">Non-Blocking</div></div>
+<div class="stat"><div class="sn">Decouple</div><div class="sl">Independent</div></div>
+<div class="stat"><div class="sn">Throughput</div><div class="sl">High</div></div>
+<div class="stat"><div class="sn">Resilient</div><div class="sl">Fault-Tolerant</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Postal Service</div>
+<div class="story">
+<div class="slabel">Why Asynchronous Communication Exists</div>
+<h3>Sending a letter vs making a phone call.</h3>
+<p>Imagine you need to send an important document. You have two options: 1) Phone call - you wait on the line until they answer. 2) Postal service - you drop the letter and continue your day. The recipient processes it whenever they're available. Distributed systems face the same choice. Asynchronous communication is the postal service of software architecture.</p>
+</div>
+
+<div class="sec">🎯 Why Asynchronous Communication?</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Synchronous communication creates bottlenecks: Services wait for each other, Cascading failures, Poor throughput, Tight coupling. Asynchronous communication solves these by letting services publish events and continue without waiting.</p>
+<div class="defbox"><strong>Key Insight:</strong> Asynchronous communication trades immediate consistency for scalability, resilience, and better user experience.</div>
+</div>
+
+<div class="sec">📐 What is Asynchronous Communication?</div>
+<div class="defbox">
+<strong>Asynchronous Communication:</strong> A communication model where the sender publishes a message and continues execution without waiting for the receiver to process it. The receiver processes the message independently.
+</div>
+
+<div class="sec">🔄 How It Works</div>
+<div class="fig">
+<svg viewBox="0 0 700 250" width="100%">
+<defs>
+<linearGradient id="ag"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="aa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="50" y="10" width="140" height="40" rx="8" fill="#10b981"/>
+<text x="120" y="36" fill="white" font-size="14" font-weight="700" text-anchor="middle">Producer</text>
+<line x1="190" y1="30" x2="280" y2="30" stroke="#64748b" stroke-width="2" marker-end="url(#aa)"/>
+<rect x="280" y="10" width="140" height="40" rx="8" fill="url(#ag)"/>
+<text x="350" y="36" fill="white" font-size="14" font-weight="700" text-anchor="middle">Message Broker</text>
+<line x1="420" y1="30" x2="510" y2="30" stroke="#64748b" stroke-width="2" marker-end="url(#aa)"/>
+<rect x="510" y="10" width="140" height="40" rx="8" fill="#f59e0b"/>
+<text x="580" y="36" fill="white" font-size="14" font-weight="700" text-anchor="middle">Consumer</text>
+<text x="350" y="80" fill="#94a3b8" font-size="13" text-anchor="middle">Producer continues immediately, consumer processes later</text>
+</svg>
+<div class="fig-cap">Producer → Broker → Consumer. No waiting required.</div>
+</div>
+
+<div class="sec">⚡ Key Concepts</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📤 Producer</div><div class="td">Creates and publishes messages without waiting</div></div>
+<div class="tag-card"><div class="tc">📥 Consumer</div><div class="td">Processes messages at its own pace</div></div>
+<div class="tag-card"><div class="tc">🔄 Message Broker</div><div class="td">Buffers messages between producer and consumer</div></div>
+<div class="tag-card"><div class="tc">⏱ Temporal Decoupling</div><div class="td">Producer and consumer don't need to be available simultaneously</div></div>
+</div>
+</div>
+
+<div class="sec">📊 Sync vs Async Comparison</div>
+<table>
+<thead><tr><th>Aspect</th><th>Synchronous</th><th>Asynchronous</th></tr></thead>
+<tbody>
+<tr><td class="h">Waiting</td><td>Blocks until response</td><td>Continues immediately</td></tr>
+<tr><td class="h">Latency</td><td>Higher (waits for all services)</td><td>Lower (returns immediately)</td></tr>
+<tr><td class="h">Coupling</td><td>Tight</td><td>Loose</td></tr>
+<tr><td class="h">Throughput</td><td>Lower</td><td>Higher</td></tr>
+<tr><td class="h">Resilience</td><td>Fails if service down</td><td>Messages queued, survives failures</td></tr>
+<tr><td class="h">Complexity</td><td>Simple</td><td>More complex</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🌍 Real-World Examples</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">Amazon Checkout</div><div class="td">Publishes OrderCreated event, continues. Email, inventory, analytics process later.</div></div>
+<div class="tag-card"><div class="tc">Uber Ride</div><div class="td">Publishes RideCompleted event. Billing, receipts, ML pipeline process independently.</div></div>
+<div class="tag-card"><div class="tc">Netflix</div><div class="td">Playback events streamed to analytics, recommendations, billing asynchronously.</div></div>
+<div class="tag-card"><div class="tc">LinkedIn</div><div class="td">Every user action becomes an event consumed by search, ads, recommendations.</div></div>
+</div>
+</div>
+
+<div class="sec">🎯 When to Use Async</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Use asynchronous communication for: Email notifications, SMS sending, Analytics processing, Report generation, Image/video processing, Audit logging, ML pipeline triggers, Cache invalidation. Use synchronous for: Login, Payment authorization (immediate feedback needed), Real-time validation.</p>
+</div>
+
+<div class="sec">⚖ Advantages & Disadvantages</div>
+<div class="g2">
+<div class="gc"><h4>✅ Advantages</h4><p>Better throughput, Loose coupling, Independent scaling, Fault tolerance, Better user experience, Services evolve independently</p></div>
+<div class="gc"><h4>❌ Disadvantages</h4><p>Eventual consistency, Harder debugging, Ordering challenges, Duplicate messages possible, Monitoring complexity</p></div>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon Order Processing</h3>
+<p>Customer places order → Order Service creates order and publishes OrderCreated event → Returns confirmation immediately. Meanwhile: Email Service sends confirmation, Inventory Service reserves stock, Analytics Service tracks metrics, Recommendation Engine updates suggestions. Each service processes independently. If Email Service is down, orders still work. When it recovers, it processes queued events.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why is asynchronous communication more scalable?"</strong><div class="mini">"Because producers don't wait for consumers. An API can handle 10,000 requests/sec if it just publishes events, vs 100 requests/sec if it waits for 10 downstream services. Consumers scale independently."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Async = Fire and Forget. Producer publishes and continues. Consumer processes whenever ready.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is the main advantage of asynchronous communication?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Simpler to implement</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Better throughput and loose coupling - services don't wait for each other</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Lower latency for all operations</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Easier debugging</div>
+<div class="quiz-feedback" id="q1">Async communication allows services to scale independently and handle more requests by not blocking on downstream operations.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. Should payment authorization be synchronous or asynchronous?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Asynchronous - better throughput</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Synchronous - user must know immediately if payment succeeded</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Either works equally well</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Depends on the payment gateway</div>
+<div class="quiz-feedback" id="q2">Payment authorization requires immediate feedback. The user cannot continue until they know if the payment succeeded.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 4: Message Brokers - Why They Exist</h3><p>Learn why message brokers were invented, how they solve direct communication problems, and the internal architecture of RabbitMQ and Kafka.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delivery Guarantees & Idempotency | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 7 · Part 11 · Delivery Guarantees</div>
+<h1>Delivery Guarantees & Idempotency<br><span>At-Most-Once, At-Least-Once, Exactly-Once</span></h1>
+<p>Understanding delivery guarantees is crucial for building reliable distributed systems. Learn about at-most-once, at-least-once, exactly-once semantics, and how idempotency prevents duplicate processing.</p>
+<div class="stats">
+<div class="stat"><div class="sn">At-Most</div><div class="sl">May Lose</div></div>
+<div class="stat"><div class="sn">At-Least</div><div class="sl">May Duplicate</div></div>
+<div class="stat"><div class="sn">Exactly</div><div class="sl">Perfect</div></div>
+<div class="stat"><div class="sn">Idempotent</div><div class="sl">Safe Retry</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Banking Disaster</div>
+<div class="story">
+<div class="slabel">Why Delivery Guarantees Matter</div>
+<h3>Transferring ₹1,00,000 twice.</h3>
+<p>You transfer ₹1,00,000 to a friend. Your internet disconnects before confirmation. You click transfer again. What happened? Case 1: First request never reached - second succeeds. Fine. Case 2: First succeeded, second also succeeds - now ₹2,00,000 transferred. Disaster. Case 3: Second detected as duplicate - only one transfer. Perfect. This uncertainty is why delivery guarantees exist in distributed systems.</p>
+</div>
+
+<div class="sec">🎯 The Two Generals Problem</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Two generals on opposite hills communicate via messengers. General A sends "Attack at dawn". How does he know it arrived? General B sends "Received". How does B know A got it? A acknowledges B's acknowledgement. Now B doesn't know if that arrived. This never ends. <strong>Absolute certainty is impossible in distributed systems.</strong> Instead, we build practical guarantees.</p>
+<div class="defbox"><strong>Key Insight:</strong> Distributed systems cannot guarantee perfection. We trade off between message loss and duplicates.</div>
+</div>
+
+<div class="sec">📐 Three Delivery Guarantees</div>
+
+<div class="card">
+<h3 style="color:#ef4444;">1. At-Most-Once Delivery</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Message delivered zero or one time. Never duplicated. Possible loss.</p>
+<div class="viz-box">Producer → Broker → Consumer
+         ↓
+    Network Failure
+         ↓
+    Message LOST
+
+No retry. No duplicate.</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Use Case</div><div class="td">Metrics, monitoring, non-critical data</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#f59e0b;">2. At-Least-Once Delivery (Most Common)</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Every message will eventually arrive. Duplicates are possible.</p>
+<div class="viz-box">Producer → Broker → Consumer
+         ↓
+    ACK Lost
+         ↓
+    Broker Retries
+         ↓
+    DUPLICATE POSSIBLE</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Use Case</div><div class="td">Most production systems (RabbitMQ, Kafka default)</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#10b981;">3. Exactly-Once Delivery</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Every message processed exactly once. No duplicates. No loss. Very difficult to achieve.</p>
+<div class="viz-box">Requires:
+- Idempotent Producer
+- Transactional Broker
+- Idempotent Consumer
+- Transactional Database
+
+One weak link breaks everything.</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">⚠️ Reality</div><div class="td">True end-to-end exactly-once is extremely expensive</div></div>
+</div>
+</div>
+
+<div class="sec">🔑 What is Idempotency?</div>
+<div class="defbox">
+<strong>Idempotency:</strong> Performing the same operation multiple times produces the same final result. Critical for handling duplicate messages safely.
+</div>
+<div class="card">
+<div class="viz-box">Idempotent:
+Set User Status = "Active"
+Run once → Active
+Run 100 times → Still Active
+✓ Safe to retry
+
+Non-Idempotent:
+Balance += 100
+Run once → ₹100
+Run twice → ₹200
+✗ Dangerous</div>
+</div>
+
+<div class="sec">🎫 Idempotency Key</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Modern payment systems use idempotency keys to prevent duplicate processing.</p>
+<div class="viz-box">POST /payments
+Idempotency-Key: a8d91c21-xyz
+
+Server stores:
+Key: a8d91c21-xyz → Result: Success
+
+Duplicate request with same key?
+→ Return previous result
+→ Don't execute again</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">💡 Example</div><div class="td">Stripe uses idempotency keys for all payment requests</div></div>
+</div>
+</div>
+
+<div class="sec">🔄 Retry Mechanisms</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Never retry immediately. Use exponential backoff with jitter.</p>
+<div class="viz-box">Retry Strategy:
+Try → Fail
+Wait 1 sec → Retry → Fail
+Wait 2 sec → Retry → Fail
+Wait 4 sec → Retry → Fail
+Wait 8 sec → Retry → Fail
+Wait 16 sec → Dead Letter Queue
+
+Add random jitter to prevent retry storms</div>
+</div>
+
+<div class="sec">💀 Dead Letter Queue (DLQ)</div>
+<div class="defbox">
+<strong>DLQ:</strong> Messages that fail permanently after max retries are moved to a Dead Letter Queue for manual investigation.
+</div>
+<div class="card">
+<div class="viz-box">Main Queue → Retry → Retry → Retry → DLQ
+                                    ↓
+                            Operations team investigates</div>
+</div>
+
+<div class="sec">📊 Comparison Matrix</div>
+<table>
+<thead><tr><th>Guarantee</th><th>Message Loss</th><th>Duplicates</th><th>Use Case</th></tr></thead>
+<tbody>
+<tr><td class="h">At-Most-Once</td><td>Possible</td><td>Never</td><td>Metrics, monitoring</td></tr>
+<tr><td class="h">At-Least-Once</td><td>Never</td><td>Possible</td><td>Most production systems</td></tr>
+<tr><td class="h">Exactly-Once</td><td>No</td><td>No</td><td>Financial systems (expensive)</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon, Uber, Stripe</h3>
+<p><strong>Amazon:</strong> Uses at-least-once delivery with idempotent consumers. Order ID prevents duplicate shipments.<br><br>
+<strong>Uber:</strong> Ride events use at-least-once. Ride ID ensures invoice generated only once.<br><br>
+<strong>Stripe:</strong> Payment processing uses idempotency keys. Network retry doesn't cause duplicate charges.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How do you prevent duplicate payment processing?"</strong><div class="mini">"I use idempotency keys - a unique key per payment request. The server stores processed keys. Before processing, it checks if the key exists. If yes, returns previous result. If no, processes and stores the key. This makes retries safe."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>At-Most-Once = Fast but may lose. At-Least-Once = Reliable but may duplicate. Exactly-Once = Perfect but expensive. Idempotency makes duplicates safe.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. Which delivery guarantee is most commonly used in production?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) At-Most-Once</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) At-Least-Once with idempotent consumers</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Exactly-Once</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) None of the above</div>
+<div class="quiz-feedback" id="q1">At-least-once is the industry standard. Duplicates are handled through idempotent consumers.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. What is the purpose of an idempotency key?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) To encrypt messages</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) To speed up processing</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) To detect and prevent duplicate message processing</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) To compress messages</div>
+<div class="quiz-feedback" id="q2">Idempotency keys allow safe retries by detecting if a message was already processed.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 12: WhatsApp Case Study - Global Messaging Platform</h3><p>Complete case study: Design WhatsApp with WebSockets, Kafka, presence, push notifications, offline sync, and message ordering.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

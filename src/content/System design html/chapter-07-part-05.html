@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RabbitMQ & AMQP Fundamentals | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 7 · Part 5 · RabbitMQ</div>
+<h1>RabbitMQ & AMQP Fundamentals<br><span>The Smart Post Office</span></h1>
+<p>RabbitMQ is the world's most popular message broker. It uses the AMQP protocol and provides intelligent routing through Exchanges, Queues, and Bindings.</p>
+<div class="stats">
+<div class="stat"><div class="sn">AMQP</div><div class="sl">Protocol</div></div>
+<div class="stat"><div class="sn">Exchange</div><div class="sl">Router</div></div>
+<div class="stat"><div class="sn">Queue</div><div class="sl">Buffer</div></div>
+<div class="stat"><div class="sn">Routing</div><div class="sl">Smart</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Smart Post Office</div>
+<div class="story">
+<div class="slabel">Why RabbitMQ is Special</div>
+<h3>The postal service that sorts intelligently.</h3>
+<p>Imagine a post office that doesn't just deliver mail randomly. It examines each letter's destination, type, and priority, then routes it to the correct delivery center. RabbitMQ works exactly like this sorting center. Unlike Kafka which stores an ordered log, RabbitMQ specializes in intelligent routing - deciding where each message should go based on sophisticated rules.</p>
+</div>
+
+<div class="sec">🎯 Why RabbitMQ?</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">When an order is created, different systems need the information: Email, Inventory, Analytics, Shipping, Fraud Detection, Loyalty. Without RabbitMQ, Order Service would need to know about all these services. With RabbitMQ, it publishes one message and the broker routes it intelligently.</p>
+<div class="defbox"><strong>Key Insight:</strong> RabbitMQ's Exchange-based routing enables flexible, sophisticated message distribution without producer changes.</div>
+</div>
+
+<div class="sec">📐 What is RabbitMQ?</div>
+<div class="defbox">
+<strong>RabbitMQ:</strong> An open-source message broker implementing the AMQP protocol. It receives messages, routes them through Exchanges based on rules, and delivers them to Queues for consumers.
+</div>
+
+<div class="sec">🔄 Architecture</div>
+<div class="fig">
+<svg viewBox="0 0 700 300" width="100%">
+<defs>
+<linearGradient id="rg"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="ra" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="250" y="10" width="200" height="40" rx="8" fill="#10b981"/>
+<text x="350" y="36" fill="white" font-size="14" font-weight="700" text-anchor="middle">Producer</text>
+<line x1="350" y1="50" x2="350" y2="70" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<rect x="250" y="75" width="200" height="45" rx="8" fill="url(#rg)"/>
+<text x="350" y="98" fill="white" font-size="14" font-weight="700" text-anchor="middle">Exchange (Router)</text>
+<text x="350" y="115" fill="#cbd5e1" font-size="11" text-anchor="middle">Routes based on rules</text>
+<line x1="280" y1="120" x2="150" y2="150" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<line x1="350" y1="120" x2="350" y2="150" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<line x1="420" y1="120" x2="550" y2="150" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<rect x="50" y="155" width="200" height="40" rx="8" fill="#f59e0b"/>
+<text x="150" y="181" fill="white" font-size="13" font-weight="700" text-anchor="middle">Queue A (Email)</text>
+<rect x="250" y="155" width="200" height="40" rx="8" fill="#f59e0b"/>
+<text x="350" y="181" fill="white" font-size="13" font-weight="700" text-anchor="middle">Queue B (Inventory)</text>
+<rect x="450" y="155" width="200" height="40" rx="8" fill="#f59e0b"/>
+<text x="550" y="181" fill="white" font-size="13" font-weight="700" text-anchor="middle">Queue C (Analytics)</text>
+<line x1="150" y1="195" x2="150" y2="225" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<line x1="350" y1="195" x2="350" y2="225" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<line x1="550" y1="195" x2="550" y2="225" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<rect x="50" y="230" width="200" height="40" rx="8" fill="#ef4444"/>
+<text x="150" y="256" fill="white" font-size="14" font-weight="700" text-anchor="middle">Consumer A</text>
+<rect x="250" y="230" width="200" height="40" rx="8" fill="#ef4444"/>
+<text x="350" y="256" fill="white" font-size="14" font-weight="700" text-anchor="middle">Consumer B</text>
+<rect x="450" y="230" width="200" height="40" rx="8" fill="#ef4444"/>
+<text x="550" y="256" fill="white" font-size="14" font-weight="700" text-anchor="middle">Consumer C</text>
+</svg>
+<div class="fig-cap">Producer → Exchange → (Binding) → Queue → Consumer</div>
+</div>
+
+<div class="sec">📋 Core Components</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📤 Producer</div><div class="td">Publishes messages to Exchange (never directly to Queue)</div></div>
+<div class="tag-card"><div class="tc">🔄 Exchange</div><div class="td">Routes messages to Queues based on rules</div></div>
+<div class="tag-card"><div class="tc">🔗 Binding</div><div class="td">Connection between Exchange and Queue with routing rules</div></div>
+<div class="tag-card"><div class="tc">📥 Queue</div><div class="td">Stores messages until consumers process them</div></div>
+<div class="tag-card"><div class="tc">👂 Consumer</div><div class="td">Processes messages from Queue</div></div>
+</div>
+</div>
+
+<div class="sec">🔀 Exchange Types</div>
+
+<div class="card">
+<h3 style="color:#a5b4fc;">1. Direct Exchange</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Routes based on exact routing key match.</p>
+<div class="viz-box">Routing Key: "email"
+Only queues bound with "email" receive the message</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Use Case</div><div class="td">Order processing, payments, specific task routing</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#6ee7b7;">2. Fanout Exchange</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Broadcasts to ALL bound queues. Routing keys ignored.</p>
+<div class="viz-box">Producer → Fanout Exchange
+                    ↓
+              Queue A (gets it)
+              Queue B (gets it)
+              Queue C (gets it)</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Use Case</div><div class="td">Broadcasts, cache invalidation, notifications</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#fcd34d;">3. Topic Exchange</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Routes based on pattern matching with wildcards.</p>
+<div class="viz-box">Routing Key: "order.created"
+Pattern: "order.*"
+Matches: order.created, order.updated, order.shipped
+
+Pattern: "payment.#"
+Matches: payment.success, payment.failed, payment.refund</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Use Case</div><div class="td">Complex routing hierarchies, multiple event types</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#fca5a5;">4. Headers Exchange</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Routes based on message headers instead of routing key.</p>
+<div class="viz-box">Headers: {country: "India", priority: "high"}
+Routes to queues matching these headers</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Use Case</div><div class="td">Metadata-based routing (less common)</div></div>
+</div>
+</div>
+
+<div class="sec">📊 Exchange Comparison</div>
+<table>
+<thead><tr><th>Exchange</th><th>Routing Logic</th><th>Use Case</th></tr></thead>
+<tbody>
+<tr><td class="h">Direct</td><td>Exact match</td><td>Specific routing</td></tr>
+<tr><td class="h">Fanout</td><td>Broadcast all</td><td>Broadcasts</td></tr>
+<tr><td class="h">Topic</td><td>Pattern matching</td><td>Flexible routing</td></tr>
+<tr><td class="h">Headers</td><td>Header matching</td><td>Metadata routing</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why does RabbitMQ use Exchanges instead of sending directly to queues?"</strong><div class="mini">"Exchanges decouple producers from queues. Producers publish to an Exchange without knowing the destination queue. This enables flexible routing and allows new consumers to be added without modifying producers. The Exchange uses bindings and routing keys to determine where messages go."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Exchange Routes, Queue Stores. Producer → Exchange → Queue → Consumer.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is the purpose of an Exchange in RabbitMQ?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Store messages permanently</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Route messages to appropriate queues based on rules</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Process messages</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Acknowledge message delivery</div>
+<div class="quiz-feedback" id="q1">Exchanges are RabbitMQ's routers. They examine routing keys and bindings to determine which queues should receive each message.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. Which Exchange type broadcasts to all bound queues?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Direct</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Topic</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Fanout - sends to every bound queue</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Headers</div>
+<div class="quiz-feedback" id="q2">Fanout Exchange ignores routing keys and broadcasts to all bound queues. Perfect for broadcast scenarios.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 6: RabbitMQ Reliability - ACK, NACK, Durable Queues</h3><p>Learn how RabbitMQ ensures reliable message delivery with acknowledgements, durable queues, persistent messages, publisher confirms, and retry mechanisms.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

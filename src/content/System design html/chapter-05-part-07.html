@@ -1,5 +1,195 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Ticketmaster Case Study | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 5 Part 7 - Ticketmaster Case Study</div><h1>Ticketmaster Case Study<br><span>Caching for High Demand</span></h1><p>How ticket booking systems handle millions of concurrent users.</p><div class="stats"><div class="stat"><div class="sn">Cache</div><div class="sl">Performance</div></div><div class="stat"><div class="sn">Hit Rate</div><div class="sl">>90%</div></div><div class="stat"><div class="sn">Case</div><div class="sl">Study</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Ticketmaster Case Study</div><h3>The Cache Mindset</h3><p>Caching stores expensive-to-compute results in fast memory. How ticket booking systems handle millions of concurrent users.</p></div>
-<div class="defbox"><strong>Ticketmaster Case Study:</strong> How ticket booking systems handle millions of concurrent users.</div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Ticketmaster Case Study - what is the primary goal?</div><div class="quiz-opt" onclick="ck(this,false)">A) Reduce storage costs</div><div class="quiz-opt" onclick="ck(this,true)">B) Improve read performance by reducing database load</div><div class="quiz-opt" onclick="ck(this,false)">C) Increase write throughput</div><div class="quiz-opt" onclick="ck(this,false)">D) Simplify code</div><div class="quiz-feedback">Caching avoids expensive database queries.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Chapter 5 Revision</h3><p>Continue learning.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ticketmaster Case Study | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 5 · Part 7 · Ticketmaster Case Study</div>
+<h1>Ticketmaster Case Study<br><span>Designing a Ticket Booking System</span></h1>
+<p>Ticket booking systems face extreme traffic spikes during flash sales, require real-time inventory management, and must prevent overselling. This case study applies caching strategies to solve these challenges.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Flash</div><div class="sl">Sales</div></div>
+<div class="stat"><div class="sn">Inventory</div><div class="sl">Real-time</div></div>
+<div class="stat"><div class="sn">Cache</div><div class="sl">Strategy</div></div>
+<div class="stat"><div class="sn">Scale</div><div class="sl">Millions</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 Problem Statement</div>
+<div class="story">
+<div class="slabel">Design Challenge</div>
+<h3>Design a ticket booking system like Ticketmaster or BookMyShow.</h3>
+<p>Design a ticket booking system where users can: Browse events, Search for concerts/movies/shows, Select seats, Book tickets, Make payments, View booking history. The system must handle millions of users during high-demand events like IPL matches or concert ticket releases.</p>
+</div>
+
+<div class="sec">📋 Requirements</div>
+<div class="g2">
+<div class="gc"><h4>✅ Functional</h4><p>Event listing, Seat selection, Booking, Payment processing, Cancellation, Waitlist, Notifications, Booking history</p></div>
+<div class="gc"><h4>📊 Non-Functional</h4><p>High availability during flash sales, Low latency booking, Prevent overselling, Fair queueing, Handle 1M+ concurrent users, Secure payments</p></div>
+</div>
+
+<div class="sec">⚠️ Key Challenges</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">💥 Flash Sale Traffic</div><div class="td">Millions of users hit the site simultaneously when tickets go on sale</div></div>
+<div class="tag-card"><div class="tc">🎫 Inventory Management</div><div class="td">Must prevent overselling — only 1000 seats, cannot sell 1001</div></div>
+<div class="tag-card"><div class="tc">⚡ Real-time Updates</div><div class="td">Seat availability must be accurate across all users</div></div>
+<div class="tag-card"><div class="tc">🐢 Database Pressure</div><div class="td">Cannot let millions of requests hit the database directly</div></div>
+</div>
+</div>
+
+<div class="sec">🏛 High-Level Architecture</div>
+<div class="fig">
+<svg viewBox="0 0 700 400" width="100%">
+<defs>
+<linearGradient id="tg"><stop offset="0%" stop-color="#4f46e5"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="ta" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="250" y="10" width="200" height="40" rx="8" fill="url(#tg)"/>
+<text x="350" y="36" fill="white" font-size="15" font-weight="700" text-anchor="middle">🎫 Users</text>
+<line x1="350" y1="50" x2="350" y2="70" stroke="#64748b" stroke-width="2" marker-end="url(#ta)"/>
+<rect x="230" y="75" width="240" height="40" rx="8" fill="#6366f1"/>
+<text x="350" y="100" fill="white" font-size="14" font-weight="700" text-anchor="middle">Load Balancer</text>
+<line x1="350" y1="115" x2="350" y2="135" stroke="#64748b" stroke-width="2" marker-end="url(#ta)"/>
+<rect x="230" y="140" width="240" height="40" rx="8" fill="#06b6d4"/>
+<text x="350" y="165" fill="white" font-size="14" font-weight="700" text-anchor="middle">API Gateway</text>
+<line x1="280" y1="180" x2="150" y2="210" stroke="#64748b" stroke-width="2" marker-end="url(#ta)"/>
+<line x1="420" y1="180" x2="550" y2="210" stroke="#64748b" stroke-width="2" marker-end="url(#ta)"/>
+<rect x="30" y="215" width="240" height="40" rx="8" fill="#10b981"/>
+<text x="150" y="240" fill="white" font-size="14" font-weight="700" text-anchor="middle">⚡ Redis Cache (Inventory)</text>
+<rect x="430" y="215" width="240" height="40" rx="8" fill="#f59e0b"/>
+<text x="550" y="240" fill="white" font-size="14" font-weight="700" text-anchor="middle">Queue System</text>
+<line x1="150" y1="255" x2="150" y2="285" stroke="#64748b" stroke-width="2" marker-end="url(#ta)"/>
+<line x1="550" y1="255" x2="550" y2="285" stroke="#64748b" stroke-width="2" marker-end="url(#ta)"/>
+<rect x="30" y="290" width="240" height="40" rx="8" fill="#ef4444"/>
+<text x="150" y="315" fill="white" font-size="14" font-weight="700" text-anchor="middle">Database (Bookings)</text>
+<rect x="430" y="290" width="240" height="40" rx="8" fill="#ef4444"/>
+<text x="550" y="315" fill="white" font-size="14" font-weight="700" text-anchor="middle">Payment Service</text>
+</svg>
+<div class="fig-cap">Ticket Booking Architecture: Users → API → Redis (Inventory) → Queue → Database</div>
+</div>
+
+<div class="sec">⚡ Caching Strategy</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Redis is the hero of this architecture:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">🎫 Seat Inventory</div><div class="td">Store available seats in Redis for fast reads/writes</div></div>
+<div class="tag-card"><div class="tc">🔒 Booking Locks</div><div class="td">Use Redis locks to prevent double-booking</div></div>
+<div class="tag-card"><div class="tc">⏱ TTL</div><div class="td">Unpaid bookings expire after 5 minutes</div></div>
+<div class="tag-card"><div class="tc">📊 Event Metadata</div><div class="td">Cache event details, prices, venue info</div></div>
+</div>
+</div>
+
+<div class="sec">🔄 Booking Flow with Caching</div>
+<div class="card">
+<div class="viz-box">User Selects Seats
+   ↓
+Check Redis (Seats Available?)
+ ├── No → Show "Sold Out"
+ └── Yes
+        │
+   Reserve in Redis (TTL = 5 min)
+        │
+   Queue Booking Request
+        │
+   Process Payment
+        │
+   Confirm in Database
+        │
+   Success!</div>
+</div>
+
+<div class="sec">🛠 Preventing Overselling</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Critical: Cannot sell more seats than available.</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">1️⃣ Redis Atomic Operations</div><div class="td">Use DECR to atomically decrement seat count</div></div>
+<div class="tag-card"><div class="tc">2️⃣ Distributed Locks</div><div class="td">Lock seat selection during booking</div></div>
+<div class="tag-card"><div class="tc">3️⃣ TTL for Unpaid</div><div class="td">Release seats if payment not completed in 5 min</div></div>
+<div class="tag-card"><div class="tc">4️⃣ Database as Source of Truth</div><div class="td">Final confirmation writes to database</div></div>
+</div>
+</div>
+
+<div class="sec">⚡ Handling Flash Sales</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">When 1 million users try to book simultaneously:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">🚦 Rate Limiting</div><div class="td">Limit requests per user/IP</div></div>
+<div class="tag-card"><div class="tc">📋 Waiting Room</div><div class="td">Queue users before they reach booking system</div></div>
+<div class="tag-card"><div class="tc">⚡ Redis First</div><div class="td">All seat checks go to Redis, not database</div></div>
+<div class="tag-card"><div class="tc">🔄 Async Processing</div><div class="td">Queue booking requests, process sequentially</div></div>
+</div>
+</div>
+
+<div class="sec">📊 Cache Invalidation</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">When a booking is confirmed or cancelled:</p>
+<div class="viz-box">Booking Confirmed
+   ↓
+Decrement Redis Seat Count
+   ↓
+Update Database
+
+Booking Cancelled
+   ↓
+Increment Redis Seat Count
+   ↓
+Update Database</div>
+</div>
+
+<div class="sec">🎯 Interview Walkthrough</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">A strong interview answer:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">1️⃣ Identify challenges</div><div class="td">Flash sales, overselling, database pressure</div></div>
+<div class="tag-card"><div class="tc">2️⃣ Use Redis for inventory</div><div class="td">Fast reads/writes, atomic operations</div></div>
+<div class="tag-card"><div class="tc">3️⃣ Implement TTL</div><div class="td">Release unpaid seats automatically</div></div>
+<div class="tag-card"><div class="tc">4️⃣ Queue bookings</div><div class="td">Prevent database overload</div></div>
+<div class="tag-card"><div class="tc">5️⃣ Rate limiting</div><div class="td">Protect against abuse</div></div>
+<div class="tag-card"><div class="tc">6️⃣ Database for persistence</div><div class="td">Source of truth for confirmed bookings</div></div>
+</div>
+</div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Flash Sales → Redis + Queue. Inventory → Atomic Operations. Overselling → Never.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. Why is Redis critical for ticket booking systems?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) It is cheaper than databases</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) It provides fast atomic operations for inventory management</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) It stores more data</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) It is easier to use</div>
+<div class="quiz-feedback" id="q1">Redis atomic operations (like DECR) prevent overselling by ensuring seat counts are updated safely under high concurrency.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 8: Chapter 5 Revision</h3><p>Comprehensive review of all caching concepts with cheat sheets, flashcards, mind maps, and interview questions.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

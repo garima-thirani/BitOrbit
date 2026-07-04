@@ -1,5 +1,201 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Multi-Tier Caching | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 6 Part 5 - Multi-Tier Caching</div><h1>Multi-Tier Caching<br><span>Cache Everywhere</span></h1><p>Caching at browser, CDN, app, and DB levels.</p><div class="stats"><div class="stat"><div class="sn">CDN</div><div class="sl">Tech</div></div><div class="stat"><div class="sn">Edge</div><div class="sl">Setup</div></div><div class="stat"><div class="sn">Cache</div><div class="sl">Layer</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Multi-Tier Caching</div><h3>Advanced Caching</h3><p>Caching at browser, CDN, app, and DB levels.</p></div>
-<div class="defbox"><strong>Multi-Tier Caching:</strong> Caching at browser, CDN, app, and DB levels.</div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Multi-Tier Caching - why is this important?</div><div class="quiz-opt" onclick="ck(this,false)">A) It replaces databases</div><div class="quiz-opt" onclick="ck(this,true)">B) It reduces latency and improves UX globally</div><div class="quiz-opt" onclick="ck(this,false)">C) Eliminates servers</div><div class="quiz-opt" onclick="ck(this,false)">D) Only for videos</div><div class="quiz-feedback">Advanced caching brings content closer to users.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Cache Warming</h3><p>Continue learning.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-Tier Caching & Geo Replication | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 6 · Part 5 · Multi-Tier Caching</div>
+<h1>Multi-Tier Caching & Geo Replication<br><span>Layered Cache Architecture</span></h1>
+<p>Production systems use multiple cache layers, each serving a different purpose. Multi-tier caching combines browser cache, CDN, application cache, and database cache into a cohesive strategy.</p>
+<div class="stats">
+<div class="stat"><div class="sn">L1</div><div class="sl">Browser</div></div>
+<div class="stat"><div class="sn">L2</div><div class="sl">CDN</div></div>
+<div class="stat"><div class="sn">L3</div><div class="sl">App</div></div>
+<div class="stat"><div class="sn">L4</div><div class="sl">Database</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Multi-Layer Security System</div>
+<div class="story">
+<div class="slabel">Why Multiple Cache Layers</div>
+<h3>Security guards at multiple checkpoints.</h3>
+<p>Imagine a high-security building. There's a guard at the main entrance, another at the lobby, another at the floor, and another at the office door. Each guard filters requests before they reach the inner layers. If the first guard handles most visitors, the inner guards rarely need to act. Multi-tier caching works the same way — each layer absorbs requests, reducing load on deeper layers.</p>
+</div>
+
+<div class="sec">🎯 Why Multi-Tier Caching?</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">A single cache layer has limitations. Multi-tier caching: Reduces latency at multiple levels, Distributes load across layers, Provides redundancy, Optimizes for different access patterns, Enables geographic distribution.</p>
+<div class="defbox"><strong>Key Insight:</strong> Each cache layer serves a different purpose. Together, they create a comprehensive caching strategy.</div>
+</div>
+
+<div class="sec">📐 The Four Cache Tiers</div>
+
+<div class="card">
+<h3 style="color:#a5b4fc;">L1: Browser Cache</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Closest to the user. Stores static assets locally.</p>
+<div class="viz-box">User's Device
+├── Images
+├── CSS
+├── JavaScript
+└── HTML
+
+TTL: Hours to days
+Hit Rate: High for repeat visits</div>
+</div>
+
+<div class="card">
+<h3 style="color:#6ee7b7;">L2: CDN Edge Cache</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Geographically distributed. Serves content from nearby locations.</p>
+<div class="viz-box">CDN Edge Servers (Worldwide)
+├── Static assets
+├── Images
+├── Videos
+└── API responses (sometimes)
+
+TTL: Minutes to days
+Hit Rate: Very high for popular content</div>
+</div>
+
+<div class="card">
+<h3 style="color:#fcd34d;">L3: Application Cache (Redis/Memcached)</h3>
+<p style="color:var(--tm);margin-bottom:12px;">In-memory cache close to application servers.</p>
+<div class="viz-box">Redis Cluster
+├── Database query results
+├── Session data
+├── Computed values
+└── API responses
+
+TTL: Seconds to hours
+Hit Rate: High for hot data</div>
+</div>
+
+<div class="card">
+<h3 style="color:#fca5a5;">L4: Database Cache</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Built into the database itself.</p>
+<div class="viz-box">Database Buffer Pool
+├── Frequently accessed rows
+├── Index pages
+└── Query results
+
+TTL: Managed by database
+Hit Rate: Varies</div>
+</div>
+
+<div class="sec">🔄 Request Flow Through Tiers</div>
+<div class="fig">
+<svg viewBox="0 0 700 250" width="100%">
+<defs>
+<linearGradient id="tg"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="ta" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="250" y="10" width="200" height="40" rx="8" fill="url(#tg)"/>
+<text x="350" y="36" fill="white" font-size="15" font-weight="700" text-anchor="middle">User Request</text>
+<line x1="350" y1="50" x2="350" y2="70" stroke="#64748b" stroke-width="2" marker-end="url(#ta)"/>
+<rect x="230" y="75" width="240" height="35" rx="8" fill="#10b981"/>
+<text x="350" y="98" fill="white" font-size="14" font-weight="700" text-anchor="middle">L1: Browser Cache</text>
+<line x1="350" y1="110" x2="350" y2="130" stroke="#64748b" stroke-width="2" marker-end="url(#ta)"/>
+<rect x="230" y="135" width="240" height="35" rx="8" fill="#06b6d4"/>
+<text x="350" y="158" fill="white" font-size="14" font-weight="700" text-anchor="middle">L2: CDN Edge</text>
+<line x1="350" y1="170" x2="350" y2="190" stroke="#64748b" stroke-width="2" marker-end="url(#ta)"/>
+<rect x="230" y="195" width="240" height="35" rx="8" fill="#f59e0b"/>
+<text x="350" y="218" fill="white" font-size="14" font-weight="700" text-anchor="middle">L3: Redis + L4: Database</text>
+</svg>
+<div class="fig-cap">Request flows through cache layers until it finds data or reaches the database.</div>
+</div>
+
+<div class="sec">🌍 Geo Replication</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Replicate cache data across geographic regions for global applications:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">🗺 Active-Active</div><div class="td">Multiple regions serve writes. Complex conflict resolution.</div></div>
+<div class="tag-card"><div class="tc">📖 Active-Passive</div><div class="td">Primary region handles writes. Replicas serve reads.</div></div>
+<div class="tag-card"><div class="tc">⏱ Replication Lag</div><div class="td">Data takes time to propagate. Accept eventual consistency.</div></div>
+<div class="tag-card"><div class="tc">🔀 Routing</div><div class="td">Route users to nearest region for lowest latency.</div></div>
+</div>
+</div>
+
+<div class="sec">📊 Cache Hierarchy Strategy</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Different data belongs in different tiers:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">L1 (Browser)</div><div class="td">Static assets, images, CSS, JS — long TTL</div></div>
+<div class="tag-card"><div class="tc">L2 (CDN)</div><div class="td">Static content, API responses, public data — medium TTL</div></div>
+<div class="tag-card"><div class="tc">L3 (Redis)</div><div class="td">Database results, sessions, computed values — short TTL</div></div>
+<div class="tag-card"><div class="tc">L4 (Database)</div><div class="td">Source of truth, frequently accessed rows</div></div>
+</div>
+</div>
+
+<div class="sec">⚖ Consistency Across Tiers</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Challenge: Keeping all cache layers synchronized.</p>
+<div class="viz-box">Data Changes in Database
+   ↓
+Invalidate L3 (Redis)
+   ↓
+Invalidate L2 (CDN)
+   ↓
+Browser cache expires naturally (L1)
+
+Result: All layers eventually consistent.</div>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Global E-commerce Platform</h3>
+<p>A global e-commerce site uses multi-tier caching: L1: Browser caches product images for 24 hours. L2: CDN caches product pages for 1 hour across 200 edge locations. L3: Redis caches product details, prices, inventory for 5 minutes in each region. L4: PostgreSQL stores source of truth. Result: 95% of requests served from cache. Database handles only 5% of traffic.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How would you design caching for a global application?"</strong><div class="mini">"I would use multi-tier caching: browser cache for static assets, CDN for geographic distribution, Redis for application-level caching, and database cache for query results. Each layer reduces load on the next."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>L1 Browser → L2 CDN → L3 Redis → L4 Database. Each layer catches what the previous one misses.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is the main benefit of multi-tier caching?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) It reduces code complexity</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Each layer reduces load on deeper layers, improving overall performance</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) It eliminates the need for databases</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) It increases memory usage</div>
+<div class="quiz-feedback" id="q1">Multi-tier caching distributes load across layers. Each layer serves what it can, reducing database pressure.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. In a multi-tier cache, which layer is closest to the user?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) CDN Edge</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Redis</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Browser Cache — stored on the user's device</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Database</div>
+<div class="quiz-feedback" id="q2">Browser cache (L1) is stored on the user's device, making it the closest and fastest cache layer.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 6: Cache Warming Strategies</h3><p>Learn techniques for preloading cache content, predicting demand, and ensuring cache hit rates remain high during traffic spikes.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

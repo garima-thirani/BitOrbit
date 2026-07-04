@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Patterns - Saga, Outbox, CDC | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 7 · Part 13 · Advanced Patterns</div>
+<h1>Advanced Messaging Patterns<br><span>Saga, Transactional Outbox, CDC & Event Sourcing</span></h1>
+<p>Advanced patterns solve complex distributed systems problems: Saga for distributed transactions, Transactional Outbox for reliable publishing, CDC for database streaming, and Event Sourcing for complete audit trails.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Saga</div><div class="sl">Transactions</div></div>
+<div class="stat"><div class="sn">Outbox</div><div class="sl">Reliable</div></div>
+<div class="stat"><div class="sn">CDC</div><div class="sl">Stream</div></div>
+<div class="stat"><div class="sn">Events</div><div class="sl">History</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Order Processing Problem</div>
+<div class="story">
+<div class="slabel">Why Advanced Patterns Exist</div>
+<h3>Order succeeds, inventory fails, now what?</h3>
+<p>Customer places order. Payment succeeds. Inventory fails. Should payment remain? Should shipping continue? Should loyalty points be awarded? Should confirmation emails be revoked? You can't "rollback" an email or SMS. Distributed systems need sophisticated patterns to handle these scenarios without distributed transactions.</p>
+</div>
+
+<div class="sec">🎯 The Distributed Transaction Problem</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">In a monolith: BEGIN → Update Order → Update Inventory → Update Payment → COMMIT. Easy. In microservices: Each service has its own database. No global transaction possible. Two-Phase Commit (2PC) is slow, blocking, and doesn't scale. Modern systems use eventual consistency with patterns like Saga.</p>
+<div class="defbox"><strong>Key Insight:</strong> Distributed transactions don't scale. Embrace eventual consistency with compensating transactions.</div>
+</div>
+
+<div class="sec">🔄 Saga Pattern</div>
+<div class="defbox">
+<strong>Saga:</strong> A sequence of local transactions where each service commits independently. If something fails, previously completed work is compensated (undone) using business logic.
+</div>
+<div class="card">
+<div class="viz-box">Normal Flow:
+Order Created → Payment Completed → Inventory Reserved → Shipping Started
+
+Failure & Compensation:
+Shipping Failed → Release Inventory → Refund Payment → Cancel Order
+
+Compensating transactions undo business actions</div>
+</div>
+
+<div class="sec">📋 Choreography vs Orchestration</div>
+<div class="g2">
+<div class="gc">
+<h4>Choreography</h4>
+<div class="viz-box">Order Created
+   ↓
+Payment Service (reacts)
+   ↓
+Payment Completed
+   ↓
+Inventory Service (reacts)
+   ↓
+Inventory Reserved
+   ↓
+Shipping Service (reacts)
+
+No central coordinator</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Pros</div><div class="td">Highly scalable, no bottleneck</div></div>
+<div class="tag-card"><div class="tc">❌ Cons</div><div class="td">Hard to debug, complex flow</div></div>
+</div>
+</div>
+<div class="gc">
+<h4>Orchestration</h4>
+<div class="viz-box">Saga Orchestrator
+   ↓
+Calls Payment Service
+   ↓
+Calls Inventory Service
+   ↓
+Calls Shipping Service
+   ↓
+Monitors each step
+   ↓
+Handles failures
+
+Central coordinator</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Pros</div><div class="td">Easier to monitor, simpler logic</div></div>
+<div class="tag-card"><div class="tc">❌ Cons</div><div class="td">Orchestrator is bottleneck</div></div>
+</div>
+</div>
+</div>
+
+<div class="sec">📦 Transactional Outbox Pattern</div>
+<div class="defbox">
+<strong>Transactional Outbox:</strong> Store events in an outbox table within the same database transaction as business data. A background publisher reliably sends events to Kafka/RabbitMQ.
+</div>
+<div class="card">
+<div class="viz-box">Problem:
+Database Commit ✔ → Kafka Publish ❌
+Inconsistent!
+
+Solution:
+BEGIN
+  ↓
+Save Order
+  ↓
+Save Event to Outbox Table
+  ↓
+COMMIT (both succeed or fail together)
+   ↓
+Outbox Publisher reads and sends to Kafka</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">💡 Key Insight</div><div class="td">Never publish Kafka events directly after database commit. Use Outbox pattern.</div></div>
+</div>
+</div>
+
+<div class="sec">📥 Inbox Pattern</div>
+<div class="defbox">
+<strong>Inbox Pattern:</strong> Consumer stores processed event IDs before processing. If duplicate event arrives, it's ignored.
+</div>
+<div class="card">
+<div class="viz-box">Kafka Event → Check Inbox Table
+                    ↓
+            Already processed?
+            ↓
+            YES → Ignore
+            ↓
+            NO → Process → Store ID</div>
+</div>
+
+<div class="sec">🔄 Change Data Capture (CDC)</div>
+<div class="defbox">
+<strong>CDC:</strong> Automatically capture database changes (INSERT, UPDATE, DELETE) and stream them to Kafka. Applications don't publish events - the database does.
+</div>
+<div class="card">
+<div class="viz-box">Database (MySQL Binlog)
+   ↓
+CDC Tool (Debezium)
+   ↓
+Kafka
+   ↓
+Consumers (Analytics, Search, ML)
+
+Applications remain unchanged</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Benefit</div><div class="td">No application code changes needed</div></div>
+</div>
+</div>
+
+<div class="sec">📚 Event Sourcing</div>
+<div class="defbox">
+<strong>Event Sourcing:</strong> Store every state change as an event. Current state is computed by replaying events. Complete audit trail built-in.
+</div>
+<div class="card">
+<div class="viz-box">Traditional: Store current state
+Balance: ₹5000
+
+Event Sourcing: Store all events
+Account Created
+Deposit ₹500
+Withdraw ₹100
+Deposit ₹4600
+Current balance = sum of all events</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Benefits</div><div class="td">Complete audit trail, replay history, time travel, debugging</div></div>
+</div>
+</div>
+
+<div class="sec">🏭 Production Example - Amazon</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Complete Order Processing Flow</h3>
+<p>1. Order Service creates order + saves to Outbox table (same transaction)<br>
+2. Outbox Publisher sends OrderCreated event to Kafka<br>
+3. Kafka consumers: Inventory reserves stock, Shipping prepares shipment, Analytics tracks metrics, Recommendations update<br>
+4. If Shipping fails: Saga orchestrator executes compensation (refund payment, release inventory, cancel order)<br>
+5. All events persisted for replay and audit</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How do you ensure no order event is lost in a distributed system?"</strong><div class="mini">"I use Transactional Outbox pattern: store the event in the same database transaction as the order. A background publisher reliably sends events to Kafka. This ensures that if the database commit succeeds, the event will eventually be published. Combined with Saga for distributed transactions and Inbox pattern for idempotent consumers, we achieve reliable event delivery."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Saga = Compensating transactions. Outbox = Reliable publishing. CDC = Database streaming. Event Sourcing = Store everything.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is the Transactional Outbox pattern used for?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) To speed up database queries</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) To ensure events are reliably published to Kafka even if the service crashes</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) To compress data</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) To encrypt messages</div>
+<div class="quiz-feedback" id="q1">Transactional Outbox stores events in the same transaction as business data, ensuring no events are lost.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. What is the Saga pattern used for?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) To speed up transactions</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) To encrypt data</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) To manage distributed transactions using compensating transactions instead of 2PC</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) To cache data</div>
+<div class="quiz-feedback" id="q2">Saga pattern manages distributed transactions by executing compensating transactions when failures occur.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 14: Chapter 7 Revision & Case Study</h3><p>Complete revision of all messaging concepts with comprehensive case study on Amazon's order processing system.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

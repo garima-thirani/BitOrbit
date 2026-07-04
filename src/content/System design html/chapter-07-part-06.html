@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RabbitMQ Reliability - ACK, NACK, Durable Queues | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 7 · Part 6 · RabbitMQ Reliability</div>
+<h1>RabbitMQ Reliability<br><span>ACK, NACK, Durable Queues & Publisher Confirms</span></h1>
+<p>Reliability in messaging systems ensures no message is lost. RabbitMQ provides ACK/NACK mechanisms, durable queues, persistent messages, and publisher confirms for guaranteed delivery.</p>
+<div class="stats">
+<div class="stat"><div class="sn">ACK</div><div class="sl">Success</div></div>
+<div class="stat"><div class="sn">NACK</div><div class="sl">Failure</div></div>
+<div class="stat"><div class="sn">Durable</div><div class="sl">Survive</div></div>
+<div class="stat"><div class="sn">Confirm</div><div class="sl">Guarantee</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Courier Company</div>
+<div class="story">
+<div class="slabel">Why Reliability Matters</div>
+<h3>Three ways to send a package.</h3>
+<p>Scenario 1: You hand over a package with no receipt. If it disappears, nobody knows. Scenario 2: You get a receipt proving the courier received it, but you don't know if it reached the destination. Scenario 3: The recipient signs for it. Now everyone knows: sender shipped, courier delivered, receiver accepted. RabbitMQ reliability works exactly like this third scenario.</p>
+</div>
+
+<div class="sec">🎯 Why Reliability Matters</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">In distributed systems, messages represent critical business events: payments, orders, inventory updates. Losing a payment message is catastrophic. RabbitMQ reliability mechanisms ensure: No message loss, Guaranteed delivery, Crash recovery, Proper retry handling.</p>
+<div class="defbox"><strong>Key Insight:</strong> Speed is important, but correctness is more important. A delayed payment is better than a lost payment.</div>
+</div>
+
+<div class="sec">📐 Message Lifecycle with ACK</div>
+<div class="defbox">
+<strong>ACK (Acknowledgement):</strong> A confirmation from consumer to broker that a message has been successfully processed. Only after ACK can the broker safely delete the message.
+</div>
+<div class="card">
+<div class="viz-box">Complete Message Flow:
+1. Producer sends message to Exchange
+2. Exchange routes to Queue
+3. Consumer receives message
+4. Consumer processes business logic
+5. Consumer sends ACK
+6. Broker deletes message
+
+If no ACK: Broker redelivers message</div>
+</div>
+
+<div class="sec">🔄 Auto ACK vs Manual ACK</div>
+
+<div class="card">
+<h3 style="color:#ef4444;">Auto ACK (Not Recommended)</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Broker immediately removes message after sending to consumer.</p>
+<div class="viz-box">Consumer receives message
+   ↓
+Broker immediately deletes it
+   ↓
+Consumer crashes
+   ↓
+Message LOST FOREVER</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Problem</div><div class="td">If consumer crashes, message is lost</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#10b981;">Manual ACK (Recommended)</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Consumer explicitly sends ACK after successful processing.</p>
+<div class="viz-box">Consumer receives message
+   ↓
+Consumer processes
+   ↓
+Consumer sends ACK
+   ↓
+Broker deletes message
+
+If crash before ACK:
+Broker redelivers to another consumer</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Benefit</div><div class="td">No message loss, even if consumer crashes</div></div>
+</div>
+</div>
+
+<div class="sec">📋 What is NACK?</div>
+<div class="defbox">
+<strong>NACK (Negative Acknowledgement):</strong> Sent by consumer when processing fails. Tells broker to retry, requeue, or send to Dead Letter Queue.
+</div>
+<div class="card">
+<div class="viz-box">Consumer receives message
+   ↓
+Processing fails (database timeout)
+   ↓
+Consumer sends NACK
+   ↓
+Broker decides:
+   - Retry (requeue)
+   - Dead Letter Queue (after max retries)</div>
+</div>
+
+<div class="sec">🏛 Durable Queues</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">What happens if RabbitMQ server crashes? If queues exist only in RAM, everything disappears. Durable Queues survive broker restarts.</p>
+<div class="viz-box">Non-Durable Queue:
+Memory → Crash → Everything Lost
+
+Durable Queue:
+Disk → Crash → Queue Restored</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">⚠️ Important</div><div class="td">Durable Queue ≠ Persistent Messages. Queue definition survives, but messages need to be marked persistent too.</div></div>
+</div>
+</div>
+
+<div class="sec">💾 Persistent Messages</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Producer marks messages as persistent. RabbitMQ writes them to disk.</p>
+<div class="viz-box">Producer → Persistent Message → Disk
+                                    ↓
+                            Survives crash</div>
+</div>
+
+<div class="sec">📊 Durability Matrix</div>
+<table>
+<thead><tr><th>Queue</th><th>Message</th><th>Result</th></tr></thead>
+<tbody>
+<tr><td class="h">Durable</td><td>Persistent</td><td>✅ Survives restart</td></tr>
+<tr><td class="h">Durable</td><td>Non-Persistent</td><td>❌ Message lost</td></tr>
+<tr><td class="h">Non-Durable</td><td>Persistent</td><td>❌ Queue disappears</td></tr>
+<tr><td class="h">Non-Durable</td><td>Non-Persistent</td><td>❌ Everything lost</td></tr>
+</tbody>
+</table>
+
+<div class="sec">✅ Publisher Confirms</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">How does producer know RabbitMQ received the message? Without confirmation, network failures create uncertainty.</p>
+<div class="viz-box">Producer → RabbitMQ → Confirm → Producer continues
+
+Now producer knows message safely reached broker.</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Benefit</div><div class="td">Producer can safely retry if no confirm received</div></div>
+</div>
+</div>
+
+<div class="sec">⚡ Prefetch Count</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Without limits, RabbitMQ sends all messages to one consumer, leaving others idle. Prefetch controls how many unacknowledged messages a consumer can have.</p>
+<div class="viz-box">Prefetch = 1:
+Consumer A receives 1 message
+   ↓
+Waits for ACK
+   ↓
+Receives next message
+
+Fair distribution across consumers</div>
+</div>
+
+<div class="sec">🔄 Retry Mechanisms</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Never retry immediately. Use exponential backoff with jitter.</p>
+<div class="viz-box">Retry Strategy:
+Try → Fail
+Wait 1 second → Retry → Fail
+Wait 2 seconds → Retry → Fail
+Wait 4 seconds → Retry → Fail
+Wait 8 seconds → Retry → Fail
+Wait 16 seconds → Dead Letter Queue</div>
+</div>
+
+<div class="sec">💀 Dead Letter Queue (DLQ)</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Messages that fail permanently are moved to DLQ after max retries. Operations team investigates later.</p>
+<div class="viz-box">Main Queue → Retry → Retry → Retry → DLQ
+                                    ↓
+                            Manual investigation</div>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon Payment Processing</h3>
+<p>Payment Service publishes payment events with: Durable queues, Persistent messages, Publisher confirms, Manual ACKs, Retry with exponential backoff, DLQ for poison messages. If Warehouse Service crashes, messages wait. When it recovers, it processes queued events. No payment event is lost.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How do you ensure no message is lost in RabbitMQ?"</strong><div class="mini">"I use: Durable queues to survive restarts, persistent messages written to disk, manual ACKs so broker only deletes after successful processing, publisher confirms for producer confidence, and DLQs for permanent failures. This combination ensures no message loss."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>ACK = Success, NACK = Retry, Durable = Survive Crash, Confirm = Producer Confidence.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is the difference between Durable Queue and Persistent Message?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) They are the same thing</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Durable Queue survives restart, Persistent Message is written to disk. Both needed for full durability.</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Durable Queue is faster</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Persistent Message is for consumers</div>
+<div class="quiz-feedback" id="q1">Durable Queue preserves queue definition. Persistent Message ensures the message itself survives. Both must be used together.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. Why is Manual ACK preferred over Auto ACK?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) It's faster</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) It's simpler</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Broker only deletes message after successful processing. If consumer crashes, message is redelivered.</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) It uses less memory</div>
+<div class="quiz-feedback" id="q2">Manual ACK ensures messages are only removed after successful processing, preventing data loss during consumer failures.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 7: Messaging Patterns & Why Kafka Was Created</h3><p>Explore common messaging patterns (Work Queue, Pub/Sub, Competing Consumers) and understand why LinkedIn created Kafka.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

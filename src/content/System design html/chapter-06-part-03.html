@@ -1,7 +1,165 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>CDN Fundamentals | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 6 Part 3 - CDN Fundamentals</div><h1>CDN Fundamentals<br><span>Content Delivery Networks</span></h1><p>CDNs bring content closer to users globally.</p><div class="stats"><div class="stat"><div class="sn">CDN</div><div class="sl">Tech</div></div><div class="stat"><div class="sn">Edge</div><div class="sl">Setup</div></div><div class="stat"><div class="sn">Cache</div><div class="sl">Layer</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">CDN Fundamentals</div><h3>Advanced Caching</h3><p>CDNs bring content closer to users globally.</p></div>
-<div class="defbox"><strong>CDN Fundamentals:</strong> CDNs bring content closer to users globally.</div>
-<div class="sec">How CDNs Work</div>
-<div class="card"><p style="color:var(--tm)">A network of geographically distributed servers caching static content. When a user requests content, the CDN serves it from the nearest edge server - reducing latency by up to 90%. Examples: CloudFront, Cloudflare, Akamai.</p></div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. CDN Fundamentals - why is this important?</div><div class="quiz-opt" onclick="ck(this,false)">A) It replaces databases</div><div class="quiz-opt" onclick="ck(this,true)">B) It reduces latency and improves UX globally</div><div class="quiz-opt" onclick="ck(this,false)">C) Eliminates servers</div><div class="quiz-opt" onclick="ck(this,false)">D) Only for videos</div><div class="quiz-feedback">Advanced caching brings content closer to users.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Edge Caching & Latency</h3><p>Continue learning.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CDN Fundamentals & Cache Control | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 6 · Part 3 · CDN Fundamentals</div>
+<h1>CDN Fundamentals & Cache Control<br><span>Edge Caching for Global Users</span></h1>
+<p>A Content Delivery Network (CDN) brings your content closer to users worldwide. Instead of every request traveling to your origin server, CDNs serve cached content from edge locations near the user.</p>
+<div class="stats">
+<div class="stat"><div class="sn">CDN</div><div class="sl">Edge Network</div></div>
+<div class="stat"><div class="sn">Latency</div><div class="sl">Reduced</div></div>
+<div class="stat"><div class="sn">Origin</div><div class="sl">Offloaded</div></div>
+<div class="stat"><div class="sn">Global</div><div class="sl">Scale</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Local Library</div>
+<div class="story">
+<div class="slabel">Why CDNs Exist</div>
+<h3>Popular books are stored in local libraries, not just the central archive.</h3>
+<p>Imagine a country with one central library in the capital. To borrow a book, everyone must travel to the capital. The solution? Copy popular books to local libraries across the country. Now readers in Mumbai access a local copy instead of traveling to Delhi. CDNs work exactly the same way. They copy your website's static content to edge servers worldwide.</p>
+</div>
+
+<div class="sec">🎯 Why CDNs Matter</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Without a CDN: User in Japan → Server in USA → 300ms latency. With a CDN: User in Japan → CDN Edge in Tokyo → 20ms latency. The improvement is dramatic.</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">🌍 Global Reach</div><div class="td">Serve users from nearby locations</div></div>
+<div class="tag-card"><div class="tc">⚡ Lower Latency</div><div class="td">Content delivered from closest edge</div></div>
+<div class="tag-card"><div class="tc">🛡️ DDoS Protection</div><div class="td">CDNs absorb attack traffic</div></div>
+<div class="tag-card"><div class="tc">💰 Cost Savings</div><div class="td">Reduce origin server bandwidth</div></div>
+</div>
+<div class="defbox"><strong>Key Insight:</strong> CDNs are essential for global applications. The closer content is to users, the faster the experience.</div>
+</div>
+
+<div class="sec">📐 What is a CDN?</div>
+<div class="defbox">
+<strong>CDN (Content Delivery Network):</strong> A geographically distributed network of proxy servers that cache content at edge locations. When a user requests content, the CDN serves it from the nearest edge server instead of the origin.
+</div>
+
+<div class="sec">🏛 CDN Architecture</div>
+<div class="fig">
+<svg viewBox="0 0 700 300" width="100%">
+<defs>
+<linearGradient id="cdng"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="cdna" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="250" y="10" width="200" height="40" rx="8" fill="url(#cdng)"/>
+<text x="350" y="36" fill="white" font-size="15" font-weight="700" text-anchor="middle">🌍 User</text>
+<line x1="350" y1="50" x2="350" y2="70" stroke="#64748b" stroke-width="2" marker-end="url(#cdna)"/>
+<rect x="230" y="75" width="240" height="40" rx="8" fill="#10b981"/>
+<text x="350" y="100" fill="white" font-size="14" font-weight="700" text-anchor="middle">CDN Edge Server (Nearby)</text>
+<line x1="350" y1="115" x2="350" y2="145" stroke="#64748b" stroke-width="2" stroke-dasharray="6 3"/>
+<rect x="230" y="150" width="240" height="40" rx="8" fill="#f59e0b"/>
+<text x="350" y="175" fill="white" font-size="14" font-weight="700" text-anchor="middle">Origin Server (Far)</text>
+<text x="350" y="220" fill="#94a3b8" font-size="13" text-anchor="middle">Cache Hit → Fast Response</text>
+<text x="350" y="240" fill="#94a3b8" font-size="13" text-anchor="middle">Cache Miss → Fetch from Origin → Cache</text>
+</svg>
+<div class="fig-cap">CDN Flow: User → Edge Server → (Hit or Miss) → Origin if needed</div>
+</div>
+
+<div class="sec">🔄 How CDNs Work</div>
+<div class="card">
+<div class="viz-box">User Requests: https://example.com/image.jpg
+   ↓
+DNS Resolution → Nearest CDN Edge
+   ↓
+CDN Checks Cache
+ ├── Hit → Return image (fast!)
+ └── Miss
+        │
+    Fetch from Origin
+        │
+    Cache at Edge
+        │
+    Return to User</div>
+</div>
+
+<div class="sec">📋 Cache Control Headers</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">HTTP headers control how CDNs cache content:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">Cache-Control</div><div class="td">max-age, no-cache, no-store, public, private</div></div>
+<div class="tag-card"><div class="tc">Expires</div><div class="td">Absolute expiration date</div></div>
+<div class="tag-card"><div class="tc">ETag</div><div class="td">Validator for conditional requests</div></div>
+<div class="tag-card"><div class="tc">Last-Modified</div><div class="td">Timestamp for validation</div></div>
+</div>
+</div>
+
+<div class="sec">⚡ Common Cache-Control Directives</div>
+<table>
+<thead><tr><th>Directive</th><th>Meaning</th><th>Use Case</th></tr></thead>
+<tbody>
+<tr><td class="h">public</td><td>Any cache can store</td><td>Static assets (images, CSS)</td></tr>
+<tr><td class="h">private</td><td>Only browser cache</td><td>User-specific content</td></tr>
+<tr><td class="h">no-cache</td><td>Must validate with server</td><td>Frequently changing data</td></tr>
+<tr><td class="h">no-store</td><td>Do not cache at all</td><td>Sensitive data (passwords)</td></tr>
+<tr><td class="h">max-age=3600</td><td>Cache for 1 hour</td><td>Static assets with TTL</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🌍 Popular CDN Providers</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">Cloudflare</div><div class="td">Global network, free tier, DDoS protection</div></div>
+<div class="tag-card"><div class="tc">AWS CloudFront</div><div class="td">Integrates with AWS services</div></div>
+<div class="tag-card"><div class="tc">Fastly</div><div class="td">Real-time cache purging, VCL</div></div>
+<div class="tag-card"><div class="tc">Akamai</div><div class="td">Enterprise-grade, massive network</div></div>
+</div>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How would you reduce latency for global users?"</strong><div class="mini">"I would use a CDN to cache static content at edge locations near users. This reduces latency from hundreds of milliseconds to tens of milliseconds. Dynamic content can use edge computing or be cached with short TTLs."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>CDN = Content at the Edge. Closer to users = Faster experience.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is the primary benefit of a CDN?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) It makes your server faster</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) It reduces latency by serving content from nearby edge locations</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) It increases bandwidth</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) It replaces your origin server</div>
+<div class="quiz-feedback" id="q1">CDNs cache content at edge locations worldwide, reducing the distance data travels and improving response times.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. Which cache-control directive prevents caching entirely?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) public</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) max-age=3600</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) no-store — tells caches not to store the response</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) private</div>
+<div class="quiz-feedback" id="q2">no-store prevents any cache from storing the response. Use for highly sensitive data like passwords.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 4: Edge Caching & Latency Optimization</h3><p>Advanced CDN strategies: edge computing, cache warming, invalidation, and optimizing for global latency.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

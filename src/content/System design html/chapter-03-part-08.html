@@ -1,5 +1,123 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Database Performance Bottlenecks | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 3 · Part 8 · Database Performance Bottlenecks</div><h1>Database Performance Bottlenecks<br><span>Database Fundamentals</span></h1><p>Identifying and resolving common database performance issues: slow queries, lock contention, connection limits.</p><div class="stats"><div class="stat"><div class="sn">Perf</div><div class="sl">Key Concept</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Database Performance Bottlenecks</div><h3>Database Decisions Drive Architecture</h3><p>The choice of database technology is one of the most consequential decisions in system design. Identifying and resolving common database performance issues: slow queries, lock contention, connection limits.</p></div>
-<div class="defbox"><strong>Database Performance Bottlenecks:</strong> Identifying and resolving common database performance issues: slow queries, lock contention, connection limits.</div>
-<div class="sec">🧪 Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Database Performance Bottlenecks — which statement is correct?</div><div class="quiz-opt" onclick="ck(this,false)">A) All databases work the same way</div><div class="quiz-opt" onclick="ck(this,true)">B) Understanding your data model and access patterns determines the right database choice</div><div class="quiz-opt" onclick="ck(this,false)">C) NoSQL is always better</div><div class="quiz-opt" onclick="ck(this,false)">D) SQL is outdated</div><div class="quiz-feedback">The database choice depends on your data structure, consistency needs, and scaling requirements.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Local Delivery Service Case Study</h3><p>Continue building your database knowledge.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Database Performance Bottlenecks | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 3 · Part 8 · Database Performance Bottlenecks</div>
+<h1>Database Performance Bottlenecks<br><span>Slow Queries, Lock Contention, Connection Limits</span></h1>
+<p>A database rarely becomes slow overnight. Performance issues usually grow gradually as traffic, data volume, and inefficient queries increase. Great engineers know how to identify the real bottleneck before trying to optimize it.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Queries</div><div class="sl">Slow</div></div>
+<div class="stat"><div class="sn">Locks</div><div class="sl">Contention</div></div>
+<div class="stat"><div class="sn">Pool</div><div class="sl">Exhaustion</div></div>
+<div class="stat"><div class="sn">Disk</div><div class="sl">I/O</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — A Busy Restaurant Kitchen</div>
+<div class="story">
+<div class="slabel">Why Bottlenecks Are Tricky</div>
+<h3>The real bottleneck may not be where you think.</h3>
+<p>A restaurant starts serving 20 customers a day. One chef is enough. Months later, 2,000 customers arrive. Food is delayed. Customers blame the chef. The owner buys a bigger oven. Nothing changes. Why? The real bottleneck was that <strong>only one cashier was taking orders</strong>. Databases are similar. The slow query you see may only be the symptom. The real bottleneck may be locks, missing indexes, disk I/O, or exhausted connections.</p>
+</div>
+
+<div class="sec">🎯 What is a Database Bottleneck?</div>
+<div class="defbox"><strong>Bottleneck:</strong> The resource or operation that limits the maximum throughput of the database. Typical symptoms: slow queries, high latency, timeouts, deadlocks, CPU spikes, connection exhaustion. <strong>Never optimize blindly. Measure first.</strong></div>
+
+<div class="sec">📋 Common Bottlenecks</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">🐢 Slow Queries</div><div class="td">Inefficient SQL, missing indexes, full table scans on large tables</div></div>
+<div class="tag-card"><div class="tc">🔒 Lock Contention</div><div class="td">Multiple transactions waiting for the same rows. Long transactions make it worse.</div></div>
+<div class="tag-card"><div class="tc">🔗 Connection Exhaustion</div><div class="td">Too many connections overwhelm the database. Solution: Connection pooling.</div></div>
+<div class="tag-card"><div class="tc">⚙ CPU Bottlenecks</div><div class="td">Complex joins, poor query plans, missing indexes, excessive sorting</div></div>
+<div class="tag-card"><div class="tc">💾 Memory Pressure</div><div class="td">Insufficient cache → more disk reads → higher latency. Add RAM.</div></div>
+<div class="tag-card"><div class="tc">💿 Disk I/O</div><div class="td">Frequent random reads/writes saturate storage. Solution: SSDs, better indexing.</div></div>
+<div class="tag-card"><div class="tc">🌐 Network Latency</div><div class="td">Database in another AZ or Region. Even fast queries become slow.</div></div>
+</div>
+</div>
+
+<div class="sec">📊 Monitoring Database Health</div>
+<table>
+<thead><tr><th>Metric</th><th>Why It Matters</th></tr></thead>
+<tbody>
+<tr><td class="h">Query Latency</td><td>User experience — the most visible metric</td></tr>
+<tr><td class="h">QPS</td><td>Throughput — how many queries per second</td></tr>
+<tr><td class="h">CPU Utilization</td><td>Compute pressure — indicates query complexity</td></tr>
+<tr><td class="h">Memory Usage</td><td>Cache efficiency — more RAM = fewer disk reads</td></tr>
+<tr><td class="h">Disk I/O</td><td>Storage bottlenecks — slow disks = slow queries</td></tr>
+<tr><td class="h">Active Connections</td><td>Connection pressure — pool exhaustion</td></tr>
+<tr><td class="h">Cache Hit Ratio</td><td>Read performance — higher is better</td></tr>
+<tr><td class="h">Lock Wait Time</td><td>Transaction contention — long waits = problem</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🔍 Troubleshooting Framework</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">When a database slows down, ask:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">1️⃣ Has traffic increased?</div><div class="td">Compare current metrics with baseline</div></div>
+<div class="tag-card"><div class="tc">2️⃣ Which queries are slow?</div><div class="td">Check slow query logs</div></div>
+<div class="tag-card"><div class="tc">3️⃣ Are indexes being used?</div><div class="td">Use EXPLAIN ANALYZE</div></div>
+<div class="tag-card"><div class="tc">4️⃣ Is CPU or memory saturated?</div><div class="td">Check system metrics</div></div>
+<div class="tag-card"><div class="tc">5️⃣ Are connections exhausted?</div><div class="td">Check pool utilization</div></div>
+<div class="tag-card"><div class="tc">6️⃣ Is lock contention occurring?</div><div class="td">Check lock wait times</div></div>
+</div>
+<div class="defbox"><strong>Avoid guessing. Investigate systematically.</strong></div></div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story"><div class="slabel">Real World</div><h3>Flash Sale Lock Contention</h3><p>An online shopping platform experiences slow checkout during a flash sale. Investigation reveals: CPU is only 35%, memory is healthy, disk usage is low. However, thousands of transactions are waiting on the same inventory row. The bottleneck is <strong>lock contention</strong> — not hardware. The solution is redesigning inventory updates, not buying larger servers.</p></div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"The database is slow. What's your first step?"</strong><div class="mini">"I would identify the bottleneck using metrics and execution plans before making architectural changes. Optimizing the wrong component wastes time and money."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Measure → Identify → Optimize → Validate</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is the first thing to check when a database query is slow?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Buy more RAM</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Check if the query is using an index (EXPLAIN ANALYZE)</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Rewrite the application in Go</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Shard the database</div>
+<div class="quiz-feedback" id="q1">Always measure before optimizing. EXPLAIN ANALYZE shows whether indexes are being used.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. During a flash sale, checkout is slow but CPU and memory are healthy. What is likely the bottleneck?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Disk I/O</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Lock contention — many transactions waiting on the same inventory row</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Network bandwidth</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Missing indexes</div>
+<div class="quiz-feedback" id="q2">Lock contention is common during flash sales when many users compete for the same limited inventory.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 9: Local Delivery Service Case Study</h3><p>A complete case study applying database fundamentals to design the data layer for a local delivery platform.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

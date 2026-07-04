@@ -1,6 +1,191 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Communication in Distributed Systems | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 7 Part 1 - Communication in Distributed Systems</div><h1>Communication in Distributed Systems<br><span>How Services Talk</span></h1><p>Synchronous and asynchronous communication patterns in distributed systems.</p><div class="stats"><div class="stat"><div class="sn">Sync</div><div class="sl">Pattern</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Communication in Distributed Systems</div><h3>Communication Patterns</h3><p>Synchronous and asynchronous communication patterns in distributed systems.</p></div>
-<div class="defbox"><strong>Communication in Distributed Systems:</strong> Synchronous and asynchronous communication patterns in distributed systems.</div>
-<div class="sec">Communication Patterns</div>
-<div class="tag-grid"><div class="tag-card"><div class="tc">Synchronous (REST/gRPC)</div><div class="td">Client waits for response. Tight coupling.</div></div><div class="tag-card"><div class="tc">Async (Message Queue)</div><div class="td">Client sends and continues. Loose coupling.</div></div><div class="tag-card"><div class="tc">Event-Driven (Pub/Sub)</div><div class="td">Maximum decoupling. Used by Kafka.</div></div></div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Communication in Distributed Systems - which is correct?</div><div class="quiz-opt" onclick="ck(this,false)">A) All services should be sync</div><div class="quiz-opt" onclick="ck(this,true)">B) Choice depends on consistency, latency, and coupling needs</div><div class="quiz-opt" onclick="ck(this,false)">C) Message queues are outdated</div><div class="quiz-opt" onclick="ck(this,false)">D) REST is always better</div><div class="quiz-feedback">Sync is simpler but creates coupling. Async improves resilience.</div></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Communication in Distributed Systems | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 7 · Part 1 · Communication in Distributed Systems</div>
+<h1>Communication in Distributed Systems<br><span>Synchronous vs Asynchronous</span></h1>
+<p>Distributed systems are built from multiple services that must communicate. Understanding communication patterns is fundamental to designing scalable, reliable architectures.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Sync</div><div class="sl">Wait</div></div>
+<div class="stat"><div class="sn">Async</div><div class="sl">Fire & Forget</div></div>
+<div class="stat"><div class="sn">REST</div><div class="sl">HTTP</div></div>
+<div class="stat"><div class="sn">gRPC</div><div class="sl">Binary</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Office Communication</div>
+<div class="story">
+<div class="slabel">Why Communication Patterns Matter</div>
+<h3>Walking to someone's desk vs sending an email.</h3>
+<p>Imagine an office. You need information from a colleague. You have two options: 1) Walk to their desk and wait for the answer (synchronous). 2) Send an email and continue working (asynchronous). Both work, but they're suited for different situations. Distributed systems face the same choice. Understanding when to use each pattern is critical for system design.</p>
+</div>
+
+<div class="sec">🎯 Why Communication Patterns Matter</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">In distributed systems, services must exchange data. The communication pattern affects: Latency, Throughput, Reliability, Coupling, Error handling, Scalability. Choosing the wrong pattern can create bottlenecks, cascading failures, and tight coupling.</p>
+<div class="defbox"><strong>Key Insight:</strong> There is no "best" communication pattern. The choice depends on the specific requirements and constraints.</div>
+</div>
+
+<div class="sec">📐 Synchronous Communication</div>
+<div class="defbox">
+<strong>Synchronous:</strong> The sender waits for the receiver to respond before continuing. Blocking operation.
+</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Example: REST API call</p>
+<div class="viz-box">Client → Server → Process Request → Response
+Client waits...
+Client receives response
+Client continues</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Advantages</div><div class="td">Simple, immediate feedback, easy to debug</div></div>
+<div class="tag-card"><div class="tc">❌ Disadvantages</div><div class="td">Tight coupling, cascading failures, lower throughput</div></div>
+</div>
+</div>
+
+<div class="sec">📐 Asynchronous Communication</div>
+<div class="defbox">
+<strong>Asynchronous:</strong> The sender sends a message and continues without waiting. Non-blocking operation.
+</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Example: Message queue</p>
+<div class="viz-box">Client → Queue → Continue (don't wait)
+                    ↓
+              Worker processes
+                    ↓
+              Response (later)</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Advantages</div><div class="td">Loose coupling, better throughput, resilient to failures</div></div>
+<div class="tag-card"><div class="tc">❌ Disadvantages</div><div class="td">More complex, eventual consistency, harder to debug</div></div>
+</div>
+</div>
+
+<div class="sec">⚖ Sync vs Async Comparison</div>
+<table>
+<thead><tr><th>Aspect</th><th>Synchronous</th><th>Asynchronous</th></tr></thead>
+<tbody>
+<tr><td class="h">Latency</td><td>Higher (waits for response)</td><td>Lower (continues immediately)</td></tr>
+<tr><td class="h">Coupling</td><td>Tight</td><td>Loose</td></tr>
+<tr><td class="h">Reliability</td><td>Fails if receiver down</td><td>Resilient (message queued)</td></tr>
+<tr><td class="h">Complexity</td><td>Simple</td><td>More complex</td></tr>
+<tr><td class="h">Throughput</td><td>Lower</td><td>Higher</td></tr>
+<tr><td class="h">Use Case</td><td>Real-time, immediate response</td><td>Background, batch processing</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🔌 Common Communication Protocols</div>
+
+<div class="card">
+<h3 style="color:#a5b4fc;">1. REST (HTTP)</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Most common. Uses HTTP methods (GET, POST, PUT, DELETE). Human-readable, widely supported.</p>
+<div class="viz-box">GET /users/123
+POST /orders
+PUT /products/456
+DELETE /items/789</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Best For</div><div class="td">Public APIs, web applications, simple integrations</div></div>
+<div class="tag-card"><div class="tc">❌ Limitations</div><div class="td">Verbose, over-fetching/under-fetching, no built-in streaming</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#6ee7b7;">2. GraphQL</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Query language for APIs. Client specifies exactly what data it needs.</p>
+<div class="viz-box">query {
+  user(id: "123") {
+    name
+    email
+    posts {
+      title
+    }
+  }
+}</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Best For</div><div class="td">Mobile apps, complex data requirements, reducing API calls</div></div>
+<div class="tag-card"><div class="tc">❌ Limitations</div><div class="td">Complex server implementation, caching challenges</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#fcd34d;">3. gRPC</h3>
+<p style="color:var(--tm);margin-bottom:12px;">High-performance RPC framework. Uses Protocol Buffers (binary). Supports streaming.</p>
+<div class="viz-box">service UserService {
+  rpc GetUser (UserRequest) returns (UserResponse);
+  rpc StreamUsers (StreamRequest) returns (stream UserResponse);
+}</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Best For</div><div class="td">Microservices, high performance, streaming, polyglot environments</div></div>
+<div class="tag-card"><div class="tc">❌ Limitations</div><div class="td">Steeper learning curve, less human-readable</div></div>
+</div>
+</div>
+
+<div class="sec">🎯 Choosing the Right Protocol</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">Use REST</div><div class="td">Public APIs, simple CRUD, web applications</div></div>
+<div class="tag-card"><div class="tc">Use GraphQL</div><div class="td">Mobile apps, complex queries, reduce over-fetching</div></div>
+<div class="tag-card"><div class="tc">Use gRPC</div><div class="td">Microservices, high performance, streaming, internal services</div></div>
+</div>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Microservices Communication</h3>
+<p>A microservices architecture uses multiple protocols: REST for public APIs (mobile apps, web). gRPC for internal service-to-service communication (high performance). Message queues (Kafka) for async event processing (analytics, notifications). GraphQL for flexible data fetching (dashboard). Each protocol serves a different purpose.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"When would you choose synchronous vs asynchronous communication?"</strong><div class="mini">"I use synchronous for real-time operations requiring immediate feedback (user login, payment processing). I use asynchronous for background tasks that don't need immediate response (email sending, analytics, notifications)."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Sync = Wait. Async = Continue. REST = Simple. gRPC = Fast. GraphQL = Flexible.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is the main advantage of asynchronous communication?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Simpler to implement</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Loose coupling and better throughput — sender doesn't wait</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Lower latency</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Easier debugging</div>
+<div class="quiz-feedback" id="q1">Asynchronous communication allows the sender to continue without waiting, improving throughput and decoupling services.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. Which protocol is best for high-performance microservices communication?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) REST</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) GraphQL</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) gRPC — binary protocol, low overhead, supports streaming</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) SOAP</div>
+<div class="quiz-feedback" id="q2">gRPC uses Protocol Buffers (binary) and supports streaming, making it ideal for high-performance microservices.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 2: Message Queues & Event-Driven Architecture</h3><p>Learn about message queues, Kafka, event-driven patterns, pub/sub, and how to build scalable asynchronous systems.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

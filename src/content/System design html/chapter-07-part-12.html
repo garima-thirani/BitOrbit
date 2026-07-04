@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WhatsApp Case Study - Global Messaging Platform | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 7 · Part 12 · WhatsApp Case Study</div>
+<h1>WhatsApp Case Study<br><span>Designing a Global Messaging Platform</span></h1>
+<p>Design a messaging system like WhatsApp supporting 2 billion users with real-time messaging, presence, offline sync, and media sharing.</p>
+<div class="stats">
+<div class="stat"><div class="sn">2B</div><div class="sl">Users</div></div>
+<div class="stat"><div class="sn">WebSocket</div><div class="sl">Real-time</div></div>
+<div class="stat"><div class="sn">Kafka</div><div class="sl">Events</div></div>
+<div class="stat"><div class="sn">Redis</div><div class="sl">Presence</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — WhatsApp's Scale</div>
+<div class="story">
+<div class="slabel">2 Billion Users, 100 Billion Messages Daily</div>
+<h3>From 100 users to 2 billion.</h3>
+<p>Day 1: 100 users. Simple server sends messages. Day 3 years: 2 billion users. Every second: millions of messages, typing events, read receipts, presence updates, image uploads. Every design decision matters. How do you deliver messages in 30-80ms globally? How do you handle offline users? How do you scale to billions of WebSocket connections?</p>
+</div>
+
+<div class="sec">📋 Requirements</div>
+<div class="g2">
+<div class="gc"><h4>✅ Functional</h4><p>Send/receive messages, Real-time delivery, Read receipts (✓✓), Typing indicators, Online status (presence), Group chats, Media sharing (images/videos), Push notifications, Offline message sync, Multi-device support</p></div>
+<div class="gc"><h4>📊 Non-Functional</h4><p>Low latency (<100ms delivery), High availability, Horizontal scalability, Message durability, Offline support, Global distribution, End-to-end encryption</p></div>
+</div>
+
+<div class="sec">🏛 High-Level Architecture</div>
+<div class="fig">
+<svg viewBox="0 0 700 350" width="100%">
+<defs>
+<linearGradient id="wg"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="wa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="250" y="10" width="200" height="40" rx="8" fill="url(#wg)"/>
+<text x="350" y="36" fill="white" font-size="15" font-weight="700" text-anchor="middle">📱 Mobile Apps</text>
+<line x1="350" y1="50" x2="350" y2="70" stroke="#64748b" stroke-width="2" marker-end="url(#wa)"/>
+<rect x="250" y="75" width="200" height="40" rx="8" fill="#10b981"/>
+<text x="350" y="100" fill="white" font-size="14" font-weight="700" text-anchor="middle">Load Balancer</text>
+<line x1="350" y1="115" x2="350" y2="135" stroke="#64748b" stroke-width="2" marker-end="url(#wa)"/>
+<rect x="230" y="140" width="240" height="40" rx="8" fill="#06b6d4"/>
+<text x="350" y="165" fill="white" font-size="14" font-weight="700" text-anchor="middle">WebSocket Cluster</text>
+<line x1="350" y1="180" x2="350" y2="200" stroke="#64748b" stroke-width="2" marker-end="url(#wa)"/>
+<rect x="230" y="205" width="240" height="40" rx="8" fill="#f59e0b"/>
+<text x="350" y="230" fill="white" font-size="14" font-weight="700" text-anchor="middle">Messaging Service</text>
+<line x1="280" y1="240" x2="150" y2="270" stroke="#64748b" stroke-width="2" marker-end="url(#wa)"/>
+<line x1="420" y1="240" x2="550" y2="270" stroke="#64748b" stroke-width="2" marker-end="url(#wa)"/>
+<rect x="50" y="275" width="200" height="40" rx="8" fill="#ef4444"/>
+<text x="150" y="302" fill="white" font-size="13" font-weight="700" text-anchor="middle">Kafka + Database</text>
+<rect x="450" y="275" width="200" height="40" rx="8" fill="#8b5cf6"/>
+<text x="550" y="302" fill="white" font-size="13" font-weight="700" text-anchor="middle">Redis (Presence)</text>
+</svg>
+<div class="fig-cap">Mobile → Load Balancer → WebSocket → Messaging Service → Kafka/DB/Redis</div>
+</div>
+
+<div class="sec">🔌 Why WebSockets?</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">HTTP is request-response. Chat needs server to push messages instantly. WebSockets maintain persistent bidirectional connection.</p>
+<div class="viz-box">HTTP: Client → Request → Response → Close
+WebSocket: Client ⇅ Persistent Connection ⇅ Server
+Server can push messages anytime</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Benefit</div><div class="td">Instant message delivery, no polling overhead</div></div>
+</div>
+</div>
+
+<div class="sec">💬 Message Flow</div>
+<div class="card">
+<div class="viz-box">Alice sends "Hello Bob"
+   ↓
+WebSocket → Messaging Service
+   ↓
+Kafka (for durability)
+   ↓
+Database (store message)
+   ↓
+Bob online? → Push via WebSocket
+   ↓
+Bob offline? → Store + Push notification
+   ↓
+Bob reconnects → Sync missing messages</div>
+</div>
+
+<div class="sec">📊 Message Status</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">WhatsApp shows three statuses, each is an event:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✓ Sent</div><div class="td">Message stored on server</div></div>
+<div class="tag-card"><div class="tc">✓✓ Delivered</div><div class="td">Delivered to recipient's device</div></div>
+<div class="tag-card"><div class="tc">✓✓ Blue Read</div><div class="td">Recipient opened the message</div></div>
+</div>
+</div>
+
+<div class="sec">🟢 Presence Service</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Track who's online/offline. Redis is perfect because presence changes constantly and doesn't need permanent storage.</p>
+<div class="viz-box">User connects → Redis: {userId: online, lastSeen: timestamp}
+User disconnects → Redis: {userId: offline, lastSeen: timestamp}
+Friends query → Redis returns online status</div>
+</div>
+
+<div class="sec">📱 Offline Sync</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">When Bob reconnects after being offline:</p>
+<div class="viz-box">Bob reconnects
+   ↓
+Client sends: lastMessageId = msg_950
+   ↓
+Server queries: messages > msg_950
+   ↓
+Returns: msg_951, msg_952, msg_953...
+   ↓
+Bob receives all missed messages</div>
+</div>
+
+<div class="sec">👥 Group Chat</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Alice sends message to group of 100:</p>
+<div class="viz-box">Alice → "Hi Everyone"
+   ↓
+Fan-out to 100 members
+   ↓
+Kafka partitions by groupId
+   ↓
+Each member receives message
+
+Challenge: 10M member groups need hierarchical fan-out</div>
+</div>
+
+<div class="sec">🔢 Message Ordering</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Per-conversation sequence numbers ensure ordering:</p>
+<div class="viz-box">Conversation: {userId1, userId2}
+Sequence: 101, 102, 103...
+
+If messages arrive out of order:
+Client reorders using sequence numbers</div>
+</div>
+
+<div class="sec">🔔 Push Notifications</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">For offline users:</p>
+<div class="viz-box">Message for offline Bob
+   ↓
+Store in database
+   ↓
+Notification Service → APNS (iOS) / FCM (Android)
+   ↓
+Bob's phone shows: "New message from Alice"
+   ↓
+Bob opens app → Full sync</div>
+</div>
+
+<div class="sec">🖼️ Media Messages</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Never send media through Kafka. Use object storage:</p>
+<div class="viz-box">Alice sends image
+   ↓
+Upload to S3
+   ↓
+Get URL: https://s3.amazonaws.com/abc123.jpg
+   ↓
+Send message with URL (not image)
+   ↓
+Bob downloads image from S3</div>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How would you design WhatsApp for 2 billion users?"</strong><div class="mini">"Use WebSockets for real-time delivery, Kafka for event streaming, Redis for presence, durable storage for message history, object storage for media, push notifications for offline users. Partition by conversation ID for ordering. Use message IDs for deduplication. Scale each component independently."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Connect → Send → Store → Deliver → ACK → Read → Sync. WebSocket for real-time, Kafka for events, Redis for presence.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. Why are WebSockets preferred over HTTP polling for chat?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) WebSockets are simpler</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Persistent bidirectional connection enables instant server push without polling overhead</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) HTTP doesn't support JSON</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) WebSockets use less memory</div>
+<div class="quiz-feedback" id="q1">WebSockets maintain persistent connections, allowing servers to push messages instantly without repeated client polling.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. Why shouldn't images be stored in Kafka?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Kafka doesn't support binary data</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Images are too small</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Kafka is optimized for event streaming, not large binary objects. Use S3 instead.</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Images can't be replicated</div>
+<div class="quiz-feedback" id="q2">Kafka is designed for streaming events, not storing large files. Object storage like S3 is better suited for media.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 13: Advanced Patterns - Saga, Outbox, CDC</h3><p>Distributed transactions, Saga pattern, Transactional Outbox, Inbox Pattern, Change Data Capture, and Event Sourcing.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apache Kafka Deep Dive | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 7 · Part 8 · Kafka Deep Dive</div>
+<h1>Apache Kafka Deep Dive<br><span>Architecture, Topics, Partitions & Consumer Groups</span></h1>
+<p>Kafka is a distributed event streaming platform. Understanding its architecture - brokers, topics, partitions, offsets, and consumer groups - is essential for designing scalable data pipelines.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Broker</div><div class="sl">Server</div></div>
+<div class="stat"><div class="sn">Topic</div><div class="sl">Category</div></div>
+<div class="stat"><div class="sn">Partition</div><div class="sl">Parallel</div></div>
+<div class="stat"><div class="sn">Offset</div><div class="sl">Position</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — LinkedIn's Data Problem</div>
+<div class="story">
+<div class="slabel">Why Kafka Was Created</div>
+<h3>The library that never throws away books.</h3>
+<p>Imagine a national library where every book is placed on a shelf and never removed. Readers remember their page number and return anytime. This is Kafka. Unlike RabbitMQ which delivers and deletes messages, Kafka stores every event forever. LinkedIn needed this because different teams needed to replay historical data: Search, Recommendations, Ads, Analytics, ML. Traditional brokers couldn't do this. Kafka was born in 2010 at LinkedIn to solve exactly this problem.</p>
+</div>
+
+<div class="sec">🎯 What is Kafka?</div>
+<div class="defbox">
+<strong>Apache Kafka:</strong> A distributed event streaming platform designed for high-throughput, fault-tolerant, scalable event storage and processing. It's not a message queue - it's an append-only distributed log.
+</div>
+
+<div class="sec">🔄 Kafka Architecture</div>
+<div class="fig">
+<svg viewBox="0 0 700 320" width="100%">
+<defs>
+<linearGradient id="kg"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="ka" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="250" y="10" width="200" height="40" rx="8" fill="#10b981"/>
+<text x="350" y="36" fill="white" font-size="14" font-weight="700" text-anchor="middle">Producer</text>
+<line x1="350" y1="50" x2="350" y2="70" stroke="#64748b" stroke-width="2" marker-end="url(#ka)"/>
+<rect x="250" y="75" width="200" height="40" rx="8" fill="url(#kg)"/>
+<text x="350" y="100" fill="white" font-size="14" font-weight="700" text-anchor="middle">Kafka Broker</text>
+<line x1="350" y1="115" x2="350" y2="140" stroke="#64748b" stroke-width="2" marker-end="url(#ka)"/>
+<rect x="230" y="145" width="240" height="50" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="168" fill="#a5b4fc" font-size="13" font-weight="700" text-anchor="middle">Topic: orders</text>
+<text x="350" y="188" fill="#94a3b8" font-size="11" text-anchor="middle">Partition 0 | Partition 1 | Partition 2</text>
+<line x1="350" y1="195" x2="350" y2="220" stroke="#64748b" stroke-width="2" marker-end="url(#ka)"/>
+<rect x="230" y="225" width="240" height="40" rx="8" fill="#f59e0b"/>
+<text x="350" y="252" fill="white" font-size="14" font-weight="700" text-anchor="middle">Consumer Group A + B + C</text>
+</svg>
+<div class="fig-cap">Producer → Broker → Topic (Partitions) → Consumer Groups</div>
+</div>
+
+<div class="sec">📋 Core Components</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📤 Producer</div><div class="td">Publishes events to topics</div></div>
+<div class="tag-card"><div class="tc">🖥 Broker</div><div class="td">Kafka server that stores data</div></div>
+<div class="tag-card"><div class="tc">📁 Topic</div><div class="td">Category/stream of events</div></div>
+<div class="tag-card"><div class="tc">📄 Partition</div><div class="td">Topics split into partitions for parallelism</div></div>
+<div class="tag-card"><div class="tc">🔢 Offset</div><div class="td">Position within a partition</div></div>
+<div class="tag-card"><div class="tc">👥 Consumer Group</div><div class="td">Group of consumers sharing workload</div></div>
+</div>
+</div>
+
+<div class="sec">📁 What is a Topic?</div>
+<div class="defbox">
+<strong>Topic:</strong> A logical category of events. Examples: "orders", "payments", "page_views", "notifications". Topics organize related events together.
+</div>
+<div class="card">
+<div class="viz-box">Topics organize events:
+topic: orders
+topic: payments
+topic: page_views
+topic: notifications
+
+Each topic is independent.</div>
+</div>
+
+<div class="sec">📄 What is a Partition?</div>
+<div class="defbox">
+<strong>Partition:</strong> Topics are divided into partitions for parallelism. Each partition is an ordered, immutable log of events stored on disk.
+</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Why partitions? One topic might receive 2M events/second. One server can't handle that. Partitions distribute data across multiple brokers.</p>
+<div class="viz-box">Topic: orders
+├── Partition 0 (Broker 1)
+├── Partition 1 (Broker 2)
+├── Partition 2 (Broker 3)
+└── Partition 3 (Broker 4)
+
+Parallel processing across brokers</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">⚠️ Important</div><div class="td">Kafka guarantees ordering ONLY within a partition, not across partitions</div></div>
+</div>
+</div>
+
+<div class="sec">🔢 What is an Offset?</div>
+<div class="defbox">
+<strong>Offset:</strong> A unique sequential number assigned to each event within a partition. Like page numbers in a book. Consumers track their position using offsets.
+</div>
+<div class="card">
+<div class="viz-box">Partition 0:
+Offset 0: OrderCreated
+Offset 1: OrderPaid
+Offset 2: OrderShipped
+Offset 3: OrderDelivered
+
+Consumer remembers last offset read</div>
+</div>
+
+<div class="sec">👥 What is a Consumer Group?</div>
+<div class="defbox">
+<strong>Consumer Group:</strong> A group of consumers that work together to consume a topic. Each partition is assigned to only one consumer in the group.
+</div>
+<div class="card">
+<div class="viz-box">Topic: orders (4 partitions)
+Consumer Group: Analytics
+├── Consumer A → Partition 0
+├── Consumer B → Partition 1
+├── Consumer C → Partition 2
+└── Consumer D → Partition 3
+
+Load balanced automatically</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">💡 Key Insight</div><div class="td">Different teams can have different Consumer Groups reading the same topic independently</div></div>
+</div>
+</div>
+
+<div class="sec">🔄 Leader & Followers</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Each partition has one Leader and multiple Followers (replicas).</p>
+<div class="viz-box">Partition 0:
+├── Leader (Broker 1) - handles reads/writes
+├── Follower (Broker 2) - replicates
+└── Follower (Broker 3) - replicates
+
+If Leader crashes → Follower becomes Leader</div>
+</div>
+
+<div class="sec">✅ In-Sync Replicas (ISR)</div>
+<div class="defbox">
+<strong>ISR:</strong> Replicas that are fully synchronized with the Leader. Only ISR members can become Leader during failover.
+</div>
+
+<div class="sec">⚡ Why Kafka is Fast</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📝 Sequential Writes</div><div class="td">Append-only log = sequential disk writes (very fast)</div></div>
+<div class="tag-card"><div class="tc">📦 Batching</div><div class="td">Sends events in batches, not one-by-one</div></div>
+<div class="tag-card"><div class="tc">🗜 Compression</div><div class="td">Compresses batches for less network overhead</div></div>
+<div class="tag-card"><div class="tc">💨 Zero Copy</div><div class="td">Minimizes data copying between kernel and app</div></div>
+</div>
+</div>
+
+<div class="sec">📊 Kafka vs RabbitMQ Philosophy</div>
+<table>
+<thead><tr><th>Aspect</th><th>RabbitMQ</th><th>Kafka</th></tr></thead>
+<tbody>
+<tr><td class="h">Model</td><td>Queue (deliver & delete)</td><td>Distributed Log (store & retain)</td></tr>
+<tr><td class="h">Message Lifecycle</td><td>Deleted after ACK</td><td>Retained for configurable period</td></tr>
+<tr><td class="h">Consumers</td><td>Competing (one processes each)</td><td>Independent groups (all read same data)</td></tr>
+<tr><td class="h">Replay</td><td>Not supported</td><td>Supported (reset offset)</td></tr>
+<tr><td class="h">Throughput</td><td>High (20K-100K/sec)</td><td>Very High (millions/sec)</td></tr>
+<tr><td class="h">Use Case</td><td>Background jobs, routing</td><td>Event streaming, analytics</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Netflix, Uber, LinkedIn</h3>
+<p><strong>Netflix:</strong> Every playback event → Kafka → Recommendations, Billing, Analytics, ML. Each has own Consumer Group.<br><br>
+<strong>Uber:</strong> RideCompleted → Kafka → Pricing, Receipts, Fraud, ML, Heat Maps. Independent processing.<br><br>
+<strong>LinkedIn:</strong> Profile views, searches, messages → Kafka → Search Ranking, Ads, Feed, Recommendations. Original Kafka use case.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why are partitions important in Kafka?"</strong><div class="mini">"Partitions enable parallel processing across multiple brokers. They improve throughput and scalability. However, ordering is only guaranteed within a partition, so partition strategy matters for ordered data."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Topic = Category, Partition = Parallelism, Offset = Position, Consumer Group = Load Balance. Kafka stores events forever.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What does a Consumer Group do?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) All consumers process all messages</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Consumers compete for messages</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Consumers share workload - each partition assigned to one consumer</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Consumers process messages randomly</div>
+<div class="quiz-feedback" id="q1">Consumer Groups enable load balancing. Each partition is assigned to one consumer, enabling parallel processing.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. Where does Kafka guarantee ordering?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Across all partitions</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Across all topics</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Within a single partition only</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Kafka doesn't guarantee ordering</div>
+<div class="quiz-feedback" id="q2">Kafka guarantees ordering only within a partition. Events in different partitions can arrive in any order.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 9: Kafka Internals - Replication, ISR, Log Segments, Retention</h3><p>Deep dive into Kafka's internal storage: log segments, replication protocol, leader election, retention policies, and delivery guarantees.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

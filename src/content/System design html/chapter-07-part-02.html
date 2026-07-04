@@ -1,6 +1,197 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Synchronous Communication | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 7 Part 2 - Synchronous Communication</div><h1>Synchronous Communication<br><span>REST, gRPC, GraphQL</span></h1><p>The client sends a request and waits for a response.</p><div class="stats"><div class="stat"><div class="sn">gRPC</div><div class="sl">Pattern</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Synchronous Communication</div><h3>Communication Patterns</h3><p>The client sends a request and waits for a response.</p></div>
-<div class="defbox"><strong>Synchronous Communication:</strong> The client sends a request and waits for a response.</div>
-<div class="sec">gRPC vs REST</div>
-<div class="g2"><div class="gc"><h4>REST (HTTP/JSON)</h4><p>Human-readable. Great for public APIs. Higher overhead.</p></div><div class="gc"><h4>gRPC (HTTP/2+Protobuf)</h4><p>Binary, faster, streaming. Best for internal services.</p></div></div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Synchronous Communication - which is correct?</div><div class="quiz-opt" onclick="ck(this,false)">A) All services should be sync</div><div class="quiz-opt" onclick="ck(this,true)">B) Choice depends on consistency, latency, and coupling needs</div><div class="quiz-opt" onclick="ck(this,false)">C) Message queues are outdated</div><div class="quiz-opt" onclick="ck(this,false)">D) REST is always better</div><div class="quiz-feedback">Sync is simpler but creates coupling. Async improves resilience.</div></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Message Queues & Event-Driven Architecture | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 7 · Part 2 · Message Queues</div>
+<h1>Message Queues & Event-Driven Architecture<br><span>Building Scalable Async Systems</span></h1>
+<p>Message queues enable asynchronous communication between services. They decouple producers from consumers, buffer traffic spikes, and enable reliable event-driven architectures.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Queue</div><div class="sl">Buffer</div></div>
+<div class="stat"><div class="sn">Kafka</div><div class="sl">Stream</div></div>
+<div class="stat"><div class="sn">Pub/Sub</div><div class="sl">Broadcast</div></div>
+<div class="stat"><div class="sn">Events</div><div class="sl">Decouple</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Mail Room</div>
+<div class="story">
+<div class="slabel">Why Message Queues Exist</div>
+<h3>Sorting mail before delivery.</h3>
+<p>Imagine a large office with hundreds of employees. Instead of everyone walking to each other's desks, they drop letters in a central mail room. The mail room sorts and delivers letters asynchronously. Employees can work without waiting for responses. This is exactly how message queues work in distributed systems.</p>
+</div>
+
+<div class="sec">🎯 Why Message Queues?</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Direct service-to-service communication creates problems: Tight coupling, Cascading failures, Traffic spikes overwhelm services, No retry mechanism, Difficult to scale independently. Message queues solve these by acting as an intermediary buffer.</p>
+<div class="defbox"><strong>Key Insight:</strong> Message queues decouple services, enabling each to scale and fail independently.</div>
+</div>
+
+<div class="sec">📐 What is a Message Queue?</div>
+<div class="defbox">
+<strong>Message Queue:</strong> A communication component that buffers messages between producers and consumers. Producers send messages to the queue. Consumers process messages at their own pace.
+</div>
+
+<div class="sec">🔄 How Message Queues Work</div>
+<div class="fig">
+<svg viewBox="0 0 700 250" width="100%">
+<defs>
+<linearGradient id="qg"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="qa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="50" y="10" width="140" height="40" rx="8" fill="#10b981"/>
+<text x="120" y="36" fill="white" font-size="14" font-weight="700" text-anchor="middle">Producer</text>
+<line x1="190" y1="30" x2="280" y2="30" stroke="#64748b" stroke-width="2" marker-end="url(#qa)"/>
+<rect x="280" y="10" width="140" height="40" rx="8" fill="url(#qg)"/>
+<text x="350" y="36" fill="white" font-size="14" font-weight="700" text-anchor="middle">Message Queue</text>
+<line x1="420" y1="30" x2="510" y2="30" stroke="#64748b" stroke-width="2" marker-end="url(#qa)"/>
+<rect x="510" y="10" width="140" height="40" rx="8" fill="#f59e0b"/>
+<text x="580" y="36" fill="white" font-size="14" font-weight="700" text-anchor="middle">Consumer</text>
+<text x="350" y="80" fill="#94a3b8" font-size="13" text-anchor="middle">Messages are buffered and delivered reliably</text>
+</svg>
+<div class="fig-cap">Producer → Queue → Consumer. Services are decoupled.</div>
+</div>
+
+<div class="sec">📋 Common Message Queue Patterns</div>
+
+<div class="card">
+<h3 style="color:#a5b4fc;">1. Point-to-Point</h3>
+<p style="color:var(--tm);margin-bottom:12px;">One producer, one consumer. Message is consumed once.</p>
+<div class="viz-box">Producer → Queue → Consumer
+Message processed once</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Use Case</div><div class="td">Task processing, job queues</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#6ee7b7;">2. Publish/Subscribe (Pub/Sub)</h3>
+<p style="color:var(--tm);margin-bottom:12px;">One producer, multiple consumers. Message broadcast to all subscribers.</p>
+<div class="viz-box">Producer → Topic → Consumer A
+                  → Consumer B
+                  → Consumer C</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Use Case</div><div class="td">Event notifications, fanout, real-time updates</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#fcd34d;">3. Competing Consumers</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Multiple consumers compete for messages. Each message processed once.</p>
+<div class="viz-box">Queue → Consumer A
+     → Consumer B
+     → Consumer C
+
+Load balanced across consumers</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Use Case</div><div class="td">Scalable processing, load distribution</div></div>
+</div>
+</div>
+
+<div class="sec">🛠 Popular Message Queue Technologies</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">RabbitMQ</div><div class="td">Traditional message broker, AMQP protocol, complex routing</div></div>
+<div class="tag-card"><div class="tc">Apache Kafka</div><div class="td">Distributed streaming platform, high throughput, persistent logs</div></div>
+<div class="tag-card"><div class="tc">AWS SQS</div><div class="td">Managed queue service, simple, reliable</div></div>
+<div class="tag-card"><div class="tc">Redis Streams</div><div class="td">Lightweight, simple, good for small workloads</div></div>
+</div>
+</div>
+
+<div class="sec">⚡ Kafka Deep Dive</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Kafka is the most popular choice for high-throughput event streaming:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📝 Topics</div><div class="td">Categories for organizing messages</div></div>
+<div class="tag-card"><div class="tc">📄 Partitions</div><div class="td">Topics split into partitions for parallelism</div></div>
+<div class="tag-card"><div class="tc">🔄 Offsets</div><div class="td">Track consumer position in partition</div></div>
+<div class="tag-card"><div class="tc">💾 Retention</div><div class="td">Messages retained for configurable period</div></div>
+</div>
+</div>
+
+<div class="sec">🌍 Event-Driven Architecture</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Systems communicate through events:</p>
+<div class="viz-box">User Places Order
+   ↓
+OrderCreated Event
+   ↓
+├── Inventory Service (reserve stock)
+├── Payment Service (process payment)
+├── Notification Service (send email)
+└── Analytics Service (track metrics)</div>
+<p style="color:var(--tm);margin-top:12px;">Each service reacts to events independently. New services can be added without modifying existing ones.</p>
+</div>
+
+<div class="sec">⚖ Message Queue vs Event Streaming</div>
+<table>
+<thead><tr><th>Aspect</th><th>Message Queue (RabbitMQ)</th><th>Event Streaming (Kafka)</th></tr></thead>
+<tbody>
+<tr><td class="h">Throughput</td><td>Medium</td><td>Very High</td></tr>
+<tr><td class="h">Retention</td><td>Consume and delete</td><td>Persistent log</td></tr>
+<tr><td class="h">Consumers</td><td>One per queue</td><td>Multiple per topic</td></tr>
+<tr><td class="h">Use Case</td><td>Task processing, routing</td><td>Event streaming, analytics</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>E-commerce Order Processing</h3>
+<p>An e-commerce platform uses Kafka for order events: 1) User places order → OrderCreated event published. 2) Inventory service reserves stock. 3) Payment service processes payment. 4) Notification service sends confirmation email. 5) Analytics service tracks metrics. Each service operates independently. If one service fails, others continue. Events are persisted for replay and debugging.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"When would you use a message queue vs direct API calls?"</strong><div class="mini">"I use message queues when services need to be decoupled, when handling traffic spikes, or when operations can be asynchronous. I use direct API calls for real-time operations requiring immediate feedback."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Message Queues = Decouple + Buffer + Scale. Kafka = High-throughput streaming.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is the main benefit of using a message queue?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) It makes services faster</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) It decouples producers and consumers, enabling independent scaling</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) It reduces network latency</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) It simplifies debugging</div>
+<div class="quiz-feedback" id="q1">Message queues buffer messages between producers and consumers, allowing each to operate independently.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. When would you choose Kafka over RabbitMQ?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) For simple task queues</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) For high-throughput event streaming with persistent logs</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) When you need complex routing</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) For low-latency messaging</div>
+<div class="quiz-feedback" id="q2">Kafka excels at high-throughput event streaming with persistent logs, making it ideal for analytics and event-driven architectures.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 3: WhatsApp Messaging System Case Study</h3><p>A complete case study on designing a messaging system like WhatsApp with message queues, delivery guarantees, and real-time communication.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

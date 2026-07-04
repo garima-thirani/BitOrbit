@@ -1,5 +1,159 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Read Replicas | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 4 Part 4 - Read Replicas</div><h1>Read Replicas<br><span>Read-Heavy Workloads</span></h1><p>Dedicated database replicas that handle read-only queries.</p><div class="stats"><div class="stat"><div class="sn">Scaling</div><div class="sl">Database</div></div><div class="stat"><div class="sn">Shards</div><div class="sl">Horizontal</div></div><div class="stat"><div class="sn">Replicas</div><div class="sl">Reads</div></div><div class="stat"><div class="sn">Learn</div><div class="sl"></div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Read Replicas</div><h3>Database Scaling Decisions</h3><p>Database scaling is one of the hardest challenges in system design. Dedicated database replicas that handle read-only queries.</p></div>
-<div class="defbox"><strong>Read Replicas:</strong> Dedicated database replicas that handle read-only queries.</div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Read Replicas - what is the key benefit?</div><div class="quiz-opt" onclick="ck(this,false)">A) Makes the database smaller</div><div class="quiz-opt" onclick="ck(this,true)">B) Enables horizontal scaling of database workloads</div><div class="quiz-opt" onclick="ck(this,false)">C) Eliminates indexes</div><div class="quiz-opt" onclick="ck(this,false)">D) Makes queries faster automatically</div><div class="quiz-feedback">Database scaling distributes data across multiple machines.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Next topic</h3><p>Continue building your knowledge.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Read Replicas & Read-Heavy Workloads | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 4 · Part 4 · Read Replicas & Read-Heavy Workloads</div>
+<h1>Read Replicas & Read-Heavy Workloads<br><span>Scaling Reads in Production</span></h1>
+<p>In most production systems, reads vastly outnumber writes. Read replicas allow applications to scale without overwhelming the primary database.</p>
+<div class="stats">
+<div class="stat"><div class="sn">95%</div><div class="sl">Reads</div></div>
+<div class="stat"><div class="sn">5%</div><div class="sl">Writes</div></div>
+<div class="stat"><div class="sn">Router</div><div class="sl">Load Balance</div></div>
+<div class="stat"><div class="sn">Lag</div><div class="sl">Manage</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Popular Library</div>
+<div class="story">
+<div class="slabel">Why Read Replicas Exist</div>
+<h3>Create multiple copies so many readers can read simultaneously.</h3>
+<p>Imagine a library with a single copy of a bestselling book. Thousands of readers want to borrow it. Only one person can read it at a time. The solution? Create multiple copies of the same book. Now many readers can read simultaneously while the original master copy remains safe. Read replicas work exactly the same way.</p>
+</div>
+
+<div class="sec">🎯 Why Read Replicas?</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Typical production traffic: <strong>Reads = 95%, Writes = 5%</strong></p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📱 Product Browsing</div><div class="td">E-commerce sites</div></div>
+<div class="tag-card"><div class="tc">📰 News Websites</div><div class="td">Content-heavy platforms</div></div>
+<div class="tag-card"><div class="tc">📱 Social Media Feeds</div><div class="td">Read-heavy workloads</div></div>
+<div class="tag-card"><div class="tc">🎬 Video Platforms</div><div class="td">Streaming metadata</div></div>
+</div>
+<div class="defbox"><strong>Key Insight:</strong> Scaling writes is difficult. Scaling reads is much easier with replicas.</div>
+</div>
+
+<div class="sec">📐 What is a Read Replica?</div>
+<div class="defbox">
+<strong>Read Replica:</strong> A copy of the primary database that continuously receives updates from the primary but serves only read requests. Applications never write directly to replicas.
+</div>
+
+<div class="sec">🔄 Read Routing</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Applications determine where queries should go:</p>
+<div class="viz-box">SELECT → Replica
+INSERT → Primary
+UPDATE → Primary
+DELETE → Primary</div>
+<p style="color:var(--tm);margin-top:12px;">This routing can happen in: Application code, Database proxy, Service mesh, ORM configuration.</p>
+</div>
+
+<div class="sec">⚖ Replica Load Balancing</div>
+<div class="fig">
+<svg viewBox="0 0 700 250" width="100%">
+<defs>
+<linearGradient id="rlg"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="rla" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="250" y="10" width="200" height="50" rx="10" fill="url(#rlg)"/>
+<text x="350" y="42" fill="white" font-size="18" font-weight="700" text-anchor="middle">📊 Read Router</text>
+<line x1="300" y1="60" x2="100" y2="100" stroke="#64748b" stroke-width="3" marker-end="url(#rla)"/>
+<line x1="350" y1="60" x2="350" y2="100" stroke="#64748b" stroke-width="3" marker-end="url(#rla)"/>
+<line x1="400" y1="60" x2="600" y2="100" stroke="#64748b" stroke-width="3" marker-end="url(#rla)"/>
+<rect x="20" y="110" width="160" height="45" rx="8" fill="#10b981"/>
+<text x="100" y="140" fill="white" font-size="15" font-weight="700" text-anchor="middle">Replica 1</text>
+<rect x="270" y="110" width="160" height="45" rx="8" fill="#10b981"/>
+<text x="350" y="140" fill="white" font-size="15" font-weight="700" text-anchor="middle">Replica 2</text>
+<rect x="520" y="110" width="160" height="45" rx="8" fill="#10b981"/>
+<text x="600" y="140" fill="white" font-size="15" font-weight="700" text-anchor="middle">Replica 3</text>
+</svg>
+<div class="fig-cap">Read Router distributes read traffic across replicas using Round Robin, Least Connections, or Weighted Routing.</div>
+</div>
+
+<div class="sec">⏱ Read-After-Write Consistency</div>
+<div class="story">
+<div class="slabel">The Stale Read Problem</div>
+<h3>User updates profile, then immediately sees old value.</h3>
+<p>Consider this sequence: 1) User updates profile. 2) Update reaches Primary. 3) User refreshes page. 4) Request goes to Replica. 5) Replica has not caught up. The user sees stale data. This is a common production issue.</p>
+</div>
+
+<div class="sec">🔄 Strategies to Handle Stale Reads</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📖 Read from Primary Temporarily</div><div class="td">After a write, route next few reads to primary. Useful for profile updates, settings, payment confirmation.</div></div>
+<div class="tag-card"><div class="tc">📌 Sticky Reads</div><div class="td">Temporarily pin user's reads to primary until replication catches up.</div></div>
+<div class="tag-card"><div class="tc">⏱ Accept Eventual Consistency</div><div class="td">For non-critical data: like counts, product views, analytics. Small delays acceptable.</div></div>
+</div>
+</div>
+
+<div class="sec">📊 Reporting Databases</div>
+<div class="card">
+<p style="color:var(--tm)">Large reporting queries should not impact production traffic. Instead: Primary → Replica → Analytics Queries. Examples: Daily sales reports, Dashboard generation, BI tools. Production latency remains low.</p>
+</div>
+
+<div class="sec">📈 Scaling Example</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Without replicas: 20,000 Reads → Primary. With four replicas: 20,000 Reads → Read Router → 5,000 per Replica. <strong>The primary focuses on writes.</strong></p>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Streaming Platform Architecture</h3>
+<p>A streaming platform stores user accounts, watch history, and preferences. Writes: viewing progress, new subscriptions. Reads: homepage, recommendations, search results. Homepage requests are served from replicas while subscription updates go to the primary.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Can read replicas increase write capacity?"</strong><div class="mini">"No. Replicas only help distribute read traffic. All writes still go through the primary unless another replication strategy such as multi-leader replication is used."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>One Writer. Many Readers.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is the main benefit of read replicas?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) They increase write capacity</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) They scale read traffic by distributing it across multiple servers</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) They replace the primary database</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) They eliminate the need for backups</div>
+<div class="quiz-feedback" id="q1">Read replicas allow you to scale reads horizontally. The primary still handles all writes.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. A user updates their email, then immediately sees the old email on their profile page. What happened?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) The database crashed</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Replication lag — the read went to a replica that hadn't updated yet</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) The primary is down</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) The user's browser is cached</div>
+<div class="quiz-feedback" id="q2">This is a classic replication lag issue. Solution: Read your own writes from primary, or use sticky reads temporarily.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 5: Multi-Leader Replication & Conflict Resolution</h3><p>Learn about multiple writable databases, write conflicts, conflict resolution strategies, and active-active deployments.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,5 +1,170 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Chapter 4 Revision | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 4 Part 8 - Chapter 4 Revision</div><h1>Chapter 4 Revision<br><span>Database Scaling Summary</span></h1><p>Comprehensive review of all database scaling concepts.</p><div class="stats"><div class="stat"><div class="sn">Scaling</div><div class="sl">Database</div></div><div class="stat"><div class="sn">Shards</div><div class="sl">Horizontal</div></div><div class="stat"><div class="sn">Replicas</div><div class="sl">Reads</div></div><div class="stat"><div class="sn">Learn</div><div class="sl"></div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Chapter 4 Revision</div><h3>Database Scaling Decisions</h3><p>Database scaling is one of the hardest challenges in system design. Comprehensive review of all database scaling concepts.</p></div>
-<div class="defbox"><strong>Chapter 4 Revision:</strong> Comprehensive review of all database scaling concepts.</div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Chapter 4 Revision - what is the key benefit?</div><div class="quiz-opt" onclick="ck(this,false)">A) Makes the database smaller</div><div class="quiz-opt" onclick="ck(this,true)">B) Enables horizontal scaling of database workloads</div><div class="quiz-opt" onclick="ck(this,false)">C) Eliminates indexes</div><div class="quiz-opt" onclick="ck(this,false)">D) Makes queries faster automatically</div><div class="quiz-feedback">Database scaling distributes data across multiple machines.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Chapter 5: Caching</h3><p>Continue building your knowledge.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 4 Revision | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 4 · Part 8 · Revision</div>
+<h1>Database Scaling — Revision<br><span>Complete Chapter Summary</span></h1>
+<p>Consolidate all database scaling concepts from Chapter 4. Includes cheat sheets, flashcards, mind map, common mistakes, and interview questions.</p>
+<div class="stats">
+<div class="stat"><div class="sn">7</div><div class="sl">Parts</div></div>
+<div class="stat"><div class="sn">Shard</div><div class="sl">Split</div></div>
+<div class="stat"><div class="sn">Replicate</div><div class="sl">Copy</div></div>
+<div class="stat"><div class="sn">Scale</div><div class="sl">Growth</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📋 Quick Revision Notes</div>
+
+<div class="card">
+<h3 style="color:#a5b4fc;">Database Sharding</h3>
+<p style="color:var(--tm)">Splits rows across multiple databases. Each shard stores different data. Benefits: Near-unlimited horizontal growth, smaller indexes, better write throughput. Challenges: Cross-shard queries, rebalancing, operational complexity. <strong>Replication copies data. Sharding splits data.</strong></p>
+</div>
+
+<div class="card">
+<h3 style="color:#6ee7b7;">Consistent Hashing</h3>
+<p style="color:var(--tm)">Places servers and keys on a hash ring. Only nearby keys move when nodes change. Virtual nodes improve load distribution. Used by Redis Cluster, Cassandra, CDNs. <strong>Modulo hashing = move almost everything. Consistent hashing = move only what's necessary.</strong></p>
+</div>
+
+<div class="card">
+<h3 style="color:#fcd34d;">Primary-Replica Pattern</h3>
+<p style="color:var(--tm)">Primary accepts writes. Replicas serve reads. Replication copies changes. Challenge: Replication lag. Solution: Read your own writes, sticky reads, accept eventual consistency for non-critical data. <strong>Primary Writes. Replicas Read.</strong></p>
+</div>
+
+<div class="card">
+<h3 style="color:#fca5a5;">Multi-Leader Replication</h3>
+<p style="color:var(--tm)">Multiple databases accept writes. Reduces global write latency. Challenge: Write conflicts. Solutions: Last Write Wins, application-level resolution, version vectors, CRDTs. <strong>Multiple Writers = Multiple Conflicts.</strong></p>
+</div>
+
+<div class="card">
+<h3 style="color:#c4b5fd;">Connection Pooling</h3>
+<p style="color:var(--tm)">Reuses database connections to avoid TCP handshake, authentication, and session initialization overhead. Pool sizing matters: too small = waiting, too large = overwhelmed database. <strong>Connections are expensive. Queries are cheap. Reuse connections.</strong></p>
+</div>
+
+<div class="sec">📋 Cheat Sheet</div>
+<table>
+<thead><tr><th>Topic</th><th>Key Takeaway</th></tr></thead>
+<tbody>
+<tr><td class="h">Sharding</td><td>Split data across databases for horizontal scaling</td></tr>
+<tr><td class="h">Consistent Hashing</td><td>Minimize data movement when nodes change</td></tr>
+<tr><td class="h">Primary-Replica</td><td>One writer, many readers</td></tr>
+<tr><td class="h">Read Replicas</td><td>Scale reads, not writes</td></tr>
+<tr><td class="h">Multi-Leader</td><td>Multiple writers, conflict resolution needed</td></tr>
+<tr><td class="h">Connection Pool</td><td>Reuse connections, reduce overhead</td></tr>
+<tr><td class="h">Replication Lag</td><td>Replicas may serve stale data</td></tr>
+<tr><td class="h">News Aggregator</td><td>Store → Index → Cache → Serve</td></tr>
+</tbody>
+</table>
+
+<div class="sec">💡 Flashcards</div>
+<div class="card">
+<div class="quiz-card">
+<div class="quiz-q">Q: Difference between sharding and replication?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">A: Sharding distributes different data. Replication copies the same data.</div>
+<div class="quiz-feedback" id="f1">Sharding splits data for horizontal scaling. Replication copies data for redundancy and read scaling.</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">Q: Why is consistent hashing better than modulo hashing?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">A: Only a small subset of keys move when nodes change</div>
+<div class="quiz-feedback" id="f2">Modulo hashing requires nearly all keys to move when N changes. Consistent hashing only moves keys near the affected node.</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">Q: Can read replicas increase write capacity?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">A: No. Replicas only distribute read traffic. All writes go to primary.</div>
+<div class="quiz-feedback" id="f3">Read replicas scale reads horizontally. Write capacity remains limited by the primary unless multi-leader replication is used.</div>
+</div>
+</div>
+
+<div class="sec">🧠 Mind Map</div>
+<div class="viz-box">Database Scaling
+│
+├── Sharding
+│   ├── Range-Based
+│   ├── Hash-Based
+│   ├── Geographic
+│   └── Consistent Hashing
+│
+├── Primary-Replica
+│   ├── Read Replicas
+│   ├── Replication Lag
+│   └── Load Balancing
+│
+├── Multi-Leader
+│   ├── Write Conflicts
+│   └── Conflict Resolution
+│
+├── Connection Pooling
+│
+└── Case Studies
+    └── News Aggregator</div>
+
+<div class="sec">🚨 Common Mistakes</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Sharding Too Early</div><div class="td">Optimize queries, add indexes, use replicas first</div></div>
+<div class="tag-card"><div class="tc">❌ Poor Shard Key</div><div class="td">Creates hotspots and uneven distribution</div></div>
+<div class="tag-card"><div class="tc">❌ Ignoring Replication Lag</div><div class="td">Critical reads must go to primary</div></div>
+<div class="tag-card"><div class="tc">❌ Multi-Leader Without Conflict Strategy</div><div class="td">Always explain how conflicts are resolved</div></div>
+<div class="tag-card"><div class="tc">❌ Unlimited Connections</div><div class="td">Connection pooling is essential for performance</div></div>
+</div>
+</div>
+
+<div class="sec">🧪 Final Quiz</div>
+<div class="quiz-card">
+<div class="quiz-q">1. Your e-commerce site has 95% reads, 5% writes. Primary handles 500 writes + 15,000 reads. How do you scale?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Shard the database immediately</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Add read replicas to distribute the 15,000 reads</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Switch to multi-leader replication</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Buy a bigger server</div>
+<div class="quiz-feedback" id="q1">Read replicas are the simplest solution for read-heavy workloads. The primary handles writes, replicas handle reads.</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">2. When would you choose multi-leader replication?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) For banking systems requiring strong consistency</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) For global applications where low write latency is critical</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) When you don't want to handle conflicts</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) For simple single-region deployments</div>
+<div class="quiz-feedback" id="q2">Multi-leader replication reduces write latency for globally distributed users but requires conflict resolution strategies.</div>
+</div>
+
+<div class="sec">➡ Chapter 5 Preview</div>
+<div class="story">
+<div class="slabel">Coming Next</div>
+<h3>Chapter 5: Caching Fundamentals</h3>
+<p>
+Learn about Cache-Aside, Read-Through, Write-Through, Write-Behind patterns, cache eviction policies (LRU, LFU, FIFO), cache stampede prevention, cache invalidation strategies, and when NOT to cache.
+</p>
+</div>
+
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

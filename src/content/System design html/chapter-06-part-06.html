@@ -1,5 +1,183 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Cache Warming | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 6 Part 6 - Cache Warming</div><h1>Cache Warming<br><span>Preventing Cold Start</span></h1><p>Pre-populating caches before traffic arrives.</p><div class="stats"><div class="stat"><div class="sn">CDN</div><div class="sl">Tech</div></div><div class="stat"><div class="sn">Edge</div><div class="sl">Setup</div></div><div class="stat"><div class="sn">Cache</div><div class="sl">Layer</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Cache Warming</div><h3>Advanced Caching</h3><p>Pre-populating caches before traffic arrives.</p></div>
-<div class="defbox"><strong>Cache Warming:</strong> Pre-populating caches before traffic arrives.</div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Cache Warming - why is this important?</div><div class="quiz-opt" onclick="ck(this,false)">A) It replaces databases</div><div class="quiz-opt" onclick="ck(this,true)">B) It reduces latency and improves UX globally</div><div class="quiz-opt" onclick="ck(this,false)">C) Eliminates servers</div><div class="quiz-opt" onclick="ck(this,false)">D) Only for videos</div><div class="quiz-feedback">Advanced caching brings content closer to users.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Facebook News Feed Case Study</h3><p>Continue learning.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cache Warming Strategies | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 6 · Part 6 · Cache Warming</div>
+<h1>Cache Warming Strategies<br><span>Preloading for Performance</span></h1>
+<p>Cache warming proactively loads data into cache before users request it. This eliminates cold cache misses and ensures instant responses during high-traffic events.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Warm</div><div class="sl">Preload</div></div>
+<div class="stat"><div class="sn">Cold</div><div class="sl">Empty</div></div>
+<div class="stat"><div class="sn">Predict</div><div class="sl">Anticipate</div></div>
+<div class="stat"><div class="sn">Hit</div><div class="sl">Instant</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Restaurant Prep</div>
+<div class="story">
+<div class="slabel">Why Cache Warming Matters</div>
+<h3>Preparing ingredients before the dinner rush.</h3>
+<p>Imagine a restaurant that knows a large party is arriving at 7:00 PM. Instead of waiting to chop vegetables when the order arrives, the chef prepares ingredients in advance. When the party arrives, food is ready instantly. Cache warming works the same way — it prepares data in cache before users request it.</p>
+</div>
+
+<div class="sec">🎯 Why Cache Warming?</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Cold caches cause problems: First requests are slow (cache misses), Database spikes during initial load, Poor user experience for first visitors, System instability during traffic surges. Cache warming solves these by preloading popular data.</p>
+<div class="defbox"><strong>Key Insight:</strong> Cache warming trades upfront computation for better user experience and system stability.</div>
+</div>
+
+<div class="sec">📐 What is Cache Warming?</div>
+<div class="defbox">
+<strong>Cache Warming:</strong> The process of preloading frequently accessed data into cache before users request it. Ensures high cache hit rates from the moment traffic arrives.
+</div>
+
+<div class="sec">🔄 When to Warm Cache</div>
+
+<div class="card">
+<h3 style="color:#a5b4fc;">1. Application Startup</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Load essential data when the application starts.</p>
+<div class="viz-box">Server Starts
+   ↓
+Load Configuration
+   ↓
+Load Popular Products
+   ↓
+Load User Sessions
+   ↓
+Ready for Traffic</div>
+</div>
+
+<div class="card">
+<h3 style="color:#6ee7b7;">2. Before Expected Traffic Spikes</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Prepare for known high-traffic events.</p>
+<div class="viz-box">Black Friday (Tomorrow)
+   ↓
+Preload Product Pages
+   ↓
+Preload Images
+   ↓
+Preload Pricing Data
+   ↓
+Ready for 1M Users</div>
+</div>
+
+<div class="card">
+<h3 style="color:#fcd34d;">3. After Cache Failure</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Rebuild cache after restart or eviction.</p>
+<div class="viz-box">Redis Restarts
+   ↓
+Cache is Empty
+   ↓
+Background Job Loads Hot Data
+   ↓
+Cache Ready</div>
+</div>
+
+<div class="card">
+<h3 style="color:#fca5a5;">4. Periodic Refresh</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Continuously update cache with fresh data.</p>
+<div class="viz-box">Every 5 Minutes
+   ↓
+Identify Top 1000 Products
+   ↓
+Refresh Cache
+   ↓
+Keep Data Fresh</div>
+</div>
+
+<div class="sec">🛠 Cache Warming Strategies</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📊 Analytics-Based</div><div class="td">Use historical data to identify popular items</div></div>
+<div class="tag-card"><div class="tc">🔮 Predictive</div><div class="td">ML models predict what users will request</div></div>
+<div class="tag-card"><div class="tc">📋 Scheduled</div><div class="td">Preload at specific times (daily, hourly)</div></div>
+<div class="tag-card"><div class="tc">⚡ Event-Driven</div><div class="td">Trigger warming before known events (sales, launches)</div></div>
+</div>
+</div>
+
+<div class="sec">📈 Implementation Example</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">E-commerce product cache warming:</p>
+<div class="viz-box">// Identify top products from yesterday's analytics
+topProducts = db.query("SELECT * FROM products ORDER BY views DESC LIMIT 1000")
+
+// Warm cache
+for product in topProducts:
+    redis.set(f"product:{product.id}", product, ttl=3600)
+
+// Now these 1000 products are instantly available</div>
+</div>
+
+<div class="sec">⚖ Warming Trade-offs</div>
+<table>
+<thead><tr><th>Strategy</th><th>Pros</th><th>Cons</th></tr></thead>
+<tbody>
+<tr><td class="h">Warm Everything</td><td>Zero cold misses</td><td>Wastes memory on unused data</td></tr>
+<tr><td class="h">Warm Top N</td><td>Efficient, covers most traffic</td><td>May miss long-tail requests</td></tr>
+<tr><td class="h">Lazy Loading</td><td>Only caches requested data</td><td>First requests are slow</td></tr>
+<tr><td class="h">Hybrid</td><td>Best of both worlds</td><td>More complex</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>News Site Cache Warming</h3>
+<p>A news site warms its cache: 1) At 11:59 PM, preload tomorrow's front page stories. 2) Every hour, refresh trending articles. 3) When a breaking news alert is sent, immediately cache the article. 4) Monitor cache hit rates and adjust warming frequency. Result: 98% cache hit rate, instant page loads even during traffic spikes.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How do you handle cache warming after a Redis restart?"</strong><div class="mini">"I would implement a background warming job that loads hot data based on analytics. The job runs at lower priority so it doesn't impact production traffic. I would also monitor cache hit rates to ensure warming completes quickly."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Warm Before Traffic. Predict Demand. Monitor Hit Rates.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is the main purpose of cache warming?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Increase cache TTL</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Preload popular data to avoid cold cache misses</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Clear old cache entries</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Reduce memory usage</div>
+<div class="quiz-feedback" id="q1">Cache warming ensures high hit rates from the start by preloading frequently accessed data before users request it.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. When should you warm your cache?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Only when the cache is full</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) At startup, before traffic spikes, after restarts, and periodically</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Never — let users populate it naturally</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Only during business hours</div>
+<div class="quiz-feedback" id="q2">Cache warming should happen at multiple points: startup, before expected spikes, after restarts, and periodically to keep data fresh.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 7: Facebook News Feed Case Study</h3><p>A complete case study on designing a high-performance news feed system with multi-tier caching, feed generation, and real-time updates.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

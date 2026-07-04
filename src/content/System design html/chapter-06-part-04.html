@@ -1,5 +1,152 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Edge Caching & Latency | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 6 Part 4 - Edge Caching & Latency</div><h1>Edge Caching & Latency<br><span>Compute at the Edge</span></h1><p>Moving computation to edge locations.</p><div class="stats"><div class="stat"><div class="sn">CDN</div><div class="sl">Tech</div></div><div class="stat"><div class="sn">Edge</div><div class="sl">Setup</div></div><div class="stat"><div class="sn">Cache</div><div class="sl">Layer</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Edge Caching & Latency</div><h3>Advanced Caching</h3><p>Moving computation to edge locations.</p></div>
-<div class="defbox"><strong>Edge Caching & Latency:</strong> Moving computation to edge locations.</div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Edge Caching & Latency - why is this important?</div><div class="quiz-opt" onclick="ck(this,false)">A) It replaces databases</div><div class="quiz-opt" onclick="ck(this,true)">B) It reduces latency and improves UX globally</div><div class="quiz-opt" onclick="ck(this,false)">C) Eliminates servers</div><div class="quiz-opt" onclick="ck(this,false)">D) Only for videos</div><div class="quiz-feedback">Advanced caching brings content closer to users.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Multi-Tier Caching</h3><p>Continue learning.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edge Caching & Latency Optimization | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 6 · Part 4 · Edge Caching</div>
+<h1>Edge Caching & Latency Optimization<br><span>Advanced CDN Strategies</span></h1>
+<p>Edge caching goes beyond simple CDN delivery. It involves strategic cache placement, invalidation, warming, and optimization techniques that maximize performance for global users.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Edge</div><div class="sl">Compute</div></div>
+<div class="stat"><div class="sn">Warm</div><div class="sl">Preload</div></div>
+<div class="stat"><div class="sn">Invalidate</div><div class="sl">Purge</div></div>
+<div class="stat"><div class="sn">Optimize</div><div class="sl">Global</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Smart Warehouse</div>
+<div class="story">
+<div class="slabel">Why Edge Caching Matters</div>
+<h3>Predicting what customers need before they ask.</h3>
+<p>Imagine an e-commerce company that knows a new iPhone will launch in Tokyo at 9:00 AM. Instead of waiting for Tokyo customers to request the product page, the company preloads the page to Tokyo edge servers at 8:55 AM. When customers arrive, the page loads instantly. This is <strong>edge caching optimization</strong> — anticipating demand and positioning content strategically.</p>
+</div>
+
+<div class="sec">🎯 Beyond Basic CDN</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Basic CDN: Cache static files at edge. Advanced Edge Caching: Dynamic content caching, Edge computing (run code at edge), Cache warming strategies, Smart invalidation, Geographic routing, Real-time purging.</p>
+<div class="defbox"><strong>Key Insight:</strong> Modern CDNs are not just file servers — they're distributed computing platforms.</div>
+</div>
+
+<div class="sec">⚡ Edge Computing</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Run application logic at the edge, closer to users:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">🔧 Edge Functions</div><div class="td">Run code at CDN edge (Cloudflare Workers, Lambda@Edge)</div></div>
+<div class="tag-card"><div class="tc">🔄 Dynamic Caching</div><div class="td">Cache personalized content at edge</div></div>
+<div class="tag-card"><div class="tc">🔐 Authentication</div><div class="td">Verify tokens at edge before forwarding</div></div>
+<div class="tag-card"><div class="tc">📊 A/B Testing</div><div class="td">Route users to variants at edge</div></div>
+</div>
+</div>
+
+<div class="sec">🔥 Cache Warming</div>
+<div class="story">
+<div class="slabel">Preloading Content Before Demand</div>
+<h3>Don't wait for the first request to cache.</h3>
+<p>Cache warming proactively loads content into cache before users request it. Example: A news site knows tomorrow's front page stories at 11:59 PM. It preloads them to CDN edges. When users wake up and visit the site, content is already cached. Result: Instant page loads, zero cache misses for popular content.</p>
+</div>
+
+<div class="sec">🔄 Cache Invalidation at Scale</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">When content changes, how do you update thousands of edge servers?</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📢 Purge by URL</div><div class="td">Remove specific URLs from all edges</div></div>
+<div class="tag-card"><div class="tc">🏷️ Purge by Tag</div><div class="td">Invalidate all content with a tag (e.g., "product:123")</div></div>
+<div class="tag-card"><div class="tc">⏱ TTL-Based</div><div class="td">Let content expire naturally</div></div>
+<div class="tag-card"><div class="tc">🔄 Versioned URLs</div><div class="td">Change URL when content changes (style.v2.css)</div></div>
+</div>
+</div>
+
+<div class="sec">📊 Cache Hit Ratio Optimization</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Higher hit ratio = better performance. Strategies:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📏 Increase TTL</div><div class="td">Longer cache times for stable content</div></div>
+<div class="tag-card"><div class="tc">🎯 Cache Key Optimization</div><div class="td">Don't cache based on unnecessary query params</div></div>
+<div class="tag-card"><div class="tc">📈 Monitor Hit Rates</div><div class="td">Track per-endpoint, per-region metrics</div></div>
+<div class="tag-card"><div class="tc">🔥 Warm Popular Content</div><div class="td">Preload high-traffic URLs</div></div>
+</div>
+</div>
+
+<div class="sec">🌍 Geographic Routing</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Route users to the best edge location:</p>
+<div class="viz-box">User in Brazil → CDN Edge in São Paulo
+User in India → CDN Edge in Mumbai
+User in Germany → CDN Edge in Frankfurt
+
+DNS resolves to nearest edge automatically.</div>
+</div>
+
+<div class="sec">⚖ Edge vs Origin Caching</div>
+<table>
+<thead><tr><th>Aspect</th><th>Edge Cache</th><th>Origin Cache</th></tr></thead>
+<tbody>
+<tr><td class="h">Latency</td><td>Very Low (near user)</td><td>Higher (central location)</td></tr>
+<tr><td class="h">Capacity</td><td>Distributed across edges</td><td>Limited to origin servers</td></tr>
+<tr><td class="h">Freshness</td><td>May be stale</td><td>Always fresh</td></tr>
+<tr><td class="h">Cost</td><td>CDN bandwidth costs</td><td>Origin bandwidth costs</td></tr>
+<tr><td class="h">Complexity</td><td>Higher (invalidation, warming)</td><td>Lower</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>E-commerce Black Friday</h3>
+<p>An e-commerce site prepares for Black Friday: 1) Cache warming: Preload product pages, images, and deals to CDN edges 24 hours before. 2) Edge functions: Run inventory checks at edge to reduce origin load. 3) TTL extension: Increase cache times for stable content. 4) Monitoring: Real-time dashboards track hit rates per region. Result: 99% cache hit rate, sub-50ms response times globally.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How do you handle cache invalidation in a CDN with thousands of edge servers?"</strong><div class="mini">"I use a combination of strategies: TTL-based expiration for most content, tag-based purging for targeted invalidation, and versioned URLs for immediate invalidation. CDN providers offer APIs to purge content across all edges."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Edge = Closer to Users. Warm = Preload. Invalidate = Remove Stale. Optimize = Monitor & Adjust.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is cache warming?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Increasing cache TTL</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Proactively loading content into cache before users request it</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Clearing old cache entries</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Reducing cache size</div>
+<div class="quiz-feedback" id="q1">Cache warming preloads popular content into cache, ensuring instant responses when users request it.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. Which strategy is best for immediate cache invalidation when content changes?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Increase TTL</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Wait for natural expiration</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Versioned URLs — change the URL to force fresh content</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Reduce cache size</div>
+<div class="quiz-feedback" id="q2">Versioned URLs (style.v2.css) immediately bypass cache because the URL is new. This is the most reliable invalidation strategy.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 5: Multi-Tier Caching & Geo Replication</h3><p>Learn how multiple cache layers work together and how to replicate cache data across geographic regions.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

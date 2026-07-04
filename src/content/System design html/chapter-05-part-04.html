@@ -1,5 +1,157 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Cache Stampede | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 5 Part 4 - Cache Stampede</div><h1>Cache Stampede<br><span>Preventing Cache Collapse</span></h1><p>Preventing thousands of requests from missing cache simultaneously.</p><div class="stats"><div class="stat"><div class="sn">Cache</div><div class="sl">Performance</div></div><div class="stat"><div class="sn">Hit Rate</div><div class="sl">>90%</div></div><div class="stat"><div class="sn">Pattern</div><div class="sl">Design</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Cache Stampede</div><h3>The Cache Mindset</h3><p>Caching stores expensive-to-compute results in fast memory. Preventing thousands of requests from missing cache simultaneously.</p></div>
-<div class="defbox"><strong>Cache Stampede:</strong> Preventing thousands of requests from missing cache simultaneously.</div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Cache Stampede - what is the primary goal?</div><div class="quiz-opt" onclick="ck(this,false)">A) Reduce storage costs</div><div class="quiz-opt" onclick="ck(this,true)">B) Improve read performance by reducing database load</div><div class="quiz-opt" onclick="ck(this,false)">C) Increase write throughput</div><div class="quiz-opt" onclick="ck(this,false)">D) Simplify code</div><div class="quiz-feedback">Caching avoids expensive database queries.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Cache Invalidation</h3><p>Continue learning.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cache Stampede & Thundering Herd | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 5 · Part 4 · Cache Stampede & Thundering Herd</div>
+<h1>Cache Stampede & Thundering Herd<br><span>Preventing Cascading Failures</span></h1>
+<p>When a popular cache entry expires, thousands of requests may simultaneously try to rebuild it. This sudden spike can overwhelm the database and cascade into a system-wide failure.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Stampede</div><div class="sl">Many Misses</div></div>
+<div class="stat"><div class="sn">Herd</div><div class="sl">Simultaneous</div></div>
+<div class="stat"><div class="sn">Lock</div><div class="sl">Prevent</div></div>
+<div class="stat"><div class="sn">Jitter</div><div class="sl">Randomize</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Concert Ticket Rush</div>
+<div class="story">
+<div class="slabel">Why Cache Stampedes Happen</div>
+<h3>Thousands of people hitting refresh simultaneously.</h3>
+<p>Imagine a popular concert where tickets go on sale at 10:00 AM. At exactly 10:00 AM, 100,000 people simultaneously click "Buy Tickets." If the ticket inventory is cached and expires at 10:00 AM, all 100,000 requests miss the cache and hit the database simultaneously. The database cannot handle the sudden spike. This is a <strong>cache stampede</strong>.</p>
+</div>
+
+<div class="sec">🎯 What is a Cache Stampede?</div>
+<div class="defbox">
+<strong>Cache Stampede:</strong> A situation where a popular cache entry expires, and a large number of simultaneous requests miss the cache and flood the database. Also called: Thundering Herd, Dogpile, Cache Avalanche.
+</div>
+
+<div class="sec">⚠ The Problem</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Example: A product page cached for 1 hour. At 11:00 AM, 50,000 users request the page simultaneously. The cache entry expires. All 50,000 requests miss the cache and query the database. The database receives 50,000 identical queries at once.</p>
+<div class="viz-box">10:00 AM → Cache Hit → 50,000 Fast Responses
+11:00 AM → Cache Expired → 50,000 Database Queries → Database Overwhelmed</div>
+</div>
+
+<div class="sec">🛠 Prevention Strategies</div>
+
+<div class="card">
+<h3 style="color:#a5b4fc;">1. Locking (Mutex)</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Only one request rebuilds the cache. Others wait.</p>
+<div class="viz-box">Request 1 → Acquire Lock → Rebuild Cache → Release Lock
+Request 2 → Wait for Lock → Use Rebuilt Cache
+Request 3 → Wait for Lock → Use Rebuilt Cache</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Advantage</div><div class="td">Only one database query per expiration</div></div>
+<div class="tag-card"><div class="tc">❌ Disadvantage</div><div class="td">Added complexity, potential deadlocks</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#6ee7b7;">2. Jitter (Randomized TTL)</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Add randomness to expiration times so entries don't expire simultaneously.</p>
+<div class="viz-box">Entry A: TTL = 1 hour + random(0-10 minutes)
+Entry B: TTL = 1 hour + random(0-10 minutes)
+Entry C: TTL = 1 hour + random(0-10 minutes)</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Advantage</div><div class="td">Simple, prevents synchronized expirations</div></div>
+<div class="tag-card"><div class="tc">❌ Disadvantage</div><div class="td">Doesn't help if a single entry is extremely popular</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#fcd34d;">3. Never Expire (Background Refresh)</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Keep serving stale data while a background job refreshes the cache.</p>
+<div class="viz-box">Cache Entry Expires?
+ ├── Yes → Continue Serving Stale Data
+ │           └── Background Job Refreshes Cache
+ └── No → Serve Fresh Data</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Advantage</div><div class="td">Zero user-facing latency spikes</div></div>
+<div class="tag-card"><div class="tc">❌ Disadvantage</div><div class="td">Users may see slightly stale data</div></div>
+</div>
+</div>
+
+<div class="card">
+<h3 style="color:#fca5a5;">4. Probabilistic Early Expiration</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Start refreshing popular entries before they expire based on access patterns.</p>
+<div class="viz-box">If an entry is accessed frequently:
+ └── Refresh it proactively before expiration</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Advantage</div><div class="td">Prevents stampedes for popular items</div></div>
+<div class="tag-card"><div class="tc">❌ Disadvantage</div><div class="td">More database queries for popular items</div></div>
+</div>
+</div>
+
+<div class="sec">⚖ Strategy Comparison</div>
+<table>
+<thead><tr><th>Strategy</th><th>Complexity</th><th>Effectiveness</th><th>Best For</th></tr></thead>
+<tbody>
+<tr><td class="h">Locking</td><td>Medium</td><td>High</td><td>Critical data</td></tr>
+<tr><td class="h">Jitter</td><td>Low</td><td>Medium</td><td>General use</td></tr>
+<tr><td class="h">Never Expire</td><td>Medium</td><td>High</td><td>Tolerates stale data</td></tr>
+<tr><td class="h">Probabilistic</td><td>High</td><td>High</td><td>Popular items</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>E-commerce Flash Sale</h3>
+<p>A popular e-commerce site runs a flash sale. Product pages are cached with TTL = 5 minutes. To prevent stampedes: 1) Jitter: Add random(0-30s) to TTL. 2) Locking: Only one request rebuilds the cache. 3) Monitoring: Alert if cache miss rate spikes. Result: Database remains stable even with 100,000 concurrent users.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What happens if a cache entry for a popular product expires?"</strong><div class="mini">"Without protection, thousands of simultaneous requests could miss the cache and overwhelm the database. I would use locking or jitter to prevent this."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Stampede = Many Misses at Once. Prevent with Lock, Jitter, or Never Expire.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is a cache stampede?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) The cache runs out of memory</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Many simultaneous requests miss an expired cache entry and overwhelm the database</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) The cache becomes corrupted</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) The cache evicts too many entries</div>
+<div class="quiz-feedback" id="q1">A cache stampede occurs when a popular cache entry expires and many requests simultaneously try to rebuild it from the database.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. Which strategy prevents cache stampedes by adding randomness to TTL?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Locking</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Never Expire</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Jitter — randomized expiration times prevent synchronized expirations</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Probabilistic Early Expiration</div>
+<div class="quiz-feedback" id="q2">Jitter adds randomness to TTL values so cache entries don't expire simultaneously, spreading the load.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 5: Cache Invalidation Strategies</h3><p>Learn when and how to remove stale data from cache: TTL-based, event-based, and write-through invalidation.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

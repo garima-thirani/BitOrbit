@@ -1,7 +1,157 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Redis Cluster & Data Structures | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 6 Part 1 - Redis Cluster & Data Structures</div><h1>Redis Cluster & Data Structures<br><span>Beyond Simple Key-Value</span></h1><p>Redis is a data structure server with clustering.</p><div class="stats"><div class="stat"><div class="sn">Redis</div><div class="sl">Tech</div></div><div class="stat"><div class="sn">Cluster</div><div class="sl">Setup</div></div><div class="stat"><div class="sn">Cache</div><div class="sl">Layer</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Redis Cluster & Data Structures</div><h3>Advanced Caching</h3><p>Redis is a data structure server with clustering.</p></div>
-<div class="defbox"><strong>Redis Cluster & Data Structures:</strong> Redis is a data structure server with clustering.</div>
-<div class="sec">Redis Data Structures</div>
-<div class="tag-grid"><div class="tag-card"><div class="tc">Strings</div><div class="td">Simple key-value pairs.</div></div><div class="tag-card"><div class="tc">Lists</div><div class="td">Ordered collections for queues.</div></div><div class="tag-card"><div class="tc">Sets</div><div class="td">Unique elements for tags.</div></div><div class="tag-card"><div class="tc">Hashes</div><div class="td">Maps of fields for objects.</div></div></div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Redis Cluster & Data Structures - why is this important?</div><div class="quiz-opt" onclick="ck(this,false)">A) It replaces databases</div><div class="quiz-opt" onclick="ck(this,true)">B) It reduces latency and improves UX globally</div><div class="quiz-opt" onclick="ck(this,false)">C) Eliminates servers</div><div class="quiz-opt" onclick="ck(this,false)">D) Only for videos</div><div class="quiz-feedback">Advanced caching brings content closer to users.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Memcached vs Redis</h3><p>Continue learning.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redis Cluster & Data Structures | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 6 · Part 1 · Redis Cluster & Data Structures</div>
+<h1>Redis Cluster & Data Structures<br><span>Scaling Redis Beyond a Single Node</span></h1>
+<p>Redis is fast, but a single Redis instance has limits. Redis Cluster distributes data across multiple nodes, enabling horizontal scaling while maintaining high performance.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Cluster</div><div class="sl">Distributed</div></div>
+<div class="stat"><div class="sn">Shard</div><div class="sl">Split</div></div>
+<div class="stat"><div class="sn">Replicate</div><div class="sl">HA</div></div>
+<div class="stat"><div class="sn">Scale</div><div class="sl">Grow</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Single Library</div>
+<div class="story">
+<div class="slabel">Why Clustering Exists</div>
+<h3>One librarian can only handle so many books.</h3>
+<p>Imagine a library with one librarian who knows where every book is. As the collection grows to millions of books, one person cannot manage it all. The solution? Split the library into sections, each managed by a different librarian. Now they can handle more books and serve more readers simultaneously. Redis Cluster works the same way.</p>
+</div>
+
+<div class="sec">🎯 Why Redis Cluster?</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">A single Redis instance is limited by: Memory (cannot exceed RAM), Throughput (single CPU core), Network (single NIC). Redis Cluster solves this by: Distributing data across multiple nodes, Enabling horizontal scaling, Providing high availability through replication.</p>
+<div class="defbox"><strong>Key Insight:</strong> Redis Cluster allows you to scale Redis like a distributed system, not just a single server.</div>
+</div>
+
+<div class="sec">📐 What is Redis Cluster?</div>
+<div class="defbox">
+<strong>Redis Cluster:</strong> A distributed implementation of Redis that automatically shards data across multiple nodes. Each node manages a subset of the data. The cluster appears as a single Redis instance to clients.
+</div>
+
+<div class="sec">🏛 Cluster Architecture</div>
+<div class="fig">
+<svg viewBox="0 0 700 300" width="100%">
+<defs>
+<linearGradient id="rg"><stop offset="0%" stop-color="#ef4444"/><stop offset="100%" stop-color="#dc2626"/></linearGradient>
+<marker id="ra" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="250" y="10" width="200" height="40" rx="8" fill="url(#rg)"/>
+<text x="350" y="36" fill="white" font-size="15" font-weight="700" text-anchor="middle">📱 Client</text>
+<line x1="350" y1="50" x2="350" y2="70" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<rect x="230" y="75" width="240" height="40" rx="8" fill="#6366f1"/>
+<text x="350" y="100" fill="white" font-size="14" font-weight="700" text-anchor="middle">Redis Cluster</text>
+<line x1="280" y1="115" x2="100" y2="145" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<line x1="350" y1="115" x2="350" y2="145" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<line x1="420" y1="115" x2="600" y2="145" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<rect x="20" y="150" width="160" height="45" rx="8" fill="#10b981"/>
+<text x="100" y="178" fill="white" font-size="14" font-weight="700" text-anchor="middle">Node A (Master)</text>
+<rect x="270" y="150" width="160" height="45" rx="8" fill="#10b981"/>
+<text x="350" y="178" fill="white" font-size="14" font-weight="700" text-anchor="middle">Node B (Master)</text>
+<rect x="520" y="150" width="160" height="45" rx="8" fill="#10b981"/>
+<text x="600" y="178" fill="white" font-size="14" font-weight="700" text-anchor="middle">Node C (Master)</text>
+<line x1="100" y1="195" x2="100" y2="225" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<line x1="350" y1="195" x2="350" y2="225" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<line x1="600" y1="195" x2="600" y2="225" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<rect x="20" y="230" width="160" height="40" rx="8" fill="#f59e0b"/>
+<text x="100" y="256" fill="white" font-size="13" font-weight="700" text-anchor="middle">Replica A1</text>
+<rect x="270" y="230" width="160" height="40" rx="8" fill="#f59e0b"/>
+<text x="350" y="256" fill="white" font-size="13" font-weight="700" text-anchor="middle">Replica B1</text>
+<rect x="520" y="230" width="160" height="40" rx="8" fill="#f59e0b"/>
+<text x="600" y="256" fill="white" font-size="13" font-weight="700" text-anchor="middle">Replica C1</text>
+</svg>
+<div class="fig-cap">Redis Cluster: Masters handle writes, replicas provide high availability and read scaling.</div>
+</div>
+
+<div class="sec">🔑 Key Concepts</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">🎯 Master Node</div><div class="td">Handles reads and writes for its shard</div></div>
+<div class="tag-card"><div class="tc">📖 Replica Node</div><div class="td">Read-only copy of master. Promotes to master if master fails</div></div>
+<div class="tag-card"><div class="tc">🗺 Hash Slots</div><div class="td">16,384 slots distributed across masters. Keys map to slots</div></div>
+<div class="tag-card"><div class="tc">🔀 Sharding</div><div class="td">Data automatically distributed based on key hash</div></div>
+</div>
+</div>
+
+<div class="sec">📊 Redis Data Structures</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Redis is not just a key-value store. It supports rich data structures:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📝 String</div><div class="td">Basic key-value. Max 512MB. Use for: caching, counters</div></div>
+<div class="tag-card"><div class="tc">📋 Hash</div><div class="td">Field-value pairs. Use for: user profiles, objects</div></div>
+<div class="tag-card"><div class="tc">📑 List</div><div class="td">Ordered collection. Use for: queues, timelines</div></div>
+<div class="tag-card"><div class="tc">📚 Set</div><div class="td">Unordered unique values. Use for: tags, relationships</div></div>
+<div class="tag-card"><div class="tc">⭐ Sorted Set</div><div class="td">Scored elements. Use for: leaderboards, rankings</div></div>
+<div class="tag-card"><div class="tc">🧮 Bitmap</div><div class="td">Bit-level operations. Use for: flags, analytics</div></div>
+</div>
+</div>
+
+<div class="sec">⚡ When to Use Each Structure</div>
+<table>
+<thead><tr><th>Structure</th><th>Use Case</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td class="h">String</td><td>Simple caching, counters</td><td>user:123:name = "Alice"</td></tr>
+<tr><td class="h">Hash</td><td>Objects with multiple fields</td><td>user:123 = {name, email, age}</td></tr>
+<tr><td class="h">List</td><td>Queues, timelines</td><td>Recent posts, task queues</td></tr>
+<tr><td class="h">Set</td><td>Unique collections</td><td>User tags, followers</td></tr>
+<tr><td class="h">Sorted Set</td><td>Rankings with scores</td><td>Leaderboards, priority queues</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How would you design a leaderboard using Redis?"</strong><div class="mini">"I would use a Sorted Set where the score is the player's points and the member is the player ID. ZADD adds players, ZRANGE retrieves top players, ZRANK gets a player's rank."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Redis Cluster = Multiple Masters + Replicas + Hash Slots</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is the main benefit of Redis Cluster?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) It makes Redis faster</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) It enables horizontal scaling by distributing data across multiple nodes</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) It reduces memory usage</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) It simplifies Redis commands</div>
+<div class="quiz-feedback" id="q1">Redis Cluster allows you to scale beyond a single node's memory and CPU limits by distributing data across multiple masters.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. Which Redis data structure is best for a leaderboard?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) List</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Set</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Sorted Set — maintains elements sorted by score</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Hash</div>
+<div class="quiz-feedback" id="q2">Sorted Sets automatically maintain elements in score order, making them perfect for leaderboards and rankings.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 2: Memcached vs Redis</h3><p>Compare two popular in-memory data stores. Understand when to use each and why Redis has become the dominant choice.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,5 +1,123 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Schema Design & Query Optimization | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 3 · Part 7 · Schema Design & Query Optimization</div><h1>Schema Design & Query Optimization<br><span>Database Fundamentals</span></h1><p>Designing efficient schemas, normalization, denormalization, and writing performant queries.</p><div class="stats"><div class="stat"><div class="sn">Schema</div><div class="sl">Key Concept</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Schema Design & Query Optimization</div><h3>Database Decisions Drive Architecture</h3><p>The choice of database technology is one of the most consequential decisions in system design. Designing efficient schemas, normalization, denormalization, and writing performant queries.</p></div>
-<div class="defbox"><strong>Schema Design & Query Optimization:</strong> Designing efficient schemas, normalization, denormalization, and writing performant queries.</div>
-<div class="sec">🧪 Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Schema Design & Query Optimization — which statement is correct?</div><div class="quiz-opt" onclick="ck(this,false)">A) All databases work the same way</div><div class="quiz-opt" onclick="ck(this,true)">B) Understanding your data model and access patterns determines the right database choice</div><div class="quiz-opt" onclick="ck(this,false)">C) NoSQL is always better</div><div class="quiz-opt" onclick="ck(this,false)">D) SQL is outdated</div><div class="quiz-feedback">The database choice depends on your data structure, consistency needs, and scaling requirements.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Database Performance Bottlenecks</h3><p>Continue building your database knowledge.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schema Design & Query Optimization | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 3 · Part 7 · Schema Design & Query Optimization</div>
+<h1>Schema Design & Query Optimization<br><span>Normalization, Denormalization, Performance</span></h1>
+<p>A database schema is the blueprint of your data. A good schema makes queries simple, fast, and maintainable. A poor schema creates bottlenecks that no amount of hardware can fix.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Normalize</div><div class="sl">No Redundancy</div></div>
+<div class="stat"><div class="sn">Denormalize</div><div class="sl">Fast Reads</div></div>
+<div class="stat"><div class="sn">JOINs</div><div class="sl">Relationships</div></div>
+<div class="stat"><div class="sn">N+1</div><div class="sl">Query Problem</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — Organizing a Warehouse</div>
+<div class="story">
+<div class="slabel">Why Schema Design Matters</div>
+<h3>A well-organized schema reduces work for every query.</h3>
+<p>Imagine two warehouses. The first labels every shelf, groups similar products together, and keeps an inventory map. The second throws everything into random boxes. Finding a product in the first warehouse takes seconds. Finding it in the second takes hours. The warehouse layout is like a database schema. A well-organized schema reduces work for every query.</p>
+</div>
+
+<div class="sec">📐 What is a Database Schema?</div>
+<div class="defbox"><strong>Schema:</strong> Defines tables, columns, data types, relationships, constraints, and indexes. It is the structural blueprint of a database.</div>
+
+<div class="sec">🔑 Primary Keys & Foreign Keys</div>
+<div class="g2">
+<div class="gc"><h4>🔑 Primary Key</h4><p>Uniquely identifies every row. Properties: Unique, Not NULL, Stable, Frequently indexed. Examples: UUID, Auto Increment, Snowflake IDs.</p></div>
+<div class="gc"><h4>🔗 Foreign Key</h4><p>Connects tables. Ensures referential integrity, prevents orphan records, and establishes clear relationships between entities.</p></div>
+</div>
+
+<div class="sec">📐 Normalization</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;"><strong>Intuition:</strong> Avoid storing the same information repeatedly.</p>
+<div class="g2">
+<div class="gc"><h4>❌ Bad Design</h4><p>Orders table stores Customer Name, Address, Phone — repeated thousands of times.</p></div>
+<div class="gc"><h4>✅ Normalized Design</h4><p>Customers table (id, name, address) + Orders table (customer_id, amount). Store customer info once.</p></div>
+</div>
+<p style="color:var(--tm);margin-top:12px;"><strong>Benefits:</strong> Less duplication, smaller storage, easier updates, better consistency. <strong>Trade-off:</strong> Queries often require JOINs.</p>
+</div>
+
+<div class="sec">📦 Denormalization</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Sometimes duplication is intentional. Example: Store Customer Name inside an order record for historical accuracy — if the customer changes their name later, past invoices remain unchanged. Denormalization also improves read performance by reducing joins.</p>
+</div>
+
+<div class="sec">⚖ Normalize vs Denormalize</div>
+<table>
+<thead><tr><th>Normalize</th><th>Denormalize</th></tr></thead>
+<tbody>
+<tr><td>Banking</td><td>Analytics</td></tr>
+<tr><td>ERP</td><td>Reporting</td></tr>
+<tr><td>Inventory</td><td>Product Catalog</td></tr>
+<tr><td>OLTP</td><td>Read-heavy APIs</td></tr>
+</tbody>
+</table>
+
+<div class="sec">⚡ Query Optimization</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Fast systems are built with efficient queries.</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Avoid SELECT *</div><div class="td">Returns unnecessary columns. More network traffic, memory, and disk reads.</div></div>
+<div class="tag-card"><div class="tc">✅ Filter Early</div><div class="td">Use WHERE clauses to reduce rows before processing.</div></div>
+<div class="tag-card"><div class="tc">📊 Use EXPLAIN</div><div class="td">Inspect query execution plans to find bottlenecks.</div></div>
+<div class="tag-card"><div class="tc">🔗 Fix N+1 Queries</div><div class="td">One query + N child queries = N+1 problem. Use JOINs or batch loading.</div></div>
+</div>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"When would you denormalize a database?"</strong><div class="mini">"When reducing joins significantly improves read performance and the application can tolerate some controlled data duplication."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Normalize for correctness. Denormalize for performance.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. When would you choose denormalization over normalization?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) When storage is expensive</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) When read performance is critical and JOINs are too slow</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) When data integrity is most important</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) When writes are frequent</div>
+<div class="quiz-feedback" id="q1">Denormalization trades storage for read speed by reducing the need for JOINs.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. What causes the N+1 query problem?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Using too many indexes</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) One parent query followed by one query for every child record</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) A slow network connection</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Too many JOINs in a single query</div>
+<div class="quiz-feedback" id="q2">N+1 occurs when you fetch N parent records and then execute one additional query per child. Solution: Use JOINs or batch loading.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 8: Database Performance Bottlenecks</h3><p>Identifying and resolving common database performance issues: slow queries, lock contention, connection limits.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

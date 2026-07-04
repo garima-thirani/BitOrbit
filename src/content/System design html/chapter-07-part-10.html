@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kafka vs RabbitMQ - Complete Comparison | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 7 · Part 10 · Kafka vs RabbitMQ</div>
+<h1>Kafka vs RabbitMQ<br><span>Complete Comparison & Decision Framework</span></h1>
+<p>Kafka and RabbitMQ solve different problems. Understanding their architectural differences helps you choose the right tool for each use case.</p>
+<div class="stats">
+<div class="stat"><div class="sn">RabbitMQ</div><div class="sl">Routing</div></div>
+<div class="stat"><div class="sn">Kafka</div><div class="sl">Streaming</div></div>
+<div class="stat"><div class="sn">Choose</div><div class="sl">Wisely</div></div>
+<div class="stat"><div class="sn">Both</div><div class="sl">Together</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — Courier vs Railway</div>
+<div class="story">
+<div class="slabel">Two Different Transportation Systems</div>
+<h3>DHL vs Indian Railways.</h3>
+<p>DHL (RabbitMQ) delivers packages and removes them from the warehouse. Once delivered, the package is gone. Indian Railways (Kafka) records every train journey permanently. Passengers can board later, inspectors can review old journeys, analysts can study patterns. Nothing disappears immediately. RabbitMQ optimizes for delivery. Kafka optimizes for history and streaming.</p>
+</div>
+
+<div class="sec">🎯 Why This Comparison Matters</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Almost every system design interview asks: "Should we use RabbitMQ or Kafka?" The answer depends on the problem. RabbitMQ excels at reliable message routing and background jobs. Kafka excels at high-throughput event streaming and replay.</p>
+<div class="defbox"><strong>Key Insight:</strong> They're not competitors - they solve different problems. Many production systems use both.</div>
+</div>
+
+<div class="sec">📊 Complete Feature Comparison</div>
+<table>
+<thead><tr><th>Feature</th><th>RabbitMQ</th><th>Kafka</th></tr></thead>
+<tbody>
+<tr><td class="h">Model</td><td>Message Queue</td><td>Distributed Event Log</td></tr>
+<tr><td class="h">Storage</td><td>Queue (deletes after ACK)</td><td>Append-only log (retains events)</td></tr>
+<tr><td class="h">Throughput</td><td>20K-100K msg/sec</td><td>Millions of events/sec</td></tr>
+<tr><td class="h">Latency</td><td>1-10 ms (lower)</td><td>5-50 ms (slightly higher)</td></tr>
+<tr><td class="h">Routing</td><td>Excellent (Exchanges)</td><td>Basic (Topic + Partition Key)</td></tr>
+<tr><td class="h">Ordering</td><td>Within queue</td><td>Within partition</td></tr>
+<tr><td class="h">Replay</td><td>Not supported</td><td>Supported (reset offset)</td></tr>
+<tr><td class="h">Consumers</td><td>Competing (one processes each)</td><td>Independent groups (all read same data)</td></tr>
+<tr><td class="h">Message Lifecycle</td><td>Deleted after processing</td><td>Retained for configurable period</td></tr>
+<tr><td class="h">Use Case</td><td>Background jobs, routing</td><td>Event streaming, analytics</td></tr>
+<tr><td class="h">Complexity</td><td>Lower</td><td>Higher</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🎯 When to Choose RabbitMQ</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Background Jobs</div><div class="td">Email, SMS, invoice generation</div></div>
+<div class="tag-card"><div class="tc">✅ Task Queues</div><div class="td">Image processing, report generation</div></div>
+<div class="tag-card"><div class="tc">✅ Complex Routing</div><div class="td">Direct, Topic, Fanout, Headers exchanges</div></div>
+<div class="tag-card"><div class="tc">✅ Low Latency</div><div class="td">Immediate message delivery needed</div></div>
+<div class="tag-card"><div class="tc">✅ Work Queues</div><div class="td">Competing consumers pattern</div></div>
+</div>
+</div>
+
+<div class="sec">🎯 When to Choose Kafka</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Event Streaming</div><div class="td">Clickstream, analytics, monitoring</div></div>
+<div class="tag-card"><div class="tc">✅ Event Replay</div><div class="td">ML training, audit logs, debugging</div></div>
+<div class="tag-card"><div class="tc">✅ High Throughput</div><div class="td">Millions of events per second</div></div>
+<div class="tag-card"><div class="tc">✅ Multiple Consumers</div><div class="td">Many teams need same data independently</div></div>
+<div class="tag-card"><div class="tc">✅ Data Pipelines</div><div class="td">Analytics, recommendations, fraud detection</div></div>
+</div>
+</div>
+
+<div class="sec">🔄 Architecture Difference</div>
+<div class="g2">
+<div class="gc">
+<h4>RabbitMQ Flow</h4>
+<div class="viz-box">Producer → Exchange → Queue → Consumer
+                            ↓
+                        ACK
+                            ↓
+                    Message Deleted
+
+Messages disappear after processing</div>
+</div>
+<div class="gc">
+<h4>Kafka Flow</h4>
+<div class="viz-box">Producer → Topic → Partition → Log
+                            ↓
+                    Consumer reads
+                            ↓
+                    Offset moves forward
+                            ↓
+                    Event REMAINS
+
+Events stay for replay</div>
+</div>
+</div>
+
+<div class="sec">📋 Decision Matrix</div>
+<table>
+<thead><tr><th>Requirement</th><th>Choose</th></tr></thead>
+<tbody>
+<tr><td class="h">Email/SMS notifications</td><td>RabbitMQ</td></tr>
+<tr><td class="h">Background task processing</td><td>RabbitMQ</td></tr>
+<tr><td class="h">Complex routing logic</td><td>RabbitMQ</td></tr>
+<tr><td class="h">Low latency messaging</td><td>RabbitMQ</td></tr>
+<tr><td class="h">Clickstream analytics</td><td>Kafka</td></tr>
+<tr><td class="h">Event replay needed</td><td>Kafka</td></tr>
+<tr><td class="h">Millions of events/sec</td><td>Kafka</td></tr>
+<tr><td class="h">Multiple independent consumers</td><td>Kafka</td></tr>
+<tr><td class="h">ML/AI pipelines</td><td>Kafka</td></tr>
+<tr><td class="h">Audit logs</td><td>Kafka</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🏭 Production Example - Hybrid Architecture</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon Uses Both</h3>
+<p>Amazon's checkout system uses both: <strong>RabbitMQ</strong> for operational messaging: Email confirmations, Warehouse notifications, Shipping updates, SMS alerts. <strong>Kafka</strong> for event streaming: Order analytics, Recommendation engine, Fraud detection, ML pipelines, Audit logs. This hybrid approach combines RabbitMQ's reliable delivery with Kafka's event streaming capabilities.</p>
+</div>
+
+<div class="sec">🏭 Production Example - Netflix</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Netflix Architecture</h3>
+<p>Netflix uses: <strong>Kafka</strong> for: Playback events, Recommendations, Billing events, Analytics, ML pipelines. <strong>RabbitMQ</strong> for: Email notifications, Video encoding jobs, Background processing. Each technology serves its optimal purpose.</p>
+</div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Need routing or background jobs? RabbitMQ. Need streaming or replay? Kafka. Large systems use both.</strong></div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Can RabbitMQ and Kafka coexist?"</strong><div class="mini">"Yes, and many large organizations do exactly this. RabbitMQ handles operational messaging like emails and notifications. Kafka handles event streaming for analytics, ML, and data pipelines. They solve different problems and complement each other."</div></div></div></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. When should you choose Kafka over RabbitMQ?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) For sending email notifications</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) For complex routing requirements</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) For high-throughput event streaming with replay requirements</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) For low-latency messaging</div>
+<div class="quiz-feedback" id="q1">Kafka excels at high-throughput event streaming where multiple consumers need to replay historical data.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. Can RabbitMQ and Kafka be used together?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) No, they're mutually exclusive</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Yes - RabbitMQ for operational messaging, Kafka for event streaming</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Only in small applications</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Only if you have a very large team</div>
+<div class="quiz-feedback" id="q2">Many large organizations use both. RabbitMQ for background jobs, Kafka for analytics and event streaming.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 11: Delivery Guarantees & Idempotency</h3><p>At-most-once, at-least-once, exactly-once delivery. Idempotency, duplicate detection, retry strategies, and poison messages.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

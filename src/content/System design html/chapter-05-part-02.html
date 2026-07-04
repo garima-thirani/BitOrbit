@@ -1,7 +1,189 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Caching Patterns | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 5 Part 2 - Caching Patterns</div><h1>Caching Patterns<br><span>Cache-Aside, Read-Through, Write-Through</span></h1><p>Keeping cache and database in sync.</p><div class="stats"><div class="stat"><div class="sn">Cache</div><div class="sl">Performance</div></div><div class="stat"><div class="sn">Hit Rate</div><div class="sl">>90%</div></div><div class="stat"><div class="sn">Pattern</div><div class="sl">Design</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Caching Patterns</div><h3>The Cache Mindset</h3><p>Caching stores expensive-to-compute results in fast memory. Keeping cache and database in sync.</p></div>
-<div class="defbox"><strong>Caching Patterns:</strong> Keeping cache and database in sync.</div>
-<div class="sec">Cache-Aside Pattern</div>
-<div class="card"><p style="color:var(--tm)">1. Check cache first 2. Cache hit -> return 3. Cache miss -> query DB 4. Store in cache 5. Return data. This is the most common pattern.</p></div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Caching Patterns - what is the primary goal?</div><div class="quiz-opt" onclick="ck(this,false)">A) Reduce storage costs</div><div class="quiz-opt" onclick="ck(this,true)">B) Improve read performance by reducing database load</div><div class="quiz-opt" onclick="ck(this,false)">C) Increase write throughput</div><div class="quiz-opt" onclick="ck(this,false)">D) Simplify code</div><div class="quiz-feedback">Caching avoids expensive database queries.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Cache Eviction Policies</h3><p>Continue learning.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caching Patterns | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 5 · Part 2 · Caching Patterns</div>
+<h1>Caching Patterns<br><span>Cache-Aside, Read-Through, Write-Through, Write-Behind</span></h1>
+<p>A cache is only useful if the application knows when and how to read from it and write to it. Different caching patterns solve different consistency and performance problems.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Cache-Aside</div><div class="sl">App Manages</div></div>
+<div class="stat"><div class="sn">Read-Through</div><div class="sl">Cache Reads</div></div>
+<div class="stat"><div class="sn">Write-Through</div><div class="sl">Sync Writes</div></div>
+<div class="stat"><div class="sn">Write-Behind</div><div class="sl">Async Writes</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Warehouse Assistant</div>
+<div class="story">
+<div class="slabel">Why Different Patterns Exist</div>
+<h3>Who manages the cache — the app or the cache itself?</h3>
+<p>Imagine a warehouse. Customers ask for products. There are two ways to operate: 1) The assistant first checks a nearby shelf before walking to the warehouse. 2) The warehouse manager automatically keeps the nearby shelf updated. Both approaches work — but responsibilities are different. Caching patterns define <strong>who manages the cache</strong>.</p>
+</div>
+
+<div class="sec">🎯 Why Do We Need Different Cache Patterns?</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Applications have different priorities:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">⚡ Lowest Latency</div><div class="td">Fastest possible response time</div></div>
+<div class="tag-card"><div class="tc">✅ Strong Consistency</div><div class="td">Cache always has latest data</div></div>
+<div class="tag-card"><div class="tc">🎯 Simplicity</div><div class="td">Easy to implement and maintain</div></div>
+<div class="tag-card"><div class="tc">📈 High Write Throughput</div><div class="td">Handle many writes efficiently</div></div>
+</div>
+<div class="defbox"><strong>Key Insight:</strong> No single caching strategy satisfies every requirement.</div>
+</div>
+
+<div class="sec">📐 Pattern 1: Cache-Aside (Lazy Loading)</div>
+<div class="defbox">
+<strong>Pattern:</strong> The application manages the cache. Most common pattern.
+</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;"><strong>Read Flow:</strong></p>
+<div class="viz-box">Client → Application → Cache?
+ ├── Hit → Return
+ └── Miss
+        │
+    Database
+        │
+   Store in Cache
+        │
+     Return</div>
+<p style="color:var(--tm);margin-top:12px;"><strong>Write Flow:</strong> Update Database → Invalidate Cache</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Advantages</div><div class="td">Simple, most common, cache stores only popular data</div></div>
+<div class="tag-card"><div class="tc">❌ Disadvantages</div><div class="td">First request is slow, cache miss logic in application, possible stale data</div></div>
+</div>
+</div>
+
+<div class="sec">📐 Pattern 2: Read-Through</div>
+<div class="defbox">
+<strong>Pattern:</strong> The application talks only to the cache. The cache loads missing data automatically.
+</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">The cache is responsible for loading data from the database when there's a miss.</p>
+<div class="viz-box">Application → Cache
+ ├── Hit → Return
+ └── Miss
+        │
+    Database
+        │
+ Cache Updates Itself</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Advantages</div><div class="td">Cleaner application code, centralized caching logic</div></div>
+<div class="tag-card"><div class="tc">❌ Disadvantages</div><div class="td">More sophisticated cache layer, less common outside managed platforms</div></div>
+</div>
+</div>
+
+<div class="sec">📐 Pattern 3: Write-Through</div>
+<div class="defbox">
+<strong>Pattern:</strong> Every write updates both cache and database simultaneously.
+</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">The cache stays fresh because writes go to both cache and database.</p>
+<div class="viz-box">Application → Cache → Database</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Advantages</div><div class="td">Cache stays fresh, reads are very fast</div></div>
+<div class="tag-card"><div class="tc">❌ Disadvantages</div><div class="td">Higher write latency, unused data may occupy cache</div></div>
+</div>
+</div>
+
+<div class="sec">📐 Pattern 4: Write-Behind (Write-Back)</div>
+<div class="defbox">
+<strong>Pattern:</strong> Writes go to the cache first. The cache asynchronously persists data to the database.
+</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">The cache buffers writes and flushes them to the database asynchronously.</p>
+<div class="viz-box">Application → Cache → Async Flush → Database</div>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Advantages</div><div class="td">Extremely fast writes, smooths traffic spikes</div></div>
+<div class="tag-card"><div class="tc">❌ Disadvantages</div><div class="td">Risk of data loss if cache fails, more operational complexity</div></div>
+</div>
+</div>
+
+<div class="sec">⚖ Pattern Comparison</div>
+<table>
+<thead><tr><th>Pattern</th><th>Read Speed</th><th>Write Speed</th><th>Consistency</th><th>Complexity</th></tr></thead>
+<tbody>
+<tr><td class="h">Cache-Aside</td><td>High</td><td>Medium</td><td>Medium</td><td>Low</td></tr>
+<tr><td class="h">Read-Through</td><td>High</td><td>Medium</td><td>Medium</td><td>Medium</td></tr>
+<tr><td class="h">Write-Through</td><td>High</td><td>Lower</td><td>High</td><td>Medium</td></tr>
+<tr><td class="h">Write-Behind</td><td>High</td><td>Very High</td><td>Eventual</td><td>High</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🎯 Choosing the Right Pattern</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">Use Cache-Aside</div><div class="td">Building general web applications, simplicity matters</div></div>
+<div class="tag-card"><div class="tc">Use Read-Through</div><div class="td">Cache infrastructure supports automatic loading</div></div>
+<div class="tag-card"><div class="tc">Use Write-Through</div><div class="td">Fresh cached data is important</div></div>
+<div class="tag-card"><div class="tc">Use Write-Behind</div><div class="td">High write throughput matters more than immediate persistence</div></div>
+</div>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>E-commerce Site Uses Multiple Patterns</h3>
+<p>Product pages → Cache-Aside (most common). User sessions → Write-Through (fresh data). Analytics events → Write-Behind (high throughput). Managed cache services → Read-Through (automatic loading). Large systems often combine multiple patterns.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Which caching strategy would you recommend for product details?"</strong><div class="mini">"Cache-Aside is usually the best choice because product data is read frequently, changes relatively infrequently, and the pattern is simple to implement."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox">
+<strong>Cache-Aside → App manages cache</strong><br>
+<strong>Read-Through → Cache reads</strong><br>
+<strong>Write-Through → Cache + DB together</strong><br>
+<strong>Write-Behind → Cache now, DB later</strong>
+</div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. Which caching pattern is most common for general web applications?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Write-Behind</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Cache-Aside — application manages the cache</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Read-Through</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Write-Through</div>
+<div class="quiz-feedback" id="q1">Cache-Aside is the most common pattern because it's simple and gives the application full control over caching logic.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. Which pattern is best for high write throughput with eventual consistency?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Cache-Aside</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Write-Through</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Read-Through</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">D) Write-Behind — writes go to cache first, async flush to DB</div>
+<div class="quiz-feedback" id="q2">Write-Behind provides the highest write throughput by buffering writes in cache and flushing asynchronously.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 3: Cache Eviction Policies</h3><p>Learn LRU, LFU, and FIFO eviction policies. Understand when to use each and how they affect cache performance.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

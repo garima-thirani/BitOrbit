@@ -1,7 +1,142 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Memcached vs Redis | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 6 Part 2 - Memcached vs Redis</div><h1>Memcached vs Redis<br><span>Choosing the Right Cache</span></h1><p>In-memory caches designed for different purposes.</p><div class="stats"><div class="stat"><div class="sn">Redis</div><div class="sl">Tech</div></div><div class="stat"><div class="sn">Cluster</div><div class="sl">Setup</div></div><div class="stat"><div class="sn">Cache</div><div class="sl">Layer</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Memcached vs Redis</div><h3>Advanced Caching</h3><p>In-memory caches designed for different purposes.</p></div>
-<div class="defbox"><strong>Memcached vs Redis:</strong> In-memory caches designed for different purposes.</div>
-<div class="sec">Memcached vs Redis</div>
-<div class="g2"><div class="gc"><h4>Memcached</h4><p>Simple, fast, multi-threaded. String values only. No persistence.</p></div><div class="gc"><h4>Redis</h4><p>Rich data structures, persistence, replication, clustering.</p></div></div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Memcached vs Redis - why is this important?</div><div class="quiz-opt" onclick="ck(this,false)">A) It replaces databases</div><div class="quiz-opt" onclick="ck(this,true)">B) It reduces latency and improves UX globally</div><div class="quiz-opt" onclick="ck(this,false)">C) Eliminates servers</div><div class="quiz-opt" onclick="ck(this,false)">D) Only for videos</div><div class="quiz-feedback">Advanced caching brings content closer to users.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>CDN Fundamentals</h3><p>Continue learning.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memcached vs Redis | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 6 · Part 2 · Memcached vs Redis</div>
+<h1>Memcached vs Redis<br><span>Choosing the Right Cache</span></h1>
+<p>Both Memcached and Redis are in-memory data stores, but they solve different problems. Understanding their differences helps you choose the right tool for your use case.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Redis</div><div class="sl">Rich Features</div></div>
+<div class="stat"><div class="sn">Memcached</div><div class="sl">Simple Cache</div></div>
+<div class="stat"><div class="sn">Persistence</div><div class="sl">Optional</div></div>
+<div class="stat"><div class="sn">Data Types</div><div class="sl">Multiple</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Toolbox</div>
+<div class="story">
+<div class="slabel">Why Two Tools Exist</div>
+<h3>A Swiss Army knife vs a specialized screwdriver.</h3>
+<p>Imagine you need to tighten a screw. You could use a Swiss Army knife (Redis) — it has many tools and can do almost anything. Or you could use a specialized screwdriver (Memcached) — it does one thing extremely well. Redis is the Swiss Army knife of caching: rich features, persistence, complex data structures. Memcached is the screwdriver: simple, fast, focused on one job. Both are excellent. The choice depends on what you need.</p>
+</div>
+
+<div class="sec">🎯 Why Compare Them?</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Both are in-memory key-value stores, but they have different philosophies:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">🎯 Redis</div><div class="td">Data structure server — does much more than caching</div></div>
+<div class="tag-card"><div class="tc">⚡ Memcached</div><div class="td">Pure caching layer — simple, fast, focused</div></div>
+</div>
+<div class="defbox"><strong>Key Insight:</strong> Redis has largely replaced Memcached in modern systems because it offers more features with similar performance.</div>
+</div>
+
+<div class="sec">📐 Feature Comparison</div>
+<table>
+<thead><tr><th>Feature</th><th>Redis</th><th>Memcached</th></tr></thead>
+<tbody>
+<tr><td class="h">Data Types</td><td>String, Hash, List, Set, Sorted Set, Bitmap, HyperLogLog</td><td>String only</td></tr>
+<tr><td class="h">Persistence</td><td>RDB and AOF snapshots</td><td>No persistence</td></tr>
+<tr><td class="h">Replication</td><td>Master-replica, Cluster</td><td>No built-in replication</td></tr>
+<tr><td class="h">Eviction Policies</td><td>LRU, LFU, and more</td><td>LRU only</td></tr>
+<tr><td class="h">Transactions</td><td>MULTI, EXEC, WATCH</td><td>No transactions</td></tr>
+<tr><td class="h">Pub/Sub</td><td>Yes</td><td>No</td></tr>
+<tr><td class="h">Lua Scripting</td><td>Yes</td><td>No</td></tr>
+<tr><td class="h">Memory Efficiency</td><td>Good</td><td>Excellent (simple structure)</td></tr>
+<tr><td class="h">Multi-threading</td><td>Single-threaded (per core)</td><td>Multi-threaded</td></tr>
+<tr><td class="h">Cluster Support</td><td>Native Redis Cluster</td><td>Client-side sharding only</td></tr>
+</tbody>
+</table>
+
+<div class="sec">⚖ Performance Comparison</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Both are extremely fast, but with different characteristics:</p>
+<div class="g2">
+<div class="gc"><h4>Redis</h4><p>Single-threaded per core. Extremely fast for most operations. Can handle 100,000+ QPS per core. Rich operations add slight overhead.</p></div>
+<div class="gc"><h4>Memcached</h4><p>Multi-threaded. Can utilize multiple CPU cores. Slightly faster for simple GET/SET operations. No complex operations.</p></div>
+</div>
+<div class="defbox"><strong>Key Insight:</strong> For simple caching, both are fast enough. The difference is usually negligible compared to network latency.</div>
+</div>
+
+<div class="sec">🎯 When to Choose Redis</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Need Data Structures</div><div class="td">Sorted sets for leaderboards, hashes for objects</div></div>
+<div class="tag-card"><div class="tc">✅ Need Persistence</div><div class="td">Cache data survives restarts</div></div>
+<div class="tag-card"><div class="tc">✅ Need Pub/Sub</div><div class="td">Real-time messaging, notifications</div></div>
+<div class="tag-card"><div class="tc">✅ Need Complex Operations</div><div class="td">Atomic increments, set operations, Lua scripts</div></div>
+<div class="tag-card"><div class="tc">✅ Need High Availability</div><div class="td">Built-in replication and failover</div></div>
+</div>
+</div>
+
+<div class="sec">🎯 When to Choose Memcached</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Simple Caching Only</div><div class="td">Just need GET/SET with no extra features</div></div>
+<div class="tag-card"><div class="tc">✅ Maximum Memory Efficiency</div><div class="td">Memcached's slab allocation is very efficient</div></div>
+<div class="tag-card"><div class="tc">✅ Multi-threading Needed</div><div class="td">Want to utilize all CPU cores for simple operations</div></div>
+<div class="tag-card"><div class="tc">✅ No Persistence Needed</div><div class="td">Cache can be rebuilt from database</div></div>
+</div>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Why Most Companies Choose Redis</h3>
+<p>Instagram uses Redis for: Feed caching (sorted sets), Session storage (hashes), Rate limiting (counters), Real-time features (pub/sub). They chose Redis because they needed multiple data structures and persistence. Memcached would have required multiple specialized tools.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Redis vs Memcached — which would you choose and why?"</strong><div class="mini">"I would choose Redis for most modern applications because it offers more features (data structures, persistence, replication) with similar performance. I would only choose Memcached if I needed pure, simple caching with maximum memory efficiency."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Redis = Swiss Army Knife. Memcached = Specialized Tool.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What is the main advantage of Redis over Memcached?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Redis is faster</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Redis supports multiple data structures and persistence</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Redis uses less memory</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Redis is simpler to use</div>
+<div class="quiz-feedback" id="q1">Redis offers rich data structures (hashes, lists, sets, sorted sets), persistence, replication, and more — making it more versatile than Memcached.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. When would you choose Memcached over Redis?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) When you need persistence</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) When you need complex data structures</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) When you need simple, pure caching with maximum memory efficiency</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) When you need replication</div>
+<div class="quiz-feedback" id="q2">Memcached excels at simple key-value caching with excellent memory efficiency and multi-threading, but lacks Redis's advanced features.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 3: CDN Fundamentals & Cache Control</h3><p>Learn how CDNs work, cache control headers, edge caching, and how CDNs reduce latency for global users.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,5 +1,192 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Chapter 5 Revision | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 5 Part 8 - Chapter 5 Revision</div><h1>Chapter 5 Revision<br><span>Caching Summary</span></h1><p>Comprehensive review of caching concepts.</p><div class="stats"><div class="stat"><div class="sn">Cache</div><div class="sl">Performance</div></div><div class="stat"><div class="sn">Hit Rate</div><div class="sl">>90%</div></div><div class="stat"><div class="sn">Pattern</div><div class="sl">Design</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Chapter 5 Revision</div><h3>The Cache Mindset</h3><p>Caching stores expensive-to-compute results in fast memory. Comprehensive review of caching concepts.</p></div>
-<div class="defbox"><strong>Chapter 5 Revision:</strong> Comprehensive review of caching concepts.</div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Chapter 5 Revision - what is the primary goal?</div><div class="quiz-opt" onclick="ck(this,false)">A) Reduce storage costs</div><div class="quiz-opt" onclick="ck(this,true)">B) Improve read performance by reducing database load</div><div class="quiz-opt" onclick="ck(this,false)">C) Increase write throughput</div><div class="quiz-opt" onclick="ck(this,false)">D) Simplify code</div><div class="quiz-feedback">Caching avoids expensive database queries.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Chapter 6: Advanced Caching</h3><p>Continue learning.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chapter 5 Revision | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 5 · Part 8 · Revision</div>
+<h1>Caching Fundamentals — Revision<br><span>Complete Chapter Summary</span></h1>
+<p>Consolidate all caching concepts from Chapter 5. Includes cheat sheets, flashcards, mind map, common mistakes, and interview questions.</p>
+<div class="stats">
+<div class="stat"><div class="sn">7</div><div class="sl">Parts</div></div>
+<div class="stat"><div class="sn">Cache</div><div class="sl">Speed</div></div>
+<div class="stat"><div class="sn">Patterns</div><div class="sl">4 Types</div></div>
+<div class="stat"><div class="sn">Eviction</div><div class="sl">Policies</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📋 Quick Revision Notes</div>
+
+<div class="card">
+<h3 style="color:#a5b4fc;">Cache Fundamentals</h3>
+<p style="color:var(--tm)">Caches store frequently accessed data in fast memory (RAM) to avoid slower database queries. Benefits: Lower latency, reduced database load, better user experience. Key metrics: Cache hit rate, cache miss rate. <strong>Cache = Copy, Not Truth.</strong></p>
+</div>
+
+<div class="card">
+<h3 style="color:#6ee7b7;">Caching Patterns</h3>
+<p style="color:var(--tm)"><strong>Cache-Aside:</strong> App manages cache (most common). <strong>Read-Through:</strong> Cache loads missing data. <strong>Write-Through:</strong> Update cache + DB together. <strong>Write-Behind:</strong> Cache now, DB later (async). Choose based on consistency needs and write patterns.</p>
+</div>
+
+<div class="card">
+<h3 style="color:#fcd34d;">Cache Eviction Policies</h3>
+<p style="color:var(--tm)"><strong>LRU:</strong> Remove least recently used (general purpose). <strong>LFU:</strong> Remove least frequently used (popularity-based). <strong>FIFO:</strong> Remove oldest (simple). <strong>TTL:</strong> Time-based expiry. Right policy improves hit rates without increasing cache size.</p>
+</div>
+
+<div class="card">
+<h3 style="color:#fca5a5;">Cache Stampede Prevention</h3>
+<p style="color:var(--tm)">When popular cache entries expire simultaneously, thousands of requests can overwhelm the database. Prevention: <strong>Locking</strong> (only one rebuilds), <strong>Jitter</strong> (randomize TTL), <strong>Never Expire</strong> (background refresh), <strong>Probabilistic Early Expiration</strong> (refresh popular items proactively).</p>
+</div>
+
+<div class="card">
+<h3 style="color:#c4b5fd;">Cache Invalidation</h3>
+<p style="color:var(--tm)"><strong>TTL-Based:</strong> Automatic expiry (simple, eventual consistency). <strong>Event-Based:</strong> Invalidate on data change (strong consistency). <strong>Write-Through:</strong> Update cache + DB together. <strong>Write-Behind:</strong> Async DB update. Choose based on freshness requirements.</p>
+</div>
+
+<div class="card">
+<h3 style="color:#6ee7b7;">When NOT to Cache</h3>
+<p style="color:var(--tm)">Avoid caching: Frequently changing data (stock prices), Highly sensitive data (passwords), Rarely accessed data (yearly reports), Data requiring strong consistency (banking), Cheap-to-compute data (simple lookups). <strong>Don't cache: Sensitive, volatile, rare, or cheap-to-compute data.</strong></p>
+</div>
+
+<div class="sec">📋 Cheat Sheet</div>
+<table>
+<thead><tr><th>Topic</th><th>Key Takeaway</th></tr></thead>
+<tbody>
+<tr><td class="h">Cache</td><td>Fast memory layer for frequently accessed data</td></tr>
+<tr><td class="h">Cache Hit</td><td>Data found in cache — fast response</td></tr>
+<tr><td class="h">Cache Miss</td><td>Data missing — fetch from database</td></tr>
+<tr><td class="h">Cache-Aside</td><td>App manages cache (most common)</td></tr>
+<tr><td class="h">Read-Through</td><td>Cache loads missing data automatically</td></tr>
+<tr><td class="h">Write-Through</td><td>Update cache + DB together</td></tr>
+<tr><td class="h">Write-Behind</td><td>Cache now, DB later (async)</td></tr>
+<tr><td class="h">LRU</td><td>Evict least recently used</td></tr>
+<tr><td class="h">LFU</td><td>Evict least frequently used</td></tr>
+<tr><td class="h">TTL</td><td>Time-based expiry</td></tr>
+<tr><td class="h">Stampede</td><td>Many misses at once — prevent with lock/jitter</td></tr>
+<tr><td class="h">Invalidation</td><td>TTL, Event, Write-Through, Write-Behind</td></tr>
+<tr><td class="h">Don't Cache</td><td>Sensitive, volatile, rare, cheap data</td></tr>
+</tbody>
+</table>
+
+<div class="sec">💡 Flashcards</div>
+<div class="card">
+<div class="quiz-card">
+<div class="quiz-q">Q: What is a cache hit?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">A: Requested data is found in cache, avoiding a database query</div>
+<div class="quiz-feedback" id="f1">Cache hits are fast. Cache misses require fetching from the slower database.</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">Q: Which caching pattern is most common?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">A: Cache-Aside — application manages the cache</div>
+<div class="quiz-feedback" id="f2">Cache-Aside is simple and gives the application full control over caching logic.</div>
+</div>
+<div class="quiz-card">
+<div class="quiz-q">Q: What is a cache stampede?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">A: Many simultaneous requests miss an expired cache entry and overwhelm the database</div>
+<div class="quiz-feedback" id="f3">Prevent with locking, jitter, or never-expire strategies.</div>
+</div>
+</div>
+
+<div class="sec">🧠 Mind Map</div>
+<div class="viz-box">Caching
+│
+├── Fundamentals
+│   ├── Cache Hit / Miss
+│   ├── Why Memory is Faster
+│   └── Where Caches Exist
+│
+├── Patterns
+│   ├── Cache-Aside
+│   ├── Read-Through
+│   ├── Write-Through
+│   └── Write-Behind
+│
+├── Eviction Policies
+│   ├── LRU
+│   ├── LFU
+│   ├── FIFO
+│   └── TTL
+│
+├── Problems
+│   ├── Cache Stampede
+│   ├── Thundering Herd
+│   └── Stale Data
+│
+├── Invalidation
+│   ├── TTL-Based
+│   ├── Event-Based
+│   └── Write Strategies
+│
+├── When NOT to Cache
+│
+└── Case Studies
+    └── Ticketmaster</div>
+
+<div class="sec">🚨 Common Mistakes</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Caching Everything</div><div class="td">Not all data benefits from caching</div></div>
+<div class="tag-card"><div class="tc">❌ Ignoring Invalidation</div><div class="td">Stale data creates bugs</div></div>
+<div class="tag-card"><div class="tc">❌ Wrong Eviction Policy</div><div class="td">Reduces hit rates</div></div>
+<div class="tag-card"><div class="tc">❌ No Stampede Protection</div><div class="td">Popular expirations can crash the database</div></div>
+<div class="tag-card"><div class="tc">❌ Caching Sensitive Data</div><div class="td">Security risk</div></div>
+</div>
+</div>
+
+<div class="sec">🧪 Final Quiz</div>
+<div class="quiz-card">
+<div class="quiz-q">1. Which caching pattern provides the highest write throughput with eventual consistency?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Cache-Aside</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) Write-Through</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Read-Through</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">D) Write-Behind — writes go to cache first, async flush to DB</div>
+<div class="quiz-feedback" id="q1">Write-Behind provides the highest write throughput by buffering writes in cache and flushing asynchronously to the database.</div>
+</div>
+
+<div class="quiz-card">
+<div class="quiz-q">2. A product page cached for 1 hour expires. 50,000 users request it simultaneously. What's the best prevention strategy?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Increase the TTL</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Use locking — only one request rebuilds the cache, others wait</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Add more database servers</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Disable caching</div>
+<div class="quiz-feedback" id="q2">Locking ensures only one request hits the database to rebuild the cache. All other requests use the rebuilt cache.</div>
+</div>
+
+<div class="sec">➡ Chapter 6 Preview</div>
+<div class="story">
+<div class="slabel">Coming Next</div>
+<h3>Chapter 6: Advanced Caching & CDN</h3>
+<p>
+Learn about Redis Cluster, Memcached vs Redis, CDN fundamentals, edge caching, multi-tier caching, cache warming strategies, and the Facebook News Feed case study.
+</p>
+</div>
+
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

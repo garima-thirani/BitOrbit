@@ -1,5 +1,167 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>When NOT to Cache | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 5 Part 6 - When NOT to Cache</div><h1>When NOT to Cache<br><span>Anti-Patterns</span></h1><p>Scenarios where caching hurts more than helps.</p><div class="stats"><div class="stat"><div class="sn">Cache</div><div class="sl">Performance</div></div><div class="stat"><div class="sn">Hit Rate</div><div class="sl">>90%</div></div><div class="stat"><div class="sn">Pattern</div><div class="sl">Design</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">When NOT to Cache</div><h3>The Cache Mindset</h3><p>Caching stores expensive-to-compute results in fast memory. Scenarios where caching hurts more than helps.</p></div>
-<div class="defbox"><strong>When NOT to Cache:</strong> Scenarios where caching hurts more than helps.</div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. When NOT to Cache - what is the primary goal?</div><div class="quiz-opt" onclick="ck(this,false)">A) Reduce storage costs</div><div class="quiz-opt" onclick="ck(this,true)">B) Improve read performance by reducing database load</div><div class="quiz-opt" onclick="ck(this,false)">C) Increase write throughput</div><div class="quiz-opt" onclick="ck(this,false)">D) Simplify code</div><div class="quiz-feedback">Caching avoids expensive database queries.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Ticketmaster Case Study</h3><p>Continue learning.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>When NOT to Cache | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 5 · Part 6 · When NOT to Cache</div>
+<h1>When NOT to Cache<br><span>Caching Is Not Always the Answer</span></h1>
+<p>Caching solves many problems, but it also introduces complexity, consistency challenges, and costs. Knowing when NOT to cache is as important as knowing when to cache.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Stale</div><div class="sl">Risk</div></div>
+<div class="stat"><div class="sn">Memory</div><div class="sl">Cost</div></div>
+<div class="stat"><div class="sn">Complex</div><div class="sl">Logic</div></div>
+<div class="stat"><div class="sn">Security</div><div class="sl">Concern</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Broken ATM</div>
+<div class="story">
+<div class="slabel">When Caching Goes Wrong</div>
+<h3>Caching the wrong data can be dangerous.</h3>
+<p>Imagine an ATM that caches account balances for 5 minutes to reduce database queries. A customer withdraws ₹10,000. The balance updates in the database. But the ATM still shows the old balance from cache. The customer checks their balance on another ATM — it shows the correct updated balance. Now the customer is confused. Worse, if the customer tries to withdraw more money, the ATM might allow an overdraft because it's showing stale data. This is why <strong>not everything should be cached</strong>.</p>
+</div>
+
+<div class="sec">🎯 Why Caching Isn't Always the Answer</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Caching introduces:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">🔄 Consistency Complexity</div><div class="td">Keeping cache synchronized with database is hard</div></div>
+<div class="tag-card"><div class="tc">💾 Memory Cost</div><div class="td">RAM is expensive. Caching everything is wasteful</div></div>
+<div class="tag-card"><div class="tc">🐛 Debugging Difficulty</div><div class="td">Stale data creates hard-to-reproduce bugs</div></div>
+<div class="tag-card"><div class="tc">🔒 Security Risks</div><div class="td">Caching sensitive data can create vulnerabilities</div></div>
+</div>
+<div class="defbox"><strong>Key Insight:</strong> Caching is a trade-off. Sometimes the costs outweigh the benefits.</div>
+</div>
+
+<div class="sec">❌ When NOT to Cache</div>
+
+<div class="card">
+<h3 style="color:#ef4444;">1. Frequently Changing Data</h3>
+<p style="color:var(--tm);margin-bottom:12px;">If data changes every second, caching provides minimal benefit.</p>
+<div class="viz-box">❌ Real-time stock prices
+❌ Live sports scores
+❌ Active session tokens
+❌ One-time passwords (OTPs)</div>
+<p style="color:var(--tm);margin-top:12px;"><strong>Why:</strong> The cache expires almost immediately. You're adding complexity without meaningful performance gains.</p>
+</div>
+
+<div class="card">
+<h3 style="color:#ef4444;">2. Highly Sensitive Data</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Caching sensitive data increases attack surface.</p>
+<div class="viz-box">❌ Credit card numbers
+❌ Passwords (even hashed)
+❌ Personal health records
+❌ Authentication tokens</div>
+<p style="color:var(--tm);margin-top:12px;"><strong>Why:</strong> Caches are often less secure than databases. A compromised cache exposes sensitive data.</p>
+</div>
+
+<div class="card">
+<h3 style="color:#ef4444;">3. Rarely Accessed Data</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Caching data that's accessed once a month wastes memory.</p>
+<div class="viz-box">❌ Yearly financial reports
+❌ Archived logs
+❌ Historical data rarely queried</div>
+<p style="color:var(--tm);margin-top:12px;"><strong>Why:</strong> The cache hit rate would be near zero. You're paying for memory without benefits.</p>
+</div>
+
+<div class="card">
+<h3 style="color:#ef4444;">4. Data Requiring Strong Consistency</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Banking and financial systems often cannot tolerate stale data.</p>
+<div class="viz-box">❌ Account balances during transfers
+❌ Inventory counts during checkout
+❌ Seat reservations</div>
+<p style="color:var(--tm);margin-top:12px;"><strong>Why:</strong> Stale data can cause financial errors, overselling, or double bookings.</p>
+</div>
+
+<div class="card">
+<h3 style="color:#ef4444;">5. Data That's Cheap to Compute</h3>
+<p style="color:var(--tm);margin-bottom:12px;">If computing the data is already fast, caching adds unnecessary complexity.</p>
+<div class="viz-box">❌ Simple database lookups with good indexes
+❌ Fast mathematical calculations
+❌ Small, frequently updated configs</div>
+<p style="color:var(--tm);margin-top:12px;"><strong>Why:</strong> The database query is already fast enough. Caching adds complexity without meaningful gains.</p>
+</div>
+
+<div class="sec">⚠️ Warning Signs You're Caching Too Much</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📉 Low Hit Rate</div><div class="td">Below 50%? You're caching the wrong things</div></div>
+<div class="tag-card"><div class="tc">🐛 Stale Data Bugs</div><div class="td">Users reporting outdated information</div></div>
+<div class="tag-card"><div class="tc">💸 High Memory Costs</div><div class="td">Cache costs exceed performance benefits</div></div>
+<div class="tag-card"><div class="tc">🔄 Constant Invalidation</div><div class="td">Cache entries expire before being reused</div></div>
+</div>
+</div>
+
+<div class="sec">🎯 Decision Framework</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Before caching, ask:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">1️⃣ Is the data read frequently?</div><div class="td">If no, don't cache</div></div>
+<div class="tag-card"><div class="tc">2️⃣ Is the data expensive to compute?</div><div class="td">If no, don't cache</div></div>
+<div class="tag-card"><div class="tc">3️⃣ Can stale data cause problems?</div><div class="td">If yes, don't cache or use short TTL</div></div>
+<div class="tag-card"><div class="tc">4️⃣ Is the data sensitive?</div><div class="td">If yes, be very careful with caching</div></div>
+<div class="tag-card"><div class="tc">5️⃣ Will the cache hit rate be high?</div><div class="td">If no, don't cache</div></div>
+</div>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Payment Processing System</h3>
+<p>A payment system does NOT cache: Account balances (stale data = financial errors), Transaction status (must be accurate), Authentication tokens (security risk). It DOES cache: Product catalog (read-heavy, changes infrequently), User preferences (personalization, low risk), Country codes (static reference data).</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Would you cache user passwords?"</strong><div class="mini">"Absolutely not. Passwords should never be cached. Even hashed passwords in cache create security risks. Authentication should always verify against the secure database."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Don't cache: Sensitive, volatile, rare, or cheap-to-compute data.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. Which of the following should NOT be cached?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Product catalog</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) One-time passwords (OTPs) — they're short-lived and security-sensitive</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) User preferences</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Country codes</div>
+<div class="quiz-feedback" id="q1">OTPs are short-lived and security-sensitive. Caching them creates security risks and provides minimal benefit.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. Why shouldn't you cache account balances in a banking app?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Banking apps don't need performance</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Stale balances can cause financial errors like overdrafts or double-spending</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Databases are always fast enough</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Caching is too expensive</div>
+<div class="quiz-feedback" id="q2">Banking requires strong consistency. Cached account balances could be stale, leading to incorrect transactions and financial losses.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 7: Ticketmaster Case Study</h3><p>A complete case study on designing a ticket booking system with caching, handling flash sales, and preventing cache stampedes.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

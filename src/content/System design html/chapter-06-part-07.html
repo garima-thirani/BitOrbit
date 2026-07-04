@@ -1,5 +1,187 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Facebook News Feed Case Study | System Design | System Design Interactive</title><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"><link rel="stylesheet" href="sd-styles.css"></head><body><div class="hero"><div class="hero-inner"><div class="badge">Chapter 6 Part 7 - Facebook News Feed Case Study</div><h1>Facebook News Feed Case Study<br><span>Caching at Planet Scale</span></h1><p>How Facebook delivers personalized content to billions.</p><div class="stats"><div class="stat"><div class="sn">CDN</div><div class="sl">Tech</div></div><div class="stat"><div class="sn">Edge</div><div class="sl">Setup</div></div><div class="stat"><div class="sn">Case</div><div class="sl">Study</div></div></div></div></div><div class="wrap"><div class="story"><div class="slabel">Facebook News Feed Case Study</div><h3>Advanced Caching</h3><p>How Facebook delivers personalized content to billions.</p></div>
-<div class="defbox"><strong>Facebook News Feed Case Study:</strong> How Facebook delivers personalized content to billions.</div>
-<div class="sec">Quick Quiz</div>
-<div class="quiz-card"><div class="quiz-q">1. Facebook News Feed Case Study - why is this important?</div><div class="quiz-opt" onclick="ck(this,false)">A) It replaces databases</div><div class="quiz-opt" onclick="ck(this,true)">B) It reduces latency and improves UX globally</div><div class="quiz-opt" onclick="ck(this,false)">C) Eliminates servers</div><div class="quiz-opt" onclick="ck(this,false)">D) Only for videos</div><div class="quiz-feedback">Advanced caching brings content closer to users.</div></div>
-<div class="story"><div class="slabel">Coming Next</div><h3>Chapter 6 Revision</h3><p>Continue learning.</p></div></div><script>function ck(el,correct){const p=el.parentElement;const f=p.querySelector('.quiz-feedback');const o=p.querySelectorAll('.quiz-opt');o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&correct)x.classList.add('correct');else if(x===el&&!correct)x.classList.add('wrong');else if(correct&&x!==el)x.classList.add('correct');});f.classList.add('show');if(correct)f.classList.add('correct');else f.classList.add('wrong');}</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Facebook News Feed Case Study | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 6 · Part 7 · Facebook News Feed</div>
+<h1>Facebook News Feed Case Study<br><span>Designing a High-Performance Feed System</span></h1>
+<p>Facebook's news feed serves billions of users with personalized content. This case study applies multi-tier caching, fanout strategies, and real-time updates to build a scalable feed system.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Fanout</div><div class="sl">Push</div></div>
+<div class="stat"><div class="sn">Cache</div><div class="sl">Multi-Tier</div></div>
+<div class="stat"><div class="sn">Real-time</div><div class="sl">Updates</div></div>
+<div class="stat"><div class="sn">Scale</div><div class="sl">Billions</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 Problem Statement</div>
+<div class="story">
+<div class="slabel">Design Challenge</div>
+<h3>Design a news feed system like Facebook or Twitter.</h3>
+<p>Design a news feed system where users can: Post updates, photos, videos, Follow other users, View personalized feed, Like and comment, Share content. The system must serve millions of users with low latency while handling millions of posts per day.</p>
+</div>
+
+<div class="sec">📋 Requirements</div>
+<div class="g2">
+<div class="gc"><h4>✅ Functional</h4><p>User posts, Follow/unollow, News feed generation, Likes, comments, shares, Notifications, Media uploads, Search</p></div>
+<div class="gc"><h4>📊 Non-Functional</h4><p>Low latency feed loading (< 200ms), High availability, Real-time updates, Personalized content, Handle 1B+ users, Support viral content</p></div>
+</div>
+
+<div class="sec">⚠️ Key Challenges</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📰 Feed Generation</div><div class="td">Millions of users, each with unique feeds</div></div>
+<div class="tag-card"><div class="tc">⚡ Low Latency</div><div class="td">Feed must load in < 200ms</div></div>
+<div class="tag-card"><div class="tc">🔥 Viral Content</div><div class="td">Popular posts can overwhelm systems</div></div>
+<div class="tag-card"><div class="tc">💾 Storage Scale</div><div class="td">Billions of posts, photos, videos</div></div>
+</div>
+</div>
+
+<div class="sec">🏛 High-Level Architecture</div>
+<div class="fig">
+<svg viewBox="0 0 700 400" width="100%">
+<defs>
+<linearGradient id="fbg"><stop offset="0%" stop-color="#1877f2"/><stop offset="100%" stop-color="#0d65d9"/></linearGradient>
+<marker id="fba" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+<rect x="250" y="10" width="200" height="40" rx="8" fill="url(#fbg)"/>
+<text x="350" y="36" fill="white" font-size="15" font-weight="700" text-anchor="middle">👥 Users</text>
+<line x1="350" y1="50" x2="350" y2="70" stroke="#64748b" stroke-width="2" marker-end="url(#fba)"/>
+<rect x="230" y="75" width="240" height="40" rx="8" fill="#6366f1"/>
+<text x="350" y="100" fill="white" font-size="14" font-weight="700" text-anchor="middle">Load Balancer</text>
+<line x1="350" y1="115" x2="350" y2="135" stroke="#64748b" stroke-width="2" marker-end="url(#fba)"/>
+<rect x="230" y="140" width="240" height="40" rx="8" fill="#06b6d4"/>
+<text x="350" y="165" fill="white" font-size="14" font-weight="700" text-anchor="middle">API Gateway</text>
+<line x1="280" y1="180" x2="150" y2="210" stroke="#64748b" stroke-width="2" marker-end="url(#fba)"/>
+<line x1="420" y1="180" x2="550" y2="210" stroke="#64748b" stroke-width="2" marker-end="url(#fba)"/>
+<rect x="30" y="215" width="240" height="40" rx="8" fill="#10b981"/>
+<text x="150" y="240" fill="white" font-size="14" font-weight="700" text-anchor="middle">⚡ Feed Cache (Redis)</text>
+<rect x="430" y="215" width="240" height="40" rx="8" fill="#f59e0b"/>
+<text x="550" y="240" fill="white" font-size="14" font-weight="700" text-anchor="middle">Fanout Service</text>
+<line x1="150" y1="255" x2="150" y2="285" stroke="#64748b" stroke-width="2" marker-end="url(#fba)"/>
+<line x1="550" y1="255" x2="550" y2="285" stroke="#64748b" stroke-width="2" marker-end="url(#fba)"/>
+<rect x="30" y="290" width="240" height="40" rx="8" fill="#ef4444"/>
+<text x="150" y="315" fill="white" font-size="14" font-weight="700" text-anchor="middle">Database (Posts)</text>
+<rect x="430" y="290" width="240" height="40" rx="8" fill="#ef4444"/>
+<text x="550" y="315" fill="white" font-size="14" font-weight="700" text-anchor="middle">CDN (Media)</text>
+</svg>
+<div class="fig-cap">News Feed Architecture: Users → API → Feed Cache → Fanout → Database/CDN</div>
+</div>
+
+<div class="sec">⚡ Multi-Tier Caching Strategy</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Feed systems rely heavily on caching:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">L1: Browser Cache</div><div class="td">Cache static assets, profile pictures</div></div>
+<div class="tag-card"><div class="tc">L2: CDN</div><div class="td">Cache images, videos, popular posts</div></div>
+<div class="tag-card"><div class="tc">L3: Redis</div><div class="td">Cache generated feeds, user data, post metadata</div></div>
+<div class="tag-card"><div class="tc">L4: Database</div><div class="td">Source of truth for all data</div></div>
+</div>
+</div>
+
+<div class="sec">🔄 Fanout Strategies</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">How to deliver posts to followers:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📤 Push Fanout</div><div class="td">When user posts, write to all followers' feeds. Fast reads, slower writes.</div></div>
+<div class="tag-card"><div class="tc">📥 Pull Fanout</div><div class="td">When user loads feed, fetch from all followed users. Slower reads, faster writes.</div></div>
+<div class="tag-card"><div class="tc">🔄 Hybrid</div><div class="td">Push for normal users, pull for celebrities with millions of followers.</div></div>
+</div>
+</div>
+
+<div class="sec">📊 Feed Generation Flow</div>
+<div class="card">
+<div class="viz-box">User Requests Feed
+   ↓
+Check Redis (Cached Feed?)
+ ├── Yes → Return Cached Feed (Fast!)
+ └── No
+        │
+   Fetch from Database
+        │
+   Rank Posts (Algorithm)
+        │
+   Cache in Redis (TTL = 5 min)
+        │
+   Return Feed</div>
+</div>
+
+<div class="sec">🎯 Ranking Algorithm</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Feed ranking considers multiple signals:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">⏰ Recency</div><div class="td">Newer posts rank higher</div></div>
+<div class="tag-card"><div class="tc">❤️ Engagement</div><div class="td">Likes, comments, shares</div></div>
+<div class="tag-card"><div class="tc">👥 Relationship</div><div class="td">Close friends rank higher</div></div>
+<div class="tag-card"><div class="tc">📊 User Behavior</div><div class="td">What the user typically engages with</div></div>
+</div>
+</div>
+
+<div class="sec">⚡ Handling Viral Content</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">When a post goes viral:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📋 Separate Cache</div><div class="td">Store viral posts in dedicated cache</div></div>
+<div class="tag-card"><div class="tc">⏱ TTL Extension</div><div class="td">Keep viral posts cached longer</div></div>
+<div class="tag-card"><div class="tc">📊 Rate Limiting</div><div class="td">Prevent abuse and spam</div></div>
+<div class="tag-card"><div class="tc">🔄 CDN Offload</div><div class="td">Serve viral content from CDN</div></div>
+</div>
+</div>
+
+<div class="sec">🎯 Interview Walkthrough</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">A strong interview answer:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">1️⃣ Identify challenges</div><div class="td">Scale, latency, personalization</div></div>
+<div class="tag-card"><div class="tc">2️⃣ Multi-tier caching</div><div class="td">Browser, CDN, Redis, Database</div></div>
+<div class="tag-card"><div class="tc">3️⃣ Fanout strategy</div><div class="td">Push for normal, pull for celebrities</div></div>
+<div class="tag-card"><div class="tc">4️⃣ Feed ranking</div><div class="td">ML-based personalization</div></div>
+<div class="tag-card"><div class="tc">5️⃣ Handle viral content</div><div class="td">Dedicated caches, CDN</div></div>
+<div class="tag-card"><div class="tc">6️⃣ Real-time updates</div><div class="td">WebSockets, push notifications</div></div>
+</div>
+</div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Feed = Cache + Fanout + Rank. Push for normal users, pull for celebrities.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. Why use push fanout for normal users and pull fanout for celebrities?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Celebrities don't post often</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Celebrities have millions of followers — pushing to all would be expensive</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Normal users don't care about latency</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Pull is always better</div>
+<div class="quiz-feedback" id="q1">A celebrity with 10M followers would require 10M writes per post. Pull fanout is more efficient — fetch posts when followers request their feed.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 8: Chapter 6 Revision</h3><p>Comprehensive review of all advanced caching concepts with cheat sheets, flashcards, mind maps, and interview questions.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>
