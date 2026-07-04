@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Introduction to Scalability - Scale Up, Scale Out | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.scale-node{cursor:pointer;transition: all 0.3s ease;}
+.scale-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 10 · Part 1 · Scalability Fundamentals</div>
+<h1>Introduction to Scalability<br><span>Scale Up vs Scale Out, Performance & Capacity Planning</span></h1>
+<p>Every successful software system eventually becomes a scalability problem. Learn the fundamentals of scalability, when to scale vertically vs horizontally, and how to plan for growth.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Scale Up</div><div class="sl">Vertical</div></div>
+<div class="stat"><div class="sn">Scale Out</div><div class="sl">Horizontal</div></div>
+<div class="stat"><div class="sn">Throughput</div><div class="sl">Capacity</div></div>
+<div class="stat"><div class="sn">Latency</div><div class="sl">Speed</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Startup That Went Viral</div>
+<div class="story">
+<div class="slabel">Day 1 vs Week 2</div>
+<h3>500 users to 5 million users overnight.</h3>
+<p>A small startup launches an online photo-sharing platform. On Day 1, they have 500 users. Everything works perfectly. Requests take 30 ms. Life is good. One week later, a famous celebrity shares the platform. Traffic becomes 5 Million Users. Suddenly the database hits 100% CPU, the server runs out of memory, the API starts timing out, and users see errors. Nothing changed in the code. Only the number of users. This is where <strong>Scalability Engineering</strong> begins.</p>
+</div>
+
+<div class="sec">🎯 What is Scalability?</div>
+<div class="defbox">
+<strong>Scalability:</strong> The ability of a system to handle increasing workload without unacceptable degradation in performance. Simple definition: More Users → More Work → Still Performs Well.
+</div>
+
+<div class="sec">🔄 Interactive: Scalability vs Performance</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each concept to understand the difference.</p>
+<div class="fig">
+<svg viewBox="0 0 700 200" width="100%" id="scaleDiagram">
+<defs>
+<marker id="sa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Performance Box -->
+<rect class="scale-node" data-type="performance" x="50" y="50" width="280" height="120" rx="8" fill="#6366f1"/>
+<text x="190" y="75" fill="white" font-size="14" font-weight="700" text-anchor="middle">Performance</text>
+<text x="190" y="100" fill="#cbd5e1" font-size="12" text-anchor="middle">"How fast is it NOW?"</text>
+<text x="190" y="120" fill="#94a3b8" font-size="11" text-anchor="middle">Current speed</text>
+<text x="190" y="140" fill="#94a3b8" font-size="11" text-anchor="middle">Response time today</text>
+
+<!-- Arrow -->
+<line x1="330" y1="110" x2="360" y2="110" stroke="#64748b" stroke-width="2" marker-end="url(#sa)"/>
+
+<!-- Scalability Box -->
+<rect class="scale-node" data-type="scalability" x="370" y="50" width="280" height="120" rx="8" fill="#10b981"/>
+<text x="510" y="75" fill="white" font-size="14" font-weight="700" text-anchor="middle">Scalability</text>
+<text x="510" y="100" fill="#cbd5e1" font-size="12" text-anchor="middle">"Will it stay fast at 100×?"</text>
+<text x="510" y="120" fill="#94a3b8" font-size="11" text-anchor="middle">Future growth</text>
+<text x="510" y="140" fill="#94a3b8" font-size="11" text-anchor="middle">Architectural optimization</text>
+
+<!-- Tooltip -->
+<rect x="50" y="190" width="600" height="25" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="207" fill="#e2e8f0" font-size="11" text-anchor="middle" id="scaleTooltip">Click on each concept to learn more</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Performance vs Scalability</div>
+<table>
+<thead><tr><th>Aspect</th><th>Performance</th><th>Scalability</th></tr></thead>
+<tbody>
+<tr><td class="h">Question</td><td>"How fast is it today?"</td><td>"Will it stay fast at 100×?"</td></tr>
+<tr><td class="h">Focus</td><td>Current speed</td><td>Future growth</td></tr>
+<tr><td class="h">Type</td><td>Local optimization</td><td>Architectural optimization</td></tr>
+<tr><td class="h">Time</td><td>Today</td><td>Tomorrow</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🔄 Interactive: Vertical vs Horizontal Scaling</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each scaling strategy to see how it works.</p>
+<div class="fig">
+<svg viewBox="0 0 700 280" width="100%" id="scalingDiagram">
+<defs>
+<marker id="va" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Vertical Scaling -->
+<rect class="scale-node" data-scale="vertical" x="50" y="30" width="280" height="100" rx="8" fill="#8b5cf6"/>
+<text x="190" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">Vertical Scaling (Scale Up)</text>
+<text x="190" y="80" fill="#cbd5e1" font-size="12" text-anchor="middle">Bigger Machine</text>
+<text x="190" y="100" fill="#94a3b8" font-size="11" text-anchor="middle">8GB → 32GB → 128GB RAM</text>
+<text x="190" y="120" fill="#94a3b8" font-size="11" text-anchor="middle">4 CPU → 16 CPU → 64 CPU</text>
+
+<!-- Horizontal Scaling -->
+<rect class="scale-node" data-scale="horizontal" x="370" y="30" width="280" height="100" rx="8" fill="#06b6d4"/>
+<text x="510" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">Horizontal Scaling (Scale Out)</text>
+<text x="510" y="80" fill="#cbd5e1" font-size="12" text-anchor="middle">More Machines</text>
+<text x="510" y="100" fill="#94a3b8" font-size="11" text-anchor="middle">1 Server → 10 Servers → 100</text>
+<text x="510" y="120" fill="#94a3b8" font-size="11" text-anchor="middle">Load Balancer distributes traffic</text>
+
+<!-- Comparison -->
+<rect x="50" y="160" width="600" height="80" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="185" fill="#e2e8f0" font-size="13" font-weight="700" text-anchor="middle">Key Differences</text>
+<text x="100" y="205" fill="#a5b4fc" font-size="11" text-anchor="middle">✔ Vertical: Simple, limited, single point of failure</text>
+<text x="100" y="225" fill="#6ee7b7" font-size="11" text-anchor="middle">✔ Horizontal: Complex, unlimited, high availability</text>
+
+<!-- Tooltip -->
+<rect x="50" y="250" width="600" height="25" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="267" fill="#e2e8f0" font-size="11" text-anchor="middle" id="scalingTooltip">Click on each strategy to learn more</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📈 Throughput vs Latency</div>
+<div class="defbox">
+<strong>Throughput:</strong> How much work the system completes (requests/second, orders/second). <strong>Latency:</strong> How long one request takes (milliseconds). Adding lanes increases throughput but not necessarily individual car speed.
+</div>
+
+<div class="sec">🎯 Availability & The Nines</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">99%</div><div class="td">~3.65 days downtime/year</div></div>
+<div class="tag-card"><div class="tc">99.9%</div><div class="td">~8.8 hours downtime/year</div></div>
+<div class="tag-card"><div class="tc">99.99%</div><div class="td">~52 minutes downtime/year</div></div>
+<div class="tag-card"><div class="tc">99.999%</div><div class="td">~5 minutes downtime/year</div></div>
+</div>
+</div>
+
+<div class="sec">🔄 Bottleneck Analysis</div>
+<div class="defbox">
+<strong>Bottleneck:</strong> The slowest component in a system. If the database can only handle 1,500 requests/second but the API can handle 10,000, the entire system is limited to 1,500 requests/second. Adding more API servers changes nothing.
+</div>
+
+<div class="sec">📊 Common Bottlenecks</div>
+<table>
+<thead><tr><th>Resource</th><th>Symptoms</th><th>Solutions</th></tr></thead>
+<tbody>
+<tr><td class="h">CPU</td><td>High utilization, slow processing</td><td>Horizontal scaling, better algorithms</td></tr>
+<tr><td class="h">Memory</td><td>OOM errors, GC pauses</td><td>Add memory, reduce allocations</td></tr>
+<tr><td class="h">Database</td><td>Slow queries, connection limits</td><td>Read replicas, sharding, caching</td></tr>
+<tr><td class="h">Network</td><td>High latency, packet loss</td><td>CDN, compression, regional deployment</td></tr>
+<tr><td class="h">Disk I/O</td><td>Slow writes, high I/O wait</td><td>SSDs, better indexing, batch writes</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon Black Friday</h3>
+<p>Traffic increases 20× during Black Friday. Amazon uses autoscaling to add more EC2 instances and Kubernetes pods. Redis cache absorbs the load. Checkout continues normally because the architecture was designed to scale.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What's the difference between performance and scalability?"</strong><div class="mini">"Performance measures how fast a system operates under its current workload. Scalability measures whether the system can continue to perform well as workload increases. A system with 20ms response time for 100 users has excellent performance, but if that becomes 30 seconds at 10 million users, it has poor scalability."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Performance = Today. Scalability = Tomorrow. Always design for tomorrow.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 2: CAP Theorem</h3><p>Learn why distributed systems must choose between Consistency and Availability during network partitions, and how to make the right trade-offs.</p></div>
+</div>
+
+<script>
+// Interactive scaling diagram
+const scaleInfo = {
+'performance': 'Performance: Measures how fast the system operates RIGHT NOW. Current response time, current throughput, current resource utilization. Optimization focuses on code, algorithms, and infrastructure. A Ferrari has excellent performance but can only carry 2 people - not scalable for a family of 10.',
+'scalability': 'Scalability: Measures whether the system can maintain performance as load increases 10×, 100×, or 1000×. Requires architectural thinking: load balancers, replication, sharding, caching. A bus has moderate performance but scales well for transporting 100 people.',
+'vertical': 'Vertical Scaling: Increase power of one machine. 8GB RAM → 128GB RAM. Simple, no code changes, but has hardware limits. Single point of failure. Eventually you hit the ceiling. Like upgrading from a motorcycle to a truck.',
+'horizontal': 'Horizontal Scaling: Add more machines. 1 server → 10 servers → 100 servers. Theoretically unlimited. Requires load balancers, stateless design, data distribution. More complex but the only viable long-term strategy for internet-scale systems. Like adding more lanes to a highway.'
+};
+
+document.querySelectorAll('.scale-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const type = this.getAttribute('data-type') || this.getAttribute('data-scale');
+const tooltip = document.getElementById('scaleTooltip') || document.getElementById('scalingTooltip');
+tooltip.textContent = scaleInfo[type] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

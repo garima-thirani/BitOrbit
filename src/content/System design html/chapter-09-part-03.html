@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Service Communication - REST, gRPC, Messaging | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.comm-node{cursor:pointer;transition: all 0.3s ease;}
+.comm-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 9 · Part 3 · Service Communication</div>
+<h1>Service Communication<br><span>REST, gRPC, Messaging & Communication Patterns</span></h1>
+<p>A Microservice architecture is only as good as the communication between its services. Learn when to use REST vs gRPC vs Kafka, synchronous vs asynchronous patterns, and how to avoid the distributed monolith anti-pattern.</p>
+<div class="stats">
+<div class="stat"><div class="sn">REST</div><div class="sl">Simple</div></div>
+<div class="stat"><div class="sn">gRPC</div><div class="sl">Fast</div></div>
+<div class="stat"><div class="sn">Kafka</div><div class="sl">Events</div></div>
+<div class="stat"><div class="sn">Sync</div><div class="sl">vs Async</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — Amazon Checkout Problem</div>
+<div class="story">
+<div class="slabel">One Click, Ten Services</div>
+<h3>Customer clicks "Buy Now". Amazon must validate customer, verify payment, reserve inventory, calculate shipping, generate invoice, notify warehouse, send email, update analytics, update recommendations, detect fraud. Should Order Service directly call all ten services? Absolutely not. Every new service increases dependencies. Eventually one service depends on dozens of others. This architecture becomes fragile.</h3>
+<p>Inside a monolith, calling Payment Service is just a function call: `paymentService.processPayment()`. Simple. Fast. Milliseconds. In Microservices, it becomes: network → serialization → authentication → load balancer → retries → timeouts → response. Suddenly takes 20-200ms. Communication becomes the biggest engineering challenge.</p>
+</div>
+
+<div class="sec">🎯 Synchronous vs Asynchronous</div>
+<div class="defbox">
+<strong>Golden Rule:</strong> Use synchronous communication only when the caller MUST wait for the answer. Everything else should be asynchronous if business requirements allow. Payment authorization → synchronous (user waits). Sending confirmation email → asynchronous (user doesn't wait). Updating analytics → asynchronous (nobody waits).
+</div>
+
+<div class="sec">🔄 Interactive: Communication Patterns</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each pattern to see when to use it.</p>
+<div class="fig">
+<svg viewBox="0 0 700 280" width="100%" id="commDiagram">
+<defs>
+<marker id="ca" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- REST -->
+<rect class="comm-node" data-comm="rest" x="50" y="50" width="140" height="80" rx="8" fill="#6366f1"/>
+<text x="120" y="75" fill="white" font-size="12" font-weight="700" text-anchor="middle">REST</text>
+<text x="120" y="95" fill="#cbd5e1" font-size="10" text-anchor="middle">HTTP + JSON</text>
+<text x="120" y="115" fill="#cbd5e1" font-size="10" text-anchor="middle">Public APIs</text>
+
+<!-- gRPC -->
+<rect class="comm-node" data-comm="grpc" x="220" y="50" width="140" height="80" rx="8" fill="#10b981"/>
+<text x="290" y="75" fill="white" font-size="12" font-weight="700" text-anchor="middle">gRPC</text>
+<text x="290" y="95" fill="#cbd5e1" font-size="10" text-anchor="middle">Protobuf + HTTP/2</text>
+<text x="290" y="115" fill="#cbd5e1" font-size="10" text-anchor="middle">Internal APIs</text>
+
+<!-- Kafka -->
+<rect class="comm-node" data-comm="kafka" x="390" y="50" width="140" height="80" rx="8" fill="#f59e0b"/>
+<text x="460" y="75" fill="white" font-size="12" font-weight="700" text-anchor="middle">Kafka</text>
+<text x="460" y="95" fill="#cbd5e1" font-size="10" text-anchor="middle">Event Streaming</text>
+<text x="460" y="115" fill="#cbd5e1" font-size="10" text-anchor="middle">Async Processing</text>
+
+<!-- GraphQL -->
+<rect class="comm-node" data-comm="graphql" x="560" y="50" width="140" height="80" rx="8" fill="#8b5cf6"/>
+<text x="630" y="75" fill="white" font-size="12" font-weight="700" text-anchor="middle">GraphQL</text>
+<text x="630" y="95" fill="#cbd5e1" font-size="10" text-anchor="middle">Flexible Queries</text>
+<text x="630" y="115" fill="#cbd5e1" font-size="10" text-anchor="middle">Client-Specific</text>
+
+<!-- Tooltip -->
+<rect x="50" y="180" width="650" height="30" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="375" y="200" fill="#e2e8f0" font-size="11" text-anchor="middle" id="commTooltip">Click on each communication type to learn when to use it</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Communication Comparison</div>
+<table>
+<thead><tr><th>Aspect</th><th>REST</th><th>gRPC</th><th>Kafka</th></tr></thead>
+<tbody>
+<tr><td class="h">Protocol</td><td>HTTP/1.1</td><td>HTTP/2</td><td>TCP</td></tr>
+<tr><td class="h">Format</td><td>JSON</td><td>Protobuf</td><td>Binary</td></tr>
+<tr><td class="h">Speed</td><td>Moderate</td><td>Very Fast</td><td>Millions/sec</td></tr>
+<tr><td class="h">Use Case</td><td>Public APIs</td><td>Internal APIs</td><td>Event Streaming</td></tr>
+<tr><td class="h">Coupling</td><td>Tight</td><td>Medium</td><td>Loose</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🔄 Request-Reply vs Fire-and-Forget</div>
+<div class="g2">
+<div class="gc">
+<h4 style="color:#6366f1;">Request-Reply (Synchronous)</h4>
+<div class="viz-box">Order Service
+   ↓
+Payment Service
+   ↓
+Wait for response
+   ↓
+Continue
+
+Use when: User needs immediate answer</div>
+</div>
+<div class="gc">
+<h4 style="color:#f59e0b;">Fire-and-Forget (Async)</h4>
+<div class="viz-box">Order Service
+   ↓
+Kafka
+   ↓
+Return immediately
+
+Analytics processes later
+
+Use when: User doesn't need to wait</div>
+</div>
+</div>
+
+<div class="sec">✅ API Composition & BFF</div>
+<div class="defbox">
+<strong>API Composition:</strong> Instead of frontend calling 4 services (Orders, Payments, Shipping, Reviews), an Aggregator service calls them all and returns one response. Reduces client-side complexity.
+</div>
+<div class="defbox">
+<strong>Backend For Frontend (BFF):</strong> Different clients need different APIs. Mobile needs small payloads. Desktop needs rich dashboards. TV needs streaming metadata. BFF provides client-specific optimized endpoints instead of one-size-fits-all API.
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon Checkout Communication</h3>
+<p><strong>Synchronous:</strong> Payment authorization (user waits for approval), Inventory validation (must confirm stock exists).<br><br>
+<strong>Asynchronous:</strong> OrderCreated event → Kafka → Shipping, Email, Analytics, Recommendations, Fraud Detection, Warehouse. Each processes independently. User doesn't wait for these.<br><br>
+This separation keeps checkout fast (synchronous path is short) while enabling scalable background processing (asynchronous).</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"When should you choose REST over Kafka?"</strong><div class="mini">"Use REST when the caller requires an immediate response, such as payment authorization or user authentication. Use Kafka when downstream processing can occur asynchronously, such as analytics, notifications, recommendations, or audit logging. The key question is: does the user need to wait for this?"</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>User Waits → Synchronous (REST/gRPC). User Doesn't Wait → Asynchronous (Kafka). Keep the critical path short.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 4: Data Management - Database per Service & Polyglot Persistence</h3><p>Learn why each microservice should own its database, how to handle distributed data, and why sharing databases creates distributed monoliths.</p></div>
+</div>
+
+<script>
+// Interactive communication diagram
+const commInfo = {
+'rest': 'REST: Best for public APIs, browser clients, third-party integrations. Simple, human-readable, widely supported. Use JSON format. Slower than gRPC but easier to debug and test.',
+'grpc': 'gRPC: Best for internal service-to-service communication. Uses Protocol Buffers (binary, compact). HTTP/2 provides multiplexing and streaming. Much faster than REST. Perfect for data centers and microservices.',
+'kafka': 'Kafka: Best for event streaming and asynchronous processing. Millions of events per second. Multiple consumers process independently. Enables loose coupling. Use for analytics, notifications, recommendations, background jobs.',
+'graphql': 'GraphQL: Best when clients need flexible queries. Client specifies exactly what data it needs. Reduces over-fetching and under-fetching. Single endpoint. Harder caching and authorization. Good for mobile and web apps with varying data needs.'
+};
+
+document.querySelectorAll('.comm-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const comm = this.getAttribute('data-comm');
+const tooltip = document.getElementById('commTooltip');
+tooltip.textContent = commInfo[comm] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Observability - Logging, Metrics, Tracing & Monitoring | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.obs-node{cursor:pointer;transition: all 0.3s ease;}
+.obs-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 9 · Part 8 · Observability</div>
+<h1>Observability in Microservices<br><span>Logging, Metrics, Tracing & Production Monitoring</span></h1>
+<p>Monitoring tells you that something is wrong. Observability tells you why. Learn the three pillars of observability and how to debug distributed systems using Logs, Metrics, and Traces.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Logs</div><div class="sl">What Happened</div></div>
+<div class="stat"><div class="sn">Metrics</div><div class="sl">How Healthy</div></div>
+<div class="stat"><div class="sn">Traces</div><div class="sl">Why It Happened</div></div>
+<div class="stat"><div class="sn">OpenTelemetry</div><div class="sl">Standard</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The 500 Error Mystery</div>
+<div class="story">
+<div class="slabel">Everything Looks Healthy</div>
+<h3>Amazon Checkout returns 500 errors. Users cannot place orders. Monitoring dashboard shows Order Service is healthy. CPU normal. Memory normal. Network normal. Everything looks fine. Yet customers cannot buy anything. Without observability, engineers spend hours searching logs. With observability, they identify the failing service within minutes.</h3>
+<p>Monitoring answers "What happened?" Observability answers "Why did it happen?" Imagine one user request travels through Gateway → Orders → Payments → Inventory → Shipping. Where did it fail? Without tracing, nobody knows. This is why modern systems need all three pillars: Logs, Metrics, and Traces working together.</p>
+</div>
+
+<div class="sec">🎯 The Three Pillars</div>
+<div class="defbox">
+<strong>Observability Three Pillars:</strong> Logs record discrete events (what happened). Metrics measure system health over time (how healthy). Traces show how a request flows across services (why it happened). Together they provide complete visibility. None replaces the others. Use all three.
+</div>
+
+<div class="sec">🔄 Interactive: Three Pillars of Observability</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each pillar to understand its role in debugging distributed systems.</p>
+<div class="fig">
+<svg viewBox="0 0 700 250" width="100%" id="obsDiagram">
+<defs>
+<marker id="oa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Logs -->
+<rect class="obs-node" data-pillar="logs" x="50" y="50" width="180" height="100" rx="8" fill="#6366f1"/>
+<text x="140" y="70" fill="white" font-size="13" font-weight="700" text-anchor="middle">Logs</text>
+<text x="140" y="90" fill="#cbd5e1" font-size="10" text-anchor="middle">Discrete Events</text>
+<text x="140" y="110" fill="#cbd5e1" font-size="10" text-anchor="middle">"Payment started"</text>
+<text x="140" y="130" fill="#cbd5e1" font-size="10" text-anchor="middle">"Payment success"</text>
+
+<!-- Metrics -->
+<rect class="obs-node" data-pillar="metrics" x="260" y="50" width="180" height="100" rx="8" fill="#10b981"/>
+<text x="350" y="70" fill="white" font-size="13" font-weight="700" text-anchor="middle">Metrics</text>
+<text x="350" y="90" fill="#cbd5e1" font-size="10" text-anchor="middle">System Health</text>
+<text x="350" y="110" fill="#cbd5e1" font-size="10" text-anchor="middle">CPU: 95%</text>
+<text x="350" y="130" fill="#cbd5e1" font-size="10" text-anchor="middle">Latency: 500ms</text>
+
+<!-- Traces -->
+<rect class="obs-node" data-pillar="traces" x="470" y="50" width="180" height="100" rx="8" fill="#f59e0b"/>
+<text x="560" y="70" fill="white" font-size="13" font-weight="700" text-anchor="middle">Traces</text>
+<text x="560" y="90" fill="#cbd5e1" font-size="10" text-anchor="middle">Request Flow</text>
+<text x="560" y="110" fill="#cbd5e1" font-size="10" text-anchor="middle">Gateway → Orders</text>
+<text x="560" y="130" fill="#cbd5e1" font-size="10" text-anchor="middle">→ Payments → Inventory</text>
+
+<!-- Tooltip -->
+<rect x="50" y="180" width="600" height="30" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="200" fill="#e2e8f0" font-size="11" text-anchor="middle" id="obsTooltip">Click on each pillar to understand observability</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Structured Logging</div>
+<div class="card">
+<h3 style="color:#ef4444;">❌ Bad Log</h3>
+<div class="viz-box">Payment Done!!
+
+Missing: timestamp, service, order ID, trace ID, severity
+Nearly useless for debugging</div>
+
+<h3 style="color:#10b981;">✅ Good Log (JSON)</h3>
+<div class="viz-box">{
+  "timestamp":"2026-08-01T10:15:33Z",
+  "service":"payment",
+  "level":"ERROR",
+  "traceId":"abc123",
+  "message":"Payment failed",
+  "orderId":"ORD902",
+  "error":"Insufficient funds"
+}
+
+Searchable, indexable, machine-readable</div>
+</div>
+
+<div class="sec">🔄 Distributed Tracing</div>
+<div class="defbox">
+<strong>Distributed Tracing:</strong> Follows one request across multiple services. Each request gets a Trace ID. Every service propagates the same ID. Example: Customer checkout → Trace ID "xyz789" → Gateway (30ms) → Orders (60ms) → Payments (400ms!) → Inventory (25ms). Trace shows Payment is slow. Without traces, you'd never know.
+</div>
+
+<div class="sec">✅ Key Metrics to Monitor</div>
+<div class="card">
+<h3 style="color:#6366f1;">Four Golden Signals (Google SRE)</h3>
+<div class="viz-box">L - Latency: Time per request
+T - Traffic: Requests per second
+E - Errors: Error rate
+S - Saturation: Resource usage
+
+Remember: LTES</div>
+
+<h3 style="color:#10b981;">RED Method (For APIs)</h3>
+<div class="viz-box">R - Rate: Requests per second
+E - Errors: Failed requests
+D - Duration: Response time
+
+Perfect for microservices</div>
+</div>
+
+<div class="sec">🔄 OpenTelemetry & Tools</div>
+<div class="g2">
+<div class="gc">
+<h4 style="color:#6366f1;">OpenTelemetry</h4>
+<div class="viz-box">Modern standard for observability
+Provides: Metrics + Logs + Traces
+One instrumentation library
+Vendor-neutral
+Integrates with everything</div>
+</div>
+<div class="gc">
+<h4 style="color:#10b981;">Tool Stack</h4>
+<div class="viz-box">Prometheus → Metrics
+Grafana → Dashboards
+Jaeger → Distributed Traces
+Elasticsearch → Log Search
+Kibana → Log Visualization
+AlertManager → Alerts</div>
+</div>
+</div>
+
+<div class="sec">📊 SLI, SLO & SLA</div>
+<table>
+<thead><tr><th>Term</th><th>Meaning</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td class="h">SLI</td><td>Service Level Indicator</td><td>Availability: 99.95%</td></tr>
+<tr><td class="h">SLO</td><td>Service Level Objective</td><td>Target: 99.99%</td></tr>
+<tr><td class="h">SLA</td><td>Service Level Agreement</td><td>Legal promise to customers</td></tr>
+<tr><td class="h">Error Budget</td><td>Allowed downtime</td><td>43 minutes/month for 99.9%</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon Observability Stack</h3>
+<p>Every request gets Trace ID and Correlation ID. Structured JSON logs flow to Elasticsearch. Metrics go to Prometheus. Traces stored in Jaeger. Grafana dashboards show real-time health. AlertManager triggers PagerDuty for critical issues. Engineers debug checkout failures by searching Trace ID across all services. Root cause identified in minutes, not hours.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How do you debug a slow request across 10 microservices?"</strong><div class="mini">"Use distributed tracing with Trace IDs propagated through all services. Each service logs the Trace ID. Search Jaeger for the Trace ID to see the complete request path. Identify which service is slow. Check logs for that service using the same Trace ID. Metrics confirm if it's a pattern or one-off. This is why Trace IDs are non-negotiable in microservices."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Logs tell "What". Metrics tell "Where". Traces tell "Why". Together they tell the complete story. Every request needs a Trace ID.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 9: Deployment & Infrastructure - Docker, Kubernetes, CI/CD</h3><p>Learn how to deploy microservices using containers, Kubernetes orchestration, rolling updates, canary deployments, and CI/CD pipelines.</p></div>
+</div>
+
+<script>
+// Interactive observability diagram
+const obsInfo = {
+'logs': 'Logs: Record discrete events. Every important action should be logged. Use structured logging (JSON) with timestamp, service name, trace ID, log level, and message. Centralize logs in Elasticsearch. Search and analyze with Kibana. Never use plain text logs.',
+'metrics': 'Metrics: Measure system health over time. Track: Requests/sec, Error rate, Latency, CPU, Memory, Queue length. Use Prometheus to collect, Grafana to visualize. Set up alerts for anomalies. Monitor business metrics too: orders/minute, revenue/hour.',
+'traces': 'Traces: Follow one request across services. Each request gets Trace ID. Every service adds spans. Visualize in Jaeger. Shows exactly where time is spent. Identifies slow services immediately. Essential for debugging distributed systems.'
+};
+
+document.querySelectorAll('.obs-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const pillar = this.getAttribute('data-pillar');
+const tooltip = document.getElementById('obsTooltip');
+tooltip.textContent = obsInfo[pillar] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security in Microservices - OAuth2, JWT, mTLS & Zero Trust | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.security-node{cursor:pointer;transition: all 0.3s ease;}
+.security-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 9 · Part 10 · Security</div>
+<h1>Security in Microservices<br><span>OAuth2, JWT, mTLS & Zero Trust Architecture</span></h1>
+<p>In a microservices architecture, every network call is a potential attack surface. Learn to secure microservices with OAuth2, JWT, mTLS, Vault, and Zero Trust. Security is no longer a gateway feature—it must exist in every service.</p>
+<div class="stats">
+<div class="stat"><div class="sn">OAuth2</div><div class="sl">Auth</div></div>
+<div class="stat"><div class="sn">JWT</div><div class="sl">Tokens</div></div>
+<div class="stat"><div class="sn">mTLS</div><div class="sl">Service Auth</div></div>
+<div class="stat"><div class="sn">Zero Trust</div><div class="sl">Verify All</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Internal API Attack</div>
+<div class="story">
+<div class="slabel">Front Door Locked, Rooms Open</div>
+<h3>Company secures API Gateway perfectly. Internet → Gateway → Microservices. Everything looks safe. But attacker gains access to one compromised container. From inside the cluster, they can call Payment Service, Inventory Service, Customer Service freely. Internal communication was never secured. Company protected front door but left every room inside unlocked.</h3>
+<p>Monolith has very few communication paths: Application → Database. Microservices have hundreds of APIs and thousands of network calls. Every connection must be trusted. Security becomes much harder. This is why modern microservices use Zero Trust: verify every request, every service, every hop.</p>
+</div>
+
+<div class="sec">🎯 Authentication vs Authorization</div>
+<div class="defbox">
+<strong>Authentication (Who are you?):</strong> Verifies identity. Example: User logs in with password, system verifies it's Alice.<br><br>
+<strong>Authorization (What can you do?):</strong> Verifies permissions. Example: Alice can view orders but cannot refund orders.<br><br>
+Authentication happens first, then authorization. Both are mandatory in every microservice.
+</div>
+
+<div class="sec">🔄 Interactive: Security Layers</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each layer to understand defense in depth.</p>
+<div class="fig">
+<svg viewBox="0 0 700 250" width="100%" id="securityDiagram">
+<defs>
+<marker id="sa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- User -->
+<rect x="280" y="20" width="140" height="40" rx="6" fill="#6366f1"/>
+<text x="350" y="45" fill="white" font-size="12" font-weight="700" text-anchor="middle">User</text>
+
+<!-- Authentication -->
+<rect class="security-node" data-layer="auth" x="280" y="70" width="140" height="40" rx="6" fill="#10b981"/>
+<text x="350" y="85" fill="white" font-size="11" font-weight="700" text-anchor="middle">Authentication</text>
+<text x="350" y="100" fill="#cbd5e1" font-size="10" text-anchor="middle">OAuth2 + JWT</text>
+
+<!-- Authorization -->
+<rect class="security-node" data-layer="authz" x="280" y="120" width="140" height="40" rx="6" fill="#f59e0b"/>
+<text x="350" y="135" fill="white" font-size="11" font-weight="700" text-anchor="middle">Authorization</text>
+<text x="350" y="150" fill="#cbd5e1" font-size="10" text-anchor="middle">RBAC / ABAC</text>
+
+<!-- Gateway -->
+<rect class="security-node" data-layer="gateway" x="280" y="170" width="140" height="40" rx="6" fill="#8b5cf6"/>
+<text x="350" y="185" fill="white" font-size="11" font-weight="700" text-anchor="middle">API Gateway</text>
+<text x="350" y="200" fill="#cbd5e1" font-size="10" text-anchor="middle">Rate Limit, SSL</text>
+
+<!-- Microservices -->
+<rect x="50" y="230" width="600" height="30" rx="4" fill="#1e293b" stroke="#6366f1"/>
+<text x="350" y="250" fill="#e2e8f0" font-size="10" text-anchor="middle">Microservices (Orders, Payments, Inventory, Shipping...)</text>
+
+<!-- Arrows -->
+<line x1="350" y1="60" x2="350" y2="70" stroke="#64748b" stroke-width="2" marker-end="url(#sa)"/>
+<line x1="350" y1="110" x2="350" y2="120" stroke="#64748b" stroke-width="2" marker-end="url(#sa)"/>
+<line x1="350" y1="160" x2="350" y2="170" stroke="#64748b" stroke-width="2" marker-end="url(#sa)"/>
+<line x1="350" y1="210" x2="350" y2="230" stroke="#64748b" stroke-width="2" marker-end="url(#sa)"/>
+
+<!-- Tooltip -->
+<rect x="50" y="270" width="600" height="25" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="287" fill="#e2e8f0" font-size="11" text-anchor="middle" id="securityTooltip">Click on each layer to understand security</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 JWT (JSON Web Token)</div>
+<div class="card">
+<h3 style="color:#10b981;">How JWT Works</h3>
+<div class="viz-box">User logs in
+   ↓
+Server validates credentials
+   ↓
+Creates JWT (3 parts):
+   1. Header (algorithm)
+   2. Payload (user info, expiry)
+   3. Signature (verification)
+   ↓
+Client stores JWT
+   ↓
+Every request includes JWT
+   ↓
+Server verifies signature
+
+Stateless. No session storage needed.</div>
+
+<h3 style="color:#f59e0b;">JWT Payload Example</h3>
+<div class="viz-box">{
+  "sub":"12345",      // User ID
+  "name":"Alice",
+  "role":"customer",
+  "exp":1712345678    // Expiry
+}
+
+Never store passwords in JWT!</div>
+</div>
+
+<div class="sec">🔄 OAuth2 & OpenID Connect</div>
+<div class="defbox">
+<strong>OAuth2:</strong> Authorization framework allowing apps to access resources on behalf of users. Example: "Login with Google" - password never reaches your app. Google provides access token.<br><br>
+<strong>OpenID Connect (OIDC):</strong> Adds authentication to OAuth2. Provides identity information (name, email) in ID Token. OAuth2 = authorization, OIDC = authentication + authorization.
+</div>
+
+<div class="sec">✅ mTLS (Mutual TLS)</div>
+<div class="defbox">
+<strong>mTLS:</strong> Normal TLS secures server only. mTLS secures both sides. Both client and server present certificates. Example: Orders Service calls Payments Service. Both verify each other's certificates. Prevents unauthorized services from impersonating trusted services. Essential for service-to-service communication in Zero Trust architecture.
+</div>
+
+<div class="sec">🔄 Zero Trust Architecture</div>
+<div class="defbox">
+<strong>Zero Trust:</strong> Old assumption: "Inside network = trusted". Modern assumption: "Trust nothing, verify everything". Every user, service, and request must authenticate and authorize itself, regardless of location. Every network hop performs verification. No implicit trust. This philosophy prevents lateral movement attacks.
+</div>
+
+<div class="sec">📊 Security Best Practices</div>
+<table>
+<thead><tr><th>Practice</th><th>Why</th><th>Tool</th></tr></thead>
+<tbody>
+<tr><td class="h">Secrets Management</td><td>Never hardcode passwords</td><td>HashiCorp Vault</td></tr>
+<tr><td class="h">Service Identity</td><td>Each service has identity</td><td>mTLS Certificates</td></tr>
+<tr><td class="h">Least Privilege</td><td>Minimal permissions</td><td>RBAC / ABAC</td></tr>
+<tr><td class="h">Encryption</td><td>Protect data</td><td>TLS/mTLS</td></tr>
+<tr><td class="h">Secret Rotation</td><td>Limit breach impact</td><td>Automated Vault</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon Security Stack</h3>
+<p>Customer logs in with OAuth2 + OIDC → receives short-lived JWT → API Gateway validates JWT → Internal services communicate with mTLS → Every service has unique identity → Secrets stored in Vault with automatic rotation → RBAC governs permissions → All traffic encrypted in transit and at rest → Every request logged and audited. Zero Trust everywhere.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How do you secure microservices?"</strong><div class="mini">"Use OAuth2 + OIDC for user authentication with short-lived JWTs. Validate tokens at API Gateway. Use mTLS for service-to-service authentication. Store secrets in Vault with automatic rotation. Apply RBAC for authorization. Encrypt all data in transit and at rest. Follow Zero Trust: verify every request, every service, every hop. Never trust internal traffic."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Users → OAuth2/JWT → Gateway → mTLS → Services → Vault → Zero Trust. Security at every layer, every hop, every request.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 11: Performance & Scaling - Caching, Load Balancing, Autoscaling</h3><p>Learn performance optimization with caching, connection pooling, load balancing, stateless services, and autoscaling for handling millions of users.</p></div>
+</div>
+
+<script>
+// Interactive security diagram
+const securityInfo = {
+'auth': 'Authentication: OAuth2 + OIDC for user login. Identity Provider (Google, Auth0, Okta) verifies credentials. Issues short-lived JWT access token + refresh token. JWT contains user claims (ID, role, expiry). Stateless - no server-side session needed.',
+'authz': 'Authorization: RBAC (Role-Based Access Control) assigns roles to users. ABAC (Attribute-Based) uses attributes (department, location, time). Gateway or each service checks permissions. Principle: Least Privilege - give minimum permissions needed.',
+'gateway': 'API Gateway Security: First line of defense. Validates JWT, enforces rate limiting, applies SSL/TLS termination, logs all requests, blocks suspicious IPs. Centralizes security so individual services don\'t repeat it. But business logic stays in services, not gateway.'
+};
+
+document.querySelectorAll('.security-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const layer = this.getAttribute('data-layer');
+const tooltip = document.getElementById('securityTooltip');
+tooltip.textContent = securityInfo[layer] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

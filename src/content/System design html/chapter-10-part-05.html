@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partitioning & Sharding - Scaling Databases | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.shard-node{cursor:pointer;transition: all 0.3s ease;}
+.shard-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 10 · Part 5 · Partitioning & Sharding</div>
+<h1>Partitioning & Sharding<br><span>Scaling Databases Beyond a Single Machine</span></h1>
+<p>Replication solves availability. Sharding solves scale. Every internet-scale database eventually reaches the point where one machine is no longer enough. Learn how to partition data across multiple servers.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Horizontal</div><div class="sl">Split Rows</div></div>
+<div class="stat"><div class="sn">Vertical</div><div class="sl">Split Columns</div></div>
+<div class="stat"><div class="sn">Hash</div><div class="sl">Even Distribution</div></div>
+<div class="stat"><div class="sn">Range</div><div class="sl">Ordered Data</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — Amazon's Growing Orders Database</div>
+<div class="story">
+<div class="slabel">When One Database Isn't Enough</div>
+<h3>Amazon starts with one database. Initially 100 orders/day. Everything works. Years later: 50 million orders/day. The database suffers from high CPU, slow queries, large indexes, storage limits. Buying a larger server no longer helps.</h3>
+<p>Amazon's solution is <strong>Sharding</strong>. By splitting data across multiple databases, each server handles only a subset of the data. This distributes the workload and enables horizontal scaling. Sharding is inevitable at internet scale.</p>
+</div>
+
+<div class="sec">🎯 What is Sharding?</div>
+<div class="defbox">
+<strong>Sharding:</strong> Horizontal partitioning across multiple machines. Each database (shard) contains only a subset of the data. A shard router determines which shard stores or retrieves each record. Enables both storage and workload scaling.
+</div>
+
+<div class="sec">🔄 Interactive: Partitioning Strategies</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each partitioning strategy to understand how it works.</p>
+<div class="fig">
+<svg viewBox="0 0 700 320" width="100%" id="shardingDiagram">
+<defs>
+<marker id="ha" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Horizontal Partitioning -->
+<rect class="shard-node" data-type="horizontal" x="50" y="30" width="280" height="100" rx="8" fill="#6366f1"/>
+<text x="190" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">Horizontal Partitioning</text>
+<text x="190" y="80" fill="#cbd5e1" font-size="12" text-anchor="middle">Split rows across shards</text>
+<text x="190" y="100" fill="#94a3b8" font-size="11" text-anchor="middle">Users 1-1M → Shard A</text>
+<text x="190" y="118" fill="#94a3b8" font-size="11" text-anchor="middle">Users 1M-2M → Shard B</text>
+
+<!-- Vertical Partitioning -->
+<rect class="shard-node" data-type="vertical" x="370" y="30" width="280" height="100" rx="8" fill="#8b5cf6"/>
+<text x="510" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">Vertical Partitioning</text>
+<text x="510" y="80" fill="#cbd5e1" font-size="12" text-anchor="middle">Split columns across databases</text>
+<text x="510" y="100" fill="#94a3b8" font-size="11" text-anchor="middle">User DB: Name, Email</text>
+<text x="510" y="118" fill="#94a3b8" font-size="11" text-anchor="middle">Payment DB: Card, Transactions</text>
+
+<!-- Hash-Based Sharding -->
+<rect class="shard-node" data-type="hash" x="50" y="160" width="280" height="100" rx="8" fill="#10b981"/>
+<text x="190" y="185" fill="white" font-size="14" font-weight="700" text-anchor="middle">Hash-Based Sharding</text>
+<text x="190" y="210" fill="#cbd5e1" font-size="12" text-anchor="middle">hash(userId) → Shard</text>
+<text x="190" y="230" fill="#94a3b8" font-size="11" text-anchor="middle">Even distribution</text>
+<text x="190" y="248" fill="#94a3b8" font-size="11" text-anchor="middle">Avoids hotspots</text>
+
+<!-- Range-Based Sharding -->
+<rect class="shard-node" data-type="range" x="370" y="160" width="280" height="100" rx="8" fill="#f59e0b"/>
+<text x="510" y="185" fill="white" font-size="14" font-weight="700" text-anchor="middle">Range-Based Sharding</text>
+<text x="510" y="210" fill="#cbd5e1" font-size="12" text-anchor="middle">User IDs 1-1M → Shard A</text>
+<text x="510" y="230" fill="#94a3b8" font-size="11" text-anchor="middle">Easy to implement</text>
+<text x="510" y="248" fill="#94a3b8" font-size="11" text-anchor="middle">Risk of hotspots</text>
+
+<!-- Tooltip -->
+<rect x="50" y="280" width="600" height="25" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="297" fill="#e2e8f0" font-size="11" text-anchor="middle" id="shardingTooltip">Click on each strategy to learn more</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Sharding Strategies Comparison</div>
+<table>
+<thead><tr><th>Strategy</th><th>Distribution</th><th>Range Queries</th><th>Hotspot Risk</th><th>Use Case</th></tr></thead>
+<tbody>
+<tr><td class="h">Hash-Based</td><td>Excellent</td><td>Expensive</td><td>Low</td><td>Even load</td></tr>
+<tr><td class="h">Range-Based</td><td>Poor</td><td>Cheap</td><td>High</td><td>Ordered data</td></tr>
+<tr><td class="h">Directory-Based</td><td>Flexible</td><td>Medium</td><td>Low</td><td>Custom rules</td></tr>
+<tr><td class="h">Geo-Based</td><td>Regional</td><td>Medium</td><td>Medium</td><td>Global apps</td></tr>
+</tbody>
+</table>
+
+<div class="sec">✅ Choosing a Shard Key</div>
+<div class="defbox">
+<strong>Good Shard Key:</strong> High cardinality, even distribution, frequently queried, stable. <strong>Bad Shard Key:</strong> Low cardinality (Country), sequential (timestamp), mutable. Example: Using "Country" as shard key means 80% US traffic hits one shard - hotspot!
+</div>
+
+<div class="sec">🔄 Hotspots & Rebalancing</div>
+<div class="defbox">
+<strong>Hotspot:</strong> One shard receives much more traffic than others. Example: Celebrity account with millions of followers on one shard. <strong>Rebalancing:</strong> Moving data between shards to distribute load. Requires online migration, minimal downtime, and careful planning.
+</div>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Instagram & Uber</h3>
+<p><strong>Instagram:</strong> Users sharded by User ID using hash-based sharding. Media stored separately. Follower graph uses different storage. Different services use different shard keys.<br><br>
+<strong>Uber:</strong> Trips sharded by Trip ID, Drivers by Driver ID, Payments by Region. Each service chooses shard keys based on query patterns.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How do you choose a shard key?"</strong><div class="mini">"A good shard key has high cardinality, distributes data evenly, remains stable, and aligns with common query patterns. Avoid low-cardinality keys like country or status. Prefer user IDs, UUIDs, or composite keys. The shard key is the most important long-term design decision."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Hash = even distribution. Range = ordered queries. Directory = flexible. Choose shard key carefully - changing it later is very expensive.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 6: Consistent Hashing</h3><p>Learn why traditional hashing fails when servers change, and how consistent hashing minimizes data movement during scaling.</p></div>
+</div>
+
+<script>
+// Interactive sharding diagram
+const shardingInfo = {
+'horizontal': 'Horizontal Partitioning: Split rows across shards. Users 1-1M on Shard A, Users 1M-2M on Shard B. Same schema, different rows. Excellent for scaling large tables. Most common sharding strategy. Example: User table with 100M rows split across 10 shards.',
+'vertical': 'Vertical Partitioning: Split columns across databases. User DB has Name, Email. Payment DB has Card, Transactions. Same row ID, different attributes. Useful for separating hot/cold data or security/compliance. Example: Separate PII from business data.',
+'hash': 'Hash-Based Sharding: Apply hash function to shard key. hash(userId) % N determines shard. Excellent distribution, avoids hotspots. Problem: Range queries require querying all shards. Example: Cassandra, DynamoDB use consistent hashing.',
+'range': 'Range-Based Sharding: Assign continuous ranges to shards. User IDs 1-1M → Shard A, 1M-2M → Shard B. Easy to implement, efficient range queries. Problem: Hotspots if new IDs concentrate on one shard. Example: Early user IDs all on Shard A.'
+};
+
+document.querySelectorAll('.shard-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const type = this.getAttribute('data-type');
+const tooltip = document.getElementById('shardingTooltip');
+tooltip.textContent = shardingInfo[type] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

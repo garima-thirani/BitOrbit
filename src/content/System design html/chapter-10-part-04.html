@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Replication - Leader-Follower, Multi-Leader, Leaderless | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.replication-node{cursor:pointer;transition: all 0.3s ease;}
+.replication-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 10 · Part 4 · Replication</div>
+<h1>Replication<br><span>Leader-Follower, Multi-Leader & Leaderless Replication</span></h1>
+<p>Data replication is the foundation of modern distributed systems. Learn why replication exists, the different replication topologies, and how to choose the right strategy for your use case.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Leader-Follower</div><div class="sl">Most Common</div></div>
+<div class="stat"><div class="sn">Multi-Leader</div><div class="sl">Global Writes</div></div>
+<div class="stat"><div class="sn">Leaderless</div><div class="sl">High Availability</div></div>
+<div class="stat"><div class="sn">Replica Lag</div><div class="sl">Challenge</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Datacenter Fire</div>
+<div class="story">
+<div class="slabel">Why Replication Matters</div>
+<h3>Amazon stores all orders in one database server in Virginia. One day, the entire datacenter loses power. Millions of customers cannot place orders. Years of business stop instantly.</h3>
+<p>Amazon's solution is not a bigger server. It is <strong>Replication</strong>. By maintaining multiple copies of data across different servers and regions, Amazon ensures that if one datacenter fails, others continue serving traffic. Replication provides high availability, fault tolerance, disaster recovery, and faster reads for geographically distributed users.</p>
+</div>
+
+<div class="sec">🎯 What is Replication?</div>
+<div class="defbox">
+<strong>Replication:</strong> Maintaining multiple copies of the same data across different servers or locations. Instead of one database, we have many: Primary, Replica 1, Replica 2, Replica 3. If one fails, others continue.
+</div>
+
+<div class="sec">🔄 Interactive: Replication Topologies</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each replication strategy to understand how it works.</p>
+<div class="fig">
+<svg viewBox="0 0 700 320" width="100%" id="replicationDiagram">
+<defs>
+<marker id="ra" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Leader-Follower -->
+<rect class="replication-node" data-type="leaderfollower" x="50" y="30" width="280" height="100" rx="8" fill="#6366f1"/>
+<text x="190" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">Leader-Follower</text>
+<text x="190" y="80" fill="#cbd5e1" font-size="12" text-anchor="middle">One leader accepts writes</text>
+<text x="190" y="100" fill="#94a3b8" font-size="11" text-anchor="middle">Followers replicate data</text>
+<text x="190" y="118" fill="#94a3b8" font-size="11" text-anchor="middle">Reads can go to any replica</text>
+
+<!-- Multi-Leader -->
+<rect class="replication-node" data-type="multileader" x="370" y="30" width="280" height="100" rx="8" fill="#f59e0b"/>
+<text x="510" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">Multi-Leader</text>
+<text x="510" y="80" fill="#cbd5e1" font-size="12" text-anchor="middle">Multiple leaders accept writes</text>
+<text x="510" y="100" fill="#94a3b8" font-size="11" text-anchor="middle">Each region has a leader</text>
+<text x="510" y="118" fill="#94a3b8" font-size="11" text-anchor="middle">Conflict resolution needed</text>
+
+<!-- Leaderless -->
+<rect class="replication-node" data-type="leaderless" x="50" y="160" width="280" height="100" rx="8" fill="#10b981"/>
+<text x="190" y="185" fill="white" font-size="14" font-weight="700" text-anchor="middle">Leaderless</text>
+<text x="190" y="210" fill="#cbd5e1" font-size="12" text-anchor="middle">No central leader</text>
+<text x="190" y="230" fill="#94a3b8" font-size="11" text-anchor="middle">Every node accepts reads/writes</text>
+<text x="190" y="248" fill="#94a3b8" font-size="11" text-anchor="middle">Quorum-based consistency</text>
+
+<!-- Comparison -->
+<rect x="370" y="160" width="280" height="100" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="510" y="185" fill="#e2e8f0" font-size="13" font-weight="700" text-anchor="middle">Key Trade-offs</text>
+<text x="390" y="210" fill="#a5b4fc" font-size="11" text-anchor="middle">✔ Leader-Follower: Simple, strong consistency</text>
+<text x="390" y="230" fill="#fcd34d" font-size="11" text-anchor="middle">✔ Multi-Leader: Regional writes, conflicts</text>
+<text x="390" y="248" fill="#6ee7b7" font-size="11" text-anchor="middle">✔ Leaderless: Max availability, complex</text>
+
+<!-- Tooltip -->
+<rect x="50" y="280" width="600" height="25" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="297" fill="#e2e8f0" font-size="11" text-anchor="middle" id="replicationTooltip">Click on each strategy to learn more</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Replication Comparison</div>
+<table>
+<thead><tr><th>Aspect</th><th>Leader-Follower</th><th>Multi-Leader</th><th>Leaderless</th></tr></thead>
+<tbody>
+<tr><td class="h">Write Scaling</td><td>One leader</td><td>Multiple leaders</td><td>Any node</td></tr>
+<tr><td class="h">Complexity</td><td>Low</td><td>Medium</td><td>High</td></tr>
+<tr><td class="h">Conflicts</td><td>None</td><td>Possible</td><td>Possible</td></tr>
+<tr><td class="h">Availability</td><td>High</td><td>Very High</td><td>Maximum</td></tr>
+<tr><td class="h">Examples</td><td>MySQL, PostgreSQL</td><td>Global apps</td><td>Cassandra, DynamoDB</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🔄 Synchronous vs Asynchronous Replication</div>
+<div class="defbox">
+<strong>Synchronous:</strong> Leader waits for followers to confirm before returning success. Strong consistency, higher latency. <strong>Asynchronous:</strong> Leader returns success immediately, followers replicate later. Lower latency, possible data loss. <strong>Semi-Synchronous:</strong> Leader waits for at least one follower. Best of both worlds.
+</div>
+
+<div class="sec">✅ Read Replicas & Replica Lag</div>
+<div class="defbox">
+<strong>Read Replicas:</strong> Followers that handle read traffic, reducing load on the leader. <strong>Replica Lag:</strong> Delay between leader update and follower update. During this time, followers contain stale data. Monitor replica lag continuously.
+</div>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>MySQL & PostgreSQL</h3>
+<p><strong>MySQL:</strong> Uses Leader-Follower replication. Primary handles writes, read replicas handle queries. Asynchronous replication by default, semi-synchronous available.<br><br>
+<strong>PostgreSQL:</strong> Streaming replication with automatic failover. Standby servers can be promoted to primary if the leader fails.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What's the difference between synchronous and asynchronous replication?"</strong><div class="mini">"Synchronous replication waits for replicas to acknowledge before returning success, providing stronger consistency at the cost of higher latency. Asynchronous replication returns success immediately after the leader commits, offering better performance but allowing temporary replica lag and possible data loss during failures."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Leader writes, followers replicate. Sync = wait, Async = fast. Read replicas scale reads, not writes. Monitor replica lag.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 5: Partitioning & Sharding</h3><p>Learn how to split large databases across multiple servers using horizontal partitioning, range-based sharding, hash-based sharding, and directory-based sharding.</p></div>
+</div>
+
+<script>
+// Interactive replication diagram
+const replicationInfo = {
+'leaderfollower': 'Leader-Follower Replication: The most common topology. One leader accepts all writes and propagates to followers. Followers replicate changes asynchronously or synchronously. Reads can be served from followers to scale read capacity. Simple, mature, strong consistency possible. Examples: MySQL, PostgreSQL.',
+'multileader': 'Multi-Leader Replication: Multiple leaders accept writes in different regions. Each region has local low-latency writes. Changes are replicated between leaders. Requires conflict resolution when same data is modified in different regions. Better for global applications with regional writes. Examples: Global SaaS applications.',
+'leaderless': 'Leaderless Replication: No central leader. Every node accepts reads and writes. Uses quorum protocol (R + W > N) for consistency. No single bottleneck, maximum availability. More complex client logic. Examples: Cassandra, DynamoDB, Riak.'
+};
+
+document.querySelectorAll('.replication-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const type = this.getAttribute('data-type');
+const tooltip = document.getElementById('replicationTooltip');
+tooltip.textContent = replicationInfo[type] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

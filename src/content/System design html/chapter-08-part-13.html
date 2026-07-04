@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Revision & Master Cheat Sheet | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.cheat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:20px 0;}
+.cheat-card{background:#1e293b;border:1px solid #6366f1;border-radius:10px;padding:16px;transition:all 0.3s ease;}
+.cheat-card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(99,102,241,0.3);}
+.cheat-card h3{color:#a5b4fc;margin-top:0;font-size:16px;}
+.cheat-card ul{margin:8px 0;padding-left:20px;}
+.cheat-card li{margin:6px 0;color:#e2e8f0;font-size:13px;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 8 · Part 13 · Final Revision</div>
+<h1>Final Revision & Master Cheat Sheet<br><span>Complete EDA Review for Interviews</span></h1>
+<p>Consolidate everything you've learned about Event-Driven Architecture. Master cheat sheets, interview questions, and quick revision guides.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Concepts</div><div class="sl">13 Parts</div></div>
+<div class="stat"><div class="sn">Cheat</div><div class="sl">Sheets</div></div>
+<div class="stat"><div class="sn">Interview</div><div class="sl">Ready</div></div>
+<div class="stat"><div class="sn">Production</div><div class="sl">Proven</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📋 Master Cheat Sheet - Core Concepts</div>
+<div class="cheat-grid">
+<div class="cheat-card">
+<h3>🎯 Event Types</h3>
+<ul>
+<li><strong>Domain Event:</strong> Internal, free to evolve</li>
+<li><strong>Integration Event:</strong> Public, stable contract</li>
+<li><strong>Event:</strong> Something that happened</li>
+<li><strong>Command:</strong> User intent</li>
+</ul>
+</div>
+
+<div class="cheat-card">
+<h3>🔄 Event Flow</h3>
+<ul>
+<li><strong>Event Storming:</strong> Business discovery</li>
+<li><strong>Broker:</strong> Decouples producers/consumers</li>
+<li><strong>Bus:</strong> Communication pattern</li>
+<li><strong>Mesh:</strong> Global multi-region</li>
+</ul>
+</div>
+
+<div class="cheat-card">
+<h3>📊 Schema Evolution</h3>
+<ul>
+<li><strong>Backward:</strong> New consumer reads old</li>
+<li><strong>Forward:</strong> Old consumer reads new</li>
+<li><strong>Full:</strong> Both directions work</li>
+<li><strong>Registry:</strong> Schema governance</li>
+</ul>
+</div>
+
+<div class="cheat-card">
+<h3>⏱️ Ordering</h3>
+<ul>
+<li><strong>Lamport:</strong> Logical time, causal order</li>
+<li><strong>Vector:</strong> Detects concurrency</li>
+<li><strong>Partition Key:</strong> Business ID for ordering</li>
+<li><strong>Kafka:</strong> Guarantees per-partition</li>
+</ul>
+</div>
+
+<div class="cheat-card">
+<h3>📐 Architecture Patterns</h3>
+<ul>
+<li><strong>CQRS:</strong> Separate reads/writes</li>
+<li><strong>Event Sourcing:</strong> Store history</li>
+<li><strong>Projection:</strong> Event → Read Model</li>
+<li><strong>Replay:</strong> Rebuild from events</li>
+</ul>
+</div>
+
+<div class="cheat-card">
+<h3>🏭 Production</h3>
+<ul>
+<li><strong>DLQ:</strong> Failed events</li>
+<li><strong>Lag:</strong> Consumer backlog</li>
+<li><strong>Tracing:</strong> Correlation ID</li>
+<li><strong>Monitoring:</strong> Metrics + Alerts</li>
+</ul>
+</div>
+</div>
+
+<div class="sec">🧠 Memory Tricks</div>
+<div class="card">
+<div class="viz-box">Event Types:
+Inside Service → Domain Event → Translate → Integration Event → Outside World
+
+Event Storming:
+Business → Events → Commands → Aggregates → Policies → Read Models → Microservices
+
+Schema Evolution:
+Schema → Registry → Version → Compatibility → Migration
+
+Ordering:
+Time → Causality → Logical Clocks → Partition Key → Idempotency
+
+Architecture:
+Command → Write Model → Event → Projection → Read Model → Query
+
+Production:
+Event → Retry → DLQ → Replay → Tracing → Monitoring → Recovery</div>
+</div>
+
+<div class="sec">🎯 Top Interview Questions</div>
+<div class="card">
+<h3 style="color:#fbbf24;">Q1: Domain vs Integration Events?</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Domain events are internal, free to evolve. Integration events are public contracts, must remain stable. Use Translation Layer between them.</p>
+
+<h3 style="color:#fbbf24;">Q2: Why Event Storming first?</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Identifies business workflows and boundaries before implementation. Prevents designing microservices around technical layers instead of business capabilities.</p>
+
+<h3 style="color:#fbbf24;">Q3: Schema evolution with 200 consumers?</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Add optional fields with defaults. Register new schema version. Deploy consumers first, then producers. Monitor validation errors before deprecating old versions.</p>
+
+<h3 style="color:#fbbf24;">Q4: Kafka ordering guarantee?</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Guaranteed only within single partition. Use business identifiers (Order ID, Conversation ID) as partition keys to maintain ordering for related events.</p>
+
+<h3 style="color:#fbbf24;">Q5: CQRS vs Event Sourcing?</h3>
+<p style="color:var(--tm);margin-bottom:12px;">CQRS separates reads from writes. Event Sourcing stores history instead of state. They complement each other: Event Sourcing provides the event log, CQRS builds optimized read models.</p>
+
+<h3 style="color:#fbbf24;">Q6: Analytics database deleted?</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Redeploy projection service with replay mode. Replay historical events from Event Store/Kafka. Rebuild analytics database. Validate correctness. Return to normal operation.</p>
+
+<h3 style="color:#fbbf24;">Q7: Poison message blocking queue?</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Implement DLQ after max retries. Use exponential backoff + jitter. Monitor DLQ size. Operations team investigates. Replay valid events after resolution.</p>
+</div>
+
+<div class="sec">📊 Quick Reference - Technology Choices</div>
+<table>
+<thead><tr><th>Need</th><th>Use</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td class="h">Event Streaming</td><td>Kafka</td><td>High throughput, replay, retention</td></tr>
+<tr><td class="h">Message Queue</td><td>RabbitMQ</td><td>Background jobs, simple routing</td></tr>
+<tr><td class="h">Global Mesh</td><td>Pulsar</td><td>Multi-region, geo-replication</td></tr>
+<tr><td class="h">Schema Registry</td><td>Confluent/Redpanda</td><td>Schema validation, compatibility</td></tr>
+<tr><td class="h">Event Store</td><td>EventStoreDB</td><td>Event Sourcing, optimistic concurrency</td></tr>
+<tr><td class="h">Write DB</td><td>PostgreSQL</td><td>ACID, transactions, consistency</td></tr>
+<tr><td class="h">Read Cache</td><td>Redis</td><td>Millisecond reads, high throughput</td></tr>
+<tr><td class="h">Search</td><td>Elasticsearch</td><td>Full-text search, analytics</td></tr>
+<tr><td class="h">Analytics</td><td>ClickHouse</td><td>OLAP, time-series, aggregations</td></tr>
+</tbody>
+</table>
+
+<div class="sec">✅ Chapter 8 Summary</div>
+<div class="story">
+<div class="slabel">You've Mastered</div>
+<h3>Complete Event-Driven Architecture</h3>
+<p>✅ Event Types & Boundaries<br>
+✅ Event Storming & Modeling<br>
+✅ Event Brokers & Event Mesh<br>
+✅ Schema Evolution & Versioning<br>
+✅ Event Ordering & Causality<br>
+✅ CQRS & Event Sourcing<br>
+✅ Event Replay & Time Travel<br>
+✅ Production Operations<br>
+✅ Real-World Case Studies</p>
+</div>
+
+<div class="sec">🎓 Ready for Interviews</div>
+<div class="card">
+<div class="viz-box">You can now:
+✓ Explain EDA to any audience
+✓ Design event-driven systems
+✓ Choose right technologies
+✓ Handle production issues
+✓ Think in trade-offs
+✓ Answer any EDA interview question
+
+Next: Practice with design exercises!</div>
+</div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 9: Microservices Architecture</h3><p>Service boundaries, API Gateway, Service Mesh, Inter-service communication, Saga pattern, Circuit Breaker, and complete microservices design.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

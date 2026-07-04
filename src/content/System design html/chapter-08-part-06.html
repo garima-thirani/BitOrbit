@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Event Versioning & Schema Evolution | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.compat-arrow{transition: all 0.3s ease;cursor:pointer;}
+.compat-arrow:hover{stroke-width:4;filter: drop-shadow(0 0 6px #6366f1);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 8 · Part 6 · Schema Evolution</div>
+<h1>Event Versioning & Schema Evolution<br><span>Evolving Events Without Breaking 200+ Consumers</span></h1>
+<p>Software changes. Business changes. Events must evolve too. Learn backward/forward compatibility, Schema Registry, Avro, Protobuf, and how to safely evolve event schemas in production.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Schema</div><div class="sl">Contract</div></div>
+<div class="stat"><div class="sn">Registry</div><div class="sl">Governance</div></div>
+<div class="stat"><div class="sn">Avro</div><div class="sl">Compact</div></div>
+<div class="stat"><div class="sn">Compatibility</div><div class="sl">Critical</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Broken Checkout</div>
+<div class="story">
+<div class="slabel">One Field Breaks Half the Company</div>
+<h3>customerId → userId breaks everything.</h3>
+<p>Today's OrderCreated event: {"orderId": 101, "customerId": 501, "amount": 999}. Life is good. Twenty services consume it. Six months later, marketing introduces coupons. Developer changes event to include discountCode. Still fine. Three months later, another developer renames customerId to userId. Now Shipping crashes. Analytics crashes. Fraud crashes. ML crashes. Recommendations crashes. One tiny schema change broke half the company. This is why schema evolution is one of the most important topics in Event-Driven Architecture.</p>
+</div>
+
+<div class="sec">🎯 Why Schemas Change</div>
+<div class="defbox">
+<strong>Schema Evolution:</strong> Business never stays the same. Events must evolve safely. Version 1 has orderId and customerId. Version 2 adds coupon. Version 3 adds tax. Version 4 adds currency. Every business evolution requires schema changes.
+</div>
+
+<div class="sec">🔄 Interactive: Compatibility Matrix</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each compatibility type to understand when it works.</p>
+<div class="fig">
+<svg viewBox="0 0 700 300" width="100%" id="compatDiagram">
+<defs>
+<marker id="ca" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Old Producer -->
+<rect x="50" y="100" width="140" height="60" rx="8" fill="#6366f1"/>
+<text x="120" y="125" fill="white" font-size="12" font-weight="700" text-anchor="middle">Old Producer</text>
+<text x="120" y="145" fill="#cbd5e1" font-size="10" text-anchor="middle">V1: orderId, customerId</text>
+
+<!-- New Consumer -->
+<rect x="280" y="50" width="140" height="60" rx="8" fill="#10b981"/>
+<text x="350" y="75" fill="white" font-size="12" font-weight="700" text-anchor="middle">New Consumer</text>
+<text x="350" y="95" fill="#cbd5e1" font-size="10" text-anchor="middle">V2: + currency (optional)</text>
+
+<!-- Old Consumer -->
+<rect x="280" y="190" width="140" height="60" rx="8" fill="#f59e0b"/>
+<text x="350" y="215" fill="white" font-size="12" font-weight="700" text-anchor="middle">Old Consumer</text>
+<text x="350" y="235" fill="#78350f" font-size="10" text-anchor="middle">V1: orderId, customerId</text>
+
+<!-- New Producer -->
+<rect x="510" y="100" width="140" height="60" rx="8" fill="#ef4444"/>
+<text x="580" y="125" fill="white" font-size="12" font-weight="700" text-anchor="middle">New Producer</text>
+<text x="580" y="145" fill="#cbd5e1" font-size="10" text-anchor="middle">V2: + currency</text>
+
+<!-- Arrows -->
+<line class="compat-arrow" data-type="backward" x1="190" y1="130" x2="280" y2="80" stroke="#10b981" stroke-width="2" marker-end="url(#ca)"/>
+<text x="225" y="100" fill="#6ee7b7" font-size="10">Backward</text>
+
+<line class="compat-arrow" data-type="forward" x1="350" y1="110" x2="350" y2="190" stroke="#f59e0b" stroke-width="2" marker-end="url(#ca)"/>
+<text x="365" y="155" fill="#fcd34d" font-size="10">Forward</text>
+
+<line class="compat-arrow" data-type="full" x1="510" y1="130" x2="420" y2="80" stroke="#6366f1" stroke-width="2" marker-end="url(#ca)"/>
+<text x="455" y="100" fill="#a5b4fc" font-size="10">Full</text>
+
+<line class="compat-arrow" data-type="full" x1="510" y1="130" x2="420" y2="220" stroke="#6366f1" stroke-width="2" marker-end="url(#ca)"/>
+<text x="475" y="180" fill="#a5b4fc" font-size="10">Full</text>
+
+<!-- Legend -->
+<rect x="50" y="250" width="620" height="30" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="270" fill="#e2e8f0" font-size="11" text-anchor="middle" id="compatTooltip">Click on arrows to see compatibility types</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Compatibility Types</div>
+<div class="card">
+<h3 style="color:#10b981;">Backward Compatibility</h3>
+<p style="color:var(--tm);margin-bottom:12px;">New consumers can read old events. Add optional fields with defaults.</p>
+<h3 style="color:#f59e0b;">Forward Compatibility</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Old consumers can read new events. Ignore unknown fields.</p>
+<h3 style="color:#6366f1;">Full Compatibility</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Both directions work. Safest but hardest to maintain.</p>
+</div>
+
+<div class="sec">✅ Safe vs Dangerous Changes</div>
+<div class="g2">
+<div class="gc">
+<h4 style="color:#10b981;">✅ Safe Changes</h4>
+<div class="viz-box">✔ Add optional field
+✔ Add field with default
+✔ Add enum values
+✔ Add metadata
+✔ Deprecate (don't remove)</div>
+</div>
+<div class="gc">
+<h4 style="color:#ef4444;">❌ Dangerous Changes</h4>
+<div class="viz-box">❌ Rename fields
+❌ Remove fields
+❌ Change field types
+❌ Change semantics
+❌ Make optional field required</div>
+</div>
+</div>
+
+<div class="sec">📦 Schema Registry</div>
+<div class="defbox">
+<strong>Schema Registry:</strong> Central repository for versioned schemas. Producers and consumers validate against it, preventing incompatible changes and enabling controlled evolution.
+</div>
+<div class="card">
+<div class="viz-box">Producer → Schema Registry → Validate → Kafka → Consumer
+                                              → Schema Registry → Validate</div>
+</div>
+
+<div class="sec">🔧 Serialization Formats</div>
+<table>
+<thead><tr><th>Format</th><th>Human Readable</th><th>Size</th><th>Performance</th><th>Use Case</th></tr></thead>
+<tbody>
+<tr><td class="h">JSON</td><td>Yes</td><td>Large</td><td>Moderate</td><td>Debugging, simple systems</td></tr>
+<tr><td class="h">Avro</td><td>No</td><td>Small</td><td>High</td><td>Kafka, production systems</td></tr>
+<tr><td class="h">Protobuf</td><td>No</td><td>Very Small</td><td>Very High</td><td>gRPC, high-performance</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Netflix Schema Evolution</h3>
+<p>Netflix's PlaybackStarted event evolved from V1 (profileId, movieId) to V5 (device, country, quality, subtitles, audio). Each version added optional fields. Old consumers ignored unknown fields. New consumers used defaults for missing fields. Schema Registry prevented breaking changes. Gradual migration over months ensured zero downtime.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How would you add a new field to an event consumed by 200 services?"</strong><div class="mini">"Add the field as optional with a default value. Register the new schema version. Update consumers to accept both old and new schemas. Deploy consumers first, then deploy producers. Monitor schema validation errors before deprecating older versions."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Schema → Registry → Version → Compatibility → Migration. Never break contracts. Always add, never rename or remove.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 7: Event Ordering, Causality & Time</h3><p>Understand why timestamps can't guarantee ordering, Lamport clocks, vector clocks, Kafka partition ordering, and strategies for handling out-of-order events.</p></div>
+</div>
+
+<script>
+// Interactive compatibility diagram
+document.querySelectorAll('.compat-arrow').forEach(arrow => {
+arrow.addEventListener('click', function(e) {
+const type = this.getAttribute('data-type');
+const tooltip = document.getElementById('compatTooltip');
+const messages = {
+backward: 'Backward Compatibility: New consumer reads old events. Example: Old event has orderId, customerId. New consumer expects + currency (optional with default). Works!',
+forward: 'Forward Compatibility: Old consumer reads new events. Example: New event adds coupon field. Old consumer ignores unknown field. Works!',
+full: 'Full Compatibility: Both directions work. Old producer ↔ New consumer AND New producer ↔ Old consumer. Safest option.'
+};
+tooltip.textContent = messages[type] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

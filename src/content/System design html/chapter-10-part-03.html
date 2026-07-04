@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consistency Models - Strong, Eventual, Causal, Linearizability | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.consistency-node{cursor:pointer;transition: all 0.3s ease;}
+.consistency-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 10 · Part 3 · Consistency Models</div>
+<h1>Consistency Models<br><span>Strong, Eventual, Causal, Sequential & Linearizability</span></h1>
+<p>CAP tells us we must choose trade-offs during failures. Consistency models define exactly what guarantees a distributed system provides when reading and writing data. Learn when to use each model.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Strong</div><div class="sl">Always Latest</div></div>
+<div class="stat"><div class="sn">Eventual</div><div class="sl">Eventually</div></div>
+<div class="stat"><div class="sn">Causal</div><div class="sl">Order Matters</div></div>
+<div class="stat"><div class="sn">Linearizable</div><div class="sl">Real-time</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Missing Message</div>
+<div class="story">
+<div class="slabel">Different Systems, Different Guarantees</div>
+<h3>Alice sends Bob "Hello!" but Bob doesn't see it for 10 seconds. Is the system broken?</h3>
+<p>Alice sends Bob "Hello!" using a messaging application. Alice immediately opens the conversation and sees "Hello!". Bob opens the same chat and sees nothing. Ten seconds later, the message finally arrives. Question: Is the system broken? No. The application uses Eventual Consistency. Different systems provide different guarantees about when data becomes visible. Understanding these guarantees is critical for designing distributed systems.</p>
+</div>
+
+<div class="sec">🎯 What is a Consistency Model?</div>
+<div class="defbox">
+<strong>Consistency Model:</strong> Defines the guarantees a system provides after a write operation. It answers: "If data changes, when can readers observe that change?" Different models offer different trade-offs between latency, availability, and correctness.
+</div>
+
+<div class="sec">🔄 Interactive: Consistency Spectrum</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each consistency model to understand its guarantees.</p>
+<div class="fig">
+<svg viewBox="0 0 700 320" width="100%" id="consistencyDiagram">
+<defs>
+<marker id="ca" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Strong Consistency -->
+<rect class="consistency-node" data-model="strong" x="50" y="30" width="280" height="70" rx="8" fill="#ef4444"/>
+<text x="190" y="55" fill="white" font-size="13" font-weight="700" text-anchor="middle">Strong Consistency</text>
+<text x="190" y="75" fill="#fca5a5" font-size="11" text-anchor="middle">Always latest data everywhere</text>
+
+<!-- Linearizability -->
+<rect class="consistency-node" data-model="linearizable" x="370" y="30" width="280" height="70" rx="8" fill="#dc2626"/>
+<text x="510" y="55" fill="white" font-size="13" font-weight="700" text-anchor="middle">Linearizability</text>
+<text x="510" y="75" fill="#fca5a5" font-size="11" text-anchor="middle">Strong + real-time ordering</text>
+
+<!-- Causal Consistency -->
+<rect class="consistency-node" data-model="causal" x="50" y="130" width="280" height="70" rx="8" fill="#f59e0b"/>
+<text x="190" y="155" fill="white" font-size="13" font-weight="700" text-anchor="middle">Causal Consistency</text>
+<text x="190" y="175" fill="#fcd34d" font-size="11" text-anchor="middle">Preserve cause-effect relationships</text>
+
+<!-- Session Consistency -->
+<rect class="consistency-node" data-model="session" x="370" y="130" width="280" height="70" rx="8" fill="#f59e0b"/>
+<text x="510" y="155" fill="white" font-size="13" font-weight="700" text-anchor="middle">Session Consistency</text>
+<text x="510" y="175" fill="#fcd34d" font-size="11" text-anchor="middle">Consistent within one session</text>
+
+<!-- Eventual Consistency -->
+<rect class="consistency-node" data-model="eventual" x="50" y="230" width="280" height="70" rx="8" fill="#10b981"/>
+<text x="190" y="255" fill="white" font-size="13" font-weight="700" text-anchor="middle">Eventual Consistency</text>
+<text x="190" y="275" fill="#6ee7b7" font-size="11" text-anchor="middle">Converges over time</text>
+
+<!-- Weak Consistency -->
+<rect class="consistency-node" data-model="weak" x="370" y="230" width="280" height="70" rx="8" fill="#10b981"/>
+<text x="510" y="255" fill="white" font-size="13" font-weight="700" text-anchor="middle">Weak Consistency</text>
+<text x="510" y="275" fill="#6ee7b7" font-size="11" text-anchor="middle">Minimal guarantees</text>
+
+<!-- Tooltip -->
+<rect x="50" y="310" width="600" height="25" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="327" fill="#e2e8f0" font-size="11" text-anchor="middle" id="consistencyTooltip">Click on each model to learn more</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Consistency Models Comparison</div>
+<table>
+<thead><tr><th>Model</th><th>Guarantee</th><th>Use Case</th><th>Latency</th></tr></thead>
+<tbody>
+<tr><td class="h">Strong</td><td>Latest data everywhere</td><td>Banking, Payments</td><td>High</td></tr>
+<tr><td class="h">Linearizable</td><td>Strong + real-time order</td><td>Stock Trading, Locks</td><td>Very High</td></tr>
+<tr><td class="h">Causal</td><td>Preserve cause-effect</td><td>Messaging, Comments</td><td>Medium</td></tr>
+<tr><td class="h">Session</td><td>Consistent within session</td><td>User Dashboard</td><td>Medium</td></tr>
+<tr><td class="h">Eventual</td><td>Converges over time</td><td>Social Media, Analytics</td><td>Low</td></tr>
+<tr><td class="h">Weak</td><td>Minimal guarantees</td><td>DNS, Caching</td><td>Very Low</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🔄 Quorum Reads & Writes</div>
+<div class="defbox">
+<strong>Quorum:</strong> When R + W > N (where R = read quorum, W = write quorum, N = total replicas), read and write sets overlap, providing strong consistency. Example: N=3, R=2, W=2. Write succeeds on 2 replicas, read queries 2 replicas. At least one has latest data.
+</div>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Google Spanner vs Cassandra</h3>
+<p><strong>Google Spanner:</strong> Uses Strong Consistency with TrueTime clocks. All reads see latest writes. Perfect for financial transactions.<br><br>
+<strong>Cassandra:</strong> Uses Eventual Consistency with tunable quorum. Developers choose consistency level per query (ONE, QUORUM, ALL). Perfect for high availability.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What's the difference between Strong and Eventual Consistency?"</strong><div class="mini">"Strong consistency guarantees every read returns the latest successful write immediately. Eventual consistency allows temporary stale reads but guarantees all replicas will converge if no new updates occur. Strong consistency prioritizes correctness, while eventual consistency prioritizes availability and scalability."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Strong = Always correct. Eventual = Eventually correct. Causal = Cause before effect. Choose the weakest model that satisfies business needs.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 4: Replication</h3><p>Learn about Leader-Follower, Multi-Leader, and Leaderless replication, synchronous vs asynchronous replication, read replicas, and failover strategies.</p></div>
+</div>
+
+<script>
+// Interactive consistency diagram
+const consistencyInfo = {
+'strong': 'Strong Consistency: Every read returns the latest successful write. All replicas agree before reads are allowed. Simple mental model, no stale reads. Example: Bank account balance must always show correct amount. Higher latency, reduced availability during partitions.',
+'linearizable': 'Linearizability: Strong consistency + real-time ordering. If Operation A completes before Operation B starts, everyone must observe A before B. Strongest practical guarantee. Used in financial systems, distributed locks. Highest latency.',
+'causal': 'Causal Consistency: Preserves cause-and-effect relationships. If Alice writes "Let\'s meet at 5" and Bob replies "Okay", everyone must see Alice\'s message before Bob\'s reply. Unrelated events may appear in different orders. Perfect for messaging and comments.',
+'session': 'Session Consistency: Guarantees within one user session. Read-after-write, monotonic reads. User sees their own changes immediately, even if other users don\'t. Good UX without global consistency. Example: Edit profile, see changes immediately.',
+'eventual': 'Eventual Consistency: If no new writes occur, all replicas eventually converge to same value. Temporary stale reads allowed. High availability, low latency, excellent for global systems. Example: Social media like count may show 103 instead of 105 briefly.',
+'weak': 'Weak Consistency: Minimal guarantees. Read may return old data even after write completes. Applications must tolerate stale information. Used in DNS, caching, non-critical systems. Lowest latency, highest availability.'
+};
+
+document.querySelectorAll('.consistency-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const model = this.getAttribute('data-model');
+const tooltip = document.getElementById('consistencyTooltip');
+tooltip.textContent = consistencyInfo[model] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

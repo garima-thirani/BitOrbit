@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distributed Consensus - Raft, Paxos & Leader Election | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.consensus-node{cursor:pointer;transition: all 0.3s ease;}
+.consensus-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 10 · Part 7 · Distributed Consensus</div>
+<h1>Distributed Consensus<br><span>Raft, Paxos, Leader Election & Quorum</span></h1>
+<p>Distributed systems are easy—until two servers disagree. Consensus algorithms exist to ensure that every node eventually agrees on one truth, even during failures. Learn how Raft and Paxos prevent split-brain.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Raft</div><div class="sl">Understandable</div></div>
+<div class="stat"><div class="sn">Paxos</div><div class="sl">Classic</div></div>
+<div class="stat"><div class="sn">Quorum</div><div class="sl">Majority</div></div>
+<div class="stat"><div class="sn">Leader</div><div class="sl">Election</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — Two Leaders</div>
+<div class="story">
+<div class="slabel">The Split-Brain Problem</div>
+<h3>A banking application runs three database servers. Server A is the leader. Suddenly, a network partition occurs. Server A believes it's still leader. Server B cannot contact A, so it elects itself leader. Now two leaders exist. Both accept writes. Balances diverge. Who is correct?</h3>
+<p>Neither server can decide alone. They need <strong>Consensus</strong>. Consensus algorithms ensure that despite failures, every healthy node agrees on critical decisions: who is the leader, what is the transaction order, and what is the cluster configuration.</p>
+</div>
+
+<div class="sec">🎯 What is Consensus?</div>
+<div class="defbox">
+<strong>Consensus:</strong> A process by which multiple computers agree on one decision when they cannot completely trust the network. Consensus solves leader election, cluster membership, transaction ordering, and distributed locking.
+</div>
+
+<div class="sec">🔄 Interactive: Consensus Properties</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each property to understand what consensus guarantees.</p>
+<div class="fig">
+<svg viewBox="0 0 700 280" width="100%" id="consensusDiagram">
+<defs>
+<marker id="ca" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Safety -->
+<rect class="consensus-node" data-prop="safety" x="50" y="30" width="280" height="100" rx="8" fill="#ef4444"/>
+<text x="190" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">Safety</text>
+<text x="190" y="80" fill="#cbd5e1" font-size="12" text-anchor="middle">Nothing bad ever happens</text>
+<text x="190" y="100" fill="#94a3b8" font-size="11" text-anchor="middle">Never elect two leaders</text>
+<text x="190" y="118" fill="#94a3b8" font-size="11" text-anchor="middle">No data corruption</text>
+
+<!-- Liveness -->
+<rect class="consensus-node" data-prop="liveness" x="370" y="30" width="280" height="100" rx="8" fill="#10b981"/>
+<text x="510" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">Liveness</text>
+<text x="510" y="80" fill="#cbd5e1" font-size="12" text-anchor="middle">Something good eventually happens</text>
+<text x="510" y="100" fill="#94a3b8" font-size="11" text-anchor="middle">Eventually elect a leader</text>
+<text x="510" y="118" fill="#94a3b8" font-size="11" text-anchor="middle">System makes progress</text>
+
+<!-- Quorum -->
+<rect x="50" y="160" width="600" height="80" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="185" fill="#e2e8f0" font-size="13" font-weight="700" text-anchor="middle">Quorum = Majority = ⌊N/2⌋ + 1</text>
+<text x="140" y="210" fill="#a5b4fc" font-size="12" text-anchor="middle">3 nodes → Quorum 2</text>
+<text x="350" y="210" fill="#6ee7b7" font-size="12" text-anchor="middle">5 nodes → Quorum 3</text>
+<text x="560" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">7 nodes → Quorum 4</text>
+<text x="350" y="230" fill="#94a3b8" font-size="10" text-anchor="middle">Majorities always overlap → Prevents split-brain</text>
+
+<!-- Tooltip -->
+<rect x="50" y="250" width="600" height="25" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="267" fill="#e2e8f0" font-size="11" text-anchor="middle" id="consensusTooltip">Click on each property to learn more</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Raft vs Paxos</div>
+<table>
+<thead><tr><th>Aspect</th><th>Raft</th><th>Paxos</th></tr></thead>
+<tbody>
+<tr><td class="h">Complexity</td><td>Easy to understand</td><td>Mathematically elegant but hard</td></tr>
+<tr><td class="h">Leader Election</td><td>Yes, explicit</td><td>Implicit</td></tr>
+<tr><td class="h">Log Replication</td><td>Yes, ordered</td><td>Yes</td></tr>
+<tr><td class="h">Production Use</td><td>etcd, CockroachDB, TiDB</td><td>Google Spanner</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🔄 Raft Node States</div>
+<div class="defbox">
+<strong>Raft States:</strong> Every node is either Follower (default, accepts leader messages), Candidate (requests votes during election), or Leader (handles all writes, replicates to followers). Exactly one leader normally exists.
+</div>
+
+<div class="sec">✅ Leader Election Flow</div>
+<div class="defbox">
+<strong>Election Process:</strong> Leader sends heartbeats → Followers wait → Heartbeat stops → Timeout expires → Followers become Candidates → Request votes → Majority wins → New leader elected. Automatic failover without manual intervention.
+</div>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>etcd, CockroachDB & Kubernetes</h3>
+<p><strong>etcd:</strong> Uses Raft consensus. Stores Kubernetes cluster state. Every deployment, pod, service depends on etcd consensus.<br><br>
+<strong>CockroachDB:</strong> Each data range uses Raft for leader election and replication. Automatic failover, strong consistency.<br><br>
+<strong>Kubernetes:</strong> Uses etcd (Raft-based) for cluster state, leader election, and configuration management.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why is Raft preferred over Paxos?"</strong><div class="mini">"Both provide strong consensus guarantees, but Raft was designed to be easier to understand, implement, and debug. This simplicity has led to widespread adoption in etcd, CockroachDB, and Kubernetes. Paxos is mathematically elegant but notoriously difficult to implement correctly."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Quorum = Majority. Raft = Leader + Followers. Election = Timeout + Votes. Consensus prevents split-brain.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 8: Distributed Coordination</h3><p>Learn about distributed locks, ZooKeeper, etcd, and how distributed systems coordinate work across multiple machines.</p></div>
+</div>
+
+<script>
+// Interactive consensus diagram
+const consensusInfo = {
+'safety': 'Safety: Guarantees that nothing bad ever happens. Examples: Never elect two leaders simultaneously, never lose committed data, never apply operations out of order. Safety is absolute - it must never be violated, even during failures.',
+'liveness': 'Liveness: Guarantees that something good eventually happens. Examples: Eventually elect a leader, eventually commit operations, eventually recover from failures. Liveness requires progress - the system cannot stop forever.'
+};
+
+document.querySelectorAll('.consensus-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const prop = this.getAttribute('data-prop');
+const tooltip = document.getElementById('consensusTooltip');
+tooltip.textContent = consensusInfo[prop] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

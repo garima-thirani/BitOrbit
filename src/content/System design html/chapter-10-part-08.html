@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distributed Coordination - Locks, ZooKeeper, etcd | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.coordination-node{cursor:pointer;transition: all 0.3s ease;}
+.coordination-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 10 · Part 8 · Distributed Coordination</div>
+<h1>Distributed Coordination<br><span>Distributed Locks, ZooKeeper, etcd & Coordination Services</span></h1>
+<p>Scaling a distributed system is not just about storing data. It is about ensuring that thousands of independent machines cooperate without interfering with each other. Learn how coordination services enable this.</p>
+<div class="stats">
+<div class="stat"><div class="sn">ZooKeeper</div><div class="sl">Coordination</div></div>
+<div class="stat"><div class="sn">etcd</div><div class="sl">Raft-based</div></div>
+<div class="stat"><div class="sn">Distributed</div><div class="sl">Locks</div></div>
+<div class="stat"><div class="sn">Leader</div><div class="sl">Election</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Double Payment Problem</div>
+<div class="story">
+<div class="slabel">When Two Services Process the Same Payment</div>
+<h3>Two Payment Services receive the same payment request. Both read the order. Both see UNPAID. Both charge the customer. Result: $100 charged twice. The problem is not the payment code. The problem is coordination.</h3>
+<p>Without coordination, multiple machines can interfere with each other. <strong>Distributed Coordination</strong> ensures that only one node performs critical operations at a time. This prevents duplicate work, race conditions, and data corruption.</p>
+</div>
+
+<div class="sec">🎯 What is Distributed Coordination?</div>
+<div class="defbox">
+<strong>Distributed Coordination:</strong> Mechanisms that synchronize work across multiple machines. Ensures exclusive access to shared resources, elects leaders, manages configuration, and prevents conflicting operations.
+</div>
+
+<div class="sec">🔄 Interactive: Coordination Problems</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each coordination problem to understand the solution.</p>
+<div class="fig">
+<svg viewBox="0 0 700 280" width="100%" id="coordinationDiagram">
+<defs>
+<marker id="ca" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Distributed Lock -->
+<rect class="coordination-node" data-problem="lock" x="50" y="30" width="280" height="100" rx="8" fill="#6366f1"/>
+<text x="190" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">Distributed Lock</text>
+<text x="190" y="80" fill="#cbd5e1" font-size="12" text-anchor="middle">One owner at a time</text>
+<text x="190" y="100" fill="#94a3b8" font-size="11" text-anchor="middle">Prevent duplicate work</text>
+<text x="190" y="118" fill="#94a3b8" font-size="11" text-anchor="middle">Critical sections</text>
+
+<!-- Leader Election -->
+<rect class="coordination-node" data-problem="leader" x="370" y="30" width="280" height="100" rx="8" fill="#10b981"/>
+<text x="510" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">Leader Election</text>
+<text x="510" y="80" fill="#cbd5e1" font-size="12" text-anchor="middle">One leader at a time</text>
+<text x="510" y="100" fill="#94a3b8" font-size="11" text-anchor="middle">Prevent split-brain</text>
+<text x="510" y="118" fill="#94a3b8" font-size="11" text-anchor="middle">Automatic failover</text>
+
+<!-- Configuration -->
+<rect x="50" y="160" width="600" height="80" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="185" fill="#e2e8f0" font-size="13" font-weight="700" text-anchor="middle">Configuration Management & Service Discovery</text>
+<text x="140" y="210" fill="#a5b4fc" font-size="12" text-anchor="middle">Centralized config</text>
+<text x="350" y="210" fill="#6ee7b7" font-size="12" text-anchor="middle">Dynamic updates</text>
+<text x="560" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">Service location</text>
+<text x="350" y="230" fill="#94a3b8" font-size="10" text-anchor="middle">All applications get consistent configuration without hardcoding</text>
+
+<!-- Tooltip -->
+<rect x="50" y="250" width="600" height="25" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="267" fill="#e2e8f0" font-size="11" text-anchor="middle" id="coordinationTooltip">Click on each problem to learn about solutions</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Coordination Tools Comparison</div>
+<table>
+<thead><tr><th>Tool</th><th>Purpose</th><th>Consensus</th><th>Use Case</th></tr></thead>
+<tbody>
+<tr><td class="h">ZooKeeper</td><td>Coordination</td><td>ZAB (ZooKeeper Atomic Broadcast)</td><td>Legacy systems, Hadoop</td></tr>
+<tr><td class="h">etcd</td><td>Key-Value Store</td><td>Raft</td><td>Kubernetes, modern apps</td></tr>
+<tr><td class="h">Consul</td><td>Service Mesh</td><td>Raft</td><td>Service discovery</td></tr>
+<tr><td class="h">Redis Redlock</td><td>Distributed Lock</td><td>None</td><td>Lightweight locking</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🔄 Lease-Based Locks</div>
+<div class="defbox">
+<strong>Lease:</strong> A lock with automatic expiration. If the lock holder crashes, the lock automatically expires after a timeout. Others can then acquire it. Prevents permanent deadlocks from abandoned locks. Example: 30-second lease, renewed by heartbeats.
+</div>
+
+<div class="sec">✅ Optimistic vs Pessimistic Locking</div>
+<div class="defbox">
+<strong>Optimistic:</strong> Assume conflicts are rare. Read data, modify, check version, update. Retry if conflict. High throughput, low contention. <strong>Pessimistic:</strong> Assume conflicts are common. Acquire lock before modifying. Lower concurrency, prevents conflicts.
+</div>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Kubernetes & HBase</h3>
+<p><strong>Kubernetes:</strong> Uses etcd for cluster state, leader election, and configuration. Every pod, deployment, and service depends on etcd coordination.<br><br>
+<strong>HBase:</strong> Uses ZooKeeper for master election, region assignment, and failure detection. Ensures only one active master at a time.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why can't we use a database for distributed locking?"</strong><div class="mini">"You can, but databases aren't optimized for coordination. ZooKeeper and etcd provide specialized primitives: ephemeral nodes (auto-delete on disconnect), sequential nodes (ordering), watches (notifications), and fast consensus. These features make them better suited for coordination than general-purpose databases."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>ZooKeeper = Coordination. etcd = Kubernetes. Locks = Exclusive access. Leases = Auto-expire. Consensus = Agreement.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 9: Multi-Region Architecture</h3><p>Learn how to deploy applications across multiple regions for lower latency, higher availability, and disaster recovery.</p></div>
+</div>
+
+<script>
+// Interactive coordination diagram
+const coordinationInfo = {
+'lock': 'Distributed Lock: Ensures only one node can access a shared resource at a time. Prevents duplicate payment processing, concurrent file modifications, and race conditions. Implemented using ZooKeeper, etcd, or Redis. Uses leases with automatic expiration.',
+'leader': 'Leader Election: Selects one node as the leader to coordinate cluster operations. Prevents split-brain (multiple leaders). Uses consensus algorithms (Raft/Paxos). Leader sends heartbeats, followers monitor. Automatic failover if leader fails.'
+};
+
+document.querySelectorAll('.coordination-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const problem = this.getAttribute('data-problem');
+const tooltip = document.getElementById('coordinationTooltip');
+tooltip.textContent = coordinationInfo[problem] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

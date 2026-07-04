@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distributed Transactions & Saga Pattern | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.saga-node{cursor:pointer;transition: all 0.3s ease;}
+.saga-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 9 · Part 5 · Distributed Transactions</div>
+<h1>Distributed Transactions & Saga Pattern<br><span>ACID, 2PC, Compensating Transactions & Choreography vs Orchestration</span></h1>
+<p>A transaction inside a monolith lasts milliseconds. A transaction across microservices may span multiple services, databases, and minutes. Learn why traditional ACID transactions break and how Sagas solve this problem.</p>
+<div class="stats">
+<div class="stat"><div class="sn">ACID</div><div class="sl">Monolith</div></div>
+<div class="stat"><div class="sn">Saga</div><div class="sl">Microservices</div></div>
+<div class="stat"><div class="sn">Compensating</div><div class="sl">Transactions</div></div>
+<div class="stat"><div class="sn">Choreography</div><div class="sl">vs Orchestration</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — Amazon Checkout Transaction</div>
+<div class="story">
+<div class="slabel">One Transaction, Four Databases</div>
+<h3>Customer places order. Amazon must: Create Order, Charge Credit Card, Reserve Inventory, Create Shipment. Inside monolith: one transaction spanning all operations. Simple. Now imagine each operation belongs to a different microservice with its own database. Question: How can one transaction span four databases? It can't. Not efficiently.</h3>
+<p>Order succeeds, Payment succeeds, Inventory fails. Should Payment be refunded? Should Order be cancelled? Who decides? Traditional ACID transactions were designed for single databases. In microservices, each service performs local transactions. There is no global transaction. This is why we need the Saga pattern.</p>
+</div>
+
+<div class="sec">🎯 Why ACID Breaks in Microservices</div>
+<div class="defbox">
+<strong>ACID Properties:</strong> Atomicity (all or nothing), Consistency (valid state), Isolation (concurrent safety), Durability (survives crashes). These work perfectly inside one database. But microservices have multiple databases: Orders DB, Payments DB, Inventory DB, Shipping DB. A single SQL transaction cannot span all databases efficiently.
+</div>
+
+<div class="sec">🔄 Interactive: Saga Pattern Flow</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each step to see how Saga handles distributed transactions with compensating actions.</p>
+<div class="fig">
+<svg viewBox="0 0 700 280" width="100%" id="sagaDiagram">
+<defs>
+<marker id="sa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Success Path -->
+<rect class="saga-node" data-step="1" x="50" y="50" width="120" height="50" rx="6" fill="#10b981"/>
+<text x="110" y="70" fill="white" font-size="11" font-weight="700" text-anchor="middle">1. Create Order</text>
+<text x="110" y="88" fill="#cbd5e1" font-size="10" text-anchor="middle">✓ Success</text>
+
+<line x1="170" y1="75" x2="200" y2="75" stroke="#10b981" stroke-width="2" marker-end="url(#sa)"/>
+
+<rect class="saga-node" data-step="2" x="200" y="50" width="120" height="50" rx="6" fill="#10b981"/>
+<text x="260" y="70" fill="white" font-size="11" font-weight="700" text-anchor="middle">2. Charge Payment</text>
+<text x="260" y="88" fill="#cbd5e1" font-size="10" text-anchor="middle">✓ Success</text>
+
+<line x1="320" y1="75" x2="350" y2="75" stroke="#10b981" stroke-width="2" marker-end="url(#sa)"/>
+
+<rect class="saga-node" data-step="3" x="350" y="50" width="120" height="50" rx="6" fill="#10b981"/>
+<text x="410" y="70" fill="white" font-size="11" font-weight="700" text-anchor="middle">3. Reserve Inventory</text>
+<text x="410" y="88" fill="#cbd5e1" font-size="10" text-anchor="middle">✓ Success</text>
+
+<line x1="470" y1="75" x2="500" y2="75" stroke="#10b981" stroke-width="2" marker-end="url(#sa)"/>
+
+<rect class="saga-node" data-step="4" x="500" y="50" width="120" height="50" rx="6" fill="#10b981"/>
+<text x="560" y="70" fill="white" font-size="11" font-weight="700" text-anchor="middle">4. Create Shipment</text>
+<text x="560" y="88" fill="#cbd5e1" font-size="10" text-anchor="middle">✓ Complete</text>
+
+<!-- Failure Path -->
+<rect x="50" y="180" width="120" height="50" rx="6" fill="#ef4444"/>
+<text x="110" y="200" fill="white" font-size="11" font-weight="700" text-anchor="middle">3. Reserve Inventory</text>
+<text x="110" y="218" fill="#cbd5e1" font-size="10" text-anchor="middle">✗ FAILS</text>
+
+<line x1="110" y1="150" x2="110" y2="180" stroke="#ef4444" stroke-width="2" marker-end="url(#sa)"/>
+
+<rect x="200" y="180" width="120" height="50" rx="6" fill="#f59e0b"/>
+<text x="260" y="200" fill="white" font-size="11" font-weight="700" text-anchor="middle">Compensate: Refund</text>
+<text x="260" y="218" fill="#cbd5e1" font-size="10" text-anchor="middle">Reverse Payment</text>
+
+<line x1="260" y1="150" x2="260" y2="180" stroke="#ef4444" stroke-width="2" marker-end="url(#sa)"/>
+
+<rect x="350" y="180" width="120" height="50" rx="6" fill="#f59e0b"/>
+<text x="410" y="200" fill="white" font-size="11" font-weight="700" text-anchor="middle">Compensate: Cancel</text>
+<text x="410" y="218" fill="#cbd5e1" font-size="10" text-anchor="middle">Cancel Order</text>
+
+<!-- Tooltip -->
+<rect x="50" y="250" width="600" height="25" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="267" fill="#e2e8f0" font-size="11" text-anchor="middle" id="sagaTooltip">Click on steps to understand Saga flow</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 ACID vs BASE</div>
+<table>
+<thead><tr><th>ACID</th><th>BASE</th></tr></thead>
+<tbody>
+<tr><td class="h">Atomicity</td><td>Basically Available</td></tr>
+<tr><td class="h">Consistency</td><td>Soft State</td></tr>
+<tr><td class="h">Isolation</td><td>Eventual Consistency</td></tr>
+<tr><td class="h">Durability</td><td>Distributed Systems</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🔄 Choreography vs Orchestration</div>
+<div class="g2">
+<div class="gc">
+<h4 style="color:#6366f1;">Choreography (Event-Driven)</h4>
+<div class="viz-box">OrderCreated
+   ↓
+Payment Service
+   ↓
+PaymentCompleted
+   ↓
+Inventory Service
+   ↓
+InventoryReserved
+   ↓
+Shipping Service
+
+No central coordinator
+Each service reacts to events</div>
+</div>
+<div class="gc">
+<h4 style="color:#f59e0b;">Orchestration (Centralized)</h4>
+<div class="viz-box">Saga Orchestrator
+   ↓
+Tell Orders: Create
+   ↓
+Tell Payments: Charge
+   ↓
+Tell Inventory: Reserve
+   ↓
+Tell Shipping: Create
+
+Central coordinator
+Explicit workflow</div>
+</div>
+</div>
+
+<div class="sec">✅ Compensating Transactions</div>
+<div class="defbox">
+<strong>Compensating Transaction:</strong> A business operation that undoes the effect of a previous operation. Unlike database rollbacks (which undo data changes), compensating transactions reverse real-world business effects. Example: If Payment succeeded but Inventory failed, the compensation is "Refund Payment" and "Cancel Order". These are business operations, not database operations.
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon Checkout Saga</h3>
+<p>Amazon uses Saga for checkout: Order Service creates order → Payment Service charges card → Inventory Service reserves stock → Shipping Service creates shipment. Each service performs local transaction and publishes event. If Inventory fails after Payment succeeds, compensating actions execute: Refund Payment, Cancel Order, Notify Customer. Idempotency ensures retries are safe. Timeouts prevent infinite waits. DLQ handles repeated failures.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why can't we use 2PC for microservices?"</strong><div class="mini">"Two-Phase Commit is a blocking protocol with a single coordinator. It creates availability issues, has poor scalability, high latency, and the coordinator is a single point of failure. Modern internet companies prefer Sagas because they provide better availability, scalability, and resilience. BASE (Basically Available, Soft state, Eventual consistency) is preferred over strict ACID in distributed systems."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Local Transaction → Publish Event → Next Service → If Failure → Compensate Previous Steps. Saga breaks one big transaction into many small ones with undo actions.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 6: Service Discovery, API Gateway & Service Mesh</h3><p>Learn how services find each other dynamically, why API Gateways are essential, and when to use Service Mesh for advanced networking.</p></div>
+</div>
+
+<script>
+// Interactive saga diagram
+const sagaInfo = {
+'1': 'Step 1: Create Order - Order Service creates order in its database. Publishes OrderCreated event. Local transaction commits.',
+'2': 'Step 2: Charge Payment - Payment Service receives OrderCreated, charges customer, publishes PaymentCompleted. Local transaction commits.',
+'3': 'Step 3: Reserve Inventory - Inventory Service receives PaymentCompleted, reserves stock. If SUCCESS, publishes InventoryReserved. If FAILS, publishes InventoryReservationFailed triggering compensation.',
+'4': 'Step 4: Create Shipment - Shipping Service receives InventoryReserved, creates shipment. Order complete!'
+};
+
+document.querySelectorAll('.saga-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const step = this.getAttribute('data-step');
+const tooltip = document.getElementById('sagaTooltip');
+tooltip.textContent = sagaInfo[step] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

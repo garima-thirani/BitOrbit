@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Disaster Recovery & High Availability - RPO, RTO & Failover | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.dr-node{cursor:pointer;transition: all 0.3s ease;}
+.dr-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 10 · Part 10 · Disaster Recovery</div>
+<h1>Disaster Recovery & High Availability<br><span>RPO, RTO, Failover & Chaos Engineering</span></h1>
+<p>Failures are inevitable. Downtime is optional. Learn how to design systems that survive catastrophic failures through proper disaster recovery planning, backup strategies, and chaos engineering.</p>
+<div class="stats">
+<div class="stat"><div class="sn">RPO</div><div class="sl">Data Loss</div></div>
+<div class="stat"><div class="sn">RTO</div><div class="sl">Downtime</div></div>
+<div class="stat"><div class="sn">Backup</div><div class="sl">Recovery</div></div>
+<div class="stat"><div class="sn">Chaos</div><div class="sl">Engineering</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Datacenter Fire</div>
+<div class="story">
+<div class="slabel">When Everything is Lost</div>
+<h3>An online banking platform runs inside one datacenter. One night, a fire destroys the entire facility. Servers gone. Storage gone. Backups stored inside the same datacenter also gone. The company loses every customer account.</h3>
+<p>The failure was not the fire. The failure was poor Disaster Recovery planning. <strong>High Availability</strong> handles routine failures. <strong>Disaster Recovery</strong> restores systems after catastrophic events. Both are essential for production systems.</p>
+</div>
+
+<div class="sec">🎯 What is Disaster Recovery?</div>
+<div class="defbox">
+<strong>Disaster Recovery (DR):</strong> The process of restoring systems after major failures including region failures, floods, fires, cyberattacks, or data corruption. DR planning defines RPO (maximum acceptable data loss), RTO (maximum acceptable downtime), and recovery procedures.
+</div>
+
+<div class="sec">🔄 Interactive: RPO & RTO</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each metric to understand disaster recovery objectives.</p>
+<div class="fig">
+<svg viewBox="0 0 700 250" width="100%" id="drDiagram">
+<defs>
+<marker id="da" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- RPO -->
+<rect class="dr-node" data-metric="rpo" x="50" y="30" width="280" height="100" rx="8" fill="#6366f1"/>
+<text x="190" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">RPO - Recovery Point Objective</text>
+<text x="190" y="80" fill="#cbd5e1" font-size="12" text-anchor="middle">Maximum acceptable data loss</text>
+<text x="190" y="100" fill="#94a3b8" font-size="11" text-anchor="middle">RPO = 5 min</text>
+<text x="190" y="118" fill="#94a3b8" font-size="11" text-anchor="middle">Lose up to 5 min of data</text>
+
+<!-- RTO -->
+<rect class="dr-node" data-metric="rto" x="370" y="30" width="280" height="100" rx="8" fill="#ef4444"/>
+<text x="510" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">RTO - Recovery Time Objective</text>
+<text x="510" y="80" fill="#cbd5e1" font-size="12" text-anchor="middle">Maximum acceptable downtime</text>
+<text x="510" y="100" fill="#94a3b8" font-size="11" text-anchor="middle">RTO = 15 min</text>
+<text x="510" y="118" fill="#94a3b8" font-size="11" text-anchor="middle">Recover within 15 minutes</text>
+
+<!-- Timeline -->
+<rect x="50" y="160" width="600" height="60" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="185" fill="#e2e8f0" font-size="13" font-weight="700" text-anchor="middle">Disaster Recovery Timeline</text>
+<text x="100" y="210" fill="#a5b4fc" font-size="11" text-anchor="middle">Failure</text>
+<text x="200" y="210" fill="#fcd34d" font-size="11" text-anchor="middle">Detection</text>
+<text x="320" y="210" fill="#f59e0b" font-size="11" text-anchor="middle">Failover</text>
+<text x="450" y="210" fill="#6ee7b7" font-size="11" text-anchor="middle">Recovery</text>
+<text x="580" y="210" fill="#10b981" font-size="11" text-anchor="middle">Normal</text>
+
+<!-- Tooltip -->
+<rect x="50" y="230" width="600" height="25" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="247" fill="#e2e8f0" font-size="11" text-anchor="middle" id="drTooltip">Click on each metric to learn more</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Backup Strategies</div>
+<table>
+<thead><tr><th>Type</th><th>Storage</th><th>Restore Speed</th><th>Use Case</th></tr></thead>
+<tbody>
+<tr><td class="h">Full Backup</td><td>High</td><td>Fast</td><td>Complete restore</td></tr>
+<tr><td class="h">Incremental</td><td>Low</td><td>Slow</td><td>Daily backups</td></tr>
+<tr><td class="h">Differential</td><td>Medium</td><td>Medium</td><td>Balance</td></tr>
+<tr><td class="h">Snapshot</td><td>Medium</td><td>Fast</td><td>Point-in-time</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🔄 Failover & Failback</div>
+<div class="defbox">
+<strong>Failover:</strong> Automatically shifting traffic from failed primary to healthy secondary. <strong>Failback:</strong> Returning traffic to primary after recovery. Requires careful data synchronization to prevent data loss. Always test failover procedures regularly.
+</div>
+
+<div class="sec">✅ Chaos Engineering</div>
+<div class="defbox">
+<strong>Chaos Engineering:</strong> Proactively testing system resilience by intentionally injecting failures. Netflix Chaos Monkey randomly terminates production servers. Goal: ensure applications recover automatically. Regular chaos experiments build confidence in DR procedures.
+</div>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Netflix & GitHub</h3>
+<p><strong>Netflix:</strong> Uses Chaos Monkey to randomly kill servers. Tests failover continuously. Simian Army includes Latency Monkey, Chaos Monkey, and Doctor Monkey. Applications must survive unexpected failures.<br><br>
+<strong>GitHub:</strong> Regularly performs disaster recovery exercises. Validates backup restoration and database failover. Ensures RTO and RPO targets are met.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What's the difference between HA and DR?"</strong><div class="mini">"High Availability minimizes service interruptions during component failures through redundancy and automatic failover. Disaster Recovery restores services after catastrophic failures such as regional outages, cyberattacks, or large-scale data corruption. HA handles server failures in seconds. DR handles region failures in minutes to hours."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>RPO = How much data can we lose? RTO = How long can we be down? Backup = Historical copy. Replication = Live copy. Chaos Engineering = Test failures.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 11: Planet-Scale Architecture</h3><p>Learn how to design systems for billions of users across the globe using CDNs, edge computing, and global databases.</p></div>
+</div>
+
+<script>
+// Interactive DR diagram
+const drInfo = {
+'rpo': 'RPO (Recovery Point Objective): Maximum acceptable data loss measured in time. If RPO = 5 minutes, you can lose up to 5 minutes of data during a disaster. Determines backup frequency. Lower RPO requires more frequent backups or continuous replication.',
+'rto': 'RTO (Recovery Time Objective): Maximum acceptable downtime. If RTO = 15 minutes, the system must be restored within 15 minutes. Determines failover automation and infrastructure readiness. Lower RTO requires more investment in automation and hot standby.'
+};
+
+document.querySelectorAll('.dr-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const metric = this.getAttribute('data-metric');
+const tooltip = document.getElementById('drTooltip');
+tooltip.textContent = drInfo[metric] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why Event-Driven Architecture Exists | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 8 · Part 1 · Why EDA Exists</div>
+<h1>Why Event-Driven Architecture Exists<br><span>From Monoliths to Event-Driven Systems</span></h1>
+<p>Modern distributed systems scale not because services become faster, but because services stop waiting for each other. Learn why EDA was invented and how it solves the coupling problem.</p>
+<div class="stats">
+<div class="stat"><div class="sn">EDA</div><div class="sl">Events</div></div>
+<div class="stat"><div class="sn">Loose</div><div class="sl">Coupling</div></div>
+<div class="stat"><div class="sn">Scale</div><div class="sl">Independently</div></div>
+<div class="stat"><div class="sn">Fault</div><div class="sl">Isolation</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Growing E-Commerce Company</div>
+<div class="story">
+<div class="slabel">From Simple to Complex</div>
+<h3>One service slows down, the entire company stops.</h3>
+<p>You're the first backend engineer at a startup. Simple architecture: Customer → Web Server → Database. A year later: 5 million users, thousands of orders per minute. Architecture evolves into 6 services (Order, Payment, Inventory, Email, Recommendation, Analytics). Then inventory becomes slow. Checkout slows. Payment waits. Shipping waits. Emails stop. One service failure cascades through everything. The team realizes: Order Service shouldn't care who needs the order. It should simply announce "An order has been created." Anyone interested can react. This simple idea became Event-Driven Architecture.</p>
+</div>
+
+<div class="sec">🎯 What is Event-Driven Architecture?</div>
+<div class="defbox">
+<strong>EDA:</strong> A software architecture where services communicate by producing and consuming events instead of directly calling each other. Services publish facts; consumers react independently.
+</div>
+<div class="card">
+<div class="viz-box">Traditional:
+Order Service → Calls → Inventory
+Order Service → Calls → Shipping
+Order Service → Calls → Analytics
+Order Service knows everyone!
+
+Event-Driven:
+Order Service → Publishes → OrderCreated
+                    ↓
+              Kafka/RabbitMQ
+                    ↓
+    Inventory ← Shipping ← Analytics
+    Everyone reacts independently!</div>
+</div>
+
+<div class="sec">📈 Evolution of Architectures</div>
+<div class="g2">
+<div class="gc">
+<h4>Stage 1: Monolith</h4>
+<p>Everything in one application. Simple but difficult to scale. One deployment affects everything.</p>
+</div>
+<div class="gc">
+<h4>Stage 2: SOA</h4>
+<p>Business functions become services. Better modularity but still many synchronous calls. Cascading failures.</p>
+</div>
+<div class="gc">
+<h4>Stage 3: Microservices</h4>
+<p>Smaller independent services. Improved ownership but communication still often synchronous.</p>
+</div>
+<div class="gc">
+<h4>Stage 4: Event-Driven</h4>
+<p>Services publish events. Consumers react independently. Loose coupling. Maximum scalability.</p>
+</div>
+</div>
+
+<div class="sec">🔄 Push vs Pull</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Traditional APIs follow pull model: "Anything new?" Wasteful. EDA follows push: Events pushed automatically. No polling required.</p>
+<div class="viz-box">Pull (Traditional):
+Inventory → GET /orders → "Anything new?"
+Inventory → GET /orders → "Anything new?"
+Wasteful polling!
+
+Push (EDA):
+OrderCreated → Broker → Inventory
+Automatic. Efficient.</div>
+</div>
+
+<div class="sec">📰 Events vs Commands</div>
+<div class="card">
+<h3 style="color:#ef4444;">Commands</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Tell someone to perform an action. Imperative. Expect one receiver.</p>
+<div class="viz-box">Commands:
+- ReserveInventory
+- SendEmail
+- ProcessPayment
+"Please do this"</div>
+<h3 style="color:#10b981;">Events</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Describe something that already happened. Past tense. Many consumers may react.</p>
+<div class="viz-box">Events:
+- InventoryReserved
+- EmailSent
+- PaymentCompleted
+"This happened"</div>
+</div>
+
+<div class="sec">✅ Benefits of EDA</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Loose Coupling</div><div class="td">Services don't know each other</div></div>
+<div class="tag-card"><div class="tc">✅ Independent Scaling</div><div class="td">Scale services independently</div></div>
+<div class="tag-card"><div class="tc">✅ Easy Feature Addition</div><div class="td">Add consumers without changing producers</div></div>
+<div class="tag-card"><div class="tc">✅ Fault Isolation</div><div class="td">Analytics failure doesn't stop checkout</div></div>
+<div class="tag-card"><div class="tc">✅ Event Replay</div><div class="td">Rebuild systems, retrain ML, recover data</div></div>
+</div>
+</div>
+
+<div class="sec">⚠️ Trade-offs</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">⚠️ Eventual Consistency</div><div class="td">Updates not immediate across services</div></div>
+<div class="tag-card"><div class="tc">⚠️ Harder Debugging</div><div class="td">One request generates many events</div></div>
+<div class="tag-card"><div class="tc">⚠️ Duplicate Events</div><div class="td">Consumers must be idempotent</div></div>
+<div class="tag-card"><div class="tc">⚠️ Ordering Challenges</div><div class="td">Ordering across partitions is difficult</div></div>
+</div>
+</div>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon, Uber, Netflix, LinkedIn</h3>
+<p><strong>Amazon:</strong> OrderCreated event triggers inventory, shipping, analytics, recommendations, fraud detection. Checkout never waits.<br><br>
+<strong>Uber:</strong> RideCompleted triggers billing, driver earnings, fraud, analytics, ML. Everything happens independently.<br><br>
+<strong>Netflix:</strong> PlaybackStarted triggers recommendations, trending, billing, analytics. Millions of events per second.<br><br>
+<strong>LinkedIn:</strong> Every user action powers feed ranking, search, ads, notifications, analytics. One event → dozens of systems.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why was Event-Driven Architecture invented?"</strong><div class="mini">"EDA was introduced to reduce tight coupling between services. Instead of directly calling downstream services, producers publish events describing completed actions. Interested consumers subscribe independently, improving scalability, fault isolation, extensibility, and allowing event replay."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Facts → Events → Broker → Consumers → Independent Systems. EDA is about publishing facts, not calling services.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. What's the key difference between a command and an event?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) Commands are faster</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Commands request action (imperative), events describe completed actions (past tense)</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Events are more reliable</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) No difference</div>
+<div class="quiz-feedback" id="q1">Commands express intent and expect one receiver. Events announce completed facts and may have many consumers.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. Why does EDA improve fault isolation?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) It makes services faster</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) It reduces code complexity</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) Services don't wait for each other; one failure doesn't cascade</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) It uses better databases</div>
+<div class="quiz-feedback" id="q2">In EDA, if Analytics fails, Checkout continues. Services are decoupled through events.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 2: Events, Producers & Consumers - Anatomy of an Event</h3><p>Deep dive into event structure, metadata, payload, producers, consumers, event contracts, and production best practices.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

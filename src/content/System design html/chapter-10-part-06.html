@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consistent Hashing - Distributed Hash Tables & Virtual Nodes | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.hash-node{cursor:pointer;transition: all 0.3s ease;}
+.hash-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 10 · Part 6 · Consistent Hashing</div>
+<h1>Consistent Hashing<br><span>Distributed Hash Tables & Virtual Nodes</span></h1>
+<p>Traditional hashing breaks when servers change. Consistent hashing was invented so distributed systems can scale with minimal data movement. Learn how hash rings and virtual nodes enable cloud-native scaling.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Hash Ring</div><div class="sl">Circular</div></div>
+<div class="stat"><div class="sn">Virtual Nodes</div><div class="sl">Load Balance</div></div>
+<div class="stat"><div class="sn">Minimal</div><div class="sl">Rebalancing</div></div>
+<div class="stat"><div class="sn">DHT</div><div class="sl">Distributed</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — Adding One More Server</div>
+<div class="story">
+<div class="slabel">The Rebalancing Problem</div>
+<h3>Your database uses 4 servers with hash(userId) % 4. Traffic doubles. You add one more server. Now every piece of data must be redistributed. Millions of records move across the network. One server caused an entire cluster to rebalance.</h3>
+<p>This is the problem with traditional modulo hashing. <strong>Consistent Hashing</strong> was invented to solve this exact problem. When servers change, only a small amount of data moves. The rest remains untouched. This makes cloud-native scaling possible.</p>
+</div>
+
+<div class="sec">🎯 What is Consistent Hashing?</div>
+<div class="defbox">
+<strong>Consistent Hashing:</strong> A technique where both servers and keys are placed on a circular hash ring. Keys are assigned to the next server clockwise. When a server joins or leaves, only nearby keys move. Everything else stays unchanged.
+</div>
+
+<div class="sec">🔄 Interactive: Hash Ring Visualization</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each component to understand how consistent hashing works.</p>
+<div class="fig">
+<svg viewBox="0 0 700 320" width="100%" id="hashRingDiagram">
+<defs>
+<marker id="ha" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Hash Ring Circle -->
+<circle cx="350" cy="160" r="100" fill="none" stroke="#6366f1" stroke-width="3"/>
+
+<!-- Server A -->
+<rect class="hash-node" data-server="A" x="280" y="60" width="80" height="40" rx="6" fill="#6366f1"/>
+<text x="320" y="85" fill="white" font-size="12" font-weight="700" text-anchor="middle">Server A</text>
+
+<!-- Server B -->
+<rect class="hash-node" data-server="B" x="480" y="140" width="80" height="40" rx="6" fill="#10b981"/>
+<text x="520" y="165" fill="white" font-size="12" font-weight="700" text-anchor="middle">Server B</text>
+
+<!-- Server C -->
+<rect class="hash-node" data-server="C" x="280" y="240" width="80" height="40" rx="6" fill="#f59e0b"/>
+<text x="320" y="265" fill="white" font-size="12" font-weight="700" text-anchor="middle">Server C</text>
+
+<!-- Key Example -->
+<circle cx="420" cy="100" r="6" fill="#ef4444"/>
+<text x="435" y="95" fill="#ef4444" font-size="11" font-weight="700">Key</text>
+<line x1="420" y1="100" x2="480" y2="140" stroke="#ef4444" stroke-width="2" marker-end="url(#ha)"/>
+<text x="450" y="120" fill="#ef4444" font-size="10">→ Server B</text>
+
+<!-- Virtual Nodes Info -->
+<rect x="50" y="280" width="600" height="30" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="300" fill="#e2e8f0" font-size="11" text-anchor="middle" id="hashTooltip">Click on servers to learn about consistent hashing</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Traditional vs Consistent Hashing</div>
+<table>
+<thead><tr><th>Aspect</th><th>Traditional (Modulo)</th><th>Consistent Hashing</th></tr></thead>
+<tbody>
+<tr><td class="h">Adding Server</td><td>Almost all keys move</td><td>Only nearby keys move</td></tr>
+<tr><td class="h">Removing Server</td><td>Massive redistribution</td><td>Minimal redistribution</td></tr>
+<tr><td class="h">Scalability</td><td>Poor</td><td>Excellent</td></tr>
+<tr><td class="h">Load Balance</td><td>Good</td><td>Needs virtual nodes</td></tr>
+</tbody>
+</table>
+
+<div class="sec">✅ Virtual Nodes (vNodes)</div>
+<div class="defbox">
+<strong>Virtual Nodes:</strong> Instead of one position per server, each server appears multiple times on the ring. This improves load balancing, reduces hotspots, and makes rebalancing smaller. Modern systems use dozens or hundreds of vNodes per physical server.
+</div>
+
+<div class="sec">🔄 How Data Movement Works</div>
+<div class="defbox">
+<strong>Example:</strong> Server D is added between Server B and Server C. Only keys between B and D move to D. All other keys stay with their current servers. Instead of moving 80% of data (modulo hashing), only ~20% moves (consistent hashing).
+</div>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Cassandra, DynamoDB & Redis Cluster</h3>
+<p><strong>Apache Cassandra:</strong> Uses consistent hashing with virtual nodes. Each physical node has multiple vNodes for better load distribution. Automatic scaling with minimal data movement.<br><br>
+<strong>Amazon DynamoDB:</strong> Uses consistent hashing to partition data across storage nodes. Adding nodes triggers minimal data movement.<br><br>
+<strong>Redis Cluster:</strong> Uses hash slots (similar concept) to distribute keys across nodes.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why is consistent hashing better than modulo hashing?"</strong><div class="mini">"Consistent hashing minimizes data movement when the cluster changes. With modulo hashing, adding one server requires redistributing almost all keys. With consistent hashing, only keys near the new/removed server move. This makes cloud-native scaling feasible."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Ring → Servers → Keys → Clockwise → Virtual Nodes → Minimal Movement. Consistent hashing enables elastic scaling.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 7: Distributed Consensus</h3><p>Learn why consensus exists, how Raft and Paxos work, and how distributed systems elect leaders and prevent split-brain.</p></div>
+</div>
+
+<script>
+// Interactive hash ring diagram
+const hashInfo = {
+'A': 'Server A: Positioned on the hash ring based on hash(server_A_id). Owns all keys from previous server clockwise to itself. When a new server joins nearby, only keys in that small range move. This is the power of consistent hashing.',
+'B': 'Server B: Another position on the ring. The gap between servers determines data ownership. Uneven gaps cause hotspots. Virtual nodes solve this by creating multiple positions per server.',
+'C': 'Server C: If Server C fails, its keys move clockwise to the next server. No central coordination needed. The ring self-heals. This makes consistent hashing perfect for dynamic cloud environments.'
+};
+
+document.querySelectorAll('.hash-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const server = this.getAttribute('data-server');
+const tooltip = document.getElementById('hashTooltip');
+tooltip.textContent = hashInfo[server] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

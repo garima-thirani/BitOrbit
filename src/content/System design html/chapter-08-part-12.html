@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Production Case Studies - Amazon, Uber, Netflix, LinkedIn | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.case-tab{cursor:pointer;transition: all 0.3s ease;}
+.case-tab:hover{filter: brightness(1.2);}
+.case-content{display:none;}
+.case-content.active{display:block;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 8 · Part 12 · Production Case Studies</div>
+<h1>Production Case Studies<br><span>Amazon, Uber, Netflix, LinkedIn, WhatsApp, Spotify, Banking & Stock Exchange</span></h1>
+<p>Complete production architectures from the world's largest companies. Learn how Amazon, Uber, Netflix, LinkedIn, WhatsApp, Spotify, banks, and stock exchanges use Event-Driven Architecture at scale.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Amazon</div><div class="sl">Commerce</div></div>
+<div class="stat"><div class="sn">Uber</div><div class="sl">Transport</div></div>
+<div class="stat"><div class="sn">Netflix</div><div class="sl">Streaming</div></div>
+<div class="stat"><div class="sn">LinkedIn</div><div class="sl">Social</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">🏢 Interactive: Company Case Studies</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each company to see their complete Event-Driven Architecture.</p>
+<div class="fig">
+<svg viewBox="0 0 700 120" width="100%" id="caseStudyTabs">
+<defs>
+<linearGradient id="cg"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="ca" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<rect class="case-tab" data-case="amazon" x="20" y="30" width="120" height="60" rx="8" fill="#6366f1"/>
+<text x="80" y="55" fill="white" font-size="12" font-weight="700" text-anchor="middle">Amazon</text>
+<text x="80" y="72" fill="#cbd5e1" font-size="10" text-anchor="middle">Commerce</text>
+
+<rect class="case-tab" data-case="uber" x="150" y="30" width="120" height="60" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="210" y="55" fill="white" font-size="12" font-weight="700" text-anchor="middle">Uber</text>
+<text x="210" y="72" fill="#cbd5e1" font-size="10" text-anchor="middle">Transport</text>
+
+<rect class="case-tab" data-case="netflix" x="280" y="30" width="120" height="60" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="340" y="55" fill="white" font-size="12" font-weight="700" text-anchor="middle">Netflix</text>
+<text x="340" y="72" fill="#cbd5e1" font-size="10" text-anchor="middle">Streaming</text>
+
+<rect class="case-tab" data-case="linkedin" x="410" y="30" width="120" height="60" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="470" y="55" fill="white" font-size="12" font-weight="700" text-anchor="middle">LinkedIn</text>
+<text x="470" y="72" fill="#cbd5e1" font-size="10" text-anchor="middle">Social</text>
+
+<rect class="case-tab" data-case="whatsapp" x="540" y="30" width="120" height="60" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="600" y="55" fill="white" font-size="12" font-weight="700" text-anchor="middle">WhatsApp</text>
+<text x="600" y="72" fill="#cbd5e1" font-size="10" text-anchor="middle">Messaging</text>
+</svg>
+</div>
+</div>
+
+<div id="amazon" class="case-content active">
+<div class="sec">🏢 Amazon - Order Processing Platform</div>
+<div class="story">
+<div class="slabel">E-Commerce at Scale</div>
+<h3>Millions of orders/day with complete event traceability.</h3>
+<p><strong>Primary Event:</strong> OrderCreated<br>
+<strong>Architecture:</strong> REST API → Order Service → PostgreSQL → Transactional Outbox → Kafka → 20+ Consumer Groups<br>
+<strong>Consumers:</strong> Inventory, Shipping, Fraud, Analytics, Recommendations, Warehouse, Billing, Customer Timeline, Search, ML<br>
+<strong>Key Features:</strong> CQRS with Redis/Elasticsearch read models, Event Sourcing for financial domains, Replay for disaster recovery, Schema Registry for 200+ services<br>
+<strong>Technology:</strong> Kafka, PostgreSQL, Redis, Elasticsearch, ClickHouse, Spark, Iceberg</p>
+</div>
+</div>
+
+<div id="uber" class="case-content">
+<div class="sec">🏢 Uber - Ride Platform</div>
+<div class="story">
+<div class="slabel">Real-Time Transportation</div>
+<h3>Millions of rides/day with continuous GPS streaming.</h3>
+<p><strong>Primary Event:</strong> RideRequested<br>
+<strong>Architecture:</strong> REST API → Ride Service → PostgreSQL → Transactional Outbox → Kafka → Consumer Groups<br>
+<strong>Consumers:</strong> Driver Matching, Pricing, Payments, Driver Earnings, Fraud, Notifications, Maps, Analytics, ML<br>
+<strong>Key Features:</strong> Partition by Ride ID for ordering, Location events (1M+ events/sec), Dynamic surge pricing, Heat maps, CQRS for dashboards<br>
+<strong>Technology:</strong> Kafka, PostgreSQL, Redis, ClickHouse, Elasticsearch, gRPC</p>
+</div>
+</div>
+
+<div id="netflix" class="case-content">
+<div class="sec">🏢 Netflix - Streaming Platform</div>
+<div class="story">
+<div class="slabel">Billions of Playback Events</div>
+<h3>300M+ users with personalized recommendations.</h3>
+<p><strong>Primary Event:</strong> PlaybackStarted<br>
+<strong>Architecture:</strong> Playback Service → Kafka → Consumer Groups<br>
+<strong>Consumers:</strong> Recommendations, Trending, Billing, Analytics, Watch History, ML Pipeline, Content Ranking<br>
+<strong>Key Features:</strong> ML feature extraction, Continue Watching sync, Multi-device synchronization, Replay for algorithm updates<br>
+<strong>Technology:</strong> Kafka, Cassandra, Redis, Feature Store, Spark, Iceberg</p>
+</div>
+</div>
+
+<div id="linkedin" class="case-content">
+<div class="sec">🏢 LinkedIn - Activity Platform</div>
+<div class="story">
+<div class="slabel">1B+ Members Activity Stream</div>
+<h3>Every user action powers multiple products.</h3>
+<p><strong>Primary Event:</strong> ActivityCreated<br>
+<strong>Architecture:</strong> Activity Service → Kafka → Consumer Groups<br>
+<strong>Consumers:</strong> Feed Ranking, Search, Notifications, Ads, Analytics, Recommendations, Fraud<br>
+<strong>Key Features:</strong> Feed generation with 100+ ranking signals, Search index updates, Ad targeting, Profile views tracking<br>
+<strong>Technology:</strong> Kafka, Elasticsearch, Redis, ClickHouse, ML Pipeline</p>
+</div>
+</div>
+
+<div id="whatsapp" class="case-content">
+<div class="sec">🏢 WhatsApp - Messaging Platform</div>
+<div class="story">
+<div class="slabel">2B Users, 100B Messages Daily</div>
+<h3>Ordered messaging with end-to-end encryption.</h3>
+<p><strong>Primary Event:</strong> MessageCreated<br>
+<strong>Architecture:</strong> WebSocket → Messaging Service → Kafka → Storage + Delivery<br>
+<strong>Key Features:</strong> Partition by Conversation ID for ordering, Offline sync via replay, Read receipts, Push notifications, Multi-device support<br>
+<strong>Technology:</strong> Kafka, Redis (presence), Object Storage (media), Push Notification Infrastructure</p>
+</div>
+</div>
+
+<div class="sec">📊 Cross-Company Comparison</div>
+<table>
+<thead><tr><th>Company</th><th>Primary Event</th><th>Partition Key</th><th>Main Goal</th><th>Core Tech</th></tr></thead>
+<tbody>
+<tr><td class="h">Amazon</td><td>OrderCreated</td><td>Order ID</td><td>Commerce</td><td>Kafka, PostgreSQL, Redis</td></tr>
+<tr><td class="h">Uber</td><td>RideRequested</td><td>Ride ID</td><td>Transportation</td><td>Kafka, Redis, ClickHouse</td></tr>
+<tr><td class="h">Netflix</td><td>PlaybackStarted</td><td>Profile ID</td><td>Streaming</td><td>Kafka, Cassandra, ML</td></tr>
+<tr><td class="h">LinkedIn</td><td>ActivityCreated</td><td>Member ID</td><td>Social Feed</td><td>Kafka, Elasticsearch</td></tr>
+<tr><td class="h">WhatsApp</td><td>MessageCreated</td><td>Conversation ID</td><td>Messaging</td><td>Kafka, Redis, Object Storage</td></tr>
+</tbody>
+</table>
+
+<div class="sec">✅ Universal Production Pattern</div>
+<div class="card">
+<div class="viz-box">Business Action
+   ↓
+Command
+   ↓
+Database
+   ↓
+Transactional Outbox
+   ↓
+Kafka
+   ↓
+Consumer Groups
+   ↓
+CQRS Projections
+   ↓
+Read Models
+   ↓
+Analytics
+   ↓
+Machine Learning
+   ↓
+Monitoring
+   ↓
+Replay
+
+This pattern powers every modern internet-scale company.</div>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Design Amazon Checkout"</strong><div class="mini">"Use REST API for immediate payment authorization. Order Service writes to PostgreSQL with Transactional Outbox. Kafka distributes OrderCreated event to 20+ independent consumers: Inventory reserves stock, Shipping prepares shipment, Analytics tracks metrics, Recommendations update, Fraud detects anomalies. CQRS projections build specialized read models. Redis caches customer dashboard. Elasticsearch powers search. Replay enables disaster recovery. Monitoring tracks consumer lag, DLQ size, and broker health."</div></div></div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 13: Final Revision & Master Cheat Sheet</h3><p>Complete review of all Event-Driven Architecture concepts with master cheat sheets, interview questions, and revision guides.</p></div>
+</div>
+
+<script>
+// Interactive case study tabs
+document.querySelectorAll('.case-tab').forEach(tab => {
+tab.addEventListener('click', function(e) {
+const caseName = this.getAttribute('data-case');
+document.querySelectorAll('.case-tab').forEach(t => {
+t.setAttribute('fill', '#1e293b');
+t.setAttribute('stroke', '#6366f1');
+});
+this.setAttribute('fill', '#6366f1');
+this.setAttribute('stroke', '#6366f1');
+document.querySelectorAll('.case-content').forEach(c => c.classList.remove('active'));
+document.getElementById(caseName).classList.add('active');
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

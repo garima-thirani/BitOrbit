@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Event Replay, Time Travel & Rebuilding Systems | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&isplay=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.replay-flow{animation: flowPulse 2s infinite;}
+@keyframes flowPulse{0%,100%{opacity:0.4;}50%{opacity:1;}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 8 · Part 10 · Event Replay</div>
+<h1>Event Replay, Time Travel & Rebuilding Systems<br><span>Disaster Recovery, Analytics & ML Retraining</span></h1>
+<p>One of the greatest advantages of Event-Driven Architecture is that mistakes don't have to be permanent. Learn how replay enables disaster recovery, analytics rebuilding, and time travel queries.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Replay</div><div class="sl">Recovery</div></div>
+<div class="stat"><div class="sn">Time Travel</div><div class="sl">History</div></div>
+<div class="stat"><div class="sn">Rebuild</div><div class="sl">Systems</div></div>
+<div class="stat"><div class="sn">Backfill</div><div class="sl">New Features</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Analytics Disaster</div>
+<div class="story">
+<div class="slabel">Netflix Saves the Day with Replay</div>
+<h3>12 hours of analytics lost. Replay restores everything in minutes.</h3>
+<p>Monday morning at Netflix. Developer deploys a bug. Instead of counting PlaybackStarted events correctly, analytics service ignores 12 hours of events. Executives see "0 Views" for half the day. Panic. Should engineers manually reconstruct everything? Fortunately, Netflix stores every event. They simply replay PlaybackStarted, PlaybackPaused, PlaybackCompleted into a corrected analytics service. Within minutes, every dashboard is restored. No users notice. This is the power of Event Replay.</p>
+</div>
+
+<div class="sec">🎯 What is Event Replay?</div>
+<div class="defbox">
+<strong>Event Replay:</strong> Process historical events again to rebuild projections, recover systems, populate new read models, or recompute analytics. Works because complete event history is preserved.
+</div>
+
+<div class="sec">🔄 Interactive: Replay Use Cases</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each use case to see how replay solves different problems.</p>
+<div class="fig">
+<svg viewBox="0 0 700 280" width="100%" id="replayDiagram">
+<defs>
+<marker id="ra" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Event Store -->
+<rect x="280" y="20" width="140" height="50" rx="8" fill="#6366f1"/>
+<text x="350" y="45" fill="white" font-size="12" font-weight="700" text-anchor="middle">Event Store</text>
+
+<!-- Replay Engine -->
+<rect x="280" y="100" width="140" height="50" rx="8" fill="#f59e0b"/>
+<text x="350" y="125" fill="white" font-size="12" font-weight="700" text-anchor="middle">Replay Engine</text>
+
+<!-- Use Cases -->
+<rect x="50" y="200" width="120" height="60" rx="6" fill="#10b981"/>
+<text x="110" y="225" fill="white" font-size="11" font-weight="600" text-anchor="middle">Disaster</text>
+<text x="110" y="240" fill="white" font-size="11" font-weight="600" text-anchor="middle">Recovery</text>
+
+<rect x="190" y="200" width="120" height="60" rx="6" fill="#6366f1"/>
+<text x="250" y="225" fill="white" font-size="11" font-weight="600" text-anchor="middle">Analytics</text>
+<text x="250" y="240" fill="white" font-size="11" font-weight="600" text-anchor="middle">Rebuild</text>
+
+<rect x="330" y="200" width="120" height="60" rx="6" fill="#8b5cf6"/>
+<text x="390" y="225" fill="white" font-size="11" font-weight="600" text-anchor="middle">ML Model</text>
+<text x="390" y="240" fill="white" font-size="11" font-weight="600" text-anchor="middle">Retraining</text>
+
+<rect x="470" y="200" width="120" height="60" rx="6" fill="#ef4444"/>
+<text x="530" y="225" fill="white" font-size="11" font-weight="600" text-anchor="middle">Search Index</text>
+<text x="530" y="240" fill="white" font-size="11" font-weight="600" text-anchor="middle">Rebuild</text>
+
+<rect x="610" y="200" width="80" height="60" rx="6" fill="#06b6d4"/>
+<text x="650" y="225" fill="white" font-size="11" font-weight="600" text-anchor="middle">Time</text>
+<text x="650" y="240" fill="white" font-size="11" font-weight="600" text-anchor="middle">Travel</text>
+
+<!-- Arrows -->
+<line x1="350" y1="70" x2="350" y2="100" stroke="#64748b" stroke-width="2" marker-end="url(#ra)" class="replay-flow"/>
+<line x1="350" y1="150" x2="350" y2="170" stroke="#64748b" stroke-width="2" marker-end="url(#ra)" class="replay-flow"/>
+<line x1="350" y1="170" x2="110" y2="200" stroke="#64748b" stroke-width="2" marker-end="url(#ra)" class="replay-flow"/>
+<line x1="350" y1="170" x2="250" y2="200" stroke="#64748b" stroke-width="2" marker-end="url(#ra)" class="replay-flow"/>
+<line x1="350" y1="170" x2="390" y2="200" stroke="#64748b" stroke-width="2" marker-end="url(#ra)" class="replay-flow"/>
+<line x1="350" y1="170" x2="530" y2="200" stroke="#64748b" stroke-width="2" marker-end="url(#ra)" class="replay-flow"/>
+<line x1="350" y1="170" x2="650" y2="200" stroke="#64748b" stroke-width="2" marker-end="url(#ra)" class="replay-flow"/>
+
+<!-- Tooltip -->
+<rect x="50" y="240" width="640" height="30" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="260" fill="#e2e8f0" font-size="11" text-anchor="middle" id="replayTooltip">Click on use cases to learn more</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">🔄 Replay Strategies</div>
+<div class="card">
+<h3 style="color:#f59e0b;">Strategy 1: Full Replay</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Replay all events from beginning. Simple but slow for large datasets.</p>
+<h3 style="color:#6366f1;">Strategy 2: From Snapshot</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Start from latest snapshot + replay remaining events. Much faster.</p>
+<h3 style="color:#10b981;">Strategy 3: By Time Range</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Replay only specific period (e.g., yesterday). Useful after small bugs.</p>
+<h3 style="color:#8b5cf6;">Strategy 4: By Aggregate</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Replay single entity (e.g., Order 1001). Only affected records.</p>
+</div>
+
+<div class="sec">⚠️ Replay Safety</div>
+<div class="defbox">
+<strong>Critical Rule:</strong> Replay should rebuild data, NOT repeat business actions. Disable emails, SMS, payments, and third-party APIs during replay.
+</div>
+<div class="card">
+<div class="viz-box">✅ Safe Replay:
+Replay → Projection → Database
+
+❌ Dangerous Replay:
+Replay → Email → SMS → Payment
+(Users get duplicate notifications!)</div>
+</div>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon, Netflix, Uber</h3>
+<p><strong>Amazon:</strong> Recommendation algorithm bug? Replay OrderCreated events → Recommendation Projection → Recommendations fixed.<br><br>
+<strong>Netflix:</strong> Trending algorithm updated? Replay Playback events → Trending Projection → Updated rankings.<br><br>
+<strong>Uber:</strong> Pricing bug fixed? Replay Ride events → Analytics → Historical reports updated.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Your analytics database was accidentally deleted. How do you recover?"</strong><div class="mini">"Redeploy the analytics projection service, enable replay mode to suppress side effects, replay historical events from the Event Store or Kafka, rebuild the analytics database, validate correctness, then return to normal operation. Use snapshots or parallel replay if the event history is very large."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>History → Replay → Projection → Rebuild → Recovery. Events are forever. Mistakes are reversible.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 11: Production Operations & Observability</h3><p>Learn about poison messages, DLQs, backpressure, consumer lag, distributed tracing, OpenTelemetry, and production monitoring.</p></div>
+</div>
+
+<script>
+// Interactive replay diagram
+const replayInfo = {
+'Disaster Recovery': 'Analytics database deleted? Replay events → Projection rebuilds database. No manual data repair needed.',
+'Analytics Rebuild': 'Bug in analytics code? Fix bug → Replay events → Correct analytics. No user impact.',
+'ML Retraining': 'New ML model? Replay historical events → Train model → Deploy. Uses real production data.',
+'Search Index': 'Search corrupted? Delete index → Replay events → Search rebuilt. Instant recovery.',
+'Time Travel': '"What was the balance on March 1st?" Replay events until that date. Historical state reconstructed.'
+};
+
+document.querySelectorAll('#replayDiagram rect').forEach(rect => {
+rect.addEventListener('click', function(e) {
+const text = this.querySelector('text');
+if (text) {
+const label = text.textContent.trim();
+const tooltip = document.getElementById('replayTooltip');
+if (replayInfo[label]) {
+tooltip.textContent = replayInfo[label];
+}
+}
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

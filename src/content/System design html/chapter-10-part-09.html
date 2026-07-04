@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-Region Architecture - Geo-Distributed Systems | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.region-node{cursor:pointer;transition: all 0.3s ease;}
+.region-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 10 · Part 9 · Multi-Region Architecture</div>
+<h1>Multi-Region Architecture<br><span>Geo-Distributed Systems & Global Deployment</span></h1>
+<p>When your users span the globe, your architecture must span the globe too. Multi-region systems exist not only for lower latency, but also to survive disasters that can take down entire continents.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Active-Passive</div><div class="sl">DR Focus</div></div>
+<div class="stat"><div class="sn">Active-Active</div><div class="sl">Low Latency</div></div>
+<div class="stat"><div class="sn">Geo-Replication</div><div class="sl">Data Sync</div></div>
+<div class="stat"><div class="sn">RPO/RTO</div><div class="sl">Recovery</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The AWS Region Outage</div>
+<div class="story">
+<div class="slabel">When an Entire Region Goes Offline</div>
+<h3>A large e-commerce company deploys its entire application inside one AWS Region. One morning, a major power failure affects the entire region. Millions of users cannot place orders. Revenue drops to zero.</h3>
+<p>The application was highly available inside one region, but not across regions. This is why global companies build <strong>Multi-Region Architectures</strong>. When one region fails, traffic automatically shifts to another. Users continue shopping. The business survives.</p>
+</div>
+
+<div class="sec">🎯 What is Multi-Region Architecture?</div>
+<div class="defbox">
+<strong>Multi-Region Architecture:</strong> Deploying applications and data across multiple geographic regions. Provides lower latency for global users, higher availability through regional failover, and disaster recovery against regional failures.
+</div>
+
+<div class="sec">🔄 Interactive: Deployment Strategies</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each deployment strategy to understand the trade-offs.</p>
+<div class="fig">
+<svg viewBox="0 0 700 280" width="100%" id="regionDiagram">
+<defs>
+<marker id="ra" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Active-Passive -->
+<rect class="region-node" data-strategy="activepassive" x="50" y="30" width="280" height="100" rx="8" fill="#6366f1"/>
+<text x="190" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">Active-Passive</text>
+<text x="190" y="80" fill="#cbd5e1" font-size="12" text-anchor="middle">One region serves traffic</text>
+<text x="190" y="100" fill="#94a3b8" font-size="11" text-anchor="middle">Backup waits for failover</text>
+<text x="190" y="118" fill="#94a3b8" font-size="11" text-anchor="middle">Simple disaster recovery</text>
+
+<!-- Active-Active -->
+<rect class="region-node" data-strategy="activeactive" x="370" y="30" width="280" height="100" rx="8" fill="#10b981"/>
+<text x="510" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">Active-Active</text>
+<text x="510" y="80" fill="#cbd5e1" font-size="12" text-anchor="middle">Multiple regions serve traffic</text>
+<text x="510" y="100" fill="#94a3b8" font-size="11" text-anchor="middle">Lower latency globally</text>
+<text x="510" y="118" fill="#94a3b8" font-size="11" text-anchor="middle">Complex consistency</text>
+
+<!-- Comparison -->
+<rect x="50" y="160" width="600" height="80" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="185" fill="#e2e8f0" font-size="13" font-weight="700" text-anchor="middle">Key Trade-offs</text>
+<text x="100" y="210" fill="#a5b4fc" font-size="11" text-anchor="middle">✔ Active-Passive: Simple, higher RTO, lower cost</text>
+<text x="100" y="230" fill="#6ee7b7" font-size="11" text-anchor="middle">✔ Active-Active: Low latency, complex, higher cost</text>
+
+<!-- Tooltip -->
+<rect x="50" y="250" width="600" height="25" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="267" fill="#e2e8f0" font-size="11" text-anchor="middle" id="regionTooltip">Click on each strategy to learn more</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Active-Passive vs Active-Active</div>
+<table>
+<thead><tr><th>Aspect</th><th>Active-Passive</th><th>Active-Active</th></tr></thead>
+<tbody>
+<tr><td class="h">Traffic</td><td>One region active</td><td>All regions active</td></tr>
+<tr><td class="h">Latency</td><td>Higher for distant users</td><td>Low globally</td></tr>
+<tr><td class="h">Complexity</td><td>Simple</td><td>Complex</td></tr>
+<tr><td class="h">Consistency</td><td>Easier</td><td>Challenging</td></tr>
+<tr><td class="h">Cost</td><td>Lower</td><td>Higher</td></tr>
+<tr><td class="h">RTO</td><td>Minutes</td><td>Seconds</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🔄 Geo-Replication Strategies</div>
+<div class="defbox">
+<strong>Synchronous:</strong> Write must complete in every region before returning. Strong consistency, high latency. <strong>Asynchronous:</strong> Write completes locally, other regions update later. Low latency, eventual consistency. Most global systems use asynchronous replication.
+</div>
+
+<div class="sec">✅ Global Load Balancing</div>
+<div class="defbox">
+<strong>Global Load Balancer:</strong> Routes users to the nearest healthy region. Uses DNS-based routing, health checks, and latency measurement. If a region fails, traffic automatically shifts to another region. Examples: AWS Route53, Cloudflare Load Balancer.
+</div>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Netflix & Amazon</h3>
+<p><strong>Netflix:</strong> Deploys Active-Active across multiple AWS regions. Users route to nearest region via DNS. Content cached in Open Connect CDN. If one region fails, traffic shifts automatically.<br><br>
+<strong>Amazon:</strong> Uses Active-Passive for critical services with automated failover. Regional databases with async replication. RTO under 5 minutes for critical systems.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"When would you choose Active-Active over Active-Passive?"</strong><div class="mini">"Choose Active-Active when users are globally distributed and low latency is critical. Multiple regions simultaneously serve traffic, improving availability and reducing latency. Active-Passive is simpler and better suited when disaster recovery is the primary goal and cost optimization matters."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Active-Passive = Simple DR. Active-Active = Global Performance. Geo-Replication = Data Sync. RPO = Data Loss. RTO = Downtime.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 10: Disaster Recovery & High Availability</h3><p>Learn about RPO, RTO, backup strategies, failover, chaos engineering, and how to design systems that survive catastrophic failures.</p></div>
+</div>
+
+<script>
+// Interactive region diagram
+const regionInfo = {
+'activepassive': 'Active-Passive: One primary region serves all traffic. Secondary region stands by with replicated data. If primary fails, traffic shifts to secondary. Simple to implement, higher RTO (minutes), lower cost. Good for disaster recovery. Example: Primary US-East, Secondary US-West.',
+'activeactive': 'Active-Active: Multiple regions simultaneously serve traffic. Users route to nearest region. Lower latency globally, better availability, complex consistency. Requires conflict resolution, geo-replication, global load balancing. Higher cost. Example: Netflix serving from US, EU, Asia simultaneously.'
+};
+
+document.querySelectorAll('.region-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const strategy = this.getAttribute('data-strategy');
+const tooltip = document.getElementById('regionTooltip');
+tooltip.textContent = regionInfo[strategy] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

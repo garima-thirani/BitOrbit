@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>From Monolith to Microservices | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.evolution-node{cursor:pointer;transition: all 0.3s ease;}
+.evolution-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 9 · Part 1 · Monolith to Microservices</div>
+<h1>From Monolith to Microservices<br><span>Why the Industry Changed</span></h1>
+<p>Microservices were not invented to solve technical problems—they were invented to solve organizational scaling problems. Learn the evolution from monoliths to microservices and when to use each.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Monolith</div><div class="sl">Starting Point</div></div>
+<div class="stat"><div class="sn">Microservices</div><div class="sl">Scaling Solution</div></div>
+<div class="stat"><div class="sn">Conway's Law</div><div class="sl">Team → Architecture</div></div>
+<div class="stat"><div class="sn">Evolution</div><div class="sl">Gradual</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Startup That Became Too Successful</div>
+<div class="story">
+<div class="slabel">Day 1 vs Year 3</div>
+<h3>5 engineers, 500 users, one database → 400 engineers, 50M users, still one database.</h3>
+<p>Day 1: 5 engineers, 500 users, one product, one database. Deployment takes 30 seconds. Every engineer understands the entire codebase. Life is good. Year 3: 400 engineers, 80 product teams, 50M users. The architecture is still one giant application. A tiny change in Profile Page requires deploying the entire application. A bug in Recommendation Engine crashes Checkout. An Analytics query locks the Orders table. Customers cannot purchase products. Engineers begin saying "Please don't deploy today." The problem isn't bad code. The architecture no longer matches the organization.</p>
+</div>
+
+<div class="sec">🔄 Interactive: Architecture Evolution</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each stage to see how software architecture evolved.</p>
+<div class="fig">
+<svg viewBox="0 0 700 220" width="100%" id="evolutionDiagram">
+<defs>
+<marker id="ea" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Stage 1: Single Executable -->
+<rect class="evolution-node" data-stage="1" x="20" y="50" width="100" height="80" rx="6" fill="#6366f1"/>
+<text x="70" y="75" fill="white" font-size="11" font-weight="700" text-anchor="middle">Single</text>
+<text x="70" y="92" fill="white" font-size="11" font-weight="700" text-anchor="middle">Executable</text>
+
+<line x1="120" y1="90" x2="140" y2="90" stroke="#64748b" stroke-width="2" marker-end="url(#ea)"/>
+
+<!-- Stage 2: Monolith -->
+<rect class="evolution-node" data-stage="2" x="140" y="50" width="100" height="80" rx="6" fill="#8b5cf6"/>
+<text x="190" y="75" fill="white" font-size="11" font-weight="700" text-anchor="middle">Monolith</text>
+<text x="190" y="92" fill="white" font-size="10" text-anchor="middle">One App</text>
+
+<line x1="240" y1="90" x2="260" y2="90" stroke="#64748b" stroke-width="2" marker-end="url(#ea)"/>
+
+<!-- Stage 3: Layered -->
+<rect class="evolution-node" data-stage="3" x="260" y="50" width="100" height="80" rx="6" fill="#06b6d4"/>
+<text x="310" y="75" fill="white" font-size="11" font-weight="700" text-anchor="middle">Layered</text>
+<text x="310" y="92" fill="white" font-size="11" font-weight="700" text-anchor="middle">Monolith</text>
+
+<line x1="360" y1="90" x2="380" y2="90" stroke="#64748b" stroke-width="2" marker-end="url(#ea)"/>
+
+<!-- Stage 4: SOA -->
+<rect class="evolution-node" data-stage="4" x="380" y="50" width="100" height="80" rx="6" fill="#f59e0b"/>
+<text x="430" y="75" fill="white" font-size="11" font-weight="700" text-anchor="middle">SOA</text>
+<text x="430" y="92" fill="white" font-size="10" text-anchor="middle">ESB</text>
+
+<line x1="480" y1="90" x2="500" y2="90" stroke="#64748b" stroke-width="2" marker-end="url(#ea)"/>
+
+<!-- Stage 5: Microservices -->
+<rect class="evolution-node" data-stage="5" x="500" y="50" width="100" height="80" rx="6" fill="#10b981"/>
+<text x="550" y="75" fill="white" font-size="11" font-weight="700" text-anchor="middle">Micro-</text>
+<text x="550" y="92" fill="white" font-size="11" font-weight="700" text-anchor="middle">services</text>
+
+<!-- Tooltip -->
+<rect x="20" y="160" width="660" height="30" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="180" fill="#e2e8f0" font-size="11" text-anchor="middle" id="evolutionTooltip">Click on each stage to learn more</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Monolith vs Microservices</div>
+<table>
+<thead><tr><th>Aspect</th><th>Monolith</th><th>Microservices</th></tr></thead>
+<tbody>
+<tr><td class="h">Deployment</td><td>One big deploy</td><td>Independent deploys</td></tr>
+<tr><td class="h">Database</td><td>Shared</td><td>Per service</td></tr>
+<tr><td class="h">Scaling</td><td>Scale all</td><td>Scale individually</td></tr>
+<tr><td class="h">Team Size</td><td>Small teams</td><td>Large orgs</td></tr>
+<tr><td class="h">Complexity</td><td>Simple ops</td><td>Distributed complexity</td></tr>
+<tr><td class="h">Fault Isolation</td><td>Poor</td><td>Good</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🎯 Conway's Law</div>
+<div class="defbox">
+<strong>Conway's Law:</strong> "Organizations design systems that mirror their communication structure." Independent teams naturally build independent services. One giant team builds one giant application.
+</div>
+
+<div class="sec">✅ When to Use Microservices</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Large Teams</div><div class="td">400+ engineers</div></div>
+<div class="tag-card"><div class="tc">✅ Independent Scaling</div><div class="td">Different services need different resources</div></div>
+<div class="tag-card"><div class="tc">✅ Multiple Products</div><div class="td">Different lifecycles</div></div>
+<div class="tag-card"><div class="tc">✅ Global Scale</div><div class="td">Millions of users</div></div>
+</div>
+</div>
+
+<div class="sec">❌ When NOT to Use Microservices</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">❌ Small Team</div><div class="td">Startup MVP</div></div>
+<div class="tag-card"><div class="tc">❌ Simple App</div><div class="td">CRUD application</div></div>
+<div class="tag-card"><div class="tc">❌ Limited DevOps</div><div class="td">No infrastructure</div></div>
+<div class="tag-card"><div class="tc">❌ Fast Iteration</div><div class="td">Need to move quickly</div></div>
+</div>
+</div>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon, Netflix, Uber</h3>
+<p><strong>Amazon:</strong> Started with monolith, evolved to 1000+ microservices over years using Strangler Fig Pattern.<br><br>
+<strong>Netflix:</strong> Moved from monolith to microservices to handle 200M+ users with independent scaling.<br><br>
+<strong>Uber:</strong> Started with monolithic Rails app, migrated to microservices as team grew from 10 to 1000+ engineers.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why did the industry move from monoliths to microservices?"</strong><div class="mini">"As engineering teams and user bases grew, monoliths became difficult to deploy, scale, and maintain. Microservices allow independent deployment, independent scaling, better team ownership, and improved fault isolation, making them better suited for large organizations."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Start Monolith → Grow Team → Extract Services → Microservices. Architecture evolves with organization.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 2: Designing Good Microservices - DDD, Bounded Contexts & Service Boundaries</h3><p>Learn how to identify good service boundaries using Domain-Driven Design, Bounded Contexts, Aggregates, and Anti-Corruption Layers.</p></div>
+</div>
+
+<script>
+// Interactive evolution diagram
+const evolutionInfo = {
+'1': 'Single Executable: Early software where everything lived in one program. Simple, fast, but no scalability.',
+'2': 'Monolith: Everything in one application. Good for small teams, but deployment and scaling become bottlenecks.',
+'3': 'Layered Monolith: Better code organization with presentation, business, and data layers. Still one deployment.',
+'4': 'SOA: Enterprise Service Bus with reusable services. ESB became a bottleneck. Governance slowed evolution.',
+'5': 'Microservices: Small independent services, each owning its data and deployment. Scales with organization.'
+};
+
+document.querySelectorAll('.evolution-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const stage = this.getAttribute('data-stage');
+const tooltip = document.getElementById('evolutionTooltip');
+tooltip.textContent = evolutionInfo[stage] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

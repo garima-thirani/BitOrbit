@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Production Operations & Observability | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.monitor-pulse{animation: pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.5;}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 8 · Part 11 · Production Operations</div>
+<h1>Production Operations & Observability<br><span>DLQs, Consumer Lag, Distributed Tracing & Monitoring</span></h1>
+<p>Building an Event-Driven Architecture is easy. Operating one at scale is hard. Learn about poison messages, DLQs, backpressure, consumer lag, OpenTelemetry, and production monitoring.</p>
+<div class="stats">
+<div class="stat"><div class="sn">DLQ</div><div class="sl">Failures</div></div>
+<div class="stat"><div class="sn">Lag</div><div class="sl">Monitor</div></div>
+<div class="stat"><div class="sn">Tracing</div><div class="sl">Debug</div></div>
+<div class="stat"><div class="sn">Alerts</div><div class="sl">React</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Invisible Failure</div>
+<div class="story">
+<div class="slabel">Uber's Missing Receipts</div>
+<h3>Everything looks healthy, but customers don't get receipts.</h3>
+<p>Everything appears healthy at Uber. Kafka brokers running. CPU low. Memory normal. Network latency fine. Yet customers complain: "My ride completed 20 minutes ago, but I still haven't received my receipt." You inspect: Payment Service ✔, Kafka ✔, Notification Service ✔, Email Service ✔. Everything looks healthy. Eventually you discover: one malformed event entered the notification pipeline. Every consumer kept retrying it. The queue became blocked. Thousands of valid receipts waited behind one bad event. One poisoned message caused a production incident.</p>
+</div>
+
+<div class="sec">🎯 Common Failure Modes</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">☠️ Poison Message</div><div class="td">Malformed event causing repeated failures</div></div>
+<div class="tag-card"><div class="tc">📊 Consumer Lag</div><div class="td">Consumers can't keep up with producers</div></div>
+<div class="tag-card"><div class="tc">🔄 Duplicate Events</div><div class="td">Producer retries cause duplicates</div></div>
+<div class="tag-card"><div class="tc">💥 Event Storm</div><div class="td">One event triggers thousands more</div></div>
+<div class="tag-card"><div class="tc">🌐 Broker Failure</div><div class="td">Kafka cluster becomes unavailable</div></div>
+</div>
+</div>
+
+<div class="sec">☠️ Poison Messages & DLQ</div>
+<div class="defbox">
+<strong>Poison Message:</strong> An event that consistently fails processing. Instead of retrying forever, move it to a Dead Letter Queue after max retries.
+</div>
+<div class="card">
+<div class="viz-box">Poison Message Flow:
+Consumer → Retry → Retry → Retry → DLQ
+                                    ↓
+                    Operations team investigates
+
+DLQ prevents queue blocking!</div>
+</div>
+
+<div class="sec">📊 Consumer Lag</div>
+<div class="defbox">
+<strong>Consumer Lag:</strong> Difference between latest produced offset and latest consumed offset. Indicates how far consumers are behind.
+</div>
+<div class="card">
+<div class="viz-box">Producer Offset: 100,000
+Consumer Offset: 95,000
+Lag: 5,000 events
+
+High lag = consumers can't keep up!</div>
+</div>
+
+<div class="sec">🔄 Retry Strategy</div>
+<div class="card">
+<div class="viz-box">❌ Bad: Immediate retry
+Fail → Retry → Fail → Retry → Storm
+
+✅ Good: Exponential backoff + jitter
+Fail → Wait 1s → Retry
+     → Wait 2s → Retry
+     → Wait 4s → Retry
+     → Wait 8s → DLQ
+
+Add random jitter to prevent retry storms!</div>
+</div>
+
+<div class="sec">🔍 Distributed Tracing</div>
+<div class="defbox">
+<strong>Correlation ID:</strong> Unique ID linking all events from the same business request. Enables end-to-end tracing across services.
+</div>
+<div class="card">
+<div class="viz-box">Order Created (correlationId: abc-123)
+   ↓
+Payment Completed (correlationId: abc-123)
+   ↓
+Inventory Reserved (correlationId: abc-123)
+   ↓
+Shipment Created (correlationId: abc-123)
+
+All events traceable!</div>
+</div>
+
+<div class="sec">📈 Production Monitoring</div>
+<div class="card">
+<h3 style="color:#f59e0b;">Critical Metrics</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Monitor these metrics to detect problems before users notice:</p>
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">📊 Consumer Lag</div><div class="td">How far behind are consumers?</div></div>
+<div class="tag-card"><div class="tc">🔄 Retry Count</div><div class="td">Are there poison messages?</div></div>
+<div class="tag-card"><div class="tc">💀 DLQ Size</div><div class="td">Are failures increasing?</div></div>
+<div class="tag-card"><div class="tc">⚡ Throughput</div><div class="td">Events/sec per topic</div></div>
+<div class="tag-card"><div class="tc">⏱️ Latency</div><div class="td">End-to-end processing time</div></div>
+<div class="tag-card"><div class="tc">🖥️ Broker Health</div><div class="td">CPU, memory, disk, network</div></div>
+</div>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Netflix Monitoring Dashboard</h3>
+<p>Netflix monitors: Playback latency, Playback failures, Consumer lag, Kafka throughput, CDN latency, Recommendation freshness, Trending update delay, Replay progress, ML feature generation, Device synchronization latency. Every metric has alerts. Every alert has a runbook. Every runbook has an owner. This is what operating at scale means.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Kafka is healthy but customers report delayed order confirmations. How do you investigate?"</strong><div class="mini">"First examine consumer lag, retry counts, and DLQ growth. Use distributed tracing to follow a delayed order through all services. Check for poison messages, schema validation failures, slow downstream dependencies, and backpressure. Scale consumers or replay failed events after resolving the root cause."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Event → Retry → DLQ → Replay → Tracing → Monitoring → Recovery. Production EDA requires observability infrastructure, not just Kafka.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 12: Production Case Studies - Amazon, Uber, Netflix, LinkedIn</h3><p>Complete production architectures: Amazon Order Processing, Uber Ride Platform, Netflix Streaming, LinkedIn Activity Feed.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

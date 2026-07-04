@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Revision & Master Cheat Sheet - Microservices | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.cheat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin:20px 0;}
+.cheat-card{background:#1e293b;border:1px solid #6366f1;border-radius:10px;padding:16px;transition:all 0.3s ease;}
+.cheat-card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(99,102,241,0.3);}
+.cheat-card h3{color:#a5b4fc;margin-top:0;font-size:16px;}
+.cheat-card ul{margin:8px 0;padding-left:20px;}
+.cheat-card li{margin:6px 0;color:#e2e8f0;font-size:13px;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 9 · Part 13 · Final Revision</div>
+<h1>Final Revision & Master Cheat Sheet<br><span>Complete Microservices Review for Interviews</span></h1>
+<p>Consolidate everything you've learned about Microservices Architecture. Master cheat sheets, decision trees, interview questions, and rapid revision guides.</p>
+<div class="stats">
+<div class="stat"><div class="sn">13 Parts</div><div class="sl">Complete</div></div>
+<div class="stat"><div class="sn">Cheat</div><div class="sl">Sheets</div></div>
+<div class="stat"><div class="sn">Interview</div><div class="sl">Ready</div></div>
+<div class="stat"><div class="sn">Production</div><div class="sl">Proven</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📋 Master Cheat Sheet - Core Concepts</div>
+<div class="cheat-grid">
+<div class="cheat-card">
+<h3>🎯 Architecture</h3>
+<ul>
+<li><strong>Monolith:</strong> Single deployable app</li>
+<li><strong>Microservice:</strong> Independent business service</li>
+<li><strong>Conway's Law:</strong> Teams shape architecture</li>
+<li><strong>Strangler Fig:</strong> Incremental migration</li>
+</ul>
+</div>
+
+<div class="cheat-card">
+<h3>📐 DDD & Boundaries</h3>
+<ul>
+<li><strong>Domain:</strong> Business problem</li>
+<li><strong>Bounded Context:</strong> Model boundary</li>
+<li><strong>Entity:</strong> Has identity</li>
+<li><strong>Aggregate:</strong> Consistency boundary</li>
+</ul>
+</div>
+
+<div class="cheat-card">
+<h3>💬 Communication</h3>
+<ul>
+<li><strong>REST:</strong> Public APIs, HTTP/JSON</li>
+<li><strong>gRPC:</strong> Internal, Protobuf, fast</li>
+<li><strong>Kafka:</strong> Events, async, streaming</li>
+<li><strong>GraphQL:</strong> Flexible queries</li>
+</ul>
+</div>
+
+<div class="cheat-card">
+<h3>🗄️ Data</h3>
+<ul>
+<li><strong>DB per Service:</strong> Independent ownership</li>
+<li><strong>Polyglot:</strong> Right DB for workload</li>
+<li><strong>CQRS:</strong> Separate reads/writes</li>
+<li><strong>Eventual Consistency:</strong> Async sync</li>
+</ul>
+</div>
+
+<div class="cheat-card">
+<h3>🔄 Transactions</h3>
+<ul>
+<li><strong>ACID:</strong> Single database</li>
+<li><strong>BASE:</strong> Distributed systems</li>
+<li><strong>Saga:</strong> Local + compensation</li>
+<li><strong>Choreography:</strong> Event-driven</li>
+</ul>
+</div>
+
+<div class="cheat-card">
+<h3>🛡️ Resilience</h3>
+<ul>
+<li><strong>Retry:</strong> Temporary failures</li>
+<li><strong>Circuit Breaker:</strong> Stop repeated fails</li>
+<li><strong>Bulkhead:</strong> Isolate resources</li>
+<li><strong>Fallback:</strong> Graceful degrade</li>
+</ul>
+</div>
+
+<div class="cheat-card">
+<h3>🔍 Networking</h3>
+<ul>
+<li><strong>Service Discovery:</strong> Find services dynamically</li>
+<li><strong>API Gateway:</strong> Single entry point</li>
+<li><strong>Service Mesh:</strong> Networking abstraction</li>
+<li><strong>mTLS:</strong> Mutual authentication</li>
+</ul>
+</div>
+
+<div class="cheat-card">
+<h3>📊 Observability</h3>
+<ul>
+<li><strong>Logs:</strong> What happened</li>
+<li><strong>Metrics:</strong> How healthy</li>
+<li><strong>Traces:</strong> Why it happened</li>
+<li><strong>Trace ID:</strong> Request identity</li>
+</ul>
+</div>
+
+<div class="cheat-card">
+<h3>🚀 Deployment</h3>
+<ul>
+<li><strong>Docker:</strong> Container platform</li>
+<li><strong>Kubernetes:</strong> Container orchestration</li>
+<li><strong>CI/CD:</strong> Automated deployment</li>
+<li><strong>Canary:</strong> Progressive rollout</li>
+</ul>
+</div>
+
+<div class="cheat-card">
+<h3>🔒 Security</h3>
+<ul>
+<li><strong>OAuth2:</strong> Authorization framework</li>
+<li><strong>JWT:</strong> Stateless tokens</li>
+<li><strong>mTLS:</strong> Service authentication</li>
+<li><strong>Zero Trust:</strong> Verify everything</li>
+</ul>
+</div>
+
+<div class="cheat-card">
+<h3>⚡ Performance</h3>
+<ul>
+<li><strong>Cache:</strong> Redis, 10-100x faster</li>
+<li><strong>Stateless:</strong> Scale horizontally</li>
+<li><strong>Load Balancer:</strong> Distribute traffic</li>
+<li><strong>Autoscale:</strong> Match demand</li>
+</ul>
+</div>
+
+<div class="cheat-card">
+<h3>🏢 Production</h3>
+<ul>
+<li><strong>Database per Service:</strong> Always</li>
+<li><strong>Event-Driven:</strong> Kafka for async</li>
+<li><strong>Observability:</strong> Logs, Metrics, Traces</li>
+<li><strong>Resilience:</strong> Retry, Circuit Breaker</li>
+</ul>
+</div>
+</div>
+
+<div class="sec">🧠 Memory Tricks</div>
+<div class="card">
+<div class="viz-box">MICROSERVICES:
+
+M - Modular Business Capabilities
+I - Independent Deployments
+C - Communication (REST/gRPC/Kafka)
+R - Resilience First
+O - Ownership of Data
+S - Stateless Services
+E - Event-Driven Processing
+V - Version Everything
+I - Isolate Failures (Bulkhead)
+C - Cache Everything
+E - Every Request Traced
+
+SCALE:
+
+S - Stateless Services
+C - Cache (Redis)
+A - Autoscaling
+L - Load Balancing
+E - Event-Driven Processing
+
+SECURE:
+
+S - Secrets in Vault
+E - Encrypt Everywhere
+C - Certificates (mTLS)
+U - User Authentication (OAuth2/JWT)
+R - RBAC/ABAC
+E - Every Request Verified</div>
+</div>
+
+<div class="sec">🎯 Top 20 Interview Questions</div>
+<div class="card">
+<h3 style="color:#fbbf24;">Fundamentals</h3>
+<p style="color:var(--tm);margin-bottom:12px;"><strong>Q1: Why microservices over monolith?</strong><br>Team scaling, independent deployment, fault isolation, technology diversity.<br><br>
+<strong>Q2: What is Conway's Law?</strong><br>Architecture mirrors organization structure. Independent teams build independent services.<br><br>
+<strong>Q3: How to identify service boundaries?</strong><br>Business capabilities, DDD bounded contexts, independent scaling, separate teams.<br><br>
+<strong>Q4: Database per Service - why?</strong><br>Independent schema evolution, deployment, scaling. No hidden coupling.<br><br>
+<strong>Q5: Shared database anti-pattern?</strong><br>Tight coupling, schema conflicts, coordinated deployments, hidden dependencies.</p>
+
+<h3 style="color:#fbbf24;">Communication & Data</h3>
+<p style="color:var(--tm);margin-bottom:12px;"><strong>Q6: REST vs gRPC vs Kafka?</strong><br>REST (public APIs, simple), gRPC (internal, fast), Kafka (events, async).<br><br>
+<strong>Q7: Synchronous vs Asynchronous?</strong><br>Sync: user waits (payment). Async: user doesn't wait (analytics).<br><br>
+<strong>Q8: What is Saga pattern?</strong><br>Local transactions with compensating actions. Replaces 2PC in microservices.<br><br>
+<strong>Q9: Eventual consistency?</strong><br>Data becomes consistent eventually. Acceptable for distributed systems.<br><br>
+<strong>Q10: CQRS?</strong><br>Separate read and write models. Optimize each independently.</p>
+
+<h3 style="color:#fbbf24;">Resilience & Operations</h3>
+<p style="color:var(--tm);margin-bottom:12px;"><<strong>Q11: Circuit Breaker?</strong><br>Stop calling failing service. States: Closed → Open → Half-Open.<br><br>
+<strong>Q12: Why retries need backoff?</strong><br>Prevent retry storms. Exponential backoff + jitter spreads traffic.<br><br>
+<strong>Q13: Service Discovery?</strong><br>Dynamic service location. No hardcoded IPs. Registry-based.<br><br>
+<strong>Q14: API Gateway purpose?</strong><br>Single entry point, auth, rate limiting, request aggregation.<br><br>
+<strong>Q15: Three observability pillars?</strong><br>Logs (what), Metrics (where), Traces (why).</p>
+
+<h3 style="color:#fbbf24;">Security & Deployment</h3>
+<p style="color:var(--tm);margin-bottom:12px;"><strong>Q16: OAuth2 vs JWT?</strong><br>OAuth2 (authorization framework), JWT (stateless token format).<br><br>
+<strong>Q17: mTLS?</strong><br>Mutual TLS. Both client and server verify certificates.<br><br>
+<strong>Q18: Zero Trust?</strong><br>Verify every request, every service, every hop. No implicit trust.<br><br>
+<strong>Q19: Docker vs Kubernetes?</strong><br>Docker (containers), Kubernetes (orchestrates containers at scale).<br><br>
+<strong>Q20: Rolling update vs Canary?</strong><br>Rolling (gradual replacement), Canary (test on small % first).</p>
+</div>
+
+<div class="sec">📊 Decision Trees</div>
+<div class="card">
+<h3 style="color:#6366f1;">When to Use Microservices?</h3>
+<div class="viz-box">Small Team (< 10)?
+↓
+YES → Monolith
+NO → Independent Teams?
+↓
+YES → Different Scaling Needs?
+↓
+YES → Microservices
+NO → Modular Monolith</div>
+
+<h3 style="color:#10b981;">Communication Choice</h3>
+<div class="viz-box">User needs immediate response?
+↓
+YES → Public API? → REST
+NO → Internal API? → gRPC
+NO → Events/Async? → Kafka</div>
+
+<h3 style="color:#f59e0b;">Database Choice</h3>
+<div class="viz-box">Need ACID? → PostgreSQL
+Need Search? → Elasticsearch
+Need Cache? → Redis
+Need Analytics? → ClickHouse
+Need Massive Writes? → Cassandra</div>
+
+<h3 style="color:#8b5cf6;">Deployment Strategy</h3>
+<div class="viz-box">Need zero downtime?
+↓
+YES → Rolling Update
+Need fast rollback? → Blue-Green
+Need progressive testing? → Canary</div>
+</div>
+
+<div class="sec">✅ Golden Rules</div>
+<div class="card">
+<div class="viz-box">1. Design around business capabilities, not technical layers
+2. Every service owns its data - never share databases
+3. Keep services independently deployable
+4. Prefer async communication where possible
+5. Every external call needs timeout
+6. Retries require backoff + jitter + circuit breaker
+7. Every request needs Trace ID
+8. Secure every service-to-service call
+9. Automate everything (CI/CD)
+10. Design for failure from day one
+11. Make everything observable (Logs, Metrics, Traces)
+12. Scale horizontally whenever possible
+13. Measure before optimizing
+14. Accept eventual consistency where appropriate
+15. Build systems that evolve without stopping business</div>
+</div>
+
+<div class="sec">🎓 Ready for Interviews</div>
+<div class="card">
+<div class="viz-box">You can now:
+✓ Explain microservices to any audience
+✓ Design microservice architectures
+✓ Choose right communication patterns
+✓ Handle distributed data correctly
+✓ Design for resilience
+✓ Secure microservices
+✓ Deploy with confidence
+✓ Monitor and observe
+✓ Think in trade-offs
+✓ Answer any microservices interview question
+
+Next: Practice with design exercises!</div>
+</div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 10: Scalability & Distributed Data Systems</h3><p>CAP theorem, consistency models, replication, sharding, consensus algorithms (Raft/Paxos), distributed locks, leader election, multi-region architectures, and planet-scale system design.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Production Case Studies - Amazon, Netflix, Uber, LinkedIn | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.case-tab{cursor:pointer;transition: all 0.3s ease;}
+.case-tab:hover{filter: brightness(1.2);}
+.case-content{display:none;}
+.case-content.active{display:block;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 9 · Part 12 · Production Case Studies</div>
+<h1>Production Case Studies<br><span>Amazon, Netflix, Uber, LinkedIn, Spotify, Airbnb</span></h1>
+<p>Study how the world's largest companies design and operate microservices. Learn from real-world architectures, engineering decisions, and trade-offs from FAANG companies.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Amazon</div><div class="sl">Commerce</div></div>
+<div class="stat"><div class="sn">Netflix</div><div class="sl">Streaming</div></div>
+<div class="stat"><div class="sn">Uber</div><div class="sl">Transport</div></div>
+<div class="stat"><div class="sn">LinkedIn</div><div class="sl">Social</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">🏢 Interactive: Company Case Studies</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each company to see their complete microservices architecture.</p>
+<div class="fig">
+<svg viewBox="0 0 700 120" width="100%" id="caseStudyTabs">
+<defs>
+<linearGradient id="cg"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/></linearGradient>
+<marker id="ca" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<rect class="case-tab" data-case="amazon" x="20" y="30" width="120" height="60" rx="8" fill="#6366f1"/>
+<text x="80" y="55" fill="white" font-size="12" font-weight="700" text-anchor="middle">Amazon</text>
+<text x="80" y="72" fill="#cbd5e1" font-size="10" text-anchor="middle">Commerce</text>
+
+<rect class="case-tab" data-case="netflix" x="150" y="30" width="120" height="60" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="210" y="55" fill="white" font-size="12" font-weight="700" text-anchor="middle">Netflix</text>
+<text x="210" y="72" fill="#cbd5e1" font-size="10" text-anchor="middle">Streaming</text>
+
+<rect class="case-tab" data-case="uber" x="280" y="30" width="120" height="60" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="340" y="55" fill="white" font-size="12" font-weight="700" text-anchor="middle">Uber</text>
+<text x="340" y="72" fill="#cbd5e1" font-size="10" text-anchor="middle">Transport</text>
+
+<rect class="case-tab" data-case="linkedin" x="410" y="30" width="120" height="60" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="470" y="55" fill="white" font-size="12" font-weight="700" text-anchor="middle">LinkedIn</text>
+<text x="470" y="72" fill="#cbd5e1" font-size="10" text-anchor="middle">Social</text>
+
+<rect class="case-tab" data-case="spotify" x="540" y="30" width="120" height="60" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="600" y="55" fill="white" font-size="12" font-weight="700" text-anchor="middle">Spotify</text>
+<text x="600" y="72" fill="#cbd5e1" font-size="10" text-anchor="middle">Music</text>
+</svg>
+</div>
+</div>
+
+<div id="amazon" class="case-content active">
+<div class="sec">🏢 Amazon - E-Commerce Platform</div>
+<div class="story">
+<div class="slabel">1000+ Microservices</div>
+<h3>Millions of orders/day with complete event traceability.</h3>
+<p><strong>Architecture:</strong> API Gateway → 1000+ Services (Catalog, Cart, Orders, Payments, Inventory, Shipping, Recommendations, Search, Notifications)<br><br>
+<strong>Key Features:</strong> Database per Service, Event-Driven with Kafka, CQRS with Redis/Elasticsearch, Service Discovery with Kubernetes DNS, mTLS for service communication, Observability with OpenTelemetry<br><br>
+<strong>Communication:</strong> REST for synchronous (checkout), Kafka for async (analytics, notifications)<br><br>
+<strong>Deployment:</strong> Docker + Kubernetes, Canary deployments, Automatic rollback<br><br>
+<strong>Scaling:</strong> Each service scales independently. Orders: 500 instances, Recommendations: 3000 instances</p>
+</div>
+</div>
+
+<div id="netflix" class="case-content">
+<div class="sec">🏢 Netflix - Streaming Platform</div>
+<div class="story">
+<div class="slabel">200M+ Users</div>
+<h3>Billions of playback events with personalized recommendations.</h3>
+<p><strong>Architecture:</strong> Gateway → Playback, Profiles, Billing, Recommendations, Encoding, Search, CDN<br><br>
+<strong>Key Features:</strong> Cassandra for playback history, Feature Store for ML, Redis for caching, Kafka for analytics, Event-driven recommendations<br><br>
+<strong>Communication:</strong> REST for playback, Kafka for analytics pipeline<br><br>
+<strong>Deployment:</strong> Docker + Kubernetes, Rolling updates, Feature flags<br><br>
+<strong>Scaling:</strong> CDN handles video delivery, Services scale independently. Encoding uses GPUs, Recommendations use CPUs</p>
+</div>
+</div>
+
+<div id="uber" class="case-content">
+<div class="sec">🏢 Uber - Ride Platform</div>
+<div class="story">
+<div class="slabel">Real-Time Transportation</div>
+<h3>Millions of rides/day with continuous GPS streaming.</h3>
+<p><strong>Architecture:</strong> Gateway → Ride, Driver, Pricing, Maps, Payments, Fraud, Analytics<br><br>
+<strong>Key Features:</strong> PostgreSQL for transactions, Redis for location cache, ClickHouse for analytics, Kafka for events, gRPC for internal communication<br><br>
+<strong>Communication:</strong> REST for ride creation, Kafka for ride events, gRPC for maps<br><br>
+<strong>Deployment:</strong> Docker + Kubernetes, Canary deployments<br><br>
+<strong>Scaling:</strong> Maps needs GPUs, Pricing needs CPUs, Analytics needs Spark. Different workloads, different technologies</p>
+</div>
+</div>
+
+<div id="linkedin" class="case-content">
+<div class="sec">🏢 LinkedIn - Professional Network</div>
+<div class="story">
+<div class="slabel">1B+ Members</div>
+<h3>Every user action powers multiple products.</h3>
+<p><strong>Architecture:</strong> Gateway → Feed, Messaging, Jobs, Search, Notifications, Ads, Profiles<br><br>
+<strong>Key Features:</strong> Kafka for activity streams (millions of events/sec), Elasticsearch for search, Redis for cache, CQRS for feed generation<br><br>
+<strong>Communication:</strong> REST for APIs, Kafka for feed generation, Event-driven architecture<br><br>
+<strong>Deployment:</strong> Docker + Kubernetes, CI/CD pipelines<br><br>
+<strong>Scaling:</strong> Feed generation is most complex - 100+ ranking signals, distributed processing</p>
+</div>
+</div>
+
+<div id="spotify" class="case-content">
+<div class="sec">🏢 Spotify - Music Streaming</div>
+<div class="story">
+<div class="slabel">500M+ Users</div>
+<h3>Personalized music experience with continuous deployment.</h3>
+<p><strong>Architecture:</strong> Gateway → Music Service, Playlist, Recommendations, Search, Downloads<br><br>
+<strong>Key Features:</strong> Microservices with autonomous teams, Feature flags for progressive rollout, Canary deployments, Extensive monitoring<br><br>
+<strong>Communication:</strong> REST for APIs, Event-driven for recommendations<br><br>
+<strong>Deployment:</strong> Docker + Kubernetes, Deploys hundreds of times per day, Feature flags for control<br><br>
+<strong>Scaling:</strong> Each team owns their service end-to-end. Autonomous scaling and deployment</p>
+</div>
+</div>
+
+<div class="sec">📊 Cross-Company Comparison</div>
+<table>
+<thead><tr><th>Company</th><th>Main Challenge</th><th>Key Technology</th><th>Deployment</th></tr></thead>
+<tbody>
+<tr><td class="h">Amazon</td><td>E-commerce at scale</td><td>Kafka, PostgreSQL, Redis</td><td>K8s, Canary</td></tr>
+<tr><td class="h">Netflix</td><td>Streaming 200M users</td><td>Cassandra, Kafka, ML</td><td>K8s, Feature Flags</td></tr>
+<tr><td class="h">Uber</td><td>Real-time rides</td><td>PostgreSQL, Redis, gRPC</td><td>K8s, Canary</td></tr>
+<tr><td class="h">LinkedIn</td><td>Feed generation</td><td>Kafka, Elasticsearch</td><td>K8s, CI/CD</td></tr>
+<tr><td class="h">Spotify</td><td>Continuous deployment</td><td>Microservices, Feature Flags</td><td>K8s, 100s/day</td></tr>
+</tbody>
+</table>
+
+<div class="sec">✅ Universal Patterns</div>
+<div class="card">
+<div class="viz-box">Every FAANG company uses:
+✓ Database per Service
+✓ Event-Driven Architecture (Kafka)
+✓ API Gateway
+✓ Service Discovery
+✓ Container orchestration (K8s)
+✓ CI/CD automation
+✓ Observability (Logs, Metrics, Traces)
+✓ Resilience patterns (Retry, Circuit Breaker)
+✓ Security (mTLS, Zero Trust)
+✓ Autoscaling
+
+The patterns are the same. The implementation details differ.</div>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Design Amazon Checkout"</strong><div class="mini">"API Gateway authenticates user. Order Service creates order (PostgreSQL). Payment Service charges card (synchronous REST). Inventory Service reserves stock. OrderCreated event → Kafka → Shipping, Email, Analytics, Recommendations, Fraud (asynchronous). Each service owns its database. Redis caches product catalog. Elasticsearch powers search. Canary deployment for safety. OpenTelemetry traces every request. mTLS secures service communication."</div></div></div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 13: Final Revision & Master Cheat Sheet</h3><p>Complete review of all microservices concepts with master cheat sheets, decision trees, top 50 interview questions, and rapid revision guide.</p></div>
+</div>
+
+<script>
+// Interactive case study tabs
+document.querySelectorAll('.case-tab').forEach(tab => {
+tab.addEventListener('click', function(e) {
+const caseName = this.getAttribute('data-case');
+document.querySelectorAll('.case-tab').forEach(t => {
+t.setAttribute('fill', '#1e293b');
+t.setAttribute('stroke', '#6366f1');
+});
+this.setAttribute('fill', '#6366f1');
+this.setAttribute('stroke', '#6366f1');
+document.querySelectorAll('.case-content').forEach(c => c.classList.remove('active'));
+document.getElementById(caseName).classList.add('active');
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

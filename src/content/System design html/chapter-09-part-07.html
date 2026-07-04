@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resilience & Fault Tolerance - Retry, Circuit Breaker, Bulkhead | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.resilience-node{cursor:pointer;transition: all 0.3s ease;}
+.resilience-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 9 · Part 7 · Resilience</div>
+<h1>Resilience & Fault Tolerance<br><span>Retry, Circuit Breaker, Bulkhead & Failure Patterns</span></h1>
+<p>In distributed systems, failures are not exceptional—they are guaranteed. Learn why failures happen and how to build systems that survive them using Retry, Circuit Breaker, Bulkhead, Fallback, and Chaos Engineering.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Retry</div><div class="sl">Recover</div></div>
+<div class="stat"><div class="sn">Circuit</div><div class="sl">Breaker</div></div>
+<div class="stat"><div class="sn">Bulkhead</div><div class="sl">Isolate</div></div>
+<div class="stat"><div class="sn">Chaos</div><div class="sl">Engineering</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — Black Friday at Amazon</div>
+<div class="story">
+<div class="slabel">Payment Service Slows Down</div>
+<h3>Black Friday. Millions of users shopping. Payment Service normally takes 50ms. Suddenly it takes 8 seconds. Every Order Service thread waits. Soon all threads blocked. Inventory waits. Shipping waits. Checkout stops. Customers cannot place orders. The problem wasn't Payment. The problem was everyone waited forever.</h3>
+<p>Distributed systems fail constantly: network issues, machine crashes, container restarts, slow databases, full disks, memory leaks, CPU spikes, DNS failures, cloud outages. Good systems expect failure. They don't ask "Will it fail?" but "When it fails, what happens?" This is resilience—designing systems that survive failures gracefully.</p>
+</div>
+
+<div class="sec">🎯 The Golden Rule</div>
+<div class="defbox">
+<strong>Golden Rule:</strong> Never assume another service will always respond. Always design for: slow responses, no responses, partial responses, wrong responses. Before calling any external service, answer: "What happens if this call fails?" If you don't have an answer, the design isn't complete.
+</div>
+
+<div class="sec">🔄 Interactive: Resilience Patterns</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each pattern to understand when and how to use it.</p>
+<div class="fig">
+<svg viewBox="0 0 700 280" width="100%" id="resilienceDiagram">
+<defs>
+<marker id="ra" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Retry -->
+<rect class="resilience-node" data-pattern="retry" x="50" y="50" width="140" height="80" rx="8" fill="#6366f1"/>
+<text x="120" y="70" fill="white" font-size="12" font-weight="700" text-anchor="middle">Retry</text>
+<text x="120" y="90" fill="#cbd5e1" font-size="10" text-anchor="middle">Temporary failures</text>
+<text x="120" y="110" fill="#cbd5e1" font-size="10" text-anchor="middle">Network blips</text>
+
+<!-- Circuit Breaker -->
+<rect class="resilience-node" data-pattern="circuit" x="220" y="50" width="140" height="80" rx="8" fill="#ef4444"/>
+<text x="290" y="70" fill="white" font-size="12" font-weight="700" text-anchor="middle">Circuit Breaker</text>
+<text x="290" y="90" fill="#cbd5e1" font-size="10" text-anchor="middle">Repeated failures</text>
+<text x="290" y="110" fill="#cbd5e1" font-size="10" text-anchor="middle">Stop calling</text>
+
+<!-- Bulkhead -->
+<rect class="resilience-node" data-pattern="bulkhead" x="390" y="50" width="140" height="80" rx="8" fill="#f59e0b"/>
+<text x="460" y="70" fill="white" font-size="12" font-weight="700" text-anchor="middle">Bulkhead</text>
+<text x="460" y="90" fill="#cbd5e1" font-size="10" text-anchor="middle">Isolate failures</text>
+<text x="460" y="110" fill="#cbd5e1" font-size="10" text-anchor="middle">Separate resources</text>
+
+<!-- Fallback -->
+<rect class="resilience-node" data-pattern="fallback" x="560" y="50" width="140" height="80" rx="8" fill="#10b981"/>
+<text x="630" y="70" fill="white" font-size="12" font-weight="700" text-anchor="middle">Fallback</text>
+<text x="630" y="90" fill="#cbd5e1" font-size="10" text-anchor="middle">Graceful degrade</text>
+<text x="630" y="110" fill="#cbd5e1" font-size="10" text-anchor="middle">Default response</text>
+
+<!-- Tooltip -->
+<rect x="50" y="180" width="650" height="30" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="375" y="200" fill="#e2e8f0" font-size="11" text-anchor="middle" id="resilienceTooltip">Click on each pattern to learn when to use it</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Retry with Exponential Backoff</div>
+<div class="card">
+<h3 style="color:#ef4444;">❌ Bad: Immediate Retry</h3>
+<div class="viz-box">Fail → Retry → Fail → Retry → Storm
+All clients retry at same time
+Overwhelms already struggling service</div>
+
+<h3 style="color:#10b981;">✅ Good: Exponential Backoff + Jitter</h3>
+<div class="viz-box">Fail → Wait 1s → Retry
+     → Wait 2s → Retry
+     → Wait 4s → Retry
+     → Wait 8s → DLQ
+
+Add random jitter to prevent synchronized retries!</div>
+</div>
+
+<div class="sec">🔄 Circuit Breaker Pattern</div>
+<div class="defbox">
+<strong>Circuit Breaker:</strong> Like a home electrical circuit breaker. When failures exceed threshold, circuit "opens" and stops sending traffic. After waiting, allows few test requests. If successful, "closes" circuit. Prevents cascading failures. Three states: Closed (normal), Open (failing), Half-Open (testing recovery).
+</div>
+
+<div class="sec">✅ Bulkhead Pattern</div>
+<div class="defbox">
+<strong>Bulkhead:</strong> Ships have watertight compartments. If one floods, others stay dry. Similarly, separate thread pools/resources for different services. Payment failure doesn't block Inventory. Example: Thread Pool A for Payments, Thread Pool B for Inventory. Payment issues don't consume Inventory threads.
+</div>
+
+<div class="sec">🔄 Timeout & Fallback</div>
+<div class="card">
+<h3 style="color:#f59e0b;">Timeout</h3>
+<div class="viz-box">Never wait forever
+Payment: 5s timeout
+Internal API: 500ms timeout
+Cache: 50ms timeout
+
+After timeout → Fallback</div>
+
+<h3 style="color:#10b981;">Fallback</h3>
+<div class="viz-box">Recommendation Service fails?
+→ Return popular products
+Checkout still works!
+
+Graceful degradation keeps core functionality alive</div>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Netflix Resilience Engineering</h3>
+<p>Netflix built Chaos Monkey to randomly kill production instances. If systems survive random failures, they're resilient. Every service uses: Retry with exponential backoff + jitter, Circuit Breaker (Hystrix), Timeouts (fail fast), Bulkhead (separate thread pools), Fallback (default content), Health Checks, and Monitoring. This is why Netflix streaming rarely fails despite millions of concurrent users.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why are retries alone dangerous?"</strong><div class="mini">"Retries increase traffic during failures. Without exponential backoff, jitter, and limits, they can overwhelm already struggling services and create retry storms. Retries should always be combined with timeouts and circuit breakers. Retry = hope. Backoff = strategy. Circuit Breaker = protection."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Fail → Retry (with backoff) → Timeout → Circuit Breaker → Fallback → Bulkhead → Chaos Test. Layer defenses like an onion.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 8: Observability - Logging, Metrics, Tracing & Monitoring</h3><p>Learn how to monitor microservices with the three pillars: Logs, Metrics, and Traces. Understand OpenTelemetry, Prometheus, Grafana, Jaeger, and distributed tracing.</p></div>
+</div>
+
+<script>
+// Interactive resilience diagram
+const resilienceInfo = {
+'retry': 'Retry Pattern: Use for temporary failures like network blips, short outages, container restarts. Always use exponential backoff (wait longer after each failure) and jitter (randomize timing) to prevent retry storms. Set max retries to avoid infinite loops.',
+'circuit': 'Circuit Breaker: Prevents calling failing services repeatedly. States: Closed (normal operation) → Open (too many failures, stop calling) → Half-Open (wait, then test with few requests). Protects both caller and callee from cascading failures.',
+'bulkhead': 'Bulkhead Pattern: Isolates resources so failures in one service don\'t affect others. Like ship compartments - if Payment fails, Inventory threads remain free. Use separate thread pools, connection pools, and rate limiters for different services.',
+'fallback': 'Fallback Pattern: Provide alternative response when service fails. Recommendations fail? Return popular products. Users can still shop. Core functionality survives. Better than complete failure. Plan fallbacks for every non-critical dependency.'
+};
+
+document.querySelectorAll('.resilience-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const pattern = this.getAttribute('data-pattern');
+const tooltip = document.getElementById('resilienceTooltip');
+tooltip.textContent = resilienceInfo[pattern] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

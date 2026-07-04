@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAP Theorem - Consistency, Availability & Partition Tolerance | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.cap-node{cursor:pointer;transition: all 0.3s ease;}
+.cap-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 10 · Part 2 · CAP Theorem</div>
+<h1>CAP Theorem<br><span>Consistency, Availability & Partition Tolerance</span></h1>
+<p>CAP Theorem is not about choosing two out of three. It is about understanding what a distributed system must sacrifice when a network partition occurs. Learn why CA systems don't exist and how to make the right trade-offs.</p>
+<div class="stats">
+<div class="stat"><div class="sn">C</div><div class="sl">Consistency</div></div>
+<div class="stat"><div class="sn">A</div><div class="sl">Availability</div></div>
+<div class="stat"><div class="sn">P</div><div class="sl">Partition Tolerance</div></div>
+<div class="stat"><div class="sn">CP vs AP</div><div class="sl">Trade-offs</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Two Data Centers</div>
+<div class="story">
+<div class="slabel">Network Partition Problem</div>
+<h3>Amazon has two data centers. The network cable between them fails. Now what?</h3>
+<p>Imagine Amazon has two data centers: US-East and US-West. Normally, they communicate continuously. Suddenly, the network cable between them fails. A customer places an order in US-East. Another customer tries to read the same data from US-West. Question: Should US-West return old data? Or refuse the request? This is the CAP problem. During a network partition, you must choose between Consistency and Availability.</p>
+</div>
+
+<div class="sec">🎯 What is CAP?</div>
+<div class="defbox">
+<strong>CAP Theorem:</strong> When a network partition occurs in a distributed system, it is impossible to simultaneously guarantee both strong consistency and availability. Since network partitions are unavoidable, systems must choose between Consistency and Availability during failures.
+</div>
+
+<div class="sec">🔄 Interactive: Understanding CAP Properties</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each property to understand what it means.</p>
+<div class="fig">
+<svg viewBox="0 0 700 280" width="100%" id="capDiagram">
+<defs>
+<marker id="ca" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Consistency -->
+<rect class="cap-node" data-cap="consistency" x="50" y="30" width="180" height="100" rx="8" fill="#6366f1"/>
+<text x="140" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">Consistency</text>
+<text x="140" y="80" fill="#cbd5e1" font-size="12" text-anchor="middle">Same data everywhere</text>
+<text x="140" y="100" fill="#94a3b8" font-size="11" text-anchor="middle">All nodes see</text>
+<text x="140" y="118" fill="#94a3b8" font-size="11" text-anchor="middle">the same value</text>
+
+<!-- Availability -->
+<rect class="cap-node" data-cap="availability" x="260" y="30" width="180" height="100" rx="8" fill="#10b981"/>
+<text x="350" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">Availability</text>
+<text x="350" y="80" fill="#cbd5e1" font-size="12" text-anchor="middle">Every request gets response</text>
+<text x="350" y="100" fill="#94a3b8" font-size="11" text-anchor="middle">System always</text>
+<text x="350" y="118" fill="#94a3b8" font-size="11" text-anchor="middle">responds</text>
+
+<!-- Partition Tolerance -->
+<rect class="cap-node" data-cap="partition" x="470" y="30" width="180" height="100" rx="8" fill="#f59e0b"/>
+<text x="560" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">Partition Tolerance</text>
+<text x="560" y="80" fill="#cbd5e1" font-size="12" text-anchor="middle">Continue despite failures</text>
+<text x="560" y="100" fill="#94a3b8" font-size="11" text-anchor="middle">Works even if</text>
+<text x="560" y="118" fill="#94a3b8" font-size="11" text-anchor="middle">network splits</text>
+
+<!-- Partition Visualization -->
+<rect x="50" y="160" width="600" height="80" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="185" fill="#e2e8f0" font-size="13" font-weight="700" text-anchor="middle">Network Partition Example</text>
+<text x="140" y="210" fill="#6366f1" font-size="12" text-anchor="middle">Node A</text>
+<text x="350" y="210" fill="#ef4444" font-size="14" font-weight="700" text-anchor="middle">X</text>
+<text x="560" y="210" fill="#10b981" font-size="12" text-anchor="middle">Node B</text>
+<text x="350" y="230" fill="#94a3b8" font-size="10" text-anchor="middle">Network failure: Both nodes continue but cannot communicate</text>
+
+<!-- Tooltip -->
+<rect x="50" y="250" width="600" height="25" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="267" fill="#e2e8f0" font-size="11" text-anchor="middle" id="capTooltip">Click on each property to learn more</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 CP vs AP Systems</div>
+<table>
+<thead><tr><th>Aspect</th><th>CP System</th><th>AP System</th></tr></thead>
+<tbody>
+<tr><td class="h">During Partition</td><td>May reject requests</td><td>Always responds</td></tr>
+<tr><td class="h">Data Guarantee</td><td>Always correct</td><td>May be stale</td></tr>
+<tr><td class="h">Example</td><td>Banking, Payments</td><td>Social Media, Analytics</td></tr>
+<tr><td class="h">Priority</td><td>Correctness over availability</td><td>Availability over consistency</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🔄 Interactive: CP vs AP Decision</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">During a network partition, the system must choose. Click to see what happens.</p>
+<div class="fig">
+<svg viewBox="0 0 700 250" width="100%" id="decisionDiagram">
+<defs>
+<marker id="da" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Question -->
+<rect x="250" y="20" width="200" height="50" rx="8" fill="#6366f1"/>
+<text x="350" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Network Partition</text>
+<text x="350" y="60" fill="#cbd5e1" font-size="11" text-anchor="middle">What do you need?</text>
+
+<!-- CP Path -->
+<rect x="80" y="100" width="240" height="80" rx="8" fill="#ef4444"/>
+<text x="200" y="125" fill="white" font-size="13" font-weight="700" text-anchor="middle">Need Correct Data?</text>
+<text x="200" y="150" fill="#cbd5e1" font-size="12" text-anchor="middle">↓</text>
+<text x="200" y="170" fill="#fca5a5" font-size="12" text-anchor="middle">Choose CP</text>
+<text x="200" y="190" fill="#fca5a5" font-size="11" text-anchor="middle">May reject requests</text>
+
+<!-- AP Path -->
+<rect x="380" y="100" width="240" height="80" rx="8" fill="#10b981"/>
+<text x="500" y="125" fill="white" font-size="13" font-weight="700" text-anchor="middle">Need Response?</text>
+<text x="500" y="150" fill="#cbd5e1" font-size="12" text-anchor="middle">↓</text>
+<text x="500" y="170" fill="#6ee7b7" font-size="12" text-anchor="middle">Choose AP</text>
+<text x="500" y="190" fill="#6ee7b7" font-size="11" text-anchor="middle">May return stale data</text>
+
+<!-- Arrows -->
+<line x1="350" y1="70" x2="200" y2="100" stroke="#ef4444" stroke-width="2" marker-end="url(#da)"/>
+<line x1="350" y1="70" x2="500" y2="100" stroke="#10b981" stroke-width="2" marker-end="url(#da)"/>
+
+<!-- Examples -->
+<rect x="80" y="210" width="240" height="30" rx="4" fill="#1e293b" stroke="#ef4444" stroke-width="1"/>
+<text x="200" y="228" fill="#fca5a5" font-size="10" text-anchor="middle">Banking, Payments, Inventory</text>
+
+<rect x="380" y="210" width="240" height="30" rx="4" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
+<text x="500" y="228" fill="#6ee7b7" font-size="10" text-anchor="middle">Social Media, Analytics, News Feed</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">✅ Why CA Doesn't Exist</div>
+<div class="defbox">
+<strong>Why CA is impossible:</strong> Network failures cannot be prevented. Cables break, routers fail, clouds have outages. If two nodes cannot communicate, Partition Tolerance becomes mandatory. Therefore, the real choice during a partition is CP (Consistency + Partition Tolerance) or AP (Availability + Partition Tolerance).
+</div>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Google Spanner vs Apache Cassandra</h3>
+<p><strong>Google Spanner:</strong> Prioritizes Consistency. Uses TrueTime clocks for global transactions. CP system. Perfect for financial data where correctness is critical.<br><br>
+<strong>Apache Cassandra:</strong> Prioritizes Availability. Always responds, even during partitions. AP system. Perfect for analytics and social media where temporary inconsistency is acceptable.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Is CAP theorem about choosing 2 out of 3?"</strong><div class="mini">"No, that's a common misconception. Partition tolerance is mandatory in distributed systems because network failures are inevitable. The real trade-off is between Consistency and Availability during a partition. When the network works normally, many systems provide all three. CAP only matters during failures."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Partition happens → Choose C or A. P is mandatory. Banking = CP. Social Media = AP.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 3: Consistency Models</h3><p>Learn about Strong Consistency, Eventual Consistency, Causal Consistency, Linearizability, and how to choose the right model for your application.</p></div>
+</div>
+
+<script>
+// Interactive CAP diagram
+const capInfo = {
+'consistency': 'Consistency: Every client sees the same data at the same time. After a successful write, all future reads return the latest value. Example: Bank account balance must always show the correct amount. No stale reads allowed.',
+'availability': 'Availability: Every request receives a response, even during failures. Important: A response does NOT guarantee latest data. It only guarantees the system responds. Example: Social media like count may show 103 instead of 105 during partition.',
+'partition': 'Partition Tolerance: The system continues operating even if communication between nodes fails. Network failures are inevitable in distributed systems. Examples: Cable cuts, router failures, cloud outages, DNS failures. Partition tolerance is not optional.'
+};
+
+document.querySelectorAll('.cap-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const cap = this.getAttribute('data-cap');
+const tooltip = document.getElementById('capTooltip');
+tooltip.textContent = capInfo[cap] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

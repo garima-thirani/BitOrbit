@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Event Brokers, Event Bus & Event Mesh | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.region-node{cursor:pointer;transition: all 0.3s ease;}
+.region-node:hover{filter: brightness(1.2);}
+.event-flow{animation: flowPulse 2s infinite;}
+@keyframes flowPulse{0%,100%{opacity:0.4;}50%{opacity:1;}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 8 · Part 5 · Event Brokers</div>
+<h1>Event Brokers, Event Bus & Event Mesh<br><span>Global Event Infrastructure</span></h1>
+<p>Learn how event brokers decouple producers from consumers, enable multi-region deployment through event mesh, and scale to billions of events per day.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Broker</div><div class="sl">Decouples</div></div>
+<div class="stat"><div class="sn">Event Bus</div><div class="sl">Pattern</div></div>
+<div class="stat"><div class="sn">Event Mesh</div><div class="sl">Global Scale</div></div>
+<div class="stat"><div class="sn">Federation</div><div class="sl">Multi-Region</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Expanding Company</div>
+<div class="story">
+<div class="slabel">From One Data Center to Global</div>
+<h3>100 services, 9,900 connections = chaos.</h3>
+<p>Your startup becomes global with offices in New York, London, Singapore, Mumbai, Sydney. Each region has its own services. Question: Should every service connect directly to every other service? 100 services × 99 connections each = 9,900 connections. Chaos. The company needs something smarter. Instead of connecting everything together, introduce an Event Broker. Like an airport hub where flights connect through central points, Kafka, RabbitMQ, Pulsar, and NATS are all event hubs that route messages efficiently.</p>
+</div>
+
+<div class="sec">🎯 What is an Event Broker?</div>
+<div class="defbox">
+<strong>Event Broker:</strong> Infrastructure responsible for receiving, storing, routing, and delivering events between producers and consumers. Producers communicate with only one component—the broker.
+</div>
+<div class="card">
+<div class="viz-box">Without Broker (Tightly Coupled):
+Order → Inventory
+Order → Shipping
+Order → Fraud
+Order → Analytics
+Order → Recommendations
+Order knows everyone!
+
+With Broker (Loosely Coupled):
+Order → Broker → Inventory
+                  → Shipping
+                  → Fraud
+                  → Analytics
+                  → Recommendations
+Order knows only ONE thing!</div>
+</div>
+
+<div class="sec">🔄 Interactive: Event Bus vs Event Broker vs Event Mesh</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each architecture type to understand the differences.</p>
+<div class="fig" style="position:relative;">
+<svg viewBox="0 0 800 350" width="100%" id="brokerDiagram">
+<defs>
+<linearGradient id="bg" stop-offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#06b6d4"/>
+<marker id="ba" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Event Bus -->
+<rect class="region-node" data-type="bus" x="50" y="50" width="220" height="250" rx="10" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="160" y="75" fill="#a5b4fc" font-size="14" font-weight="700" text-anchor="middle">Event Bus</text>
+<text x="160" y="95" fill="#94a3b8" font-size="11" text-anchor="middle">(Communication Pattern)</text>
+
+<rect x="90" y="120" width="140" height="35" rx="6" fill="#6366f1"/>
+<text x="160" y="142" fill="white" font-size="12" font-weight="600" text-anchor="middle">Producer</text>
+<line x1="160" y1="155" x2="160" y2="175" stroke="#64748b" stroke-width="2" marker-end="url(#ba)"/>
+
+<rect x="90" y="180" width="140" height="40" rx="6" fill="#06b6d4"/>
+<text x="160" y="200" fill="white" font-size="12" font-weight="700" text-anchor="middle">Event Bus</text>
+<text x="160" y="215" fill="#cbd5e1" font-size="10" text-anchor="middle">(Logical Channel)</text>
+<line x1="160" y1="220" x2="160" y2="240" stroke="#64748b" stroke-width="2" marker-end="url(#ba)"/>
+
+<rect x="90" y="245" width="140" height="35" rx="6" fill="#10b981"/>
+<text x="160" y="267" fill="white" font-size="12" font-weight="600" text-anchor="middle">Consumers</text>
+
+<!-- Event Broker -->
+<rect class="region-node" data-type="broker" x="290" y="50" width="220" height="250" rx="10" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+<text x="400" y="75" fill="#fcd34d" font-size="14" font-weight="700" text-anchor="middle">Event Broker</text>
+<text x="400" y="95" fill="#94a3b8" font-size="11" text-anchor="middle">(Software Implementation)</text>
+
+<rect x="330" y="120" width="140" height="35" rx="6" fill="#6366f1"/>
+<text x="400" y="142" fill="white" font-size="12" font-weight="600" text-anchor="middle">Producer</text>
+<line x1="400" y1="155" x2="400" y2="175" stroke="#64748b" stroke-width="2" marker-end="url(#ba)"/>
+
+<rect x="330" y="180" width="140" height="40" rx="6" fill="#f59e0b"/>
+<text x="400" y="200" fill="white" font-size="12" font-weight="700" text-anchor="middle">Kafka/RabbitMQ</text>
+<text x="400" y="215" fill="#78350f" font-size="10" text-anchor="middle">(Actual Software)</text>
+<line x1="400" y1="220" x2="400" y2="240" stroke="#64748b" stroke-width="2" marker-end="url(#ba)"/>
+
+<rect x="330" y="245" width="140" height="35" rx="6" fill="#10b981"/>
+<text x="400" y="267" fill="white" font-size="12" font-weight="600" text-anchor="middle">Consumers</text>
+
+<!-- Event Mesh -->
+<rect class="region-node" data-type="mesh" x="530" y="50" width="240" height="250" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+<text x="650" y="75" fill="#6ee7b7" font-size="14" font-weight="700" text-anchor="middle">Event Mesh</text>
+<text x="650" y="95" fill="#94a3b8" font-size="11" text-anchor="middle">(Global Network)</text>
+
+<rect x="570" y="120" width="70" height="35" rx="6" fill="#ef4444"/>
+<text x="605" y="142" fill="white" font-size="10" font-weight="600" text-anchor="middle">US Broker</text>
+<rect x="660" y="120" width="70" height="35" rx="6" fill="#ef4444"/>
+<text x="695" y="142" fill="white" font-size="10" font-weight="600" text-anchor="middle">EU Broker</text>
+
+<line x1="640" y1="137" x2="660" y2="137" stroke="#64748b" stroke-width="2" marker-end="url(#ba)" class="event-flow"/>
+
+<rect x="570" y="170" width="70" height="35" rx="6" fill="#ef4444"/>
+<text x="605" y="192" fill="white" font-size="10" font-weight="600" text-anchor="middle">Asia</text>
+<rect x="660" y="170" width="70" height="35" rx="6" fill="#ef4444"/>
+<text x="695" y="192" fill="white" font-size="10" font-weight="600" text-anchor="middle">AU Broker</text>
+
+<line x1="605" y1="205" x2="605" y2="225" stroke="#64748b" stroke-width="2" marker-end="url(#ba)"/>
+<line x1="695" y1="205" x2="695" y2="225" stroke="#64748b" stroke-width="2" marker-end="url(#ba)"/>
+
+<rect x="570" y="230" width="160" height="35" rx="6" fill="#10b981"/>
+<text x="650" y="252" fill="white" font-size="11" font-weight="600" text-anchor="middle">Regional Services</text>
+
+<!-- Tooltip -->
+<rect x="50" y="320" width="720" height="25" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="400" y="337" fill="#e2e8f0" font-size="11" text-anchor="middle" id="brokerTooltip">Click on each architecture to learn more</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Broker Comparison</div>
+<table>
+<thead><tr><th>Feature</th><th>RabbitMQ</th><th>Kafka</th><th>Pulsar</th></tr></thead>
+<tbody>
+<tr><td class="h">Model</td><td>Message Queue</td><td>Event Log</td><td>Event Mesh</td></tr>
+<tr><td class="h">Storage</td><td>Queue (deletes after ACK)</td><td>Append-only log</td><td>Append-only log</td></tr>
+<tr><td class="h">Throughput</td><td>20K-100K msg/sec</td><td>Millions/sec</td><td>Millions/sec</td></tr>
+<tr><td class="h">Retention</td><td>Short</td><td>Configurable</td><td>Configurable</td></tr>
+<tr><td class="h">Replay</td><td>No</td><td>Yes</td><td>Yes</td></tr>
+<tr><td class="h">Multi-Region</td><td>Manual</td><td>Manual</td><td>Built-in</td></tr>
+<tr><td class="h">Best For</td><td>Background jobs</td><td>Event streaming</td><td>Global event mesh</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🌍 Interactive: Multi-Region Event Mesh</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">See how events flow across regions in an Event Mesh architecture.</p>
+<div class="fig">
+<svg viewBox="0 0 700 300" width="100%">
+<defs>
+<linearGradient id="mg" stop-offset="0%" stop-color="#ef4444"/><stop offset="100%" stop-color="#f59e0b"/>
+<marker id="ma" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Regions -->
+<rect x="50" y="50" width="140" height="100" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+<text x="120" y="75" fill="#fca5a5" font-size="13" font-weight="700" text-anchor="middle">US Region</text>
+<text x="120" y="95" fill="#94a3b8" font-size="10" text-anchor="middle">Kafka Cluster</text>
+<text x="120" y="115" fill="#e2e8f0" font-size="10">• Orders</text>
+<text x="120" y="130" fill="#e2e8f0" font-size="10">• Payments</text>
+
+<rect x="280" y="50" width="140" height="100" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+<text x="350" y="75" fill="#fcd34d" font-size="13" font-weight="700" text-anchor="middle">Europe Region</text>
+<text x="350" y="95" fill="#94a3b8" font-size="10" text-anchor="middle">Kafka Cluster</text>
+<text x="350" y="115" fill="#e2e8f0" font-size="10">• Analytics</text>
+<text x="350" y="130" fill="#e2e8f0" font-size="10">• Recommendations</text>
+
+<rect x="510" y="50" width="140" height="100" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+<text x="580" y="75" fill="#6ee7b7" font-size="13" font-weight="700" text-anchor="middle">Asia Region</text>
+<text x="580" y="95" fill="#94a3b8" font-size="10" text-anchor="middle">Kafka Cluster</text>
+<text x="580" y="115" fill="#e2e8f0" font-size="10">• Inventory</text>
+<text x="580" y="130" fill="#e2e8f0" font-size="10">• Shipping</text>
+
+<!-- Replication arrows -->
+<line x1="190" y1="100" x2="280" y2="100" stroke="#64748b" stroke-width="2" marker-end="url(#ma)" class="event-flow"/>
+<text x="235" y="95" fill="#94a3b8" font-size="9" text-anchor="middle">Replicate</text>
+
+<line x1="420" y1="100" x2="510" y2="100" stroke="#64748b" stroke-width="2" marker-end="url(#ma)" class="event-flow"/>
+<text x="465" y="95" fill="#94a3b8" font-size="9" text-anchor="middle">Replicate</text>
+
+<line x1="350" y1="150" x2="350" y2="220" stroke="#64748b" stroke-width="2" marker-end="url(#ma)" class="event-flow"/>
+<text x="365" y="185" fill="#94a3b8" font-size="9">Event</text>
+<text x="365" y="197" fill="#94a3b8" font-size="9">Mesh</text>
+
+<rect x="250" y="230" width="200" height="50" rx="8" fill="#6366f1"/>
+<text x="350" y="255" fill="white" font-size="12" font-weight="700" text-anchor="middle">Event Mesh</text>
+<text x="350" y="272" fill="#cbd5e1" font-size="10" text-anchor="middle">Automatic Cross-Region Routing</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">✅ Benefits</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Loose Coupling</div><div class="td">Producers don't know consumers</div></div>
+<div class="tag-card"><div class="tc">✅ Independent Scaling</div><div class="td">Scale producers/consumers separately</div></div>
+<div class="tag-card"><div class="tc">✅ Regional Autonomy</div><div class="td">Each region operates independently</div></div>
+<div class="tag-card"><div class="tc">✅ Fault Isolation</div><div class="td">Failures don't cascade</div></div>
+<div class="tag-card"><div class="tc">✅ Replay Support</div><div class="td">Rebuild systems from history</div></div>
+</div>
+</div>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon, Uber, Netflix</h3>
+<p><strong>Amazon:</strong> Uses Kafka as event backbone. OrderCreated flows to inventory, shipping, analytics, recommendations, fraud. Each team owns their consumers.<br><br>
+<strong>Uber:</strong> Regional Kafka clusters connected via federation. Ride events flow across US, EU, Asia for global analytics.<br><br>
+<strong>Netflix:</strong> Kafka processes millions of playback events per second. Event mesh enables global recommendation systems.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why introduce an Event Broker instead of direct service communication?"</strong><div class="mini">"An Event Broker decouples producers from consumers. Producers publish events without needing to know which services consume them. This improves scalability, fault isolation, independent deployments, and allows new consumers to be added without modifying existing services."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Producer → Broker → Topic → Consumers → Event Mesh → Global Scale. Brokers are the nervous system of modern distributed systems.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 6: Event Versioning & Schema Evolution</h3><p>Learn why schemas evolve, backward/forward compatibility, Schema Registry, Avro, Protobuf, and how to evolve events without breaking 200+ consumers.</p></div>
+</div>
+
+<script>
+// Interactive broker diagram
+document.querySelectorAll('.region-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const type = this.getAttribute('data-type');
+const tooltip = document.getElementById('brokerTooltip');
+const messages = {
+bus: 'Event Bus is a COMMUNICATION PATTERN. It describes how producers broadcast events and consumers subscribe. Kafka, RabbitMQ implement this pattern.',
+broker: 'Event Broker is the SOFTWARE that implements the pattern. Examples: Apache Kafka, RabbitMQ, Apache Pulsar, Azure Event Grid, AWS EventBridge.',
+mesh: 'Event Mesh is a NETWORK of brokers across regions. Events automatically flow between brokers. Enables global distribution, low latency, and fault tolerance.'
+};
+tooltip.textContent = messages[type] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

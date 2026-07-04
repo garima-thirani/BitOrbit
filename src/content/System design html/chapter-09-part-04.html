@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Management - Database per Service & Polyglot Persistence | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.db-node{cursor:pointer;transition: all 0.3s ease;}
+.db-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 9 · Part 4 · Data Management</div>
+<h1>Data Management in Microservices<br><span>Database per Service & Polyglot Persistence</span></h1>
+<p>Microservices don't fail because of APIs. They fail because engineers try to distribute code while keeping the database monolithic. Learn why each service must own its data and how to handle distributed data correctly.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Database</div><div class="sl">Per Service</div></div>
+<div class="stat"><div class="sn">Polyglot</div><div class="sl">Persistence</div></div>
+<div class="stat"><div class="sn">Ownership</div><div class="sl">Critical</div></div>
+<div class="stat"><div class="sn">No Joins</div><div class="sl">Across Services</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Shared Database Disaster</div>
+<div class="story">
+<div class="slabel">Distributed Monolith</div>
+<h3>Company migrates monolith into 6 microservices but they all share one database. They proudly announce Orders, Payments, Inventory, Shipping, Catalog, and Notification services. Everyone celebrates. Then someone notices: the services were independent, but the data wasn't. Nothing had actually changed. They had built a distributed monolith.</h3>
+<p>Splitting code is relatively easy. Splitting data is extremely difficult. Every business capability needs data. Order Service needs Customer, Inventory, Payment, and Shipping data. Question: Should it directly query everyone else's database? Absolutely not. That creates hidden coupling. If Payments renames a column, Orders breaks. This is why Database per Service is fundamental to microservices.</p>
+</div>
+
+<div class="sec">🎯 Why Data is the Hardest Problem</div>
+<div class="defbox">
+<strong>Golden Rule:</strong> "If another service can directly query your database, it owns part of your service." Data ownership is what enables independent deployment, schema evolution, and team autonomy. Without it, services remain tightly coupled no matter how independent the code looks.
+</div>
+
+<div class="sec">🔄 Interactive: Database per Service Pattern</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each service to see how data ownership works.</p>
+<div class="fig">
+<svg viewBox="0 0 700 250" width="100%" id="dbDiagram">
+<defs>
+<marker id="dba" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Orders Service -->
+<rect class="db-node" data-service="orders" x="50" y="50" width="140" height="70" rx="8" fill="#6366f1"/>
+<text x="120" y="70" fill="white" font-size="12" font-weight="700" text-anchor="middle">Orders Service</text>
+<text x="120" y="90" fill="#cbd5e1" font-size="10" text-anchor="middle">API: /orders</text>
+<rect x="70" y="100" width="100" height="30" rx="4" fill="#1e293b" stroke="#6366f1"/>
+<text x="120" y="118" fill="#a5b4fc" font-size="10" font-weight="600" text-anchor="middle">Orders DB</text>
+
+<!-- Payments Service -->
+<rect class="db-node" data-service="payments" x="280" y="50" width="140" height="70" rx="8" fill="#10b981"/>
+<text x="350" y="70" fill="white" font-size="12" font-weight="700" text-anchor="middle">Payments Service</text>
+<text x="350" y="90" fill="#cbd5e1" font-size="10" text-anchor="middle">API: /payments</text>
+<rect x="300" y="100" width="100" height="30" rx="4" fill="#1e293b" stroke="#10b981"/>
+<text x="350" y="118" fill="#6ee7b7" font-size="10" font-weight="600" text-anchor="middle">Payments DB</text>
+
+<!-- Inventory Service -->
+<rect class="db-node" data-service="inventory" x="510" y="50" width="140" height="70" rx="8" fill="#f59e0b"/>
+<text x="580" y="70" fill="white" font-size="12" font-weight="700" text-anchor="middle">Inventory Service</text>
+<text x="580" y="90" fill="#cbd5e1" font-size="10" text-anchor="middle">API: /inventory</text>
+<rect x="530" y="100" width="100" height="30" rx="4" fill="#1e293b" stroke="#f59e0b"/>
+<text x="580" y="118" fill="#fcd34d" font-size="10" font-weight="600" text-anchor="middle">Inventory DB</text>
+
+<!-- Communication arrows -->
+<line x1="190" y1="85" x2="280" y2="85" stroke="#64748b" stroke-width="2" marker-end="url(#dba)"/>
+<text x="235" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">REST/Events</text>
+
+<line x1="420" y1="85" x2="510" y2="85" stroke="#64748b" stroke-width="2" marker-end="url(#dba)"/>
+<text x="465" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">REST/Events</text>
+
+<!-- Tooltip -->
+<rect x="50" y="180" width="600" height="30" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="200" fill="#e2e8f0" font-size="11" text-anchor="middle" id="dbTooltip">Click on each service to learn about data ownership</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Shared Database Anti-Pattern</div>
+<div class="card">
+<h3 style="color:#ef4444;">❌ NEVER Do This</h3>
+<div class="viz-box">Orders Service
+   ↓
+Payments Service
+   ↓
+Inventory Service
+   ↓
+Shipping Service
+   ↓
+ONE SHARED DATABASE
+
+Problems:
+- Tight coupling
+- Schema conflicts
+- Deployment coordination
+- Security issues
+- Hidden dependencies</div>
+</div>
+
+<div class="sec">✅ Polyglot Persistence</div>
+<div class="defbox">
+<strong>Polyglot Persistence:</strong> Using different database technologies for different workloads. One database cannot optimize every use case. Orders need ACID transactions (PostgreSQL). Search needs full-text search (Elasticsearch). Cache needs speed (Redis). Analytics needs time-series (ClickHouse). Each database is chosen for its specific strength.
+</div>
+
+<div class="sec">📊 Database Selection Guide</div>
+<table>
+<thead><tr><th>Requirement</th><th>Best Database</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td class="h">ACID Transactions</td><td>PostgreSQL</td><td>Strong consistency</td></tr>
+<tr><td class="h">Cache</td><td>Redis</td><td>In-memory speed</td></tr>
+<tr><td class="h">Full-Text Search</td><td>Elasticsearch</td><td>Search optimized</td></tr>
+<tr><td class="h">Time Series</td><td>InfluxDB</td><td>Time-based data</td></tr>
+<tr><td class="h">Analytics</td><td>ClickHouse</td><td>OLAP queries</td></tr>
+<tr><td class="h">Massive Writes</td><td>Cassandra</td><td>Write scalability</td></tr>
+<tr><td class="h">Documents</td><td>MongoDB</td><td>Flexible schema</td></tr>
+<tr><td class="h">Graph Data</td><td>Neo4j</td><td>Relationships</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🔄 Handling Cross-Service Queries</div>
+<div class="card">
+<h3 style="color:#f59e0b;">Solution 1: API Composition</h3>
+<div class="viz-box">Customer Dashboard
+   ↓
+Aggregator Service
+   ↓
+Orders API + Payments API + Shipping API
+   ↓
+Combine into one response
+
+Pros: No data sharing
+Cons: Multiple network calls</div>
+
+<h3 style="color:#10b981;">Solution 2: CQRS Projections</h3>
+<div class="viz-box">Orders Event + Payments Event + Shipping Event
+   ↓
+Projection Service
+   ↓
+Customer Dashboard DB (pre-computed)
+   ↓
+One fast query
+
+Pros: Fast reads
+Cons: Eventual consistency</div>
+</div>
+
+<div class="sec">✅ Eventual Consistency</div>
+<div class="defbox">
+<strong>Eventual Consistency:</strong> In microservices, data is eventually consistent, not immediately consistent. Customer places order → Dashboard may not show it immediately → Seconds later, projection updates → Everything consistent. This is acceptable because services communicate asynchronously. Waiting for every service would destroy performance.
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon's Data Architecture</h3>
+<p>Orders Service uses PostgreSQL for ACID transactions. Search Service uses Elasticsearch for product search. Sessions use Redis for speed. Analytics uses ClickHouse for OLAP. Recommendations use DynamoDB for scale. Each service owns its database. No cross-service SQL joins. Customer Dashboard uses CQRS projection built from events. Data duplication is acceptable when it reduces coupling.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why can't microservices share a database?"</strong><div class="mini">"Sharing a database creates tight coupling. Schema changes require coordinated deployments, hidden dependencies emerge, and services lose independence. Database per Service ensures each team can evolve its schema, scale independently, and deploy without coordinating with other teams. Communication happens through APIs or events, never through direct database access."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Service Owns Data → API/Events for Communication → No Cross-Service Joins → Polyglot Persistence → Eventual Consistency. Data ownership enables independence.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 5: Distributed Transactions & Saga Pattern</h3><p>Learn why ACID transactions break in microservices, how to use the Saga pattern with compensating transactions, and when to use choreography vs orchestration.</p></div>
+</div>
+
+<script>
+// Interactive database diagram
+const dbInfo = {
+'orders': 'Orders Service: Owns all order-related data. Uses PostgreSQL for ACID transactions. Other services access orders only through APIs or OrderCreated events. Can change schema anytime without breaking other services.',
+'payments': 'Payments Service: Owns all payment data. Uses PostgreSQL with strong consistency. Critical for financial accuracy. Other services never query payments table directly. Communication through PaymentCompleted events.',
+'inventory': 'Inventory Service: Owns stock data. Uses PostgreSQL or DynamoDB. High write throughput during sales. Other services call Inventory API or listen to InventoryReserved events. Never direct database access.'
+};
+
+document.querySelectorAll('.db-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const service = this.getAttribute('data-service');
+const tooltip = document.getElementById('dbTooltip');
+tooltip.textContent = dbInfo[service] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

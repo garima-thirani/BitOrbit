@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Event Ordering, Causality & Time | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.clock-node{cursor:pointer;transition: all 0.3s ease;}
+.clock-node:hover{filter: brightness(1.2);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 8 · Part 7 · Event Ordering</div>
+<h1>Event Ordering, Causality & Time<br><span>Lamport Clocks, Vector Clocks & Kafka Partitions</span></h1>
+<p>In distributed systems, two events may occur simultaneously yet no computer can always agree on which happened first. Learn logical clocks, causality, and strategies for preserving event order.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Lamport</div><div class="sl">Logical Time</div></div>
+<div class="stat"><div class="sn">Vector</div><div class="sl">Concurrency</div></div>
+<div class="stat"><div class="sn">Partition</div><div class="sl">Ordering</div></div>
+<div class="stat"><div class="sn">Causality</div><div class="sl">Critical</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Impossible Race</div>
+<div class="story">
+<div class="slabel">London vs Tokyo - Which Happened First?</div>
+<h3>Two customers buy the last PlayStation 5 simultaneously.</h3>
+<p>Customer A in London clicks Buy at 10:00:00.120. Customer B in Tokyo clicks Buy at 10:00:00.118. Tokyo's timestamp is earlier. But did it really happen first? London's request traveled through different networks with different delays. Both servers have slightly different clocks due to clock drift. Even NTP synchronization can't guarantee perfect ordering. This is why physical timestamps cannot establish causal ordering in distributed systems.</p>
+</div>
+
+<div class="sec">🎯 Why Ordering Matters</div>
+<div class="defbox">
+<strong>Ordering Problem:</strong> Alice updates her shipping address, then places an order. If events arrive as OrderCreated → AddressUpdated, the package ships to the old address. One ordering mistake = huge business impact.
+</div>
+
+<div class="sec">🕐 Physical vs Logical Time</div>
+<div class="g2">
+<div class="gc">
+<h4 style="color:#ef4444;">Physical Time (Clocks)</h4>
+<div class="viz-box">❌ Clock drift
+❌ Network delays
+❌ NTP imperfections
+❌ Cannot guarantee order
+
+Used for:
+- Logging
+- Monitoring
+- Auditing</div>
+</div>
+<div class="gc">
+<h4 style="color:#10b981;">Logical Time (Causality)</h4>
+<div class="viz-box">✅ No clock sync needed
+✅ Captures cause-effect
+✅ Works across networks
+✅ Guarantees causal order
+
+Used for:
+- Event ordering
+- Distributed systems
+- Conflict resolution</div>
+</div>
+</div>
+
+<div class="sec">🔄 Interactive: Lamport Logical Clock</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">See how Lamport clocks establish logical ordering without synchronized physical clocks.</p>
+<div class="fig">
+<svg viewBox="0 0 700 250" width="100%" id="lamportDiagram">
+<defs>
+<marker id="la" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Server A -->
+<rect x="50" y="50" width="200" height="150" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="150" y="75" fill="#a5b4fc" font-size="13" font-weight="700" text-anchor="middle">Server A</text>
+
+<rect class="clock-node" data-clock="1" x="80" y="100" width="140" height="30" rx="4" fill="#6366f1"/>
+<text x="150" y="120" fill="white" font-size="11" font-weight="600" text-anchor="middle">Clock: 1</text>
+
+<rect class="clock-node" data-clock="2" x="80" y="140" width="140" height="30" rx="4" fill="#6366f1"/>
+<text x="150" y="160" fill="white" font-size="11" font-weight="600" text-anchor="middle">Clock: 2 (Order Created)</text>
+
+<rect class="clock-node" data-clock="3" x="80" y="180" width="140" height="30" rx="4" fill="#6366f1"/>
+<text x="150" y="200" fill="white" font-size="11" font-weight="600" text-anchor="middle">Clock: 3 (Send to B)</text>
+
+<!-- Arrow to B -->
+<line x1="250" y1="195" x2="350" y2="195" stroke="#64748b" stroke-width="2" marker-end="url(#la)" class="event-flow"/>
+<text x="300" y="188" fill="#94a3b8" font-size="9">msg(3)</text>
+
+<!-- Server B -->
+<rect x="450" y="50" width="200" height="150" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+<text x="550" y="75" fill="#6ee7b7" font-size="13" font-weight="700" text-anchor="middle">Server B</text>
+
+<rect class="clock-node" data-clock="5" x="480" y="100" width="140" height="30" rx="4" fill="#10b981"/>
+<text x="550" y="120" fill="white" font-size="11" font-weight="600" text-anchor="middle">Clock: 5 (already running)</text>
+
+<rect class="clock-node" data-clock="6" x="480" y="140" width="140" height="30" rx="4" fill="#f59e0b"/>
+<text x="550" y="160" fill="white" font-size="11" font-weight="600" text-anchor="middle">Clock: max(5,3)+1 = 6</text>
+
+<rect class="clock-node" data-clock="7" x="480" y="180" width="140" height="30" rx="4" fill="#10b981"/>
+<text x="550" y="200" fill="white" font-size="11" font-weight="600" text-anchor="middle">Clock: 7 (Processed)</text>
+
+<!-- Info box -->
+<rect x="50" y="220" width="620" height="25" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="237" fill="#e2e8f0" font-size="11" text-anchor="middle" id="lamportTooltip">Click on clock values to see how Lamport clocks work</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📋 Lamport Clock Rules</div>
+<div class="card">
+<div class="viz-box">Rule 1: Increment before every event
+Rule 2: Include counter in every message
+Rule 3: Receiver updates: max(local, received) + 1
+
+Result: Logical ordering without clock sync!</div>
+</div>
+
+<div class="sec">🔢 Vector Clocks</div>
+<div class="defbox">
+<strong>Vector Clock:</strong> Extends Lamport clocks by tracking one counter per process. Can detect concurrent events (Lamport cannot).
+</div>
+<div class="card">
+<div class="viz-box">Server A: [4,2,1]
+Server B: [4,3,1]
+Server C: [4,3,5]
+
+Each entry tracks another node.
+Can determine:
+- Happens-before
+- Concurrent events</div>
+</div>
+
+<div class="sec">📊 Kafka Partition Ordering</div>
+<div class="card">
+<h3 style="color:#10b981;">✅ Guaranteed Ordering</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Within a single partition, events are strictly ordered by offset.</p>
+<h3 style="color:#f59e0b;">❌ No Global Ordering</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Different partitions have no ordering guarantees.</p>
+<div class="viz-box">Partition 0: Order A → Order B → Order C (ordered)
+Partition 1: Order D → Order E → Order F (ordered)
+But: Order A vs Order D? No guarantee!</div>
+</div>
+
+<div class="sec">🔑 Partition Strategy</div>
+<div class="defbox">
+<strong>Golden Rule:</strong> Use business identifiers as partition keys (Order ID, Conversation ID, Account ID). Never use random keys for stateful workflows.
+</div>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>WhatsApp, Uber, Amazon</h3>
+<p><strong>WhatsApp:</strong> Partitions by Conversation ID. All messages in same conversation stay ordered.<br><br>
+<strong>Uber:</strong> Partitions by Ride ID. Ride events maintain correct sequence.<br><br>
+<strong>Amazon:</strong> Partitions by Order ID. Order lifecycle events stay together.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How does Kafka preserve event ordering?"</strong><div class="mini">"Kafka guarantees ordering only within a single partition. To preserve ordering for a business entity, all related events should use the same partition key, such as Order ID or Conversation ID. This ensures all events for that entity are written to the same partition in order."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Time → Causality → Logical Clocks → Ordering → Partition Key → Idempotency. Physical clocks lie. Logical clocks reveal truth.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 8: CQRS - Command Query Responsibility Segregation</h3><p>Learn why CQRS exists, how to separate reads from writes, build read models, and scale reads independently from writes.</p></div>
+</div>
+
+<script>
+// Interactive Lamport clock diagram
+document.querySelectorAll('.clock-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const clock = this.getAttribute('data-clock');
+const tooltip = document.getElementById('lamportTooltip');
+const messages = {
+'1': 'Server A starts with clock = 1. Each server maintains its own logical counter.',
+'2': 'Server A increments to 2 before creating "Order Created" event. This event gets timestamp 2.',
+'3': 'Server A increments to 3 before sending message to Server B. Message includes clock=3.',
+'5': 'Server B was already running and had clock=5 from its own events.',
+'6': 'Server B receives message with clock=3. Updates: max(5,3) + 1 = 6. Logical ordering preserved!',
+'7': 'Server B increments to 7 after processing. Event timestamped with 7.'
+};
+tooltip.textContent = messages[clock] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

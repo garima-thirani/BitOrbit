@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance & Scaling - Caching, Load Balancing, Autoscaling | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.perf-node{cursor:pointer;transition: all 0.3s ease;}
+.perf-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 9 · Part 11 · Performance</div>
+<h1>Performance & Scaling<br><span>Caching, Load Balancing, Autoscaling & Cost Optimization</span></h1>
+<p>A system serving 1,000 users is software. A system serving 100 million users is an economics problem. Learn to scale microservices with caching, stateless architecture, load balancing, and autoscaling while optimizing costs.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Latency</div><div class="sl">Speed</div></div>
+<div class="stat"><div class="sn">Throughput</div><div class="sl">Volume</div></div>
+<div class="stat"><div class="sn">Cache</div><div class="sl">Fast Reads</div></div>
+<div class="stat"><div class="sn">Autoscale</div><div class="sl">Match Demand</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — Netflix During World Cup Final</div>
+<div class="story">
+<div class="slabel">Traffic Jumps 7x</div>
+<h3>FIFA World Cup Final begins. Millions of users open Netflix immediately after the match. Traffic jumps from 2M to 15M requests/minute. Nothing changed in the code. Only traffic changed. Question: Can your architecture survive sudden demand? Performance engineering is preparing before the traffic arrives.</h3>
+<p>Performance answers: How efficiently does the system perform work? Two major metrics: Latency (time per request) and Throughput (requests per second). Optimizing one doesn't always optimize the other. Like a supermarket: latency is time for one customer, throughput is customers served per hour.</p>
+</div>
+
+<div class="sec">🎯 Latency vs Throughput</div>
+<div class="defbox">
+<strong>Latency:</strong> Time required to complete one request. Example: Checkout takes 150ms. Lower latency = faster responses.<br><br>
+<strong>Throughput:</strong> How much work can be completed per unit time. Example: 10,000 requests/sec.<br><br>
+These are different. A system can have low latency but low throughput (fast but handles few requests), or high throughput but high latency (slow but handles many requests).
+</div>
+
+<div class="sec">🔄 Interactive: Scaling Strategies</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each strategy to understand when to use it.</p>
+<div class="fig">
+<svg viewBox="0 0 700 250" width="100%" id="perfDiagram">
+<defs>
+<marker id="pa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Vertical Scaling -->
+<rect class="perf-node" data-strategy="vertical" x="50" y="50" width="140" height="80" rx="8" fill="#6366f1"/>
+<text x="120" y="70" fill="white" font-size="12" font-weight="700" text-anchor="middle">Vertical Scaling</text>
+<text x="120" y="90" fill="#cbd5e1" font-size="10" text-anchor="middle">Bigger Server</text>
+<text x="120" y="110" fill="#cbd5e1" font-size="10" text-anchor="middle">4 CPU → 16 CPU</text>
+
+<!-- Horizontal Scaling -->
+<rect class="perf-node" data-strategy="horizontal" x="220" y="50" width="140" height="80" rx="8" fill="#10b981"/>
+<text x="290" y="70" fill="white" font-size="12" font-weight="700" text-anchor="middle">Horizontal Scaling</text>
+<text x="290" y="90" fill="#cbd5e1" font-size="10" text-anchor="middle">More Servers</text>
+<text x="290" y="110" fill="#cbd5e1" font-size="10" text-anchor="middle">1 → 100 servers</text>
+
+<!-- Caching -->
+<rect class="perf-node" data-strategy="cache" x="390" y="50" width="140" height="80" rx="8" fill="#f59e0b"/>
+<text x="460" y="70" fill="white" font-size="12" font-weight="700" text-anchor="middle">Caching</text>
+<text x="460" y="90" fill="#cbd5e1" font-size="10" text-anchor="middle">Redis Cache</text>
+<text x="460" y="110" fill="#cbd5e1" font-size="10" text-anchor="middle">Millisecond reads</text>
+
+<!-- Autoscaling -->
+<rect class="perf-node" data-strategy="autoscale" x="560" y="50" width="140" height="80" rx="8" fill="#8b5cf6"/>
+<text x="630" y="70" fill="white" font-size="12" font-weight="700" text-anchor="middle">Autoscaling</text>
+<text x="630" y="90" fill="#cbd5e1" font-size="10" text-anchor="middle">Dynamic</text>
+<text x="630" y="110" fill="#cbd5e1" font-size="10" text-anchor="middle">Match traffic</text>
+
+<!-- Tooltip -->
+<rect x="50" y="180" width="650" height="30" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="375" y="200" fill="#e2e8f0" font-size="11" text-anchor="middle" id="perfTooltip">Click on each strategy to learn when to use it</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">✅ Stateless Services</div>
+<div class="defbox">
+<strong>Stateless Services:</strong> Store no client session in memory. Any instance can process any request. Example: Request → Service → Database → Response. No local state. This enables horizontal scaling - any of 100 instances can handle any request. Stateful services (storing session in memory) require sticky sessions and reduce scalability.
+</div>
+
+<div class="sec">📊 Caching Architecture</div>
+<div class="card">
+<h3 style="color:#f59e0b;">How Caching Works</h3>
+<div class="viz-box">Client
+   ↓
+Service
+   ↓
+Cache (Redis)
+   ↓
+Cache Hit? → Return (1ms)
+   ↓
+Cache Miss? → Database (50ms)
+   ↓
+Update Cache
+   ↓
+Return
+
+Cache Hit Ratio = Hits / (Hits + Misses)
+Target: 95%+</div>
+</div>
+
+<div class="sec">🔄 Load Balancing</div>
+<div class="defbox">
+<strong>Load Balancer:</strong> Distributes traffic across multiple service instances. Algorithms: Round Robin (rotate), Least Connections (send to least busy), Weighted (powerful servers get more), Consistent Hashing (same user to same server). Prevents any single instance from becoming overloaded.
+</div>
+
+<div class="sec">📊 Performance Optimization Checklist</div>
+<table>
+<thead><tr><th>Problem</th><th>Solution</th><th>Impact</th></tr></thead>
+<tbody>
+<tr><td class="h">Slow Reads</td><td>Redis Cache</td><td>10-100x faster</td></tr>
+<tr><td class="h">Too Many DB Connections</td><td>Connection Pool</td><td>Reuse connections</td></tr>
+<tr><td class="h">Slow Writes</td><td>Async Processing</td><td>Non-blocking</td></tr>
+<tr><td class="h">Large Responses</td><td>Compression</td><td>Smaller payload</td></tr>
+<tr><td class="h">Huge Datasets</td><td>Pagination</td><td>20-50 per page</td></tr>
+<tr><td class="h">Traffic Growth</td><td>Horizontal Scaling</td><td>Add servers</td></tr>
+</tbody>
+</table>
+
+<div class="sec">✅ Cost Optimization</div>
+<div class="card">
+<h3 style="color:#10b981;">Strategies</h3>
+<div class="viz-box">✔ Autoscaling - Match resources to demand
+✔ Spot Instances - 70% cheaper
+✔ Right-sizing - Don't over-provision
+✔ Compression - Reduce bandwidth
+✔ Caching - Reduce DB load
+✔ Reserved Instances - Commit for discount
+✔ Storage Tiering - Cold vs hot data
+
+Performance engineering = Cost optimization</div>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon Black Friday Scaling</h3>
+<p>Amazon uses: Redis cache for product catalog (95%+ hit ratio), stateless services behind load balancers, Kubernetes HPA for autoscaling (5 pods morning → 50 pods evening peak), Kafka for async order processing, connection pooling for databases, compression for API responses, pagination for large lists. Everything scales independently. Checkout path stays fast. Analytics runs in background.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How do you handle 20x traffic spike?"</strong><div class="mini">"Cache everything cacheable (Redis, CDN). Make services stateless for horizontal scaling. Use load balancers to distribute traffic. Autoscale based on CPU/request rate. Offload background work to message queues. Compress responses. Paginate large datasets. Monitor cache hit ratios, queue lengths, and database connections. Load test before the event. Use canary deployments for last-minute changes."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Cache → Stateless → Load Balance → Autoscale → Async → Compress → Paginate. Layer optimizations like an onion.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 12: Production Case Studies - Amazon, Netflix, Uber, LinkedIn</h3><p>Study real-world microservices architectures from Amazon, Netflix, Uber, LinkedIn, Spotify, and Airbnb. Learn how FAANG companies design and operate microservices at scale.</p></div>
+</div>
+
+<script>
+// Interactive performance diagram
+const perfInfo = {
+'vertical': 'Vertical Scaling: Increase resources of one machine (4 CPU → 16 CPU, 16GB → 64GB RAM). Simple, no code changes. Good for databases. Problems: Hardware limits, expensive, single point of failure. Not suitable for unlimited growth.',
+'horizontal': 'Horizontal Scaling: Add more servers (1 → 100 servers). Preferred for microservices. Highly available, virtually unlimited growth, cloud-friendly. Requires stateless services and load balancers. This is how Netflix handles millions of users.',
+'cache': 'Caching: Store frequently accessed data in Redis. 10-100x faster than database. Cache hit ratio measures effectiveness (target 95%+). Use for: product catalog, user sessions, frequently accessed data. Eviction policies: LRU, LFU, TTL.',
+'autoscale': 'Autoscaling: Automatically add/remove instances based on demand. Morning: 5 pods. Evening peak: 50 pods. Night: 4 pods. Metrics: CPU, memory, request rate, queue length, Kafka lag. Kubernetes HPA makes this easy.'
+};
+
+document.querySelectorAll('.perf-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const strategy = this.getAttribute('data-strategy');
+const tooltip = document.getElementById('perfTooltip');
+tooltip.textContent = perfInfo[strategy] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

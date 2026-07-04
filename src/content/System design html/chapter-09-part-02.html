@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Designing Good Microservices - DDD & Bounded Contexts | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.context-node{cursor:pointer;transition: all 0.3s ease;}
+.context-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 9 · Part 2 · DDD & Bounded Contexts</div>
+<h1>Designing Good Microservices<br><span>Domain-Driven Design, Bounded Contexts & Service Boundaries</span></h1>
+<p>The hardest problem in Microservices is deciding where one service ends and another begins. Learn to use Domain-Driven Design to find natural service boundaries that align with business capabilities.</p>
+<div class="stats">
+<div class="stat"><div class="sn">DDD</div><div class="sl">Business First</div></div>
+<div class="stat"><div class="sn">Bounded</div><div class="sl">Context</div></div>
+<div class="stat"><div class="sn">Aggregates</div><div class="sl">Rules</div></div>
+<div class="stat"><div class="sn">Boundaries</div><div class="sl">Critical</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The "User Service" Disaster</div>
+<div class="story">
+<div class="slabel">One Service to Rule Them All</div>
+<h3>Engineers build "User Service" containing profiles, payments, wishlists, addresses, orders, and loyalty points. After 3 years: 2M lines of code, 60 engineers, hundreds of APIs. Every team modifies the same service. Nobody knows who owns what. The "User Service" has become another monolith.</h3>
+<p>The problem wasn't Microservices. The problem was poor boundaries. Microservices are not defined by number of APIs or databases. They are defined by business responsibilities. Good boundaries reduce coupling. Bad boundaries recreate monoliths. This is why Domain-Driven Design (DDD) exists—to help you find natural service boundaries based on business capabilities, not technical convenience.</p>
+</div>
+
+<div class="sec">🎯 What is Domain-Driven Design?</div>
+<div class="defbox">
+<strong>Domain-Driven Design (DDD):</strong> A software design approach introduced by Eric Evans that focuses on modeling software around the business domain instead of technical layers. Instead of thinking "Controllers → Services → Repositories", DDD thinks "Orders → Payments → Inventory → Shipping". Business first, technology second.
+</div>
+
+<div class="sec">🔄 Interactive: Understanding Domains & Subdomains</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each domain type to understand its role in DDD.</p>
+<div class="fig">
+<svg viewBox="0 0 700 250" width="100%" id="domainDiagram">
+<defs>
+<marker id="da" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Core Domain -->
+<rect class="context-node" data-domain="core" x="50" y="50" width="180" height="100" rx="8" fill="#ef4444"/>
+<text x="140" y="75" fill="white" font-size="13" font-weight="700" text-anchor="middle">Core Domain</text>
+<text x="140" y="95" fill="#fef3f3" font-size="10" text-anchor="middle">Competitive Advantage</text>
+<text x="140" y="115" fill="#fef3f3" font-size="10" text-anchor="middle">Example: Recommendations</text>
+<text x="140" y="135" fill="#fef3f3" font-size="10" text-anchor="middle">Example: Driver Matching</text>
+
+<!-- Supporting Domain -->
+<rect class="context-node" data-domain="supporting" x="260" y="50" width="180" height="100" rx="8" fill="#f59e0b"/>
+<text x="350" y="75" fill="white" font-size="13" font-weight="700" text-anchor="middle">Supporting Domain</text>
+<text x="350" y="95" fill="#fef3f3" font-size="10" text-anchor="middle">Supports the Business</text>
+<text x="350" y="115" fill="#fef3f3" font-size="10" text-anchor="middle">Example: Notifications</text>
+<text x="350" y="135" fill="#fef3f3" font-size="10" text-anchor="middle">Example: Billing</text>
+
+<!-- Generic Domain -->
+<rect class="context-node" data-domain="generic" x="470" y="50" width="180" height="100" rx="8" fill="#6366f1"/>
+<text x="560" y="75" fill="white" font-size="13" font-weight="700" text-anchor="middle">Generic Domain</text>
+<text x="560" y="95" fill="#cbd5e1" font-size="10" text-anchor="middle">Commodity Functionality</text>
+<text x="560" y="115" fill="#cbd5e1" font-size="10" text-anchor="middle">Example: Authentication</text>
+<text x="560" y="135" fill="#cbd5e1" font-size="10" text-anchor="middle">Example: Email</text>
+
+<!-- Tooltip -->
+<rect x="50" y="180" width="600" height="30" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="200" fill="#e2e8f0" font-size="11" text-anchor="middle" id="domainTooltip">Click on each domain type to learn more</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📋 Ubiquitous Language</div>
+<div class="defbox">
+<strong>Ubiquitous Language:</strong> Everyone in the organization uses the same terminology. If Business says "Order", Engineering says "Order", Database says "Order", Support says "Order". No more "Customer vs User vs Client vs Member" confusion. This single shared vocabulary eliminates misunderstandings and ensures everyone talks about the same thing.
+</div>
+
+<div class="sec">🔄 Interactive: Bounded Contexts Explained</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">The word "Customer" means different things in different contexts. Click to see how bounded contexts solve this.</p>
+<div class="fig">
+<svg viewBox="0 0 700 220" width="100%" id="contextDiagram">
+<defs>
+<marker id="ca" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Customer in different contexts -->
+<rect x="50" y="30" width="180" height="60" rx="6" fill="#6366f1"/>
+<text x="140" y="50" fill="white" font-size="12" font-weight="700" text-anchor="middle">Order Service</text>
+<text x="140" y="70" fill="#cbd5e1" font-size="10" text-anchor="middle">Customer = Buyer</text>
+
+<rect x="260" y="30" width="180" height="60" rx="6" fill="#10b981"/>
+<text x="350" y="50" fill="white" font-size="12" font-weight="700" text-anchor="middle">Marketing Service</text>
+<text x="350" y="70" fill="#cbd5e1" font-size="10" text-anchor="middle">Customer = Potential Lead</text>
+
+<rect x="470" y="30" width="180" height="60" rx="6" fill="#f59e0b"/>
+<text x="560" y="50" fill="white" font-size="12" font-weight="700" text-anchor="middle">Support Service</text>
+<text x="560" y="70" fill="#cbd5e1" font-size="10" text-anchor="middle">Customer = Ticket Owner</text>
+
+<!-- Arrows showing separation -->
+<line x1="140" y1="90" x2="140" y2="110" stroke="#64748b" stroke-width="2"/>
+<line x1="350" y1="90" x2="350" y2="110" stroke="#64748b" stroke-width="2"/>
+<line x1="560" y1="90" x2="560" y2="110" stroke="#64748b" stroke-width="2"/>
+
+<line x1="100" y1="110" x2="600" y2="110" stroke="#64748b" stroke-width="2" stroke-dasharray="5,5"/>
+
+<text x="350" y="140" fill="#e2e8f0" font-size="12" font-weight="600" text-anchor="middle">Bounded Context Boundary</text>
+<text x="350" y="160" fill="#94a3b8" font-size="10" text-anchor="middle">Each service owns its own definition of "Customer"</text>
+<text x="350" y="180" fill="#94a3b8" font-size="10" text-anchor="middle">No global model forced on everyone</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Entity vs Value Object</div>
+<table>
+<thead><tr><th>Aspect</th><th>Entity</th><th>Value Object</th></tr></thead>
+<tbody>
+<tr><td class="h">Identity</td><td>Has unique ID</td><td>No identity</td></tr>
+<tr><td class="h">Mutability</td><td>Mutable</td><td>Usually immutable</td></tr>
+<tr><td class="h">Example</td><td>Customer, Order</td><td>Address, Money</td></tr>
+<tr><td class="h">Tracking</td><td>Tracked by ID</td><td>Tracked by values</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🔄 Aggregates & Aggregate Roots</div>
+<div class="defbox">
+<strong>Aggregate:</strong> A cluster of related entities treated as a single unit. The Aggregate Root is the only entry point. Example: Order Aggregate contains Order, Order Items, Shipping Address, Payment Status. No service should directly modify Order Items—everything goes through the Order Aggregate Root. This enforces business rules and maintains consistency.
+</div>
+
+<div class="sec">✅ Anti-Corruption Layer (ACL)</div>
+<div class="defbox">
+<strong>Anti-Corruption Layer:</strong> A translation layer between your modern service and a legacy system. If Legacy returns "Cust_ID" but your service expects "CustomerId", the ACL translates between them. This prevents legacy concepts from polluting your clean domain model. Think of it as a diplomatic translator between two countries speaking different languages.
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon's Service Boundaries</h3>
+<p>Amazon doesn't have a "Shopping Service" containing everything. Instead, they have separate services: Catalog (product info), Cart (shopping cart), Orders (purchase workflow), Payments (money), Inventory (stock), Shipping (delivery), Recommendations (suggestions). Each service owns its business capability, its data, and its deployment. This allows 1000+ services to evolve independently without blocking each other.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How do you decide Microservice boundaries?"</strong><div class="mini">"Microservice boundaries should follow business capabilities rather than technical layers. A good candidate service has distinct business rules, independent ownership, independent scaling requirements, and its own lifecycle. Use DDD to identify bounded contexts, then extract services around those boundaries."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Business Capability → Bounded Context → Aggregate → Service. Design services around what the business does, not how the code is organized.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 3: Service Communication - REST, gRPC, Messaging & Patterns</h3><p>Learn when to use REST vs gRPC vs Kafka, synchronous vs asynchronous communication, API Composition, BFF, and how to design communication for microservices.</p></div>
+</div>
+
+<script>
+// Interactive domain diagram
+const domainInfo = {
+'core': 'Core Domain: Creates competitive advantage. This is why your company exists. Examples: Netflix Recommendation Engine, Uber Driver Matching, Amazon Product Ranking. Invest heavily here.',
+'supporting': 'Supporting Domain: Supports the business but isn\'t the competitive advantage. Examples: Notifications, Billing, Reporting. Can be built in-house or outsourced.',
+'generic': 'Generic Domain: Commodity functionality needed but not unique. Examples: Authentication, Email, Logging, Monitoring. Usually bought or reused from third parties.'
+};
+
+document.querySelectorAll('.context-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const domain = this.getAttribute('data-domain');
+const tooltip = document.getElementById('domainTooltip');
+tooltip.textContent = domainInfo[domain] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deployment & Infrastructure - Docker, Kubernetes, CI/CD | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.deploy-node{cursor:pointer;transition: all 0.3s ease;}
+.deploy-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 9 · Part 9 · Deployment</div>
+<h1>Deployment & Infrastructure<br><span>Docker, Kubernetes, CI/CD & Production Releases</span></h1>
+<p>Writing microservices is only 30% of the job. Deploying, scaling, upgrading, securing, and operating them reliably in production is the remaining 70%. Learn modern deployment with containers, Kubernetes, and CI/CD.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Docker</div><div class="sl">Containers</div></div>
+<div class="stat"><div class="sn">Kubernetes</div><div class="sl">Orchestration</div></div>
+<div class="stat"><div class="sn">CI/CD</div><div class="sl">Automation</div></div>
+<div class="stat"><div class="sn">GitOps</div><div class="sl">Git-Driven</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — "Works on My Machine"</div>
+<div class="story">
+<div class="slabel">The Deployment Problem</div>
+<h3>Developer finishes Payment Service. Tests it. Everything works. Pushes to production. Deployment fails. Operations reports "Java Version Mismatch". Developer replies: "But it worked on my laptop." The problem wasn't the code. The environments were different. This single phrase led to one of the biggest revolutions in software engineering: Containers.</h3>
+<p>Traditional deployments required installing Java, Python, Node.js, libraries, OS packages on every server. Every server looked different. Result: Development ≠ Testing ≠ Production. Containers solve this by packaging only what the application needs. Write once, run anywhere. Every environment runs the exact same software.</p>
+</div>
+
+<div class="sec">🎯 Why Containers?</div>
+<div class="defbox">
+<strong>Containers:</strong> Package applications with all dependencies into immutable images. Unlike VMs (which include entire OS), containers share the host OS kernel. Result: Lightweight (MBs vs GBs), fast startup (seconds vs minutes), higher density. Docker is the most popular container platform. Every environment runs identical software.
+</div>
+
+<div class="sec">🔄 Interactive: VM vs Container</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each to understand the difference.</p>
+<div class="fig">
+<svg viewBox="0 0 700 200" width="100%" id="deployDiagram">
+<defs>
+<marker id="dpa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- VM -->
+<rect class="deploy-node" data-type="vm" x="50" y="50" width="280" height="100" rx="8" fill="#6366f1"/>
+<text x="190" y="70" fill="white" font-size="13" font-weight="700" text-anchor="middle">Virtual Machine</text>
+<text x="190" y="90" fill="#cbd5e1" font-size="10" text-anchor="middle">Hardware</text>
+<text x="190" y="110" fill="#cbd5e1" font-size="10" text-anchor="middle">Hypervisor</text>
+<text x="190" y="130" fill="#cbd5e1" font-size="10" text-anchor="middle">Guest OS + Application (GBs, Minutes)</text>
+
+<!-- Container -->
+<rect class="deploy-node" data-type="container" x="370" y="50" width="280" height="100" rx="8" fill="#10b981"/>
+<text x="510" y="70" fill="white" font-size="13" font-weight="700" text-anchor="middle">Container (Docker)</text>
+<text x="510" y="90" fill="#cbd5e1" font-size="10" text-anchor="middle">Hardware</text>
+<text x="510" y="110" fill="#cbd5e1" font-size="10" text-anchor="middle">Host OS + Docker Engine</text>
+<text x="510" y="130" fill="#cbd5e1" font-size="10" text-anchor="middle">Container + App (MBs, Seconds)</text>
+
+<!-- Tooltip -->
+<rect x="50" y="170" width="600" height="25" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="187" fill="#e2e8f0" font-size="11" text-anchor="middle" id="deployTooltip">Click to compare VM vs Container</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">🔄 Kubernetes Fundamentals</div>
+<div class="defbox">
+<strong>Kubernetes (K8s):</strong> Orchestrates containers at scale. Manages deployment, scaling, networking, health monitoring, and recovery. Key concepts: Pod (smallest unit, runs containers), Deployment (manages Pods), Service (stable networking), Ingress (external routing), HPA (auto-scaling). Think of Docker as the engine, Kubernetes as the fleet manager.
+</div>
+
+<div class="sec">📊 Deployment Strategies</div>
+<table>
+<thead><tr><th>Strategy</th><th>Downtime</th><th>Risk</th><th>Rollback</th></tr></thead>
+<tbody>
+<tr><td class="h">Recreate</td><td>High</td><td>High</td><td>Slow</td></tr>
+<tr><td class="h">Rolling Update</td><td>None</td><td>Low</td><td>Medium</td></tr>
+<tr><td class="h">Blue-Green</td><td>None</td><td>Low</td><td>Fast</td></tr>
+<tr><td class="h">Canary</td><td>None</td><td>Lowest</td><td>Fast</td></tr>
+</tbody>
+</table>
+
+<div class="sec">✅ CI/CD Pipeline</div>
+<div class="defbox">
+<strong>CI/CD (Continuous Integration/Continuous Deployment):</strong> Automated pipeline: Developer pushes code → Git → Build → Unit Tests → Integration Tests → Docker Build → Container Registry → Kubernetes Deploy → Production. Benefits: Faster releases, repeatability, automated testing, lower human error. GitOps takes this further: Git becomes the source of truth for infrastructure.
+</div>
+
+<div class="sec">🔄 Rolling Update vs Canary</div>
+<div class="g2">
+<div class="gc">
+<h4 style="color:#6366f1;">Rolling Update</h4>
+<div class="viz-box">10 Pods v1
+   ↓
+9 v1 + 1 v2
+   ↓
+8 v1 + 2 v2
+   ↓
+...
+   ↓
+All v2
+
+Gradual replacement
+No downtime</div>
+</div>
+<div class="gc">
+<h4 style="color:#f59e0b;">Canary Deployment</h4>
+<div class="viz-box">95% v1
+   ↓
+5% v2 (test)
+   ↓
+Monitor
+   ↓
+50% v2
+   ↓
+100% v2
+
+Progressive rollout
+Lowest risk</div>
+</div>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Netflix Deployment Pipeline</h3>
+<p>Developer pushes code → CI runs tests → Docker image built → Pushed to registry → Kubernetes rolling update → Prometheus monitors → If errors spike → Automatic rollback. Canary deployments test on 5% traffic first. Feature flags enable/disable features without redeployment. Entire process automated. Netflix deploys hundreds of times per day safely.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How do you deploy microservices without downtime?"</strong><div class="mini">"Use rolling updates or blue-green deployments. Rolling updates gradually replace old instances with new ones. Blue-green maintains two environments and switches traffic instantly. Canary deployments release to small percentage first, monitor, then expand. Combine with health checks, automatic rollback on errors, and feature flags for runtime control."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Docker Packages → Kubernetes Orchestrates → CI/CD Automates → GitOps Controls. Infrastructure as code, deployments as automated workflows.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 10: Security - OAuth2, JWT, mTLS & Zero Trust</h3><p>Learn to secure microservices with OAuth2, JWT, mTLS, Vault, and Zero Trust architecture. Every network hop must be secured.</p></div>
+</div>
+
+<script>
+// Interactive deployment diagram
+const deployInfo = {
+'vm': 'Virtual Machine: Includes full OS (GBs in size). Slow startup (minutes). Lower density. Each VM is isolated but heavy. Good for legacy apps needing specific OS. Containers replaced VMs for microservices due to efficiency.',
+'container': 'Container (Docker): Packages only app + dependencies (MBs). Fast startup (seconds). High density. Shares host OS kernel. Immutable images. Write once, run anywhere. Perfect for microservices. Docker Hub stores images.'
+};
+
+document.querySelectorAll('.deploy-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const type = this.getAttribute('data-type');
+const tooltip = document.getElementById('deployTooltip');
+tooltip.textContent = deployInfo[type] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Events, Producers & Consumers - Anatomy of an Event | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 8 · Part 2 · Event Anatomy</div>
+<h1>Events, Producers & Consumers<br><span>Anatomy of an Event</span></h1>
+<p>Every distributed system revolves around one simple idea: something happened. That 'something' is an event. Learn event structure, metadata, payload, producers, consumers, and event contracts.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Event</div><div class="sl">Business Fact</div></div>
+<div class="stat"><div class="sn">Producer</div><div class="sl">Publishes</div></div>
+<div class="stat"><div class="sn">Consumer</div><div class="sl">Reacts</div></div>
+<div class="stat"><div class="sn">Immutable</div><div class="sl">Never Changes</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Digital Newspaper</div>
+<div class="story">
+<div class="slabel">Events Are Like Newspapers</div>
+<h3>Millions read, nobody knows who.</h3>
+<p>A newspaper prints today's news. Millions read it. The newspaper doesn't know who reads it, when they read it, or why. It simply publishes facts. Readers decide what interests them. Events work exactly the same way. A producer publishes facts. Consumers independently decide whether to react. An event is not just a message—it's an immutable business fact describing something that already happened.</p>
+</div>
+
+<div class="sec">🎯 What is an Event?</div>
+<div class="defbox">
+<strong>Event:</strong> An immutable business fact describing something that has already happened inside the system. Events use past tense because they represent completed actions.
+</div>
+<div class="card">
+<div class="viz-box">Events (Past Tense):
+- OrderCreated
+- PaymentCompleted
+- InventoryReserved
+- RideCompleted
+- UserRegistered
+
+NOT events (Commands):
+- CreateOrder
+- ProcessPayment
+- ReserveInventory</div>
+</div>
+
+<div class="sec">📦 Event Anatomy</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">A production event contains more than business data. It includes metadata for infrastructure understanding.</p>
+<div class="viz-box">Complete Event Structure:
+┌─────────────────────────────────────┐
+│ Metadata                            │
+│ - eventId: "evt_123"                │
+│ - eventType: "OrderCreated"         │
+│ - timestamp: "2026-07-01T10:15:00Z" │
+│ - version: 1                        │
+│ - source: "OrderService"            │
+│ - correlationId: "req_56789"        │
+├─────────────────────────────────────┤
+│ Business Payload                    │
+│ - orderId: 123                      │
+│ - customerId: 456                   │
+│ - total: 899.99                     │
+└─────────────────────────────────────┘</div>
+</div>
+
+<div class="sec">🏷️ Event Metadata</div>
+<div class="card">
+<h3 style="color:#a5b4fc;">Event ID</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Globally unique identifier. Used for duplicate detection, tracing, debugging, idempotency.</p>
+<h3 style="color:#6ee7b7;">Timestamp</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Always use UTC. Helps with ordering, debugging, auditing, analytics.</p>
+<h3 style="color:#fcd34d;">Event Type</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Examples: OrderCreated, PaymentCompleted. Consumers use this to determine processing.</p>
+<h3 style="color:#fca5a5;">Source</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Which service published it. Useful when many services publish similar events.</p>
+<h3 style="color:#c4b5fd;">Version</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Schema version. Prevents breaking older consumers when events evolve.</p>
+<h3 style="color:#6ee7b7;">Correlation ID</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Links all events from the same business request. Enables distributed tracing.</p>
+<h3 style="color:#fcd34d;">Causation ID</h3>
+<p style="color:var(--tm);margin-bottom:12px;">Identifies the immediate parent event that triggered this event.</p>
+</div>
+
+<div class="sec">👤 Producers & Consumers</div>
+<div class="g2">
+<div class="gc">
+<h4>Producers</h4>
+<div class="viz-box">Responsibilities:
+✔ Create events
+✔ Validate payload
+✔ Publish reliably
+✔ Never know consumers
+
+Examples:
+- Order Service
+- Payment Service
+- User Service</div>
+</div>
+<div class="gc">
+<h4>Consumers</h4>
+<div class="viz-box">Responsibilities:
+✔ Validate schema
+✔ Process event
+✔ Handle duplicates
+✔ Retry failures
+✔ Record metrics
+
+Examples:
+- Analytics
+- Recommendations
+- Notifications</div>
+</div>
+</div>
+
+<div class="sec">🔑 Key Principles</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">Immutable</div><div class="td">Events never change. Publish new events instead.</div></div>
+<div class="tag-card"><div class="tc">One Producer</div><div class="td">Exactly one authoritative source per event type.</div></div>
+<div class="tag-card"><div class="tc">Many Consumers</div><div class="td">Multiple services can react to same event.</div></div>
+<div class="tag-card"><div class="tc">Event Contract</div><div class="td">Schema must evolve carefully with versioning.</div></div>
+</div>
+</div>
+
+<div class="sec">🏭 Production Example</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Amazon OrderCreated Event</h3>
+<p>Order Service publishes OrderCreated with full metadata. Twenty services consume it: Inventory reserves stock, Shipping prepares shipment, Analytics tracks metrics, Recommendations update, Fraud detects anomalies, ML trains models. Order Service knows nothing about them. This is loose coupling at scale.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What makes an event different from a message?"</strong><div class="mini">"A message is a transport mechanism. An event represents an immutable business fact describing something that already happened. Events carry business meaning and are used for communication in Event-Driven Architecture, while messages are simply containers for transmitting data."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Business Action → Event → Metadata + Payload → Broker → Consumers. Events are facts, never instructions.</strong></div>
+
+<div class="sec">🧪 Test Your Knowledge</div>
+<div class="quiz-card"><div class="quiz-q">1. Why should events use past tense?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) It's just a naming convention</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">B) Events describe completed facts, not requests for action</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">C) Past tense is faster to process</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) Commands use past tense too</div>
+<div class="quiz-feedback" id="q1">Events represent something that already happened. Commands (future/imperative) request actions.</div></div>
+
+<div class="quiz-card"><div class="quiz-q">2. What is the Correlation ID used for?</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">A) To encrypt events</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">B) To compress event payload</div>
+<div class="quiz-opt" onclick="checkQuiz(this,true)">C) To trace a single business request across multiple services</div>
+<div class="quiz-opt" onclick="checkQuiz(this,false)">D) To validate event schema</div>
+<div class="quiz-feedback" id="q2">Correlation ID links all events generated from the same business request for distributed tracing.</div></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 3: Domain Events vs Integration Events</h3><p>Learn when to publish events internally vs externally, event boundaries, translation layers, and anti-corruption layers.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Event Sourcing - Storing History Instead of State | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.event-stream{animation: flowPulse 2s infinite;}
+@keyframes flowPulse{0%,100%{opacity:0.4;}50%{opacity:1;}}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 8 · Part 9 · Event Sourcing</div>
+<h1>Event Sourcing<br><span>Storing History Instead of State</span></h1>
+<p>Traditional databases tell you the current state. Event Sourcing tells you how the system reached that state. Learn to store every change as an immutable event for complete auditability and time travel.</p>
+<div class="stats">
+<div class="stat"><div class="sn">History</div><div class="sl">Not State</div></div>
+<div class="stat"><div class="sn">Replay</div><div class="sl">Rebuild</div></div>
+<div class="stat"><div class="sn">Audit</div><div class="sl">Complete</div></div>
+<div class="stat"><div class="sn">Time Travel</div><div class="sl">Possible</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 The Story — The Missing Money</div>
+<div class="story">
+<div class="slabel">Bank Account Mystery</div>
+<h3>Balance shows ₹42,000. Where did ₹8,000 go?</h3>
+<p>Customer calls bank support: "Yesterday my account had ₹50,000. Today it has ₹42,000. Where did my money go?" You open the database. It shows only: Balance = ₹42,000. No explanation. No history. No timeline. The current state exists, but the journey is lost. Now imagine Event Sourcing. Instead of storing balance, you store: Account Created, Salary Credited ₹50,000, Electricity Bill ₹2,000, ATM Withdrawal ₹5,000, Online Purchase ₹1,000. Now anyone can answer how the balance became ₹42,000. The history itself becomes the database.</p>
+</div>
+
+<div class="sec">🎯 What is Event Sourcing?</div>
+<div class="defbox">
+<strong>Event Sourcing:</strong> Store every state change as an immutable event. Current state is computed by replaying events. Complete audit trail built-in.
+</div>
+
+<div class="sec">🔄 Interactive: Traditional vs Event Sourcing</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each approach to see the difference.</p>
+<div class="fig">
+<svg viewBox="0 0 700 250" width="100%" id="esDiagram">
+<defs>
+<marker id="ea" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Traditional -->
+<rect x="50" y="50" width="300" height="150" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+<text x="200" y="75" fill="#fca5a5" font-size="13" font-weight="700" text-anchor="middle">Traditional Database</text>
+
+<rect x="80" y="100" width="240" height="40" rx="6" fill="#ef4444"/>
+<text x="200" y="122" fill="white" font-size="12" font-weight="600" text-anchor="middle">Account Balance: ₹42,000</text>
+<text x="200" y="138" fill="#fef3f3" font-size="10" text-anchor="middle">(Current state only)</text>
+
+<text x="200" y="175" fill="#fca5a5" font-size="11" text-anchor="middle">❌ No history</text>
+<text x="200" y="192" fill="#fca5a5" font-size="11" text-anchor="middle">❌ No audit trail</text>
+<text x="200" y="209" fill="#fca5a5" font-size="11" text-anchor="middle">❌ Cannot time travel</text>
+
+<!-- Event Sourcing -->
+<rect x="400" y="50" width="300" height="150" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+<text x="550" y="75" fill="#6ee7b7" font-size="13" font-weight="700" text-anchor="middle">Event Sourcing</text>
+
+<rect x="430" y="100" width="240" height="30" rx="6" fill="#10b981"/>
+<text x="550" y="118" fill="white" font-size="10" font-weight="600" text-anchor="middle">Account Created</text>
+
+<rect x="430" y="135" width="240" height="30" rx="6" fill="#10b981"/>
+<text x="550" y="153" fill="white" font-size="10" font-weight="600" text-anchor="middle">Salary Credited ₹50,000</text>
+
+<rect x="430" y="170" width="240" height="30" rx="6" fill="#10b981"/>
+<text x="550" y="188" fill="white" font-size="10" font-weight="600" text-anchor="middle">Electricity Bill ₹2,000</text>
+
+<text x="550" y="220" fill="#6ee7b7" font-size="11" text-anchor="middle">✅ Complete history</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">🔄 Event Store Architecture</div>
+<div class="card">
+<div class="viz-box">Traditional:
+UPDATE accounts SET balance = 42000
+
+Event Sourcing:
+APPEND: Account Created
+APPEND: Salary Credited 50000
+APPEND: Electricity Bill -2000
+APPEND: ATM Withdrawal -5000
+APPEND: Online Purchase -1000
+
+Current Balance = Sum of all events</div>
+</div>
+
+<div class="sec">📦 Event Store Schema</div>
+<div class="card">
+<div class="viz-box">Event:
+{
+  "eventId": "evt_123",
+  "aggregateId": "account_456",
+  "eventType": "MoneyDeposited",
+  "timestamp": "2026-07-01T12:00:00Z",
+  "version": 1,
+  "payload": {
+    "amount": 5000,
+    "currency": "INR"
+  }
+}</div>
+</div>
+
+<div class="sec">🔄 Rebuilding State (Replay)</div>
+<div class="card">
+<div class="viz-box">Event Store
+   ↓
+Replay All Events
+   ↓
+Current State Computed
+
+Example:
+Start: 0
++ Deposit 5000 = 5000
+- Withdraw 2000 = 3000
++ Deposit 4600 = 7600
+= Current Balance: ₹7,600</div>
+</div>
+
+<div class="sec">📸 Snapshots</div>
+<div class="defbox">
+<strong>Snapshot:</strong> Periodic checkpoint of current state to avoid replaying thousands of events. Recovery starts from latest snapshot + remaining events.
+</div>
+<div class="card">
+<div class="viz-box">Without Snapshot:
+Replay 1,000,000 events → Slow!
+
+With Snapshot:
+Start at Snapshot (event 1000)
+Replay remaining 900,000 events → Much faster!</div>
+</div>
+
+<div class="sec">✅ Benefits</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">✅ Complete Audit Trail</div><div class="td">Every change recorded</div></div>
+<div class="tag-card"><div class="tc">✅ Time Travel</div><div class="td">Reconstruct any past state</div></div>
+<div class="tag-card"><div class="tc">✅ Replay</div><div class="td">Rebuild systems, fix bugs</div></div>
+<div class="tag-card"><div class="tc">✅ Debugging</div><div class="td">See exactly what happened</div></div>
+</div>
+</div>
+
+<div class="sec">🏭 Production Examples</div>
+<div class="story">
+<div class="slabel">Real World</div>
+<h3>Banking, Uber, Healthcare</h3>
+<p><strong>Banking:</strong> Every transaction stored as event. Auditors can reconstruct any account balance from any point in time.<br><br>
+<strong>Uber:</strong> Ride events (Requested → Matched → Started → Completed) stored permanently. Complete ride history available.<br><br>
+<strong>Healthcare:</strong> Patient events (Registered → Diagnosis → Medication → Lab Results) stored for compliance and complete medical history.</p>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What's the difference between Event Sourcing and Kafka?"</strong><div class="mini">"Kafka is designed for event streaming and message distribution with temporary retention. Event Sourcing uses an Event Store as the authoritative source of business history with permanent retention, aggregate streams, optimistic concurrency, and built-in replay for state reconstruction. Many systems use both: Event Store for source of truth, Kafka for distribution."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Command → Event → Append → Event Store → Replay → Current State. History creates state, not the other way around.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 10: Event Replay, Time Travel & Rebuilding Systems</h3><p>Learn how replay enables disaster recovery, analytics rebuilding, ML retraining, and time travel queries.</p></div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>
