@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 13 — Testing & Debugging | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Module 13 · Chapter 46</div>
+<h1>Module 13 — Testing & Debugging<br><span>Q1. What is Unit Testing?</span></h1>
+<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Q1. What</div><div class="sl">is Unit Testing?</div></div><div class="stat"><div class="sn">Q2. What</div><div class="sl">is the difference between `unittest` and `pytest`?</div></div><div class="stat"><div class="sn">Q3. What</div><div class="sl">is an Assertion?</div></div><div class="stat"><div class="sn">Q4. What</div><div class="sl">are `setUp()` and `tearDown()`?</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">Q1. What is Unit Testing?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Unit testing verifies the correctness of the smallest testable units of code,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">typically individual functions or methods.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q2. What is the difference between `unittest` and `pytest`?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>unittest</code> is Python's built-in testing framework and follows a class-based approach.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>pytest</code> is a third-party framework with simpler syntax,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">automatic test discovery,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and advanced features such as fixtures and parameterized testing.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q3. What is an Assertion?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">An assertion checks whether the actual output matches the expected output.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">If they differ,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">the test fails.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q4. What are `setUp()` and `tearDown()`?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>setUp()</code> runs before every test and prepares the test environment.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>tearDown()</code> runs after every test and cleans up resources.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q5. Why is Testing important?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Testing improves software quality by detecting bugs early,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">preventing regressions,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">making refactoring safer,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and increasing confidence that the code behaves correctly.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Concept | Purpose |<br>|----------|----------|<br>| Unit Testing | Test individual functions |<br>| <code>unittest</code> | Built-in testing framework |<br>| <code>pytest</code> | Modern testing framework |<br>| Assertion | Compare expected vs actual |<br>| <code>setUp()</code> | Prepare test environment |<br>| <code>tearDown()</code> | Cleanup after tests |<br>| <code>assertRaises()</code> | Verify exceptions |<br>| Parametrized Tests | Test multiple inputs efficiently |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Chapter 47 — Debugging**, you'll learn how to find and fix bugs using:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>pdb</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Assertions</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Logging</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These tools help you diagnose problems quickly and are indispensable in real-world software development.</p>
+</div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Operators - Arithmetic, Comparison, Logical & More | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.op-node{cursor:pointer;transition:all .3s ease}
+.op-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+.flow-step{fill:#1e293b;stroke:var(--accent);stroke-width:1.5;rx:6}
+.flow-arrow{stroke:#64748b;stroke-width:2;marker-end:url(#fa)}
+.flow-text{fill:#e2e8f0;font-size:12px;text-anchor:middle;font-weight:500}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Module 1 · Chapter 3 · Python Fundamentals</div>
+<h1>Python Operators<br><span>Arithmetic, Comparison, Logical, Bitwise, Identity & Membership</span></h1>
+<p>Operators are the building blocks of expressions and decision-making in Python. Learn the 7 categories of operators and how Python evaluates expressions.</p>
+<div class="stats">
+<div class="stat"><div class="sn">7</div><div class="sl">Categories</div></div>
+<div class="stat"><div class="sn">AACLBIM</div><div class="sl">Memory Trick</div></div>
+<div class="stat"><div class="sn">Precedence</div><div class="sl">Rules</div></div>
+<div class="stat"><div class="sn">Short-Circuit</div><div class="sl">Evaluation</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<!-- Learning Objectives -->
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>What operators are and how they work</li>
+<li>Arithmetic operators (+, -, *, /, //, %, **)</li>
+<li>Assignment operators (=, +=, -=, etc.)</li>
+<li>Comparison operators (==, !=, >, <, >=, <=)</li>
+<li>Logical operators (and, or, not)</li>
+<li>Bitwise operators (&, |, ^, ~, <<, >>)</li>
+<li>Identity operators (is, is not)</li>
+<li>Membership operators (in, not in)</li>
+<li>Operator precedence and short-circuit evaluation</li>
+</ul>
+</div>
+
+<!-- Story Section -->
+<div class="sec">📖 The Story — The Calculator</div>
+<div class="story">
+<div class="slabel">Buttons and Operations</div>
+<h3>Python operators are like the buttons on a calculator. They tell Python what operation to perform on values.</h3>
+<p>Imagine a calculator with buttons: 7, +, 3, =. The calculator isn't smart because of the numbers—it's smart because of the <strong>operations</strong>. Python operators are the buttons that tell Python what operation to perform. An <strong>operator</strong> is a symbol that performs an operation on one or more values. For example, in <code>5 + 3</code>, <code>+</code> is the operator and <code>5</code> and <code>3</code> are the <strong>operands</strong>.</p>
+</div>
+
+<!-- Interactive Operator Categories -->
+<div class="sec">🔄 Interactive: Operator Categories (AACLBIM)</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each category to learn more. Remember: <strong>AACLBIM</strong> (pronounced "Ackle-Bim")</p>
+<div class="fig">
+<svg viewBox="0 0 700 300" width="100%" id="opDiagram">
+<defs>
+<marker id="oa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Row 1 -->
+<rect class="op-node" data-cat="arithmetic" x="20" y="20" width="150" height="60" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="12" font-weight="700" text-anchor="middle">Arithmetic</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">+ - * / // % **</text>
+
+<rect class="op-node" data-cat="assignment" x="190" y="20" width="150" height="60" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="12" font-weight="700" text-anchor="middle">Assignment</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">= += -= *= /=</text>
+
+<rect class="op-node" data-cat="comparison" x="360" y="20" width="150" height="60" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="12" font-weight="700" text-anchor="middle">Comparison</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">== != > < >= <=</text>
+
+<rect class="op-node" data-cat="logical" x="530" y="20" width="150" height="60" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="12" font-weight="700" text-anchor="middle">Logical</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">and or not</text>
+
+<!-- Row 2 -->
+<rect class="op-node" data-cat="bitwise" x="20" y="110" width="150" height="60" rx="6" fill="#8b5cf6"/>
+<text x="95" y="135" fill="white" font-size="12" font-weight="700" text-anchor="middle">Bitwise</text>
+<text x="95" y="155" fill="#cbd5e1" font-size="10" text-anchor="middle">& | ^ ~ << >></text>
+
+<rect class="op-node" data-cat="identity" x="190" y="110" width="150" height="60" rx="6" fill="#06b6d4"/>
+<text x="265" y="135" fill="white" font-size="12" font-weight="700" text-anchor="middle">Identity</text>
+<text x="265" y="155" fill="#cbd5e1" font-size="10" text-anchor="middle">is is not</text>
+
+<rect class="op-node" data-cat="membership" x="360" y="110" width="150" height="60" rx="6" fill="#f43f5e"/>
+<text x="435" y="135" fill="white" font-size="12" font-weight="700" text-anchor="middle">Membership</text>
+<text x="435" y="155" fill="#cbd5e1" font-size="10" text-anchor="middle">in not in</text>
+
+<!-- Memory Trick -->
+<rect x="20" y="200" width="660" height="70" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="225" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: AACLBIM ("Ackle-Bim")</text>
+<text x="350" y="250" fill="#94a3b8" font-size="11" text-anchor="middle">A(Arithmetic) A(Assignment) C(Comparison) L(Logical) B(Bitwise) I(Identity) M(Membership)</text>
+
+<!-- Tooltip -->
+<rect x="20" y="275" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="290" fill="#e2e8f0" font-size="10" text-anchor="middle" id="opTooltip">Click on each category to learn more</text>
+</svg>
+</div>
+</div>
+
+<!-- Arithmetic Operators -->
+<div class="sec">➕ Arithmetic Operators</div>
+<table>
+<thead><tr><th>Operator</th><th>Meaning</th><th>Example</th><th>Result</th></tr></thead>
+<tbody>
+<tr><td class="h">+</td><td>Addition</td><td><code>5 + 3</code></td><td>8</td></tr>
+<tr><td class="h">-</td><td>Subtraction</td><td><code>10 - 4</code></td><td>6</td></tr>
+<tr><td class="h">*</td><td>Multiplication</td><td><code>6 * 5</code></td><td>30</td></tr>
+<tr><td class="h">/</td><td>Division (float)</td><td><code>10 / 2</code></td><td>5.0</td></tr>
+<tr><td class="h">//</td><td>Floor Division</td><td><code>10 // 3</code></td><td>3</td></tr>
+<tr><td class="h">%</td><td>Modulus (Remainder)</td><td><code>10 % 3</code></td><td>1</td></tr>
+<tr><td class="h">**</td><td>Exponent (Power)</td><td><code>2 ** 5</code></td><td>32</td></tr>
+</tbody>
+</table>
+
+<!-- Floor Division & Modulus Visualization -->
+<div class="sec">🔄 Floor Division vs Modulus</div>
+<div class="card">
+<div class="fig">
+<svg viewBox="0 0 700 180" width="100%">
+<defs>
+<marker id="fa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- 10 / 3 -->
+<rect x="50" y="20" width="280" height="60" rx="6" fill="#6366f1"/>
+<text x="190" y="45" fill="white" font-size="12" font-weight="700" text-anchor="middle">10 / 3 = 3.333 (Normal Division)</text>
+<text x="190" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Always returns a float</text>
+
+<!-- 10 // 3 -->
+<rect x="370" y="20" width="280" height="60" rx="6" fill="#10b981"/>
+<text x="510" y="45" fill="white" font-size="12" font-weight="700" text-anchor="middle">10 // 3 = 3 (Floor Division)</text>
+<text x="510" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Removes decimal part</text>
+
+<!-- 10 % 3 -->
+<rect x="50" y="110" width="280" height="60" rx="6" fill="#f59e0b"/>
+<text x="190" y="135" fill="white" font-size="12" font-weight="700" text-anchor="middle">10 % 3 = 1 (Modulus)</text>
+<text x="190" y="155" fill="#cbd5e1" font-size="10" text-anchor="middle">Returns the remainder</text>
+
+<!-- Uses -->
+<rect x="370" y="110" width="280" height="60" rx="6" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="510" y="135" fill="#e2e8f0" font-size="11" font-weight="700" text-anchor="middle">Modulus Uses</text>
+<text x="510" y="155" fill="#94a3b8" font-size="10" text-anchor="middle">Even/Odd check, Circular indexing, Hashing</text>
+</svg>
+</div>
+</div>
+
+<!-- Comparison Operators -->
+<div class="sec">⚖️ Comparison Operators</div>
+<div class="defbox">
+<strong>Comparison operators</strong> compare values and always return <code>True</code> or <code>False</code>.<br><br>
+<code>==</code> Equal to | <code>!=</code> Not equal | <code>></code> Greater than | <code><</code> Less than | <code>>=</code> Greater or equal | <code><=</code> Less or equal<br><br>
+<strong>Example:</strong> <code>print(10 > 5)</code> → <code>True</code> | <code>print(5 == 10)</code> → <code>False</code>
+</div>
+
+<!-- Logical Operators -->
+<div class="sec">🧠 Logical Operators</div>
+<div class="card">
+<div class="fig">
+<svg viewBox="0 0 700 200" width="100%">
+<defs>
+<marker id="la" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- AND -->
+<rect x="50" y="20" width="180" height="70" rx="6" fill="#6366f1"/>
+<text x="140" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">and</text>
+<text x="140" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Both must be True</text>
+<text x="140" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">age > 18 and salary > 40000</text>
+
+<!-- OR -->
+<rect x="260" y="20" width="180" height="70" rx="6" fill="#10b981"/>
+<text x="350" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">or</text>
+<text x="350" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">At least one True</text>
+<text x="350" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">10 > 5 or 5 > 20</text>
+
+<!-- NOT -->
+<rect x="470" y="20" width="180" height="70" rx="6" fill="#f59e0b"/>
+<text x="560" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">not</text>
+<text x="560" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Reverses Boolean</text>
+<text x="560" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">not True → False</text>
+
+<!-- Short Circuit -->
+<rect x="50" y="120" width="600" height="65" rx="6" fill="#1e293b" stroke="#ef4444" stroke-width="1"/>
+<text x="350" y="145" fill="#fca5a5" font-size="12" font-weight="700" text-anchor="middle">Short-Circuit Evaluation</text>
+<text x="350" y="165" fill="#94a3b8" font-size="10" text-anchor="middle">Python stops evaluating as soon as the result is determined.</text>
+<text x="350" y="180" fill="#94a3b8" font-size="10" text-anchor="middle">Example: True or anything → True (second condition never evaluated)</text>
+</svg>
+</div>
+</div>
+
+<!-- Identity vs Equality -->
+<div class="sec">🔍 Identity vs Equality</div>
+<div class="card">
+<div class="fig">
+<svg viewBox="0 0 700 180" width="100%">
+<defs>
+<marker id="ia" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- == -->
+<rect x="50" y="20" width="280" height="60" rx="6" fill="#6366f1"/>
+<text x="190" y="45" fill="white" font-size="12" font-weight="700" text-anchor="middle">== (Equality)</text>
+<text x="190" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Compares VALUES</text>
+
+<!-- is -->
+<rect x="370" y="20" width="280" height="60" rx="6" fill="#10b981"/>
+<text x="510" y="45" fill="white" font-size="12" font-weight="700" text-anchor="middle">is (Identity)</text>
+<text x="510" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Compares OBJECTS (memory)</text>
+
+<!-- Example -->
+<rect x="50" y="110" width="600" height="55" rx="6" fill="#1e293b" stroke="#f59e0b" stroke-width="1"/>
+<text x="350" y="132" fill="#fcd34d" font-size="11" font-weight="700" text-anchor="middle">a = [1,2]; b = [1,2]</text>
+<text x="350" y="152" fill="#94a3b8" font-size="10" text-anchor="middle">a == b → True (same values) | a is b → False (different objects in memory)</text>
+</svg>
+</div>
+</div>
+
+<!-- Membership -->
+<div class="sec">🔎 Membership Operators</div>
+<div class="defbox">
+<strong>Membership operators</strong> check whether an element exists in a sequence.<br><br>
+<code>in</code> → Returns True if element exists: <code>2 in [1,2,3]</code> → <code>True</code><br>
+<code>not in</code> → Returns True if element does NOT exist: <code>5 not in [1,2,3]</code> → <code>True</code><br><br>
+<strong>Useful with:</strong> Lists, Tuples, Sets, Dictionaries, Strings
+</div>
+
+<!-- Operator Precedence -->
+<div class="sec">📊 Operator Precedence (Highest to Lowest)</div>
+<div class="viz-box">()
+  ↓
+**
+  ↓
+* / // %
+  ↓
++ -
+  ↓
+Comparisons (== != > < >= <=)
+  ↓
+not
+  ↓
+and
+  ↓
+or</div>
+
+<div class="defbox">
+<strong>Example:</strong> <code>2 + 3 * 4</code> → <code>14</code> (not 20) because <code>*</code> has higher precedence than <code>+</code>.<br>
+<strong>Use parentheses</strong> to make precedence explicit: <code>(2 + 3) * 4</code> → <code>20</code>
+</div>
+
+<!-- Common Mistakes -->
+<div class="sec">⚠️ Common Beginner Mistakes</div>
+<div class="card">
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Confusing <code>=</code> (assignment) with <code>==</code> (comparison).</strong><div class="mini">✔ <code>=</code> assigns a value. <code>==</code> compares two values. Using <code>if age = 18:</code> instead of <code>if age == 18:</code> is a common error.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using <code>is</code> instead of <code>==</code> to compare values.</strong><div class="mini">✔ Use <code>==</code> for value comparison. Use <code>is</code> for object identity. <code>a == b</code> checks if values are equal; <code>a is b</code> checks if they're the same object.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Forgetting operator precedence.</strong><div class="mini">✔ <code>2 + 3 * 4</code> = 14, not 20. Use parentheses to make your intent clear: <code>(2 + 3) * 4</code>.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Misunderstanding floor division.</strong><div class="mini">✔ <code>10 // 3</code> = 3, not 3.333. Floor division removes the decimal part, always rounding down.</div></div></div>
+</div>
+
+<!-- Interview Questions -->
+<div class="sec">🎯 Interview Questions</div>
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the difference between <code>=</code> and <code>==</code>?"</strong><div class="mini">"<code>=</code> is the assignment operator used to assign a value to a variable. <code>==</code> is the equality comparison operator that checks if two values are equal. Using <code>=</code> instead of <code>==</code> in a condition is one of the most common programming mistakes."</div></div></div>
+</div>
+
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Explain the difference between <code>==</code> and <code>is</code>."</strong><div class="mini">"<code>==</code> compares the <strong>values</strong> of two objects. <code>is</code> compares the <strong>identity</strong> (memory address) of two objects. Two objects can have equal values but be different objects in memory. For example, <code>a = [1,2]; b = [1,2]; a == b</code> is True, but <code>a is b</code> is False."</div></div></div>
+</div>
+
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is short-circuit evaluation?"</strong><div class="mini">"Short-circuit evaluation means Python stops evaluating a logical expression as soon as the result is determined. For <code>and</code>, if the first condition is False, Python doesn't evaluate the second. For <code>or</code>, if the first condition is True, Python doesn't evaluate the second. This improves performance and can prevent errors like division by zero."</div></div></div>
+</div>
+
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is floor division and why is it useful?"</strong><div class="mini">"Floor division (<code>//</code>) divides two numbers and returns the integer part, discarding the remainder. For example, <code>10 // 3</code> returns 3. It's useful for dividing items into groups, pagination, and any scenario where you need whole numbers."</div></div></div>
+</div>
+
+<!-- Chapter Summary -->
+<div class="sec">📋 Chapter Summary / Cheat Sheet</div>
+<table>
+<thead><tr><th>Category</th><th>Operators</th></tr></thead>
+<tbody>
+<tr><td class="h">Arithmetic</td><td><code>+ - * / // % **</code></td></tr>
+<tr><td class="h">Assignment</td><td><code>= += -= *= /= //= %= **=</code></td></tr>
+<tr><td class="h">Comparison</td><td><code>== != > < >= <=</code></td></tr>
+<tr><td class="h">Logical</td><td><code>and or not</code></td></tr>
+<tr><td class="h">Bitwise</td><td><code>& | ^ ~ << >></code></td></tr>
+<tr><td class="h">Identity</td><td><code>is is not</code></td></tr>
+<tr><td class="h">Membership</td><td><code>in not in</code></td></tr>
+<tr><td class="h">Memory Trick</td><td><strong>AACLBIM</strong> = Arithmetic, Assignment, Comparison, Logical, Bitwise, Identity, Membership</td></tr>
+</tbody>
+</table>
+
+<!-- What's Next -->
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 4: Writing Better Python</h3><p>Learn about <strong>PEP 8, naming conventions, code readability, Pythonic code, docstrings, and common beginner mistakes</strong> that distinguish professional Python developers from beginners.</p></div>
+</div>
+
+<script>
+const opInfo = {
+'arithmetic': 'Arithmetic Operators: Perform mathematical calculations. + (addition), - (subtraction), * (multiplication), / (division, returns float), // (floor division, removes decimal), % (modulus, returns remainder), ** (exponent/power). Example: 2 ** 3 = 8.',
+'assignment': 'Assignment Operators: Store values in variables. = (basic assignment), += (add and assign), -= (subtract and assign), *= (multiply and assign), /= (divide and assign). Example: x += 5 is equivalent to x = x + 5.',
+'comparison': 'Comparison Operators: Compare values and return True or False. == (equal), != (not equal), > (greater than), < (less than), >= (greater or equal), <= (less or equal). Example: 10 > 5 returns True.',
+'logical': 'Logical Operators: Combine conditions. and (both True), or (at least one True), not (reverses Boolean). Python uses short-circuit evaluation for efficiency.',
+'bitwise': 'Bitwise Operators: Work directly on binary numbers. & (AND), | (OR), ^ (XOR), ~ (NOT), << (left shift), >> (right shift). Used in system programming, networking, and performance optimization.',
+'identity': 'Identity Operators: Compare object identity, not values. is (same object), is not (different object). Use == for value comparison, is for checking if two variables point to the same object.',
+'membership': 'Membership Operators: Check if an element exists in a sequence. in (exists), not in (does not exist). Works with lists, tuples, sets, dictionaries, and strings.'
+};
+
+document.querySelectorAll('.op-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const cat = this.getAttribute('data-cat');
+const tooltip = document.getElementById('opTooltip');
+tooltip.textContent = opInfo[cat] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 14 — NumPy | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Module 14 · Chapter 52</div>
+<h1>Module 14 — NumPy<br><span>Q1. What is the difference between Element-wise Multiplication and Matrix Multiplication?</span></h1>
+<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Q1. What</div><div class="sl">is the difference between Element-wise Multiplication and Matrix Multiplication?</div></div><div class="stat"><div class="sn">Q2. What</div><div class="sl">is the Dot Product?</div></div><div class="stat"><div class="sn">Q3. What</div><div class="sl">is a Transpose?</div></div><div class="stat"><div class="sn">Q4. What</div><div class="sl">is the purpose of a Determinant?</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">Q1. What is the difference between Element-wise Multiplication and Matrix Multiplication?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Element-wise multiplication (<code>*</code>) multiplies corresponding elements independently.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Matrix multiplication (<code>@</code> or <code>np.matmul()</code>) follows the rules of linear algebra,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">where rows of the first matrix are multiplied with columns of the second matrix.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q2. What is the Dot Product?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">The dot product multiplies corresponding elements of two vectors</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and sums the results.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It is commonly used to measure similarity,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">especially in Machine Learning,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Information Retrieval,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and Recommendation Systems.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q3. What is a Transpose?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">The transpose of a matrix swaps its rows and columns.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In NumPy,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">it is obtained using</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">A.T</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q4. What is the purpose of a Determinant?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">The determinant indicates whether a matrix is invertible.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">If the determinant is zero,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">the matrix is singular and cannot be inverted.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q5. Why is Linear Algebra important in Machine Learning?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Machine Learning algorithms represent datasets,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">model parameters,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and computations as vectors and matrices.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Operations such as matrix multiplication,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">dot products,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and eigenvalue decomposition are fundamental to algorithms like</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Linear Regression</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">PCA</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Neural Networks</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Support Vector Machines</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Function | Purpose |<br>|----------|----------|<br>| <code>@</code> | Matrix Multiplication |<br>| <code>np.matmul()</code> | Matrix Multiplication |<br>| <code>np.dot()</code> | Dot Product |<br>| <code>A.T</code> | Transpose |<br>| <code>np.eye()</code> | Identity Matrix |<br>| <code>np.linalg.det()</code> | Determinant |<br>| <code>np.linalg.inv()</code> | Matrix Inverse |<br>| <code>np.linalg.solve()</code> | Solve Linear Equations |<br>| <code>np.linalg.eig()</code> | Eigenvalues & Eigenvectors |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Chapter 53 — Performance Optimization**, you'll learn why NumPy is one of the fastest numerical computing libraries in Python:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Vectorization</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Memory Efficiency</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Broadcasting Optimization</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Avoiding Python Loops</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Profiling NumPy Code</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Performance Best Practices</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These optimization techniques are essential for working with large datasets and high-performance AI/ML applications.</p>
+</div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

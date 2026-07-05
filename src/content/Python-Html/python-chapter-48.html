@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 13 — Testing & Debugging | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Module 13 · Chapter 48</div>
+<h1>Module 13 — Testing & Debugging<br><span>Q1. What is Mocking?</span></h1>
+<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Q1. What</div><div class="sl">is Mocking?</div></div><div class="stat"><div class="sn">Q2. What</div><div class="sl">is `patch()` used for?</div></div><div class="stat"><div class="sn">Q3. What</div><div class="sl">is the difference between `Mock` and `MagicMock`?</div></div><div class="stat"><div class="sn">Q4. What</div><div class="sl">is Code Coverage?</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">Q1. What is Mocking?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Mocking is the practice of replacing real objects or external dependencies with fake objects during testing.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">This allows tests to run quickly,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">safely,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and independently of services such as databases,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">APIs,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">or email servers.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q2. What is `patch()` used for?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>patch()</code> temporarily replaces an object,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">function,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">or method with a mock during a test.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Once the test finishes,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">the original object is automatically restored.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q3. What is the difference between `Mock` and `MagicMock`?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>Mock</code></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">provides basic mocking functionality.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>MagicMock</code></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">extends <code>Mock</code> by automatically supporting Python's magic methods,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">such as</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">__len__()</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">__iter__()</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">__getitem__()</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">making it useful for mocking container-like objects.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q4. What is Code Coverage?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Code Coverage measures how much of the application's code is executed while running tests.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It helps identify untested areas,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">but it does **not** guarantee the absence of bugs.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q5. Why should APIs and Databases be mocked?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Mocking external systems makes unit tests</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Faster</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Deterministic</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Independent of network or database availability</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Safer, since no real data is modified</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It allows developers to focus on testing application logic.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Concept | Purpose |<br>|----------|----------|<br>| Mock | Fake object used during testing |<br>| MagicMock | Mock with built-in support for magic methods |<br>| <code>patch()</code> | Temporarily replace an object |<br>| <code>mock_open()</code> | Mock file operations |<br>| <code>assert_called_once()</code> | Verify method invocation |<br>| Code Coverage | Percentage of executed code |<br>| <code>coverage.py</code> | Measure test coverage |<br>| HTML Report | Visual coverage analysis |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Module 13 Complete ✅</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">You have now mastered Testing & Debugging:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Unit Testing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>unittest</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>pytest</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Assertions</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Test Fixtures</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Debugging</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>pdb</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Logging</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Mocking</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>Mock</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>MagicMock</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>patch()</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Code Coverage</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Coverage Reports</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These skills are essential for writing reliable, maintainable, and production-ready Python applications. They are also widely tested in Python developer interviews and are standard practices in professional software engineering.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Module 14 — NumPy**, you'll begin scientific computing with Python by learning:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>ndarray</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Array Creation</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Indexing & Slicing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Broadcasting</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Universal Functions</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Linear Algebra</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Performance Optimization</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">NumPy is the foundation of the entire Python data science, machine learning, and AI ecosystem.</p>
+</div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

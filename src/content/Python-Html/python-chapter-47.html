@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 13 — Testing & Debugging | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Module 13 · Chapter 47</div>
+<h1>Module 13 — Testing & Debugging<br><span>Q1. What is Debugging?</span></h1>
+<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Q1. What</div><div class="sl">is Debugging?</div></div><div class="stat"><div class="sn">Q2. What</div><div class="sl">is the purpose of `pdb`?</div></div><div class="stat"><div class="sn">Q3. What</div><div class="sl">is an Assertion?</div></div><div class="stat"><div class="sn">Q4. Why</div><div class="sl">is Logging preferred over `print()`?</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">Q1. What is Debugging?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Debugging is the process of identifying,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">analyzing,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and fixing bugs in a program.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It involves reproducing issues,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">inspecting program state,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and verifying that the fix works.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q2. What is the purpose of `pdb`?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>pdb</code> is Python's built-in interactive debugger.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It allows developers to pause execution,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">inspect variables,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">step through code,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and understand program behavior line by line.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q3. What is an Assertion?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">An assertion verifies that a condition is true.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">If the condition evaluates to <code>False</code>,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Python raises an <code>AssertionError</code>.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Assertions are mainly used to catch programming mistakes during development.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q4. Why is Logging preferred over `print()`?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Logging supports</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Multiple severity levels</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Writing to files</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Configurable output</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Better debugging in production</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Unlike <code>print()</code>,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">logs remain available after the program finishes.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q5. What are the different Logging Levels?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Python defines five primary logging levels:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">DEBUG</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">INFO</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">WARNING</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">ERROR</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">CRITICAL</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Each level represents increasing severity.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Concept | Purpose |<br>|----------|----------|<br>| Debugging | Find and fix bugs |<br>| Traceback | Shows where an error occurred |<br>| <code>print()</code> | Simple debugging |<br>| <code>pdb</code> | Interactive debugger |<br>| <code>assert</code> | Verify assumptions |<br>| <code>logging</code> | Record application events |<br>| DEBUG | Detailed diagnostics |<br>| INFO | General events |<br>| WARNING | Potential issues |<br>| ERROR | Operation failed |<br>| CRITICAL | Severe failure |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Chapter 48 — Mocking & Code Coverage**, you'll learn advanced testing techniques:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Mock Objects</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>unittest.mock</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Mocking APIs and Databases</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Measuring Test Coverage</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Coverage Reports</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These tools are essential for testing large applications where real external systems are unavailable or expensive to use.</p>
+</div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

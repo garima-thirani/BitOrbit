@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>File I/O - Reading, Writing, Modes & Context Managers | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.file-node{cursor:pointer;transition:all .3s ease}
+.file-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
+</head>
+<body>
+<div class="hero"><div class="hero-inner"><div class="badge">Module 10 · Chapter 20 · File I/O</div>
+<h1>File I/O<br><span>Reading, Writing, Modes & Context Managers</span></h1>
+<p>File handling is essential for persistent data storage. Learn to read, write, and manage files using Python's built-in functions and context managers.</p>
+<div class="stats"><div class="stat"><div class="sn">RWCM</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">Read</div><div class="sl">Input</div></div><div class="stat"><div class="sn">Write</div><div class="sl">Output</div></div><div class="stat"><div class="sn">with</div><div class="sl">Auto-close</div></div></div></div></div>
+<div class="wrap">
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>Opening files with open()</li>
+<li>File modes: read, write, append, binary</li>
+<li>Reading files: read(), readline(), readlines()</li>
+<li>Writing files: write(), writelines()</li>
+<li>Context managers: with statement</li>
+<li>File positioning: seek(), tell()</li>
+<li>Working with CSV and JSON files</li>
+<li>Best practices for file handling</li>
+</ul></div>
+<div class="sec">📖 The Story — Notebook</div>
+<div class="story"><div class="slabel">Persistent Storage</div>
+<h3>A notebook stores information that persists even after you close it. Files work the same way for programs.</h3>
+<p>Imagine a notebook where you write notes. The information stays there even after you close the notebook. Later, you can open it and read what you wrote. Computer files work exactly like this. They provide <strong>persistent storage</strong> — data that survives after your program ends. You can <strong>read</strong> from files, <strong>write</strong> to files, and the <code>with</code> statement ensures the file is properly closed (like closing your notebook).</p></div>
+<div class="sec">🔄 Interactive: File I/O (RWCM)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each concept. Remember: <strong>RWCM</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="fileDiagram">
+<defs><marker id="fa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="file-node" data-concept="read" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Read</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Get data from file</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">'r' mode</text>
+<rect class="file-node" data-concept="write" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Write</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Save data to file</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">'w' mode</text>
+<rect class="file-node" data-concept="context" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">with Statement</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Auto-close</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Context manager</text>
+<rect class="file-node" data-concept="modes" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">File Modes</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">r, w, a, rb, wb</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Different operations</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: RWCM ("Roo-Comm")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">R → Read (get data from files)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">W → Write (save data to files)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">C → Context Manager (with statement auto-closes)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">M → Modes (r, w, a, rb, wb for different operations)</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="fileTooltip">Click on each concept to learn more</text>
+</svg></div></div>
+<div class="sec">📊 File Modes</div>
+<table><thead><tr><th>Mode</th><th>Purpose</th><th>Example</th></tr></thead><tbody>
+<tr><td class="h"><code>'r'</code></td><td>Read (default)</td><td><code>open('file.txt', 'r')</code></td></tr>
+<tr><td class="h"><code>'w'</code></td><td>Write (overwrite)</td><td><code>open('file.txt', 'w')</code></td></tr>
+<tr><td class="h"><code>'a'</code></td><td>Append (add to end)</td><td><code>open('file.txt', 'a')</code></td></tr>
+<tr><td class="h"><code>'rb'</code></td><td>Read binary</td><td><code>open('img.png', 'rb')</code></td></tr>
+<tr><td class="h"><code>'wb'</code></td><td>Write binary</td><td><code>open('img.png', 'wb')</code></td></tr>
+<tr><td class="h"><code>'r+'</code></td><td>Read and write</td><td><code>open('file.txt', 'r+')</code></td></tr>
+</tbody></table>
+<div class="sec">🔧 File I/O Example</div>
+<div class="defbox"><strong>Using with statement (recommended):</strong><br><br>
+<code># Write to file</code><br>
+<code>with open("notes.txt", "w") as file:</code><br>
+<code>&nbsp;&nbsp;file.write("Hello, World!\n")</code><br>
+<code>&nbsp;&nbsp;file.write("Python is awesome\n")</code><br><br>
+<code># Read from file</code><br>
+<code>with open("notes.txt", "r") as file:</code><br>
+<code>&nbsp;&nbsp;content = file.read()</code><br>
+<code>&nbsp;&nbsp;print(content)</code><br><br>
+<strong>Benefits:</strong> Automatically closes file, even if error occurs.</div>
+<div class="sec">⚠️ Common Mistakes</div>
+<div class="card">
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Forgetting to close files.</strong><div class="mini">✔ Always use <code>with</code> statement. It automatically closes the file. If not using with, call <code>file.close()</code> explicitly.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using write mode ('w') when you mean append.</strong><div class="mini">✔ 'w' overwrites the entire file. 'a' appends to the end. Be careful with 'w' — you can lose data!</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Not handling file not found errors.</strong><div class="mini">✔ Use try-except or check if file exists before opening. FileNotFoundError is common.</div></div></div>
+</div>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the with statement and why is it used?"</strong><div class="mini">"The with statement is a context manager that automatically handles resource cleanup. For files, it ensures the file is properly closed after operations, even if an exception occurs. It's the recommended way to work with files in Python."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What's the difference between 'w' and 'a' modes?"</strong><div class="mini">"'w' (write) mode overwrites the entire file, creating a new file if it doesn't exist. 'a' (append) mode adds content to the end of the file without removing existing content. Use 'w' for new files and 'a' for logging or adding to existing files."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Concept</th><th>Description</th></tr></thead><tbody>
+<tr><td class="h">open()</td><td>Open a file</td></tr>
+<tr><td class="h">read()</td><td>Read entire file</td></tr>
+<tr><td class="h">readline()</td><td>Read one line</td></tr>
+<tr><td class="h">readlines()</td><td>Read all lines as list</td></tr>
+<tr><td class="h">write()</td><td>Write string to file</td></tr>
+<tr><td class="h">with</td><td>Context manager (auto-close)</td></tr>
+<tr><td class="h">Memory Trick</td><td><strong>RWCM</strong> = Read, Write, Context Manager, Modes</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 21: Working with Data</h3><p>Learn to work with <strong>CSV, JSON, and XML files</strong> — common data formats used in real-world applications.</p></div>
+</div>
+<script>
+const fileInfo = {
+'read': 'Read: Open file in read mode (r) to get data. Methods: read() gets all content, readline() gets one line, readlines() gets all lines as list. Example: content = file.read()',
+'write': 'Write: Open file in write mode (w) to save data. Creates new file or overwrites existing. Use a to append. Example: file.write("Hello") writes to file.',
+'context': 'Context Manager: The with statement automatically closes files. Example: with open("file.txt") as f:. No need to call f.close(). Ensures cleanup even if errors occur.',
+'modes': 'File Modes: r (read), w (write/overwrite), a (append), b (binary), + (read+write). rb for binary read, wb for binary write. Choose the right mode for your operation.'
+};
+document.querySelectorAll('.file-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('fileTooltip').textContent = fileInfo[this.getAttribute('data-concept')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
+</script>
+</body>
+</html>

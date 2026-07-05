@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 14 — NumPy | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Module 14 · Chapter 49</div>
+<h1>Module 14 — NumPy<br><span>Q1. What is an ndarray?</span></h1>
+<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Q1. What</div><div class="sl">is an ndarray?</div></div><div class="stat"><div class="sn">Q2. Why</div><div class="sl">is NumPy faster than Python Lists?</div></div><div class="stat"><div class="sn">Q3. What</div><div class="sl">is the difference between `shape` and `size`?</div></div><div class="stat"><div class="sn">Q4. What</div><div class="sl">does `dtype` represent?</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">Q1. What is an ndarray?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">An <code>ndarray</code> (N-dimensional array) is NumPy's core data structure.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It stores homogeneous data in contiguous memory,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">allowing fast numerical computations and efficient memory usage.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q2. Why is NumPy faster than Python Lists?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">NumPy arrays store elements of the same type in contiguous memory.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">This reduces memory overhead,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">improves CPU cache efficiency,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and enables vectorized operations implemented in optimized C code.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q3. What is the difference between `shape` and `size`?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>shape</code> returns the dimensions of an array.</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>size</code> returns the total number of elements.</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Example</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">arr = np.array([[1,2],[3,4]])</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">arr.shape</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># (2,2)</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">arr.size</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># 4</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q4. What does `dtype` represent?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>dtype</code> specifies the data type of elements stored in the array,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">such as</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>int32</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>int64</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>float64</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>bool</code></li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">All elements in an ndarray share the same data type.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q5. What is the difference between `arange()` and `linspace()`?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>arange()</code></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">creates values using a fixed step size.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Example</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">np.arange(0,10,2)</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># [0 2 4 6 8]</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>linspace()</code></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">creates a specified number of equally spaced values.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Example</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">np.linspace(0,1,5)</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># [0.00 0.25 0.50 0.75 1.00]</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Concept | Purpose |<br>|----------|----------|<br>| <code>ndarray</code> | Core NumPy data structure |<br>| <code>np.array()</code> | Create an array |<br>| <code>shape</code> | Dimensions |<br>| <code>size</code> | Total elements |<br>| <code>ndim</code> | Number of dimensions |<br>| <code>dtype</code> | Data type of elements |<br>| <code>np.zeros()</code> | Array of zeros |<br>| <code>np.ones()</code> | Array of ones |<br>| <code>np.eye()</code> | Identity matrix |<br>| <code>np.arange()</code> | Sequence with step size |<br>| <code>np.linspace()</code> | Equally spaced values |<br>| <code>np.random.rand()</code> | Random numbers |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Chapter 50 — Indexing & Broadcasting**, you'll learn the two most powerful NumPy concepts:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Array Indexing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Slicing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Boolean Indexing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Fancy Indexing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Broadcasting Rules</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Vectorized Operations</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These concepts are the key to writing concise, high-performance numerical code and are used extensively in data science and machine learning.</p>
+</div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

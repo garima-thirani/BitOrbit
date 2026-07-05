@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 12 — Memory Management | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Module 12 · Chapter 44</div>
+<h1>Module 12 — Memory Management<br><span>Q1. How does Python manage memory?</span></h1>
+<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Q1. How</div><div class="sl">does Python manage memory?</div></div><div class="stat"><div class="sn">Q2. What</div><div class="sl">is Reference Counting?</div></div><div class="stat"><div class="sn">Q3. Why</div><div class="sl">does Python need a Garbage Collector if it already has Reference Counting?</div></div><div class="stat"><div class="sn">Q4. What</div><div class="sl">is the `gc` module?</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">Q1. How does Python manage memory?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Python primarily uses **reference counting**.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">When an object's reference count becomes zero,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">its memory is immediately reclaimed.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">To handle objects involved in circular references,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Python also uses a cyclic **Garbage Collector**.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q2. What is Reference Counting?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Reference counting tracks how many variables reference an object.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Each new reference increases the count,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and removing a reference decreases it.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">When the count reaches zero,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">the object is destroyed.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q3. Why does Python need a Garbage Collector if it already has Reference Counting?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Reference counting cannot detect circular references.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">If two or more objects reference each other,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">their reference counts never become zero.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">The Garbage Collector identifies and removes these unreachable cycles.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q4. What is the `gc` module?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">The <code>gc</code> module provides functions to inspect and control Python's cyclic garbage collector.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Common functions include</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>gc.collect()</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>gc.enable()</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>gc.disable()</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>gc.isenabled()</code></li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q5. What is the difference between `del` and Garbage Collection?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>del</code></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">removes a reference (such as a variable).</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Garbage Collection removes the actual object,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">but only when it is no longer reachable.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Deleting a variable does **not** guarantee the object is immediately destroyed if other references still exist.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Concept | Purpose |<br>|----------|----------|<br>| Garbage | Unreachable object |<br>| Reference Count | Number of references to an object |<br>| Count = 0 | Object immediately destroyed |<br>| Circular Reference | Objects referencing each other |<br>| Garbage Collector | Removes unreachable cycles |<br>| <code>gc.collect()</code> | Run garbage collection manually |<br>| <code>gc.enable()</code> | Enable GC |<br>| <code>gc.disable()</code> | Disable GC |<br>| <code>del</code> | Remove a reference, not necessarily the object |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Chapter 45 — Memory Optimization**, you'll learn practical techniques for writing memory-efficient Python programs:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Shallow Copy vs Deep Copy</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Memory Profiling</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Object Size Analysis</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Efficient Data Structures</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Optimization Techniques</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These concepts are especially important for handling large datasets, high-performance applications, and production systems.</p>
+</div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

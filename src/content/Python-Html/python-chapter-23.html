@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Database - Indexing, Transactions, Connection Pooling & Optimization | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.adv-db-node{cursor:pointer;transition:all .3s ease}
+.adv-db-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
+</head>
+<body>
+<div class="hero"><div class="hero-inner"><div class="badge">Module 13 · Chapter 23 · Advanced Database</div>
+<h1>Advanced Database Concepts<br><span>Indexing, Transactions, Connection Pooling & Optimization</span></h1>
+<p>Take your database skills to the next level. Learn advanced concepts that improve performance, ensure data integrity, and optimize database operations.</p>
+<div class="stats"><div class="stat"><div class="sn">TICO</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">Indexing</div><div class="sl">Speed</div></div><div class="stat"><div class="sn">Transactions</div><div class="sl">ACID</div></div><div class="stat"><div class="sn">Pooling</div><div class="sl">Reuse</div></div></div></div></div>
+<div class="wrap">
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>Database indexing and when to use it</li>
+<li>Types of indexes: B-tree, Hash, Composite</li>
+<li>Transactions and transaction isolation levels</li>
+<li>Connection pooling and its benefits</li>
+<li>Database optimization techniques</li>
+<li>Query optimization and EXPLAIN</li>
+<li>Database normalization and denormalization</li>
+<li>Python database connectors (psycopg2, sqlite3)</li>
+</ul></div>
+<div class="sec">📖 The Story — Highway System</div>
+<div class="story"><div class="slabel">Efficiency & Flow</div>
+<h3>Indexes are like highway exits - they help you reach your destination faster. Connection pooling is like having multiple toll booths instead of one.</h3>
+<p>Imagine a busy highway. Without exits, you'd have to drive all the way around to reach your destination. Indexes work the same way - they provide quick paths to data. Now imagine a toll booth with only one lane during rush hour - massive traffic jams! Connection pooling is like having multiple toll booths ready to handle traffic efficiently. Advanced database concepts optimize how data is stored, accessed, and managed.</p></div>
+<div class="sec">🔄 Interactive: Advanced Concepts (TICO)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each concept. Remember: <strong>TICO</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="advDbDiagram">
+<defs><marker id="ada" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="adv-db-node" data-concept="index" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Indexing</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Fast lookups</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">B-tree, Hash</text>
+<rect class="adv-db-node" data-concept="transaction" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Transactions</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Atomic operations</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">BEGIN, COMMIT</text>
+<rect class="adv-db-node" data-concept="pool" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Connection Pool</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Reuse connections</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Performance</text>
+<rect class="adv-db-node" data-concept="optimize" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Optimization</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Query tuning</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">EXPLAIN</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: TICO ("Ty-Koh")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">T → Transactions (ACID, isolation levels)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">I → Indexing (B-tree, Hash, Composite for speed)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">C → Connection Pool (reuse connections, improve performance)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">O → Optimization (query tuning, EXPLAIN, normalization)</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="advDbTooltip">Click on each concept to learn more</text>
+</svg></div></div>
+<div class="sec">📊 Index Types</div>
+<table><thead><tr><th>Index Type</th><th>Use Case</th><th>Speed</th></tr></thead><tbody>
+<tr><td class="h">B-tree</td><td>General purpose, range queries</td><td>O(log n)</td></tr>
+<tr><td class="h">Hash</td><td>Exact matches only</td><td>O(1)</td></tr>
+<tr><td class="h">Composite</td><td>Multiple columns</td><td>Varies</td></tr>
+<tr><td class="h">Full-text</td><td>Text search</td><td>Varies</td></tr>
+</tbody></table>
+<div class="sec">🔧 Transaction Example</div>
+<div class="defbox"><strong>Using transactions:</strong><br><br>
+<code>BEGIN TRANSACTION;</code><br><br>
+<code>UPDATE accounts SET balance = balance - 100 WHERE id = 1;</code><br>
+<code>UPDATE accounts SET balance = balance + 100 WHERE id = 2;</code><br><br>
+<code>COMMIT;  -- Save changes</code><br>
+<code>-- or ROLLBACK;  -- Undo changes</code><br><br>
+<strong>Isolation Levels:</strong><br>
+<code>READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
+<div class="card">
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Creating too many indexes.</strong><div class="mini">✔ Indexes speed up reads but slow down writes. Only index columns frequently used in WHERE, JOIN, and ORDER BY clauses.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Not using transactions for multi-step operations.</strong><div class="mini">✔ Always use transactions when multiple related changes must succeed or fail together (e.g., bank transfers).</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Opening/closing connections for every query.</strong><div class="mini">✔ Use connection pooling to reuse connections. Creating new connections is expensive.</div></div></div>
+</div>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is database indexing and how does it work?"</strong><div class="mini">"An index is a data structure (usually B-tree) that improves query performance by allowing quick lookups. Think of it like a book's index - instead of reading every page, you go directly to the right page. Indexes speed up SELECT queries but slow down INSERT, UPDATE, DELETE because the index must be maintained."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What are database transactions and why are they important?"</strong><div class="mini">"Transactions group multiple operations into a single logical unit. They follow ACID properties: Atomicity (all succeed or fail together), Consistency (data remains valid), Isolation (concurrent transactions don't interfere), Durability (committed data persists). Transactions ensure data integrity in critical operations like bank transfers."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Concept</th><th>Description</th></tr></thead><tbody>
+<tr><td class="h">Index</td><td>Speeds up queries, slows writes</td></tr>
+<tr><td class="h">B-tree</td><td>Most common index type</td></tr>
+<tr><td class="h">Transaction</td><td>Atomic unit of work (ACID)</td></tr>
+<tr><td class="h">Isolation Level</td><td>Controls transaction visibility</td></tr>
+<tr><td class="h">Connection Pool</td><td>Reuses database connections</td></tr>
+<tr><td class="h">EXPLAIN</td><td>Analyzes query performance</td></tr>
+<tr><td class="h">Memory Trick</td><td><strong>TICO</strong> = Transactions, Indexing, Connection Pool, Optimization</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 24: Python Database Programming</h3><p>Learn to connect Python to databases using <strong>sqlite3, psycopg2, SQLAlchemy</strong> and build real database applications.</p></div>
+</div>
+<script>
+const advDbInfo = {
+'index': 'Indexing: A data structure that speeds up data retrieval. B-tree indexes are most common - they maintain sorted data for fast lookups. Hash indexes provide O(1) access for exact matches. Trade-off: faster reads, slower writes.',
+'transaction': 'Transactions: A unit of work that must succeed or fail completely. BEGIN starts a transaction. COMMIT saves changes. ROLLBACK undoes changes. Isolation levels control what concurrent transactions can see: READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SERIALIZABLE.',
+'pool': 'Connection Pooling: Reusing database connections instead of creating new ones for each query. Creating connections is expensive (handshake, authentication). Pools maintain a set of ready-to-use connections, significantly improving performance.',
+'optimize': 'Optimization: Techniques to improve database performance. Use EXPLAIN to analyze query execution. Add indexes to frequently queried columns. Avoid SELECT *. Normalize data to reduce redundancy, but denormalize when needed for read performance.'
+};
+document.querySelectorAll('.adv-db-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('advDbTooltip').textContent = advDbInfo[this.getAttribute('data-concept')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
+</script>
+</body>
+</html>

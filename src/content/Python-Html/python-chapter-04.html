@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Writing Better Python - PEP 8, Naming Conventions & Pythonic Code | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.code-node{cursor:pointer;transition:all .3s ease}
+.code-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+.flow-step{fill:#1e293b;stroke:var(--accent);stroke-width:1.5;rx:6}
+.flow-arrow{stroke:#64748b;stroke-width:2;marker-end:url(#fa)}
+.flow-text{fill:#e2e8f0;font-size:12px;text-anchor:middle;font-weight:500}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Module 1 · Chapter 4 · Python Fundamentals</div>
+<h1>Writing Better Python<br><span>PEP 8, Naming Conventions, Pythonic Code & Best Practices</span></h1>
+<p>Writing code that works is only the beginning. Professional developers write code that is easy to read, debug, maintain, and extend. Learn how to write clean, Pythonic code.</p>
+<div class="stats">
+<div class="stat"><div class="sn">PEP 8</div><div class="sl">Style Guide</div></div>
+<div class="stat"><div class="sn">Pythonic</div><div class="sl">Idioms</div></div>
+<div class="stat"><div class="sn">DRY</div><div class="sl">Principle</div></div>
+<div class="stat"><div class="sn">KISS</div><div class="sl">Principle</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<!-- Learning Objectives -->
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>Why writing clean code matters in professional development</li>
+<li>Python naming conventions (snake_case, PascalCase, UPPER_CASE)</li>
+<li>PEP 8 — the official Python style guide</li>
+<li>How to write Pythonic code using built-in features</li>
+<li>Comments vs docstrings and when to use each</li>
+<li>Useful built-in functions (enumerate, zip, sorted, etc.)</li>
+<li>Common beginner mistakes and how to avoid them</li>
+<li>DRY (Don't Repeat Yourself) and KISS (Keep It Simple) principles</li>
+</ul>
+</div>
+
+<!-- Story Section -->
+<div class="sec">📖 The Story — Building a House</div>
+<div class="story">
+<div class="slabel">Quality Matters</div>
+<h3>Writing code is like building a house. Both houses work, but which one will be easier to repair ten years later?</h3>
+<p>Imagine two construction teams. The first team builds a house quickly. The second team spends extra time labeling every wire, organizing every pipe, drawing proper blueprints, and keeping everything clean. Both houses work. But ten years later, which house will be easier to repair? Obviously, the second one. Programming is exactly the same. Writing code is easy. Maintaining it for years is difficult. Professional developers spend <strong>80% of their time reading code</strong> and only 20% writing it.</p>
+</div>
+
+<!-- The Golden Rule -->
+<div class="sec">🥇 The Golden Rule</div>
+<div class="defbox">
+<strong>Code is written once but read hundreds of times.</strong> Always optimize your code for readability. Your future teammates—and your future self—will thank you.
+</div>
+
+<!-- Naming Conventions -->
+<div class="sec">📝 Naming Conventions</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each naming convention to learn more:</p>
+<div class="fig">
+<svg viewBox="0 0 700 280" width="100%" id="namingDiagram">
+<defs>
+<marker id="na" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- snake_case -->
+<rect class="code-node" data-name="snake" x="20" y="20" width="200" height="70" rx="6" fill="#6366f1"/>
+<text x="120" y="45" fill="white" font-size="12" font-weight="700" text-anchor="middle">snake_case</text>
+<text x="120" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Variables & Functions</text>
+<text x="120" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">student_name, calculate_age()</text>
+
+<!-- PascalCase -->
+<rect class="code-node" data-name="pascal" x="250" y="20" width="200" height="70" rx="6" fill="#10b981"/>
+<text x="350" y="45" fill="white" font-size="12" font-weight="700" text-anchor="middle">PascalCase</text>
+<text x="350" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Classes</text>
+<text x="350" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Student, BankAccount</text>
+
+<!-- UPPER_CASE -->
+<rect class="code-node" data-name="upper" x="480" y="20" width="200" height="70" rx="6" fill="#f59e0b"/>
+<text x="580" y="45" fill="white" font-size="12" font-weight="700" text-anchor="middle">UPPER_CASE</text>
+<text x="580" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Constants</text>
+<text x="580" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">PI, MAX_USERS</text>
+
+<!-- Boolean -->
+<rect class="code-node" data-name="bool" x="20" y="120" width="200" height="70" rx="6" fill="#ef4444"/>
+<text x="120" y="145" fill="white" font-size="12" font-weight="700" text-anchor="middle">Boolean Variables</text>
+<text x="120" y="165" fill="#cbd5e1" font-size="10" text-anchor="middle">is_ / has_ / can_ prefix</text>
+<text x="120" y="180" fill="#94a3b8" font-size="9" text-anchor="middle">is_logged_in, has_permission</text>
+
+<!-- Function -->
+<rect class="code-node" data-name="func" x="250" y="120" width="200" height="70" rx="6" fill="#8b5cf6"/>
+<text x="350" y="145" fill="white" font-size="12" font-weight="700" text-anchor="middle">Function Names</text>
+<text x="350" y="165" fill="#cbd5e1" font-size="10" text-anchor="middle">Begin with verbs</text>
+<text x="350" y="180" fill="#94a3b8" font-size="9" text-anchor="middle">calculate_salary(), send_email()</text>
+
+<!-- Memory Trick -->
+<rect x="20" y="220" width="660" height="45" rx="6" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="240" fill="#e2e8f0" font-size="12" font-weight="700" text-anchor="middle">Memory Trick: NAME</text>
+<text x="350" y="258" fill="#94a3b8" font-size="10" text-anchor="middle">N(Natural) A(Accurate) M(Meaningful) E(Easy to Read)</text>
+
+<!-- Tooltip -->
+<rect x="20" y="270" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="284" fill="#e2e8f0" font-size="10" text-anchor="middle" id="namingTooltip">Click on each convention to learn more</text>
+</svg>
+</div>
+</div>
+
+<!-- PEP 8 -->
+<div class="sec">📋 PEP 8 — Python Style Guide</div>
+<div class="defbox">
+<strong>PEP 8</strong> (Python Enhancement Proposal 8) is the official coding style guide for Python. It defines standards for naming, indentation, spacing, imports, blank lines, comments, and line length. Following PEP 8 makes code consistent and easier to maintain.<br><br>
+<strong>Key Rules:</strong><br>
+• Use <strong>4 spaces</strong> for indentation (not tabs)<br>
+• Keep lines under <strong>79 characters</strong><br>
+• Use spaces around operators: <code>total = price + tax</code><br>
+• Separate logical sections with <strong>blank lines</strong><br>
+• Place <strong>imports at the top</strong> of the file<br>
+• Use <strong>snake_case</strong> for variables and functions<br>
+• Use <strong>PascalCase</strong> for classes
+</div>
+
+<!-- Pythonic Code Examples -->
+<div class="sec">✨ Pythonic Code Examples</div>
+<div class="card">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<div>
+<h4 style="color:#fca5a5;font-size:.85rem;margin-bottom:8px">❌ Not Pythonic</h4>
+<div class="viz-box" style="font-size:.72rem"># Swapping
+temp = a
+a = b
+b = temp
+
+# Looping with index
+for i in range(len(names)):
+    print(i, names[i])
+
+# Empty check
+if len(items) == 0:
+    print("Empty")</div>
+</div>
+<div>
+<h4 style="color:#6ee7b7;font-size:.85rem;margin-bottom:8px">✅ Pythonic</h4>
+<div class="viz-box" style="font-size:.72rem"># Swapping
+a, b = b, a
+
+# Looping with index
+for i, name in enumerate(names):
+    print(i, name)
+
+# Empty check
+if not items:
+    print("Empty")</div>
+</div>
+</div>
+</div>
+
+<!-- Useful Built-in Functions -->
+<div class="sec">🔧 Useful Built-in Functions</div>
+<table>
+<thead><tr><th>Function</th><th>Purpose</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td class="h"><code>enumerate()</code></td><td>Index + Value</td><td><code>for i, v in enumerate(items):</code></td></tr>
+<tr><td class="h"><code>zip()</code></td><td>Combine iterables</td><td><code>for a, b in zip(x, y):</code></td></tr>
+<tr><td class="h"><code>sorted()</code></td><td>Return sorted copy</td><td><code>sorted([3,1,2])</code> → [1,2,3]</td></tr>
+<tr><td class="h"><code>any()</code></td><td>At least one True</td><td><code>any([False, True, False])</code> → True</td></tr>
+<tr><td class="h"><code>all()</code></td><td>All True</td><td><code>all([True, True, False])</code> → False</td></tr>
+<tr><td class="h"><code>len()</code></td><td>Count elements</td><td><code>len("Python")</code> → 6</td></tr>
+<tr><td class="h"><code>type()</code></td><td>Get data type</td><td><code>type(10)</code> → <class 'int'></td></tr>
+</tbody>
+</table>
+
+<!-- Comments vs Docstrings -->
+<div class="sec">💬 Comments vs Docstrings</div>
+<div class="defbox">
+<strong>Comments</strong> explain <strong>why</strong> something is done, not what the code already says. Use <code>#</code> for single-line comments.<br><br>
+<strong>Docstrings</strong> document functions, classes, or modules and can be accessed programmatically using <code>help()</code>. Use <code>"""triple quotes"""</code>.<br><br>
+<strong>Example:</strong><br>
+<code># Retry after temporary network failure</code> (comment — explains why)<br>
+<code>def add(a, b): """Returns the sum of two numbers."""</code> (docstring)
+</div>
+
+<!-- Common Mistakes -->
+<div class="sec">⚠️ Common Beginner Mistakes</div>
+<div class="card">
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Meaningless variable names.</strong><div class="mini">✔ Use descriptive names: <code>age = 10</code> instead of <code>x = 10</code>. Good names make code self-documenting.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Ignoring indentation.</strong><div class="mini">✔ Python depends on indentation to define blocks. Always use 4 spaces consistently.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using camelCase for variables.</strong><div class="mini">✔ Python uses <code>snake_case</code> for variables and functions: <code>student_name</code> not <code>studentName</code>.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Writing comments for obvious code.</strong><div class="mini">✔ Avoid <code># Add one</code> above <code>x += 1</code>. Explain <strong>why</strong>, not what the code already shows.</div></div></div>
+</div>
+
+<!-- Interview Questions -->
+<div class="sec">🎯 Interview Questions</div>
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is PEP 8 and why is it important?"</strong><div class="mini">"PEP 8 (Python Enhancement Proposal 8) is the official coding style guide for Python. It provides conventions for naming, indentation, spacing, imports, comments, and line length. Following PEP 8 makes code consistent, readable, and easier to maintain across different developers and projects. Tools like Flake8 and Black help enforce PEP 8 automatically."</div></div></div>
+</div>
+
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is Pythonic code?"</strong><div class="mini">"Pythonic code uses Python's features to write code that is simple, readable, and expressive. Instead of writing code like other languages, it embraces Python's strengths. Examples include using <code>a, b = b, a</code> for swapping instead of a temporary variable, using <code>enumerate()</code> instead of <code>range(len())</code>, and using <code>if not items:</code> instead of <code>if len(items) == 0:</code>."</div></div></div>
+</div>
+
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the difference between comments and docstrings?"</strong><div class="mini">"Comments explain parts of the code to developers and are ignored by Python. They use <code>#</code> and should explain <strong>why</strong> something is done. Docstrings document functions, classes, or modules using <code>"""triple quotes"""</code> and can be accessed programmatically with <code>help()</code>. Docstrings become part of your project's documentation."</div></div></div>
+</div>
+
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why should variable names be meaningful?"</strong><div class="mini">"Meaningful variable names make code self-documenting. Readers can understand the program without relying heavily on comments. For example, <code>monthly_salary = 500</code> is immediately clear, while <code>x = 500</code> requires the reader to guess or search for context. Good names reduce cognitive load and simplify maintenance."</div></div></div>
+</div>
+
+<!-- Chapter Summary -->
+<div class="sec">📋 Chapter Summary / Cheat Sheet</div>
+<table>
+<thead><tr><th>Topic</th><th>Recommendation</th></tr></thead>
+<tbody>
+<tr><td class="h">Variables</td><td><code>snake_case</code> — <code>student_name</code></td></tr>
+<tr><td class="h">Functions</td><td><code>snake_case</code> + Verb — <code>calculate_age()</code></td></tr>
+<tr><td class="h">Classes</td><td><code>PascalCase</code> — <code>BankAccount</code></td></tr>
+<tr><td class="h">Constants</td><td><code>UPPER_CASE</code> — <code>MAX_USERS</code></td></tr>
+<tr><td class="h">Booleans</td><td><code>is_</code>, <code>has_</code>, <code>can_</code> prefix</td></tr>
+<tr><td class="h">Indentation</td><td>4 Spaces (not tabs)</td></tr>
+<tr><td class="h">Comments</td><td>Explain <strong>why</strong>, not <strong>what</strong></td></tr>
+<tr><td class="h">Docstrings</td><td>Document functions and classes</td></tr>
+<tr><td class="h">Pythonic Code</td><td>Prefer readability and simplicity</td></tr>
+<tr><td class="h">DRY</td><td>Don't Repeat Yourself</td></tr>
+<tr><td class="h">KISS</td><td>Keep It Simple, Stupid</td></tr>
+</tbody>
+</table>
+
+<!-- Module Complete -->
+<div class="sec">✅ Module 1 Complete</div>
+<div class="story">
+<div class="slabel">Foundation Built</div>
+<h3>You now understand Python Fundamentals!</h3>
+<p>You have built a strong foundation covering: Python basics, variables & objects, data types, input/output, type casting, operators, clean coding practices, and professional Python style.</p>
+<p><strong>Next: Module 2 — Control Flow</strong> — Learn how to make programs <strong>think, decide, and repeat actions</strong> using conditions and loops. These concepts transform static scripts into interactive and intelligent programs.</p>
+</div>
+</div>
+
+<script>
+const namingInfo = {
+'snake': 'snake_case: Used for variables and functions in Python. Words are separated by underscores. Examples: student_name, calculate_salary(), is_logged_in. This is the standard Python convention.',
+'pascal': 'PascalCase: Used for class names. Each word starts with a capital letter. Examples: Student, BankAccount, ShoppingCart, DatabaseConnection.',
+'upper': 'UPPER_CASE: Used for constants (values that should not change). Examples: PI = 3.14159, MAX_USERS = 1000, DATABASE_URL = "localhost".',
+'bool': 'Boolean Variables: Should answer a Yes/No question. Use prefixes like is_, has_, can_. Examples: is_logged_in, has_permission, can_vote, is_admin.',
+'func': 'Function Names: Should begin with verbs since functions perform actions. Examples: calculate_salary(), read_file(), send_email(), validate_password().'
+};
+
+document.querySelectorAll('.code-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const name = this.getAttribute('data-name');
+const tooltip = document.getElementById('namingTooltip');
+tooltip.textContent = namingInfo[name] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

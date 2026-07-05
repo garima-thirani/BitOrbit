@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Production Case Studies - Google, Netflix, Meta, Cloudflare | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.case-node{cursor:pointer;transition: all 0.3s ease;}
+.case-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 10 · Part 12 · Production Case Studies</div>
+<h1>Production Case Studies<br><span>Google, Amazon, Netflix, Meta, Cloudflare & More</span></h1>
+<p>Theory teaches principles. Production systems teach trade-offs. Learn how the world's largest technology companies solve scalability and distributed systems problems at planet scale.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Google</div><div class="sl">Search</div></div>
+<div class="stat"><div class="sn">Netflix</div><div class="sl">Streaming</div></div>
+<div class="stat"><div class="sn">Meta</div><div class="sl">TAO Cache</div></div>
+<div class="stat"><div class="sn">Cloudflare</div><div class="sl">Edge</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 Overview</div>
+<div class="story">
+<div class="slabel">Learning from the Best</div>
+<h3>Eight production architectures that define modern distributed systems.</h3>
+<p>This chapter examines how Google Search, Amazon DynamoDB, Netflix, Meta (Facebook TAO), Cloudflare, Discord, WhatsApp, and CockroachDB solve scalability and distributed systems problems. Each case study includes business requirements, architecture, scaling strategy, and interview takeaways.</p>
+</div>
+
+<div class="sec">🔄 Interactive: Production Systems</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each company to learn about their architecture.</p>
+<div class="fig">
+<svg viewBox="0 0 700 320" width="100%" id="caseDiagram">
+<defs>
+<marker id="ca" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Google -->
+<rect class="case-node" data-company="google" x="50" y="30" width="180" height="70" rx="8" fill="#6366f1"/>
+<text x="140" y="55" fill="white" font-size="13" font-weight="700" text-anchor="middle">Google Search</text>
+<text x="140" y="75" fill="#cbd5e1" font-size="10" text-anchor="middle">Distributed Indexes</text>
+
+<!-- DynamoDB -->
+<rect class="case-node" data-company="dynamodb" x="260" y="30" width="180" height="70" rx="8" fill="#10b981"/>
+<text x="350" y="55" fill="white" font-size="13" font-weight="700" text-anchor="middle">Amazon DynamoDB</text>
+<text x="350" y="75" fill="#cbd5e1" font-size="10" text-anchor="middle">Consistent Hashing</text>
+
+<!-- Netflix -->
+<rect class="case-node" data-company="netflix" x="470" y="30" width="180" height="70" rx="8" fill="#ef4444"/>
+<text x="560" y="55" fill="white" font-size="13" font-weight="700" text-anchor="middle">Netflix</text>
+<text x="560" y="75" fill="#cbd5e1" font-size="10" text-anchor="middle">CDN + Microservices</text>
+
+<!-- Meta -->
+<rect class="case-node" data-company="meta" x="50" y="120" width="180" height="70" rx="8" fill="#f59e0b"/>
+<text x="140" y="145" fill="white" font-size="13" font-weight="700" text-anchor="middle">Meta (Facebook)</text>
+<text x="140" y="165" fill="#cbd5e1" font-size="10" text-anchor="middle">TAO Graph Cache</text>
+
+<!-- Cloudflare -->
+<rect class="case-node" data-company="cloudflare" x="260" y="120" width="180" height="70" rx="8" fill="#06b6d4"/>
+<text x="350" y="145" fill="white" font-size="13" font-weight="700" text-anchor="middle">Cloudflare</text>
+<text x="350" y="165" fill="#cbd5e1" font-size="10" text-anchor="middle">Anycast + Edge</text>
+
+<!-- CockroachDB -->
+<rect class="case-node" data-company="cockroach" x="470" y="120" width="180" height="70" rx="8" fill="#8b5cf6"/>
+<text x="560" y="145" fill="white" font-size="13" font-weight="700" text-anchor="middle">CockroachDB</text>
+<text x="560" y="165" fill="#cbd5e1" font-size="10" text-anchor="middle">Raft + SQL</text>
+
+<!-- Discord -->
+<rect class="case-node" data-company="discord" x="50" y="210" width="180" height="70" rx="8" fill="#6366f1"/>
+<text x="140" y="235" fill="white" font-size="13" font-weight="700" text-anchor="middle">Discord</text>
+<text x="140" y="255" fill="#cbd5e1" font-size="10" text-anchor="middle">Real-time Messaging</text>
+
+<!-- WhatsApp -->
+<rect class="case-node" data-company="whatsapp" x="260" y="210" width="180" height="70" rx="8" fill="#10b981"/>
+<text x="350" y="235" fill="white" font-size="13" font-weight="700" text-anchor="middle">WhatsApp</text>
+<text x="350" y="255" fill="#cbd5e1" font-size="10" text-anchor="middle">Message Queues</text>
+
+<!-- Tooltip -->
+<rect x="50" y="290" width="600" height="25" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="307" fill="#e2e8f0" font-size="11" text-anchor="middle" id="caseTooltip">Click on each company to learn about their architecture</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Cross-Company Comparison</div>
+<table>
+<thead><tr><th>Company</th><th>Main Challenge</th><th>Primary Solution</th></tr></thead>
+<tbody>
+<tr><td class="h">Google Search</td><td>Search latency</td><td>Distributed indexes</td></tr>
+<tr><td class="h">DynamoDB</td><td>Massive key-value storage</td><td>Consistent hashing + replication</td></tr>
+<tr><td class="h">Netflix</td><td>Global video delivery</td><td>CDN + microservices</td></tr>
+<tr><td class="h">Meta</td><td>Social graph</td><td>TAO cache</td></tr>
+<tr><td class="h">Cloudflare</td><td>Edge delivery</td><td>Anycast + CDN</td></tr>
+<tr><td class="h">Discord</td><td>Real-time messaging</td><td>Sharded gateways</td></tr>
+<tr><td class="h">WhatsApp</td><td>Reliable messaging</td><td>Message queues</td></tr>
+<tr><td class="h">CockroachDB</td><td>Global SQL</td><td>Raft + partitioning</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🏭 Google Search Architecture</div>
+<div class="story">
+<div class="slabel">Case Study 1</div>
+<h3>Search trillions of webpages in milliseconds</h3>
+<p><strong>Architecture:</strong> Users → Global DNS → Nearest Edge → Load Balancer → Search Frontend → Index Servers → Ranking Service → Result Aggregation. Google uses massive inverted indexes where words map to documents instead of documents to words. Indexes are sharded across thousands of servers and replicated across regions. Consistency is eventual - new pages may take seconds to appear.</p>
+</div>
+
+<div class="sec">🏭 Amazon DynamoDB</div>
+<div class="story">
+<div class="slabel">Case Study 2</div>
+<h3>Planet-scale key-value storage</h3>
+<p><strong>Architecture:</strong> Uses consistent hashing with virtual nodes for automatic scaling. Every partition stores 3 replicas. Developers choose between Strong Reads and Eventually Consistent Reads per request. Automatic node replacement, rebalancing, and replication. Leaderless architecture with tunable consistency.</p>
+</div>
+
+<div class="sec">🏭 Netflix</div>
+<div class="story">
+<div class="slabel">Case Study 3</div>
+<h3>Global video streaming at scale</h3>
+<p><strong>Architecture:</strong> Videos cached in Open Connect CDN near ISPs. Most traffic never reaches Netflix origin. Each microservice (Playback, Recommendations, Billing, Search) scales independently. Active-Active across AWS regions. Uses Chaos Engineering to validate resilience - assumes servers fail constantly.</p>
+</div>
+
+<div class="sec">🏭 Meta (Facebook TAO)</div>
+<div class="story">
+<div class="slabel">Case Study 4</div>
+<h3>Storing the social graph for billions</h3>
+<p><strong>Architecture:</strong> TAO acts as a distributed graph cache between users and MySQL storage. Regional caching, massive replication, graph partitioning, and read optimization. Eventually consistent - perfect freshness is less important than fast responses. General-purpose databases replaced with domain-specific systems.</p>
+</div>
+
+<div class="sec">🏭 Cloudflare</div>
+<div class="story">
+<div class="slabel">Case Study 5</div>
+<h3>Edge delivery for the entire internet</h3>
+<p><strong>Architecture:</strong> Uses Anycast to advertise one IP globally. Internet routing sends users to the nearest edge location. Cloudflare Workers execute JavaScript near users - many requests never reach the origin. Hundreds of edge locations with distributed cache. Network-first architecture.</p>
+</div>
+
+<div class="sec">🏭 Discord, WhatsApp & CockroachDB</div>
+<div class="story">
+<div class="slabel">Case Studies 6-8</div>
+<h3>Real-time messaging, reliable delivery & global SQL</h3>
+<p><strong>Discord:</strong> Regional gateways, sharded messaging, distributed caches. Optimizes connection management as much as database performance.<br><br>
+<strong>WhatsApp:</strong> Stateless gateways, message queues, distributed routing, regional clusters. Prioritizes availability and delivery guarantees over strict global consistency.<br><br>
+<strong>CockroachDB:</strong> Each data range uses Raft for leader election and replication. Data automatically partitioned into ranges that move between nodes for load balancing. Combines SQL, Raft, replication, and partitioning.</p>
+</div>
+
+<div class="sec">📊 Architectural Patterns Used</div>
+<table>
+<thead><tr><th>Pattern</th><th>Companies</th></tr></thead>
+<tbody>
+<tr><td class="h">Sharding</td><td>Google, Meta, DynamoDB</td></tr>
+<tr><td class="h">Replication</td><td>All</td></tr>
+<tr><td class="h">Consistent Hashing</td><td>DynamoDB, Cassandra</td></tr>
+<tr><td class="h">CDN</td><td>Netflix, Cloudflare</td></tr>
+<tr><td class="h">Edge Computing</td><td>Cloudflare</td></tr>
+<tr><td class="h">Consensus</td><td>CockroachDB, Kubernetes</td></tr>
+<tr><td class="h">Eventual Consistency</td><td>Meta, DynamoDB</td></tr>
+<tr><td class="h">Strong Consistency</td><td>CockroachDB</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What patterns do all production systems share?"</strong><div class="mini">"Every internet-scale system uses horizontal scaling, replication, monitoring, automation, load balancing, failure recovery, regional deployment, observability, caching, and incremental deployments. When designing large-scale systems, always discuss scaling, replication, partitioning, caching, consistency, failure handling, monitoring, deployment, cost, and trade-offs."</div></div></div></div>
+
+<div class="sec">🧠 Memory Trick</div>
+<div class="defbox"><strong>Scale → Replicate → Partition → Hash → Consensus → Coordinate → Multi-Region → Recover → Planet Scale. This flow defines modern distributed systems.</strong></div>
+
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Part 13: Final Revision & Master Cheat Sheet</h3><p>Complete chapter summary, master architecture diagrams, decision trees, comparison tables, 100+ interview questions, and a 30-minute revision guide.</p></div>
+</div>
+
+<script>
+// Interactive case study diagram
+const caseInfo = {
+'google': 'Google Search: Massive inverted indexes where words map to documents. Sharded across thousands of servers, replicated across regions. Eventually consistent - new pages may take seconds to appear. Favors availability, replication, partitioning, and caching over strong consistency.',
+'dynamodb': 'Amazon DynamoDB: Uses consistent hashing with virtual nodes for automatic scaling. Every partition stores 3 replicas. Tunable consistency - developers choose Strong or Eventually Consistent per request. Leaderless architecture with automatic node replacement.',
+'netflix': 'Netflix: Videos cached in Open Connect CDN near ISPs. Each microservice scales independently. Active-Active across AWS regions. Uses Chaos Engineering to validate resilience. Assumes servers fail constantly.',
+'meta': 'Meta (Facebook TAO): Distributed graph cache between users and MySQL storage. Regional caching, massive replication, graph partitioning. Eventually consistent. General-purpose databases replaced with domain-specific systems at scale.',
+'cloudflare': 'Cloudflare: Uses Anycast to advertise one IP globally. Internet routing sends users to nearest edge. Workers execute code near users. Hundreds of edge locations. Network-first architecture.',
+'cockroach': 'CockroachDB: Each data range uses Raft for leader election and replication. Data automatically partitioned into ranges that move between nodes. Combines SQL, Raft, replication, and partitioning for global distributed SQL.',
+'discord': 'Discord: Regional gateways, sharded messaging, distributed caches. Optimizes connection management as much as database performance. Real-time messaging at millions of concurrent connections.',
+'whatsapp': 'WhatsApp: Stateless gateways, message queues, distributed routing, regional clusters. Prioritizes availability and delivery guarantees over strict global consistency. Billions of messages daily.'
+};
+
+document.querySelectorAll('.case-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const company = this.getAttribute('data-company');
+const tooltip = document.getElementById('caseTooltip');
+tooltip.textContent = caseInfo[company] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep Learning Introduction - Neural Networks, TensorFlow & Keras | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.dl-node{cursor:pointer;transition:all .3s ease}
+.dl-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
+</head>
+<body>
+<div class="hero"><div class="hero-inner"><div class="badge">Module 24 · Chapter 34 · Deep Learning</div>
+<h1>Deep Learning Introduction<br><span>Neural Networks, TensorFlow & Keras</span></h1>
+<p>Deep Learning powers modern AI applications. Learn neural network fundamentals, TensorFlow/Keras frameworks, and build your first deep learning model.</p>
+<div class="stats"><div class="stat"><div class="sn">LPA</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">Layers</div><div class="sl">Network</div></div><div class="stat"><div class="sn">Perceptron</div><div class="sl">Neuron</div></div><div class="stat"><div class="sn">Activation</div><div class="sl">Non-linear</div></div></div></div></div>
+<div class="wrap">
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>What is Deep Learning and how it differs from ML</li>
+<li>Neural network fundamentals: neurons, layers, weights</li>
+<li>Activation functions: ReLU, Sigmoid, Softmax</li>
+<li>TensorFlow and Keras frameworks</li>
+<li>Building a simple neural network</li>
+<li>Training: forward propagation, backpropagation</li>
+<li>Loss functions and optimizers</li>
+<li>When to use deep learning</li>
+</ul></div>
+<div class="sec">📖 The Story — Human Brain</div>
+<div class="story"><div class="slabel">Biological Inspiration</div>
+<h3>The human brain has billions of neurons connected in networks. Artificial neural networks mimic this structure.</h3>
+<p>Imagine the human brain. It has billions of neurons connected by synapses. Each neuron receives signals, processes them, and passes them to other neurons. This parallel processing enables vision, language, and reasoning. Deep Learning is inspired by this. <strong>Artificial neural networks</strong> have layers of artificial neurons. Each neuron receives inputs, applies weights, and passes the result through an <strong>activation function</strong>. Stack many layers, and you get a "deep" network capable of learning complex patterns.</p></div>
+<div class="sec">🔄 Interactive: Deep Learning Concepts (LPA)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each concept. Remember: <strong>LPA</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="dlDiagram">
+<defs><marker id="dla" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="dl-node" data-concept="layers" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Layers</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Input, Hidden, Output</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Network structure</text>
+<rect class="dl-node" data-concept="perceptron" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Perceptron</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Basic neuron</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Weighted sum</text>
+<rect class="dl-node" data-concept="activation" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Activation</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">ReLU, Sigmoid</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Non-linear</text>
+<rect class="dl-node" data-concept="training" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Training</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Backpropagation</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Gradient descent</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: LPA ("El-Pee-Ay")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">L → Layers (input, hidden, output layers)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">P → Perceptron (basic neuron, weighted sum)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">A → Activation (ReLU, Sigmoid, Softmax)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">Training uses backpropagation and gradient descent</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="dlTooltip">Click on each concept to learn more</text>
+</svg></div></div>
+<div class="sec">📊 Neural Network Components</div>
+<table><thead><tr><th>Component</th><th>Purpose</th><th>Example</th></tr></thead><tbody>
+<tr><td class="h">Input Layer</td><td>Receives data</td><td>Image pixels, features</td></tr>
+<tr><td class="h">Hidden Layers</td><td>Learn patterns</td><td>1-100+ layers</td></tr>
+<tr><td class="h">Output Layer</td><td>Produces prediction</td><td>Classes, values</td></tr>
+<tr><td class="h">Weights</td><td>Learnable parameters</td><td>Adjusted during training</td></tr>
+<tr><td class="h">Activation</td><td>Add non-linearity</td><td>ReLU, Sigmoid</td></tr>
+</tbody></table>
+<div class="sec">🔧 Keras Example</div>
+<div class="defbox"><strong>Building a neural network with Keras:</strong><br><br>
+<code>import tensorflow as tf</code><br>
+<code>from tensorflow import keras</code><br>
+<code>from tensorflow.keras import layers</code><br><br>
+<code># Build model</code><br>
+<code>model = keras.Sequential([</code><br>
+<code>&nbsp;&nbsp;# Input layer + first hidden layer</code><br>
+<code>&nbsp;&nbsp;layers.Dense(128, activation='relu', input_shape=(784,)),</code><br><br>
+<code>&nbsp;&nbsp;# Second hidden layer</code><br>
+<code>&nbsp;&nbsp;layers.Dense(64, activation='relu'),</code><br><br>
+<code>&nbsp;&nbsp;# Output layer</code><br>
+<code>&nbsp;&nbsp;layers.Dense(10, activation='softmax')</code><br>
+<code>])</code><br><br>
+<code># Compile</code><br>
+<code>model.compile(</code><br>
+<code>&nbsp;&nbsp;optimizer='adam',</code><br>
+<code>&nbsp;&nbsp;loss='sparse_categorical_crossentropy',</code><br>
+<code>&nbsp;&nbsp;metrics=['accuracy']</code><br>
+<code>)</code><br><br>
+<code># Train</code><br>
+<code>model.fit(X_train, y_train, epochs=10, batch_size=32)</code><br><br>
+<code># Evaluate</code><br>
+<code>test_loss, test_acc = model.evaluate(X_test, y_test)</code><br>
+<code>print(f"Test accuracy: {test_acc:.2f}")</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
+<div class="card">
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using too many layers/neurons.</strong><div class="mini">✔ Start simple (1-2 hidden layers). Add complexity only if needed. More parameters = more overfitting risk.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Not normalizing input data.</strong><div class="mini">✔ Neural networks need scaled inputs (0-1 or standardized). Always normalize/standardize before training.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Choosing wrong activation functions.</strong><div class="mini">✔ Hidden layers: ReLU (most common). Output: Softmax (classification), Linear (regression). Sigmoid for binary output.</div></div></div>
+</div>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is a neural network and how does it work?"</strong><div class="mini">"A neural network is a computing system inspired by biological neurons. It consists of layers of interconnected nodes (neurons). Each connection has a weight. Data flows from input layer through hidden layers to output layer. Each neuron computes: output = activation(weighted_sum + bias). The network learns by adjusting weights via backpropagation to minimize error."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the difference between deep learning and machine learning?"</strong><div class="mini">"Deep Learning is a subset of ML that uses neural networks with many layers (hence 'deep'). Key differences: 1) Feature extraction: ML needs manual feature engineering, DL learns features automatically. 2) Data: DL needs large datasets, ML works with smaller data. 3) Computation: DL requires GPUs, ML works on CPUs. 4) Interpretability: ML models are more interpretable, DL is often a 'black box'."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Concept</th><th>Description</th></tr></thead><tbody>
+<tr><td class="h">Neural Network</td><td>Layers of interconnected neurons</td></tr>
+<tr><td class="h">Dense Layer</td><td>Fully connected layer</td></tr>
+<tr><td class="h">Activation</td><td>ReLU, Sigmoid, Softmax</td></tr>
+<tr><td class="h">Loss Function</td><td>Measures prediction error</td></tr>
+<tr><td class="h">Optimizer</td><td>Adam, SGD, RMSprop</td></tr>
+<tr><td class="h">Epoch</td><td>One pass through all data</td></tr>
+<tr><td class="h">Memory Trick</td><td><strong>LPA</strong> = Layers, Perceptron, Activation</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 35: Advanced Deep Learning</h3><p>Explore <strong>CNNs for images, RNNs for sequences, and transfer learning</strong> techniques.</p></div>
+</div>
+<script>
+const dlInfo = {
+'layers': 'Layers: Neural networks are organized in layers. Input layer receives data. Hidden layers (1 to many) learn patterns through weighted connections. Output layer produces predictions. More layers = "deeper" network = ability to learn more complex patterns.',
+'perceptron': 'Perceptron: The basic unit of a neural network. Computes: output = activation(sum(weights * inputs) + bias). Single perceptron can learn simple patterns. Multiple perceptrons in layers learn complex patterns. Inspired by biological neurons.',
+'activation': 'Activation Functions: Add non-linearity to neural networks. ReLU (max(0,x)): most common, fast. Sigmoid: 0-1 output, for binary classification. Softmax: multi-class probabilities. Tanh: -1 to 1. Without activation, network is just linear regression.',
+'training': 'Training: Process of learning optimal weights. Forward pass: compute predictions. Calculate loss (error). Backward pass: backpropagation computes gradients. Optimizer (Adam, SGD) updates weights to minimize loss. Repeat for many epochs.'
+};
+document.querySelectorAll('.dl-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('dlTooltip').textContent = dlInfo[this.getAttribute('data-concept')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 14 — NumPy | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Module 14 · Chapter 51</div>
+<h1>Module 14 — NumPy<br><span>Q1. What is a Universal Function (ufunc)?</span></h1>
+<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Q1. What</div><div class="sl">is a Universal Function (ufunc)?</div></div><div class="stat"><div class="sn">Q2. What</div><div class="sl">is Vectorization?</div></div><div class="stat"><div class="sn">Q3. What</div><div class="sl">is the difference between `*` and `@` in NumPy?</div></div><div class="stat"><div class="sn">Q4. What</div><div class="sl">is the purpose of the `axis` parameter?</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">Q1. What is a Universal Function (ufunc)?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">A Universal Function (ufunc) is a NumPy function that performs element-wise operations on arrays.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">They are implemented in optimized C code,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">making them significantly faster than Python loops.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q2. What is Vectorization?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Vectorization is the process of applying operations to entire arrays instead of individual elements.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It eliminates explicit loops,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">improves readability,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and provides substantial performance improvements.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q3. What is the difference between `*` and `@` in NumPy?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>*</code></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">performs **element-wise multiplication**.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Example</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">[1,2] * [3,4]</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">[3,8]</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>@</code></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">performs **matrix multiplication**.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Example</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">A @ B</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">This follows the rules of linear algebra.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q4. What is the purpose of the `axis` parameter?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">The <code>axis</code> parameter specifies the dimension along which an operation is performed.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>axis=0</code> → Operate down columns.</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>axis=1</code> → Operate across rows.</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q5. Why are NumPy ufuncs faster than Python loops?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">NumPy ufuncs execute optimized C code internally,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">operate on contiguous memory,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and take advantage of CPU-level optimizations,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">making them much faster than interpreted Python loops.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Function | Purpose |<br>|----------|----------|<br>| <code>+ - * /</code> | Element-wise arithmetic |<br>| <code>np.power()</code> | Exponentiation |<br>| <code>np.sqrt()</code> | Square root |<br>| <code>np.abs()</code> | Absolute value |<br>| <code>np.exp()</code> | Exponential |<br>| <code>np.log()</code> | Natural logarithm |<br>| <code>np.sin()</code> | Sine |<br>| <code>np.cos()</code> | Cosine |<br>| <code>np.mean()</code> | Average |<br>| <code>np.median()</code> | Median |<br>| <code>np.std()</code> | Standard deviation |<br>| <code>np.var()</code> | Variance |<br>| <code>np.sum()</code> | Sum |<br>| <code>np.max()</code> | Maximum |<br>| <code>np.min()</code> | Minimum |<br>| <code>axis=0</code> | Column-wise operation |<br>| <code>axis=1</code> | Row-wise operation |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Chapter 52 — Linear Algebra**, you'll explore one of NumPy's most powerful capabilities:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Vectors</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Matrices</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Matrix Multiplication</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Dot Product</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Transpose</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Inverse</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Determinant</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Eigenvalues & Eigenvectors</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These concepts form the mathematical foundation of Machine Learning, Deep Learning, Computer Graphics, Robotics, and Scientific Computing.</p>
+</div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sets & Dictionaries - Unique Collections & Key-Value Pairs | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.set-node{cursor:pointer;transition:all .3s ease}
+.set-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
+</head>
+<body>
+<div class="hero"><div class="hero-inner"><div class="badge">Module 4 · Chapter 14 · Collections</div>
+<h1>Sets & Dictionaries<br><span>Unique Collections & Key-Value Pairs</span></h1>
+<p>Sets store unique elements without order. Dictionaries store data as key-value pairs for fast lookups. Both are essential for efficient Python programming.</p>
+<div class="stats"><div class="stat"><div class="sn">UKVF</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">Set</div><div class="sl">Unique</div></div><div class="stat"><div class="sn">Dict</div><div class="sl">Key-Value</div></div><div class="stat"><div class="sn">Fast</div><div class="sl">O(1) Lookup</div></div></div></div></div>
+<div class="wrap">
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>What sets are and when to use them</li>
+<li>Creating sets and removing duplicates</li>
+<li>Set operations: union, intersection, difference</li>
+<li>What dictionaries are and when to use them</li>
+<li>Creating, accessing, and modifying dictionaries</li>
+<li>Dictionary methods: keys(), values(), items()</li>
+<li>Dictionary comprehensions</li>
+<li>When to use sets vs lists vs dictionaries</li>
+</ul></div>
+<div class="sec">📖 The Story — Phone Contacts</div>
+<div class="story"><div class="slabel">Names & Numbers</div>
+<h3>Your phone contacts are like a dictionary: names (keys) map to phone numbers (values). No duplicate names allowed.</h3>
+<p>Imagine your phone's contact list. Each contact has a unique name (the key) and a phone number (the value). You can quickly look up anyone by name. If you try to add the same name twice, the phone replaces the old number. Python dictionaries work exactly like this. They store data as <strong>key-value pairs</strong> and provide lightning-fast lookups.</p></div>
+<div class="sec">🔄 Interactive: Sets & Dicts (UKVF)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each concept. Remember: <strong>UKVF</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="setDiagram">
+<defs><marker id="sa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="set-node" data-concept="unique" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Set</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Unique elements</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">{1, 2, 3}</text>
+<rect class="set-node" data-concept="keyvalue" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Dictionary</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Key-Value pairs</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">{"a": 1, "b": 2}</text>
+<rect class="set-node" data-concept="operations" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Set Operations</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">union, intersect</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">|, &, -</text>
+<rect class="set-node" data-concept="fast" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Fast Lookup</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">O(1) access</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Hash-based</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: UKVF ("You-Kay-Vee-Eff")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">U → Unique (sets store only unique elements)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">K → Keys (dictionaries use keys to access values)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">V → Values (data stored in dictionaries)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">F → Fast (O(1) lookup time for both sets and dicts)</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="setTooltip">Click on each concept to learn more</text>
+</svg></div></div>
+<div class="sec">📊 Set Operations</div>
+<table><thead><tr><th>Operation</th><th>Symbol</th><th>Method</th><th>Example</th></tr></thead><tbody>
+<tr><td class="h">Union</td><td><code>|</code></td><td><code>union()</code></td><td><code>{1,2} | {2,3}</code> → {1,2,3}</td></tr>
+<tr><td class="h">Intersection</td><td><code>&</code></td><td><code>intersection()</code></td><td><code>{1,2} & {2,3}</code> → {2}</td></tr>
+<tr><td class="h">Difference</td><td><code>-</code></td><td><code>difference()</code></td><td><code>{1,2} - {2,3}</code> → {1}</td></tr>
+<tr><td class="h">Symmetric Diff</td><td><code>^</code></td><td><code>symmetric_difference()</code></td><td><code>{1,2} ^ {2,3}</code> → {1,3}</td></tr>
+</tbody></table>
+<div class="sec">🔧 Dictionary Methods</div>
+<div class="defbox"><strong>Common dictionary operations:</strong><br><br>
+<code># Create</code><br>
+<code>user = {"name": "Alice", "age": 22}</code><br><br>
+<code># Access</code><br>
+<code>user["name"]  # "Alice"</code><br>
+<code>user.get("email", "N/A")  # "N/A" (safe)</code><br><br>
+<code># Modify</code><br>
+<code>user["age"] = 23  # Update</code><br>
+<code>user["email"] = "a@b.com"  # Add</code><br>
+<code>del user["age"]  # Remove</code><br><br>
+<code># Iterate</code><br>
+<code>for key, value in user.items():</code><br>
+<code>&nbsp;&nbsp;print(key, value)</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
+<div class="card">
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using a list as a dictionary key.</strong><div class="mini">✔ Keys must be immutable (strings, numbers, tuples). Lists cannot be keys because they can change.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Accessing a key that doesn't exist without using .get().</strong><div class="mini">✔ <code>user["email"]</code> raises KeyError if "email" doesn't exist. Use <code>user.get("email", "N/A")</code> for safe access.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Confusing sets with lists.</strong><div class="mini">✔ Sets are unordered and unique. Lists are ordered and allow duplicates. Use sets for membership testing and removing duplicates.</div></div></div>
+</div>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the difference between a set and a list?"</strong><div class="mini">"Sets are unordered collections of unique elements. Lists are ordered sequences that allow duplicates. Sets are faster for membership testing (O(1)) but don't maintain order. Use sets when you need uniqueness or fast lookups."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"When would you use a dictionary?"</strong><div class="mini">"Dictionaries are ideal when you need to map keys to values. They provide O(1) lookup time. Common uses: caching, counting frequencies, storing object properties, and any scenario where you need fast lookups by a unique identifier."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Structure</th><th>Use Case</th><th>Syntax</th></tr></thead><tbody>
+<tr><td class="h">Set</td><td>Unique elements, fast membership</td><td><code>{1, 2, 3}</code></td></tr>
+<tr><td class="h">Dictionary</td><td>Key-value mapping</td><td><code>{"key": "value"}</code></td></tr>
+<tr><td class="h">Set Ops</td><td>Union, Intersection, Difference</td><td><code>|</code>, <code>&</code>, <code>-</code></td></tr>
+<tr><td class="h">Dict Methods</td><td>keys(), values(), items()</td><td><code>for k, v in d.items()</code></td></tr>
+<tr><td class="h">Memory Trick</td><td><strong>UKVF</strong> = Unique, Key-Value, Fast</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 15: Strings & String Manipulation</h3><p>Master Python strings — <strong>slicing, formatting, methods, f-strings, and common string patterns</strong> used in every Python program.</p></div>
+</div>
+<script>
+const setInfo = {
+'unique': 'Set: An unordered collection of unique elements. Automatically removes duplicates. Example: {1, 2, 2, 3} becomes {1, 2, 3}. Fast membership testing with "in" operator.',
+'keyvalue': 'Dictionary: A collection of key-value pairs. Keys must be unique and immutable. Values can be any type. Example: {"name": "Alice", "age": 22}. Fast O(1) lookup by key.',
+'operations': 'Set Operations: Union (|) combines sets. Intersection (&) finds common elements. Difference (-) removes elements. Symmetric difference (^) finds elements in either set but not both.',
+'fast': 'Fast Lookup: Both sets and dictionaries use hash tables internally, providing O(1) average lookup time. This makes them extremely efficient for membership testing and data retrieval.'
+};
+document.querySelectorAll('.set-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('setTooltip').textContent = setInfo[this.getAttribute('data-concept')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
+</script>
+</body>
+</html>

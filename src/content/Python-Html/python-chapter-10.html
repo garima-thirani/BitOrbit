@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Functional Programming - Lambda, map, filter, reduce & Closures | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.fp-node{cursor:pointer;transition:all .3s ease}
+.fp-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
+</head>
+<body>
+<div class="hero"><div class="hero-inner"><div class="badge">Module 3 · Chapter 10 · Functions</div>
+<h1>Functional Programming<br><span>Lambda, map(), filter(), reduce() & Closures</span></h1>
+<p>Functions are objects in Python. They can be stored in variables, passed as arguments, and returned from other functions. This enables a powerful programming style called Functional Programming.</p>
+<div class="stats"><div class="stat"><div class="sn">LMFC</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">Lambda</div><div class="sl">Anonymous</div></div><div class="stat"><div class="sn">map/filter</div><div class="sl">Transform</div></div><div class="stat"><div class="sn">Closure</div><div class="sl">Factory</div></div></div></div></div>
+<div class="wrap">
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>First-class functions and higher-order functions</li>
+<li>Lambda (anonymous) functions</li>
+<li><code>map()</code> — transform every element</li>
+<li><code>filter()</code> — select matching elements</li>
+<li><code>reduce()</code> — combine into one value</li>
+<li>Closures — functions that remember outer variables</li>
+<li>When to use functional vs traditional programming</li>
+</ul></div>
+<div class="sec">📖 The Story — Factory Assembly Line</div>
+<div class="story"><div class="slabel">Pipeline Processing</div>
+<h3>Each station performs one job, receives input, processes it, and passes the result forward.</h3>
+<p>Imagine a car factory assembly line. Each station performs exactly one job: Cutting, Painting, Quality Check, Packaging. Each station doesn't know about the others—it simply receives an input, processes it, and passes the result forward. Functional programming follows the same idea. Instead of writing one huge function, we build many small functions and connect them together using tools like <code>map()</code>, <code>filter()</code>, and <code>reduce()</code>.</p></div>
+<div class="sec">🔄 Interactive: FP Concepts (LMFC)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each concept. Remember: <strong>LMFC</strong> (pronounced "Lem-Fick")</p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="fpDiagram">
+<defs><marker id="fa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="fp-node" data-topic="lambda" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Lambda</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Anonymous function</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">lambda x: x * x</text>
+<rect class="fp-node" data-topic="map" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">map()</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Transform elements</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">map(func, iterable)</text>
+<rect class="fp-node" data-topic="filter" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">filter()</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Select elements</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">filter(predicate, iterable)</text>
+<rect class="fp-node" data-topic="closure" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Closure</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Remembers variables</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Function factory</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: LMFC ("Lem-Fick")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">L → Lambda (anonymous one-line functions)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">M → map() (transform every element)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">F → filter() (select matching elements)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">C → Closures (functions that remember outer scope)</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="fpTooltip">Click on each concept to learn more</text>
+</svg></div></div>
+<div class="sec">📊 map vs filter vs reduce</div>
+<table><thead><tr><th>Function</th><th>Purpose</th><th>Output</th><th>Example</th></tr></thead><tbody>
+<tr><td class="h"><code>map()</code></td><td>Transform data</td><td>Same length</td><td><code>map(lambda x: x*2, [1,2,3])</code> → [2,4,6]</td></tr>
+<tr><td class="h"><code>filter()</code></td><td>Remove unwanted</td><td>Shorter or equal</td><td><code>filter(lambda x: x>1, [1,2,3])</code> → [2,3]</td></tr>
+<tr><td class="h"><code>reduce()</code></td><td>Combine to one</td><td>Single value</td><td><code>reduce(lambda a,b: a+b, [1,2,3,4])</code> → 10</td></tr>
+</tbody></table>
+<div class="sec">🔧 Closure Example</div>
+<div class="defbox"><strong>Closure:</strong> A function that remembers variables from its enclosing scope even after the outer function has finished executing.<br><br>
+<code>def multiplier(x):</code><br>
+<code>&nbsp;&nbsp;def multiply(y):</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;return x * y</code><br>
+<code>&nbsp;&nbsp;return multiply</code><br><br>
+<code>double = multiplier(2)</code><br>
+<code>print(double(5))  # 10</code><br><br>
+<strong>Use cases:</strong> Function factories, data hiding, callbacks, decorators.</div>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is a lambda function?"</strong><div class="mini">"A lambda function is a small anonymous function written in a single expression. Syntax: <code>lambda arguments: expression</code>. Use lambda only for short operations. Complex logic should use <code>def</code>."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Explain map(), filter(), and reduce()."</strong><div class="mini">"<code>map()</code> transforms every element. <code>filter()</code> selects elements based on a condition. <code>reduce()</code> combines all elements into one value. <code>map</code> and <code>filter</code> are built-in; <code>reduce</code> is in <code>functools</code>."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is a closure?"</strong><div class="mini">"A closure is an inner function that remembers variables from its outer function even after the outer function has returned. Closures form the foundation for decorators, one of Python's most powerful features."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Concept</th><th>Purpose</th></tr></thead><tbody>
+<tr><td class="h">First-Class Function</td><td>Functions behave like objects</td></tr>
+<tr><td class="h">Higher-Order Function</td><td>Takes or returns functions</td></tr>
+<tr><td class="h">Lambda</td><td>Anonymous one-line function</td></tr>
+<tr><td class="h"><code>map()</code></td><td>Transform each element</td></tr>
+<tr><td class="h"><code>filter()</code></td><td>Select matching elements</td></tr>
+<tr><td class="h"><code>reduce()</code></td><td>Combine elements into one</td></tr>
+<tr><td class="h">Closure</td><td>Function remembers outer variables</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 11: Recursion</h3><p>Learn how functions can <strong>call themselves</strong> to solve problems like factorials, Fibonacci, and tree traversals.</p></div>
+</div>
+<script>
+const fpInfo = {
+'lambda': 'Lambda: A small anonymous function defined in a single expression. Syntax: lambda arguments: expression. Example: square = lambda x: x * x. Best for short operations passed to map/filter/sorted.',
+'map': 'map(): Applies a function to every element of an iterable. Returns an iterator. Example: map(lambda x: x*2, [1,2,3]) → [2,4,6]. Use when you want to transform every element.',
+'filter': 'filter(): Selects elements where the function returns True. Returns an iterator. Example: filter(lambda x: x%2==0, [1,2,3,4]) → [2,4]. Use when you want to remove unwanted elements.',
+'closure': 'Closure: An inner function that captures and remembers variables from its enclosing scope. Even after the outer function returns, the closure retains access to those variables. Used for function factories and decorators.'
+};
+document.querySelectorAll('.fp-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('fpTooltip').textContent = fpInfo[this.getAttribute('data-topic')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
+</script>
+</body>
+</html>

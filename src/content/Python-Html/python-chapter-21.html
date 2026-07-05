@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Working with Data - CSV, JSON & XML Formats | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.data-node{cursor:pointer;transition:all .3s ease}
+.data-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
+</head>
+<body>
+<div class="hero"><div class="hero-inner"><div class="badge">Module 11 · Chapter 21 · Data Formats</div>
+<h1>Working with Data<br><span>CSV, JSON & XML Formats</span></h1>
+<p>Real-world applications use various data formats. Learn to work with CSV, JSON, and XML - the most common formats for data exchange and storage.</p>
+<div class="stats"><div class="stat"><div class="sn">CJX</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">CSV</div><div class="sl">Tabular</div></div><div class="stat"><div class="sn">JSON</div><div class="sl">Web API</div></div><div class="stat"><div class="sn">XML</div><div class="sl">Structured</div></div></div></div></div>
+<div class="wrap">
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>CSV format and the csv module</li>
+<li>Reading and writing CSV files</li>
+<li>JSON format and the json module</li>
+<li>Serializing and deserializing JSON</li>
+<li>XML format and parsing with ElementTree</li>
+<li>When to use each format</li>
+<li>Working with APIs and data exchange</li>
+<li>Best practices for data formats</li>
+</ul></div>
+<div class="sec">📖 The Story — Language Translator</div>
+<div class="story"><div class="slabel">Different Formats</div>
+<h3>Different situations require different ways of expressing the same information. Data formats are like languages - each has its own use case.</h3>
+<p>Imagine you need to share a recipe. For a spreadsheet, you'd use CSV. For a web app, you'd use JSON. For a document with formatting, you might use XML. Each format has strengths: CSV is simple and human-readable, JSON is lightweight and perfect for web APIs, XML is verbose but highly structured and supports complex hierarchies. Python's standard library supports all three formats natively.</p></div>
+<div class="sec">🔄 Interactive: Data Formats (CJX)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each format. Remember: <strong>CJX</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="dataDiagram">
+<defs><marker id="da" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="data-node" data-format="csv" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">CSV</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Tabular data</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Comma-separated</text>
+<rect class="data-node" data-format="json" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">JSON</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Web APIs</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Lightweight</text>
+<rect class="data-node" data-format="xml" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">XML</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Structured</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Verbose</text>
+<rect class="data-node" data-format="when" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">When to Use</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Choose format</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Right tool</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: CJX ("Cee-Jex")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">C → CSV (tabular data, spreadsheets, simple)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">J → JSON (web APIs, config files, lightweight)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">X → XML (complex documents, legacy systems, verbose)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">Choose the right format for your use case</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="dataTooltip">Click on each format to learn more</text>
+</svg></div></div>
+<div class="sec">📊 Format Comparison</div>
+<table><thead><tr><th>Format</th><th>Best For</th><th>Pros</th><th>Cons</th></tr></thead><tbody>
+<tr><td class="h">CSV</td><td>Spreadsheets, data export</td><td>Simple, human-readable</td><td>No nesting, no types</td></tr>
+<tr><td class="h">JSON</td><td>Web APIs, config</td><td>Lightweight, widely supported</td><td>No comments, verbose for large data</td></tr>
+<tr><td class="h">XML</td><td>Complex documents</td><td>Schema support, namespaces</td><td>Verbose, complex</td></tr>
+</tbody></table>
+<div class="sec">🔧 CSV Example</div>
+<div class="defbox"><strong>Reading CSV:</strong><br><br>
+<code>import csv</code><br><br>
+<code>with open("data.csv", "r") as file:</code><br>
+<code>&nbsp;&nbsp;reader = csv.reader(file)</code><br>
+<code>&nbsp;&nbsp;for row in reader:</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;print(row)</code><br><br>
+<strong>Writing CSV:</strong><br><br>
+<code>with open("output.csv", "w") as file:</code><br>
+<code>&nbsp;&nbsp;writer = csv.writer(file)</code><br>
+<code>&nbsp;&nbsp;writer.writerow(["Name", "Age", "City"])</code><br>
+<code>&nbsp;&nbsp;writer.writerow(["Alice", 22, "NYC"])</code></div>
+<div class="sec">🔧 JSON Example</div>
+<div class="defbox"><strong>Reading JSON:</strong><br><br>
+<code>import json</code><br><br>
+<code>with open("data.json", "r") as file:</code><br>
+<code>&nbsp;&nbsp;data = json.load(file)</code><br>
+<code>&nbsp;&nbsp;print(data["name"])</code><br><br>
+<strong>Writing JSON:</strong><br><br>
+<code>data = {"name": "Alice", "age": 22}</code><br>
+<code>with open("output.json", "w") as file:</code><br>
+<code>&nbsp;&nbsp;json.dump(data, file, indent=2)</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
+<div class="card">
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Forgetting to handle encoding.</strong><div class="mini">✔ Always specify encoding="utf-8" when working with files containing special characters. Example: open("file.csv", encoding="utf-8")</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Not using the csv module for CSV files.</strong><div class="mini">✔ Don't parse CSV manually with split(). Use the csv module which handles edge cases like quoted fields and commas inside values.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Using XML for simple data.</strong><div class="mini">✔ For simple data, prefer JSON or CSV. XML is overkill for most modern applications.</div></div></div>
+</div>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"When would you use CSV vs JSON?"</strong><div class="mini">"Use CSV for tabular data that needs to be opened in Excel or spreadsheets. Use JSON for web APIs, configuration files, or when you need nested data structures. CSV is simpler but less flexible. JSON supports nested structures and is the standard for web APIs."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is serialization?"</strong><div class="mini">"Serialization is the process of converting data structures (like dictionaries or objects) into a format that can be stored or transmitted (like JSON or XML). Deserialization is the reverse process - converting the formatted data back into data structures."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Format</th><th>Module</th><th>Use Case</th></tr></thead><tbody>
+<tr><td class="h">CSV</td><td>csv</td><td>Tabular data, spreadsheets</td></tr>
+<tr><td class="h">JSON</td><td>json</td><td>Web APIs, config files</td></tr>
+<tr><td class="h">XML</td><td>xml.etree.ElementTree</td><td>Complex documents, legacy</td></tr>
+<tr><td class="h">Memory Trick</td><td colspan="2"><strong>CJX</strong> = CSV, JSON, XML</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 22: Database Fundamentals</h3><p>Learn about <strong>databases, SQL vs NoSQL, and basic database operations</strong> for persistent data storage.</p></div>
+</div>
+<script>
+const dataInfo = {
+'csv': 'CSV (Comma-Separated Values): Simple text format for tabular data. Each line is a row, fields separated by commas. Perfect for spreadsheets and data export. Use Python csv module for proper handling.',
+'json': 'JSON (JavaScript Object Notation): Lightweight format for structured data. Supports nested objects and arrays. The standard for web APIs and configuration. Use json module: json.load() to read, json.dump() to write.',
+'xml': 'XML (Extensible Markup Language): Verbose, structured format with tags. Supports complex hierarchies, schemas, and namespaces. Used in legacy systems and complex documents. Use xml.etree.ElementTree for parsing.',
+'when': 'When to use: CSV for simple tabular data and Excel compatibility. JSON for web APIs, config files, and modern applications. XML for complex documents, legacy systems, or when schema validation is needed.'
+};
+document.querySelectorAll('.data-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('dataTooltip').textContent = dataInfo[this.getAttribute('data-format')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
+</script>
+</body>
+</html>

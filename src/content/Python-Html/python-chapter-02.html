@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Basics - Variables, Objects, Data Types & Dynamic Typing | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.var-node{cursor:pointer;transition:all .3s ease}
+.var-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+.flow-step{fill:#1e293b;stroke:var(--accent);stroke-width:1.5;rx:6}
+.flow-arrow{stroke:#64748b;stroke-width:2;marker-end:url(#fa)}
+.flow-text{fill:#e2e8f0;font-size:12px;text-anchor:middle;font-weight:500}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Module 1 · Chapter 2 · Python Fundamentals</div>
+<h1>Python Basics<br><span>Variables, Objects, Data Types, Dynamic Typing & Type Casting</span></h1>
+<p>Understanding variables is the first major step toward becoming a Python programmer. Learn how Python stores data, why dynamic typing matters, and how to work with different data types.</p>
+<div class="stats">
+<div class="stat"><div class="sn">VOT</div><div class="sl">Memory Trick</div></div>
+<div class="stat"><div class="sn">Dynamic</div><div class="sl">Typing</div></div>
+<div class="stat"><div class="sn">14+</div><div class="sl">Data Types</div></div>
+<div class="stat"><div class="sn">f-Strings</div><div class="sl">Formatting</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<!-- Learning Objectives -->
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>What variables are and how they work in Python</li>
+<li>How objects, types, and identities work</li>
+<li>Dynamic typing vs static typing</li>
+<li>All Python built-in data types</li>
+<li>How to write comments in Python</li>
+<li>Input/output with <code>input()</code> and <code>print()</code></li>
+<li>Type casting (implicit and explicit)</li>
+<li>Python keywords and the Zen of Python</li>
+</ul>
+</div>
+
+<!-- Story Section -->
+<div class="sec">📖 The Story — The Warehouse</div>
+<div class="story">
+<div class="slabel">Labels and Boxes</div>
+<h3>Python variables are like labels attached to boxes in a warehouse. The label points to the box, not the other way around.</h3>
+<p>Imagine a warehouse with thousands of boxes. Each box contains something. Instead of remembering where every box is, we simply attach labels. Python variables behave exactly like these labels. A variable is simply a <strong>name (label)</strong> given to an object. When you write <code>age = 25</code>, the variable <code>age</code> is <strong>not</strong> the integer 25. It is merely a name pointing to the integer object.</p>
+</div>
+
+<!-- Variable Visualization -->
+<div class="sec">🔄 Variable Visualization</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each component to understand how variables work:</p>
+<div class="fig">
+<svg viewBox="0 0 700 280" width="100%" id="varDiagram">
+<defs>
+<marker id="va" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Variable Box -->
+<rect class="var-node" data-concept="variable" x="50" y="30" width="180" height="80" rx="8" fill="#6366f1"/>
+<text x="140" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">Variable (Label)</text>
+<text x="140" y="75" fill="#cbd5e1" font-size="11" text-anchor="middle">age</text>
+<text x="140" y="92" fill="#94a3b8" font-size="10" text-anchor="middle">Stores a reference</text>
+
+<!-- Arrow -->
+<line x1="230" y1="70" x2="260" y2="70" stroke="#64748b" stroke-width="2" marker-end="url(#va)"/>
+
+<!-- Object Box -->
+<rect class="var-node" data-concept="object" x="270" y="30" width="180" height="80" rx="8" fill="#10b981"/>
+<text x="360" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">Object</text>
+<text x="360" y="75" fill="#cbd5e1" font-size="11" text-anchor="middle">Integer: 25</text>
+<text x="360" y="92" fill="#94a3b8" font-size="10" text-anchor="middle">Has type, value, identity</text>
+
+<!-- Type Box -->
+<rect class="var-node" data-concept="type" x="490" y="30" width="160" height="80" rx="8" fill="#f59e0b"/>
+<text x="570" y="55" fill="white" font-size="14" font-weight="700" text-anchor="middle">Type</text>
+<text x="570" y="75" fill="#cbd5e1" font-size="11" text-anchor="middle"><class 'int'></text>
+<text x="570" y="92" fill="#94a3b8" font-size="10" text-anchor="middle">Determined at runtime</text>
+
+<!-- Memory Trick -->
+<rect x="50" y="140" width="600" height="100" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="165" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: VOT</text>
+<text x="350" y="190" fill="#a5b4fc" font-size="12" text-anchor="middle">V → Variable (name/label)</text>
+<text x="350" y="210" fill="#6ee7b7" font-size="12" text-anchor="middle">O → Object (value in memory)</text>
+<text x="350" y="230" fill="#fcd34d" font-size="12" text-anchor="middle">T → Type (determined at runtime)</text>
+
+<!-- Tooltip -->
+<rect x="50" y="250" width="600" height="25" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="267" fill="#e2e8f0" font-size="11" text-anchor="middle" id="varTooltip">Click on each component to learn more. Remember: VOT = Variable → Object → Type</text>
+</svg>
+</div>
+</div>
+
+<!-- Dynamic Typing -->
+<div class="sec">🔄 Dynamic Typing Explained</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Python uses dynamic typing — the interpreter determines the data type during execution:</p>
+<div class="fig">
+<svg viewBox="0 0 700 200" width="100%">
+<defs>
+<marker id="da" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Initially -->
+<rect class="flow-step" x="50" y="20" width="250" height="60" stroke="#6366f1"/>
+<text class="flow-text" x="175" y="45" fill="#a5b4fc">x = 10</text>
+<text class="flow-text" x="175" y="65" fill="#94a3b8" style="font-size:10px">x → Integer Object (10)</text>
+
+<line class="flow-arrow" x1="300" y1="50" x2="340" y2="50"/>
+
+<!-- Later -->
+<rect class="flow-step" x="350" y="20" width="300" height="60" stroke="#10b981"/>
+<text class="flow-text" x="500" y="45" fill="#6ee7b7">x = "Python"</text>
+<text class="flow-text" x="500" y="65" fill="#94a3b8" style="font-size:10px">x → String Object ("Python")</text>
+
+<!-- Explanation -->
+<rect x="50" y="110" width="600" height="70" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="1"/>
+<text x="350" y="135" fill="#fcd34d" font-size="12" font-weight="700" text-anchor="middle">Dynamic Typing: The variable x first points to an integer, then to a string.</text>
+<text x="350" y="155" fill="#94a3b8" font-size="11" text-anchor="middle">The previous integer object is no longer referenced by x. Python handles this automatically.</text>
+<text x="350" y="172" fill="#94a3b8" font-size="10" text-anchor="middle">Advantages: Less code, faster development, flexible. Disadvantages: Runtime errors possible.</text>
+</svg>
+</div>
+</div>
+
+<!-- Static vs Dynamic Typing -->
+<div class="sec">📊 Static vs Dynamic Typing</div>
+<table>
+<thead><tr><th>Aspect</th><th>Static Typing (Java, C++)</th><th>Dynamic Typing (Python)</th></tr></thead>
+<tbody>
+<tr><td class="h">Declaration</td><td><code>int age = 25;</code></td><td><code>age = 25</code></td></tr>
+<tr><td class="h">Type Check</td><td>At compile time</td><td>At runtime</td></tr>
+<tr><td class="h">Flexibility</td><td>Less flexible</td><td>More flexible</td></tr>
+<tr><td class="h">Error Detection</td><td>Earlier (compile time)</td><td>Later (runtime)</td></tr>
+<tr><td class="h">Code Length</td><td>More verbose</td><td>Shorter, cleaner</td></tr>
+</tbody>
+</table>
+
+<!-- Object Properties -->
+<div class="sec">🎯 Object Properties</div>
+<div class="defbox">
+<strong>Every Python object has three properties:</strong><br>
+<strong>Value:</strong> The actual data stored (e.g., 25, "Hello", True)<br>
+<strong>Type:</strong> Determines what operations are allowed (use <code>type()</code> to check)<br>
+<strong>Identity:</strong> Unique memory address (use <code>id()</code> to check)<br><br>
+<strong>Example:</strong> <code>x = 10; print(type(x))</code> → <code><class 'int'></code><br>
+<strong>Example:</strong> <code>x = 10; print(id(x))</code> → <code>140248756...</code> (memory address)
+</div>
+
+<!-- Data Types Tree -->
+<div class="sec">📊 Python Data Types</div>
+<div class="card">
+<div class="fig">
+<svg viewBox="0 0 700 320" width="100%">
+<defs>
+<marker id="ta" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Root -->
+<rect x="250" y="10" width="200" height="35" rx="6" fill="#6366f1"/>
+<text x="350" y="33" fill="white" font-size="13" font-weight="700" text-anchor="middle">Python Data Types</text>
+
+<!-- Level 1 -->
+<rect x="20" y="70" width="150" height="35" rx="6" fill="#10b981"/>
+<text x="95" y="92" fill="white" font-size="11" font-weight="700" text-anchor="middle">Numeric</text>
+
+<rect x="190" y="70" width="150" height="35" rx="6" fill="#f59e0b"/>
+<text x="265" y="92" fill="white" font-size="11" font-weight="700" text-anchor="middle">Sequence</text>
+
+<rect x="360" y="70" width="150" height="35" rx="6" fill="#ef4444"/>
+<text x="435" y="92" fill="white" font-size="11" font-weight="700" text-anchor="middle">Mapping</text>
+
+<rect x="530" y="70" width="150" height="35" rx="6" fill="#8b5cf6"/>
+<text x="605" y="92" fill="white" font-size="11" font-weight="700" text-anchor="middle">Set</text>
+
+<!-- Level 2 - Numeric -->
+<rect x="20" y="130" width="150" height="30" rx="4" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
+<text x="95" y="150" fill="#6ee7b7" font-size="10" text-anchor="middle">int, float, complex</text>
+
+<!-- Level 2 - Sequence -->
+<rect x="190" y="130" width="150" height="30" rx="4" fill="#1e293b" stroke="#f59e0b" stroke-width="1"/>
+<text x="265" y="150" fill="#fcd34d" font-size="10" text-anchor="middle">str, list, tuple, range</text>
+
+<!-- Level 2 - Mapping -->
+<rect x="360" y="130" width="150" height="30" rx="4" fill="#1e293b" stroke="#ef4444" stroke-width="1"/>
+<text x="435" y="150" fill="#fca5a5" font-size="10" text-anchor="middle">dict</text>
+
+<!-- Level 2 - Set -->
+<rect x="530" y="130" width="150" height="30" rx="4" fill="#1e293b" stroke="#8b5cf6" stroke-width="1"/>
+<text x="605" y="150" fill="#c4b5fd" font-size="10" text-anchor="middle">set, frozenset</text>
+
+<!-- Additional types -->
+<rect x="20" y="190" width="150" height="30" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="95" y="210" fill="#a5b4fc" font-size="10" text-anchor="middle">bool (True/False)</text>
+
+<rect x="190" y="190" width="150" height="30" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="265" y="210" fill="#a5b4fc" font-size="10" text-anchor="middle">NoneType (None)</text>
+
+<rect x="360" y="190" width="150" height="30" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="435" y="210" fill="#a5b4fc" font-size="10" text-anchor="middle">bytes, bytearray</text>
+
+<!-- Examples -->
+<rect x="20" y="250" width="660" height="55" rx="6" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="272" fill="#e2e8f0" font-size="11" font-weight="700" text-anchor="middle">Examples</text>
+<text x="350" y="295" fill="#94a3b8" font-size="10" text-anchor="middle">int: 10 | float: 3.14 | str: "Hello" | list: [1,2,3] | tuple: (1,2) | dict: {"a":1} | set: {1,2,3}</text>
+</svg>
+</div>
+</div>
+
+<!-- Input/Output -->
+<div class="sec">💻 Input & Output</div>
+<div class="defbox">
+<strong>Input:</strong> <code>name = input("Enter your name: ")</code> — Always returns a <strong>string</strong>!<br>
+<strong>Output:</strong> <code>print("Hello", name)</code> — Displays values to the console<br>
+<strong>f-Strings (Modern):</strong> <code>print(f"{name} is {age} years old")</code> — Clean, readable formatting<br><br>
+<strong>Important:</strong> <code>input()</code> always returns a string. Use type casting to convert: <code>age = int(input())</code>
+</div>
+
+<!-- Type Casting -->
+<div class="sec">🔄 Type Casting</div>
+<div class="card">
+<div class="fig">
+<svg viewBox="0 0 700 160" width="100%">
+<defs>
+<marker id="ca" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Input -->
+<rect x="50" y="20" width="200" height="50" rx="6" fill="#6366f1"/>
+<text x="150" y="45" fill="white" font-size="12" font-weight="700" text-anchor="middle">input() → "25" (String)</text>
+
+<line x1="250" y1="45" x2="290" y2="45" stroke="#64748b" stroke-width="2" marker-end="url(#ca)"/>
+
+<!-- Cast -->
+<rect x="300" y="20" width="200" height="50" rx="6" fill="#f59e0b"/>
+<text x="400" y="45" fill="white" font-size="12" font-weight="700" text-anchor="middle">int("25") → 25 (Integer)</text>
+
+<line x1="500" y1="45" x2="540" y2="45" stroke="#64748b" stroke-width="2" marker-end="url(#ca)"/>
+
+<!-- Result -->
+<rect x="550" y="20" width="120" height="50" rx="6" fill="#10b981"/>
+<text x="610" y="45" fill="white" font-size="12" font-weight="700" text-anchor="middle">age = 25</text>
+
+<!-- Explanation -->
+<rect x="50" y="90" width="600" height="55" rx="6" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="112" fill="#e2e8f0" font-size="11" font-weight="700" text-anchor="middle">Type Casting Functions</text>
+<text x="350" y="135" fill="#94a3b8" font-size="10" text-anchor="middle">int() | float() | str() | bool() — Convert between types explicitly</text>
+</svg>
+</div>
+</div>
+
+<!-- Implicit vs Explicit -->
+<div class="sec">📊 Implicit vs Explicit Type Casting</div>
+<table>
+<thead><tr><th>Aspect</th><th>Implicit</th><th>Explicit</th></tr></thead>
+<tbody>
+<tr><td class="h">How</td><td>Python converts automatically</td><td>Developer converts manually</td></tr>
+<tr><td class="h">Example</td><td><code>5 + 2.5</code> → 5 becomes 5.0</td><td><code>int("500")</code> → "500" becomes 500</td></tr>
+<tr><td class="h">Safety</td><td>Safe, Python handles it</td><td>May raise ValueError</td></tr>
+<tr><td class="h">Control</td><td>No control</td><td>Full control</td></tr>
+</tbody>
+</table>
+
+<!-- Keywords -->
+<div class="sec">🔑 Python Keywords</div>
+<div class="defbox">
+<strong>Keywords</strong> are reserved words with predefined meanings. You cannot use them as variable names.<br><br>
+<strong>Examples:</strong> <code>if, else, for, while, class, return, try, except, import, def, True, False, None</code><br><br>
+<strong>Incorrect:</strong> <code>class = 10</code> ❌<br>
+<strong>Correct:</strong> <code>class_name = "Python"</code> ✅
+</div>
+
+<!-- Zen of Python -->
+<div class="sec">🧘 The Zen of Python</div>
+<div class="story">
+<div class="slabel">Python's Philosophy</div>
+<h3>Type <code>import this</code> in Python to read the Zen of Python</h3>
+<p>Python has a guiding philosophy that influences every feature. Some famous principles:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li><strong>Beautiful is better than ugly.</strong></li>
+<li><strong>Simple is better than complex.</strong></li>
+<li><strong>Readability counts.</strong></li>
+</ul>
+</div>
+
+<!-- Common Mistakes -->
+<div class="sec">⚠️ Common Beginner Mistakes</div>
+<div class="card">
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Thinking variables store values.</strong><div class="mini">✔ Variables store <strong>references</strong> to objects, not the values themselves. When you write <code>x = 10</code>, x points to the integer object 10.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Forgetting that <code>input()</code> always returns a string.</strong><div class="mini">✔ <code>input()</code> always returns <code>str</code>. Use <code>int(input())</code> to get a number.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using keywords as variable names.</strong><div class="mini">✔ <code>if = 10</code> is invalid. Use <code>if_condition = 10</code> instead.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Confusing <code>=</code> (assignment) with <code>==</code> (comparison).</strong><div class="mini">✔ <code>=</code> assigns a value. <code>==</code> compares two values.</div></div></div>
+</div>
+
+<!-- Interview Questions -->
+<div class="sec">🎯 Interview Questions</div>
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is dynamic typing in Python?"</strong><div class="mini">"Dynamic typing means the interpreter determines the data type of a variable at runtime, not at compile time. A variable can refer to different types of objects during its lifetime. For example, <code>x = 10</code> makes x an integer, but later <code>x = 'Python'</code> makes it a string. This provides flexibility and faster development but can lead to runtime errors."</div></div></div>
+</div>
+
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Are variables objects in Python?"</strong><div class="mini">"No, variables are not objects. Variables are <strong>names (labels)</strong> that refer to objects. Everything in Python is an object—integers, strings, lists, functions, even classes. But variables are simply references pointing to those objects."</div></div></div>
+</div>
+
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What does <code>input()</code> return?"</strong><div class="mini">"<code>input()</code> always returns a <strong>string</strong>. If you need a number, you must explicitly convert it using <code>int()</code> or <code>float()</code>. For example: <code>age = int(input('Enter age: '))</code>"</div></div></div>
+</div>
+
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the difference between implicit and explicit type casting?"</strong><div class="mini">"Implicit type casting is performed automatically by Python when it's safe, like converting <code>5</code> to <code>5.0</code> in <code>5 + 2.5</code>. Explicit type casting is done manually by the developer using functions like <code>int()</code>, <code>float()</code>, <code>str()</code>, and <code>bool()</code>."</div></div></div>
+</div>
+
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is None in Python?"</strong><div class="mini">"<code>None</code> is Python's null value, representing the absence of a value. It is of type <code>NoneType</code>. It is commonly used as a default return value for functions that don't explicitly return anything, or as a placeholder for optional values."</div></div></div>
+</div>
+
+<!-- Chapter Summary -->
+<div class="sec">📋 Chapter Summary / Cheat Sheet</div>
+<table>
+<thead><tr><th>Topic</th><th>Summary</th></tr></thead>
+<tbody>
+<tr><td class="h">Variable</td><td>Name that refers to an object (stores a reference, not the value)</td></tr>
+<tr><td class="h">Object</td><td>Every value in Python is an object with type, value, and identity</td></tr>
+<tr><td class="h">Dynamic Typing</td><td>Variable type decided at runtime, can change during execution</td></tr>
+<tr><td class="h">Data Types</td><td>int, float, bool, str, list, tuple, dict, set, NoneType, etc.</td></tr>
+<tr><td class="h">Comments</td><td><code># Single line</code> or <code>"""Multi-line"""</code></td></tr>
+<tr><td class="h">Input</td><td><code>input()</code> always returns a string</td></tr>
+<tr><td class="h">Output</td><td><code>print()</code> displays values; f-Strings for formatting</td></tr>
+<tr><td class="h">Type Casting</td><td><code>int()</code>, <code>float()</code>, <code>str()</code>, <code>bool()</code></td></tr>
+<tr><td class="h">Keywords</td><td>Reserved words like <code>if</code>, <code>for</code>, <code>class</code> (cannot be used as variables)</td></tr>
+<tr><td class="h">Zen of Python</td><td>Python's design philosophy (<code>import this</code>)</td></tr>
+<tr><td class="h">Memory Trick</td><td><strong>VOT</strong> = Variable → Object → Type</td></tr>
+</tbody>
+</table>
+
+<!-- What's Next -->
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 3: Python Operators</h3><p>Learn about <strong>arithmetic, comparison, logical, bitwise, identity, and membership operators</strong>, plus operator precedence and short-circuit evaluation. These operators are the building blocks of expressions and decision-making in Python.</p></div>
+</div>
+
+<script>
+const varInfo = {
+'variable': 'Variable: A name (label) that refers to an object. When you write "age = 25", age is NOT the integer 25. It is a reference pointing to the integer object. Variables are created automatically when first assigned—no declaration needed.',
+'object': 'Object: Every value in Python is an object. Each object has three properties: a value (the actual data), a type (determines allowed operations), and an identity (unique memory address, accessible via id()).',
+'type': 'Type: Determined at runtime in Python (dynamic typing). Use type() to check: type(10) returns <class \'int\'>, type("Hello") returns <class \'str\'>. Python figures out the type automatically.'
+};
+
+document.querySelectorAll('.var-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const concept = this.getAttribute('data-concept');
+const tooltip = document.getElementById('varTooltip');
+tooltip.textContent = varInfo[concept] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

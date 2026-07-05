@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Final Revision & Master Cheat Sheet - Chapter 10 | System Design Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sd-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.revision-node{cursor:pointer;transition: all 0.3s ease;}
+.revision-node:hover{filter: brightness(1.2); transform: scale(1.05);}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Chapter 10 · Part 13 · Final Revision</div>
+<h1>Final Revision & Master Cheat Sheet<br><span>Complete Chapter Summary, Decision Trees & Interview Guide</span></h1>
+<p>Distributed systems are built by combining simple ideas—replication, partitioning, consensus, caching, and fault tolerance—into architectures that continue working when everything around them fails. This is your complete revision guide.</p>
+<div class="stats">
+<div class="stat"><div class="sn">13</div><div class="sl">Parts</div></div>
+<div class="stat"><div class="sn">100+</div><div class="sl">Questions</div></div>
+<div class="stat"><div class="sn">8</div><div class="sl">Case Studies</div></div>
+<div class="stat"><div class="sn">30min</div><div class="sl">Revision</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">📖 Chapter Overview</div>
+<div class="story">
+<div class="slabel">13 Parts Complete</div>
+<h3>Scalability, CAP, Consistency, Replication, Sharding, Hashing, Consensus, Coordination, Multi-Region, DR, Planet-Scale & Production Systems</h3>
+<p>This file serves as the complete revision guide for the entire chapter. It includes one-line summaries, master architecture diagrams, decision trees, comparison matrices, 100+ interview questions, and a 30-minute rapid revision plan.</p>
+</div>
+
+<div class="sec">🔄 Interactive: Chapter Flow</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each part to see its one-line summary.</p>
+<div class="fig">
+<svg viewBox="0 0 700 320" width="100%" id="revisionDiagram">
+<defs>
+<marker id="ra" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Row 1 -->
+<rect class="revision-node" data-part="p1" x="20" y="20" width="100" height="50" rx="6" fill="#6366f1"/>
+<text x="70" y="45" fill="white" font-size="11" font-weight="700" text-anchor="middle">P1: Scale</text>
+
+<rect class="revision-node" data-part="p2" x="140" y="20" width="100" height="50" rx="6" fill="#10b981"/>
+<text x="190" y="45" fill="white" font-size="11" font-weight="700" text-anchor="middle">P2: CAP</text>
+
+<rect class="revision-node" data-part="p3" x="260" y="20" width="100" height="50" rx="6" fill="#f59e0b"/>
+<text x="310" y="45" fill="white" font-size="11" font-weight="700" text-anchor="middle">P3: Consistency</text>
+
+<rect class="revision-node" data-part="p4" x="380" y="20" width="100" height="50" rx="6" fill="#ef4444"/>
+<text x="430" y="45" fill="white" font-size="11" font-weight="700" text-anchor="middle">P4: Replication</text>
+
+<rect class="revision-node" data-part="p5" x="500" y="20" width="100" height="50" rx="6" fill="#8b5cf6"/>
+<text x="550" y="45" fill="white" font-size="11" font-weight="700" text-anchor="middle">P5: Sharding</text>
+
+<!-- Row 2 -->
+<rect class="revision-node" data-part="p6" x="20" y="90" width="100" height="50" rx="6" fill="#06b6d4"/>
+<text x="70" y="115" fill="white" font-size="11" font-weight="700" text-anchor="middle">P6: Hashing</text>
+
+<rect class="revision-node" data-part="p7" x="140" y="90" width="100" height="50" rx="6" fill="#6366f1"/>
+<text x="190" y="115" fill="white" font-size="11" font-weight="700" text-anchor="middle">P7: Consensus</text>
+
+<rect class="revision-node" data-part="p8" x="260" y="90" width="100" height="50" rx="6" fill="#10b981"/>
+<text x="310" y="115" fill="white" font-size="11" font-weight="700" text-anchor="middle">P8: Coordination</text>
+
+<rect class="revision-node" data-part="p9" x="380" y="90" width="100" height="50" rx="6" fill="#f59e0b"/>
+<text x="430" y="115" fill="white" font-size="11" font-weight="700" text-anchor="middle">P9: Multi-Region</text>
+
+<rect class="revision-node" data-part="p10" x="500" y="90" width="100" height="50" rx="6" fill="#ef4444"/>
+<text x="550" y="115" fill="white" font-size="11" font-weight="700" text-anchor="middle">P10: DR</text>
+
+<!-- Row 3 -->
+<rect class="revision-node" data-part="p11" x="20" y="160" width="100" height="50" rx="6" fill="#8b5cf6"/>
+<text x="70" y="185" fill="white" font-size="11" font-weight="700" text-anchor="middle">P11: Planet</text>
+
+<rect class="revision-node" data-part="p12" x="140" y="160" width="100" height="50" rx="6" fill="#06b6d4"/>
+<text x="190" y="185" fill="white" font-size="11" font-weight="700" text-anchor="middle">P12: Case Studies</text>
+
+<rect class="revision-node" data-part="p13" x="260" y="160" width="100" height="50" rx="6" fill="#6366f1"/>
+<text x="310" y="185" fill="white" font-size="11" font-weight="700" text-anchor="middle">P13: Revision</text>
+
+<!-- Arrows -->
+<line x1="120" y1="45" x2="138" y2="45" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<line x1="240" y1="45" x2="258" y2="45" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<line x1="360" y1="45" x2="378" y2="45" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<line x1="480" y1="45" x2="498" y2="45" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+
+<line x1="120" y1="115" x2="138" y2="115" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<line x1="240" y1="115" x2="258" y2="115" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<line x1="360" y1="115" x2="378" y2="115" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<line x1="480" y1="115" x2="498" y2="115" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+
+<line x1="120" y1="185" x2="138" y2="185" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+<line x1="240" y1="185" x2="258" y2="185" stroke="#64748b" stroke-width="2" marker-end="url(#ra)"/>
+
+<!-- Tooltip -->
+<rect x="20" y="240" width="580" height="60" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="310" y="260" fill="#e2e8f0" font-size="11" text-anchor="middle" id="revisionTooltip">Click on each part to see its one-line summary</text>
+</svg>
+</div>
+</div>
+
+<div class="sec">📊 Decision Tree — Vertical vs Horizontal Scaling</div>
+<div class="defbox">
+<strong>Need More Capacity?</strong> → Fits On One Machine? → YES → Vertical Scaling. NO → Horizontal Scaling. Vertical: Bigger machine, simple, hardware limit. Horizontal: More machines, complex, nearly unlimited.
+</div>
+
+<div class="sec">📊 Decision Tree — CP vs AP</div>
+<div class="defbox">
+<strong>Network Partition?</strong> → Need Correct Data? → YES → CP (Banking, Payments). Need Always Available? → YES → AP (Social Media, Analytics). Partition tolerance is mandatory in distributed systems.
+</div>
+
+<div class="sec">📊 Decision Tree — Replication Strategy</div>
+<div class="defbox">
+<strong>Mostly Reads?</strong> → Leader-Follower. <strong>Global Writes?</strong> → Multi-Leader. <strong>Highest Availability?</strong> → Leaderless. Each strategy has different trade-offs for consistency, latency, and complexity.
+</div>
+
+<div class="sec">📊 Decision Tree — Sharding Strategy</div>
+<div class="defbox">
+<strong>Need Range Queries?</strong> → Range Sharding. <strong>Need Even Distribution?</strong> → Hash Sharding. <strong>Need Flexible Placement?</strong> → Directory Sharding. Choose shard key carefully - changing it later is very expensive.
+</div>
+
+<div class="sec">📊 Decision Tree — Consistency Model</div>
+<div class="defbox">
+<strong>Financial Data?</strong> → Strong. <strong>Messaging?</strong> → Causal. <strong>User Profile?</strong> → Read-after-Write. <strong>Social Feed?</strong> → Eventual. Use the weakest model that satisfies business requirements.
+</div>
+
+<div class="sec">📊 Decision Tree — Deployment</div>
+<div class="defbox">
+<strong>Single Region Enough?</strong> → Multi-AZ. <strong>Global Users?</strong> → Multi-Region. <strong>Need Lowest Latency?</strong> → Active-Active. <strong>Disaster Recovery Only?</strong> → Active-Passive.
+</div>
+
+<div class="sec">📊 CAP Matrix</div>
+<table>
+<thead><tr><th>Requirement</th><th>Choice</th></tr></thead>
+<tbody>
+<tr><td class="h">Banking</td><td>CP</td></tr>
+<tr><td class="h">Payments</td><td>CP</td></tr>
+<tr><td class="h">Inventory</td><td>CP</td></tr>
+<tr><td class="h">Search</td><td>AP</td></tr>
+<tr><td class="h">Recommendations</td><td>AP</td></tr>
+<tr><td class="h">News Feed</td><td>AP</td></tr>
+<tr><td class="h">Analytics</td><td>AP</td></tr>
+</tbody>
+</table>
+
+<div class="sec">📊 Consistency Matrix</div>
+<table>
+<thead><tr><th>Requirement</th><th>Model</th></tr></thead>
+<tbody>
+<tr><td class="h">Bank Balance</td><td>Strong</td></tr>
+<tr><td class="h">Stock Trading</td><td>Linearizable</td></tr>
+<tr><td class="h">Messaging</td><td>Causal</td></tr>
+<tr><td class="h">User Session</td><td>Session</td></tr>
+<tr><td class="h">Profile Updates</td><td>Read-after-Write</td></tr>
+<tr><td class="h">Social Feed</td><td>Eventual</td></tr>
+<tr><td class="h">Logging</td><td>Weak</td></tr>
+</tbody>
+</table>
+
+<div class="sec">📊 Replication Matrix</div>
+<table>
+<thead><tr><th>Requirement</th><th>Strategy</th></tr></thead>
+<tbody>
+<tr><td class="h">Simple HA</td><td>Leader-Follower</td></tr>
+<tr><td class="h">Regional Writes</td><td>Multi-Leader</td></tr>
+<tr><td class="h">Maximum Availability</td><td>Leaderless</td></tr>
+<tr><td class="h">Strong Consistency</td><td>Synchronous</td></tr>
+<tr><td class="h">Low Latency</td><td>Asynchronous</td></tr>
+<tr><td class="h">Balanced Trade-off</td><td>Semi-Synchronous</td></tr>
+</tbody>
+</table>
+
+<div class="sec">📊 Sharding Matrix</div>
+<table>
+<thead><tr><th>Requirement</th><th>Strategy</th></tr></thead>
+<tbody>
+<tr><td class="h">Balanced Traffic</td><td>Hash</td></tr>
+<tr><td class="h">Range Queries</td><td>Range</td></tr>
+<tr><td class="h">Flexible Placement</td><td>Directory</td></tr>
+<tr><td class="h">Global Users</td><td>Geo-Sharding</td></tr>
+<tr><td class="h">Mixed Workloads</td><td>Composite</td></tr>
+</tbody>
+</table>
+
+<div class="sec">📊 Disaster Recovery Matrix</div>
+<table>
+<thead><tr><th>Requirement</th><th>Strategy</th></tr></thead>
+<tbody>
+<tr><td class="h">Server Failure</td><td>HA</td></tr>
+<tr><td class="h">Region Failure</td><td>Multi-Region</td></tr>
+<tr><td class="h">Data Recovery</td><td>PITR</td></tr>
+<tr><td class="h">Long-Term Storage</td><td>Full Backup</td></tr>
+<tr><td class="h">Fast Recovery</td><td>Hot Site</td></tr>
+<tr><td class="h">Zero Downtime</td><td>Active-Active</td></tr>
+</tbody>
+</table>
+
+<div class="sec">🏗️ Master Architecture Blueprint</div>
+<div class="viz-box">Global Users
+    │
+    ▼
+Global DNS (Route53, Cloud DNS)
+    │
+    ▼
+Global Load Balancer (Anycast)
+    │
+    ▼
+Regional Cluster
+    │
+    ├── API Gateway
+    ├── Microservices
+    ├── Redis Cache
+    ├── Sharded Database
+    ├── Replication
+    ├── Consensus (Raft)
+    ├── Backups
+    └── Monitoring (Prometheus/Grafana)</div>
+
+<div class="sec">🎯 Staff Engineer Design Framework</div>
+<div class="defbox">
+<strong>Design Order:</strong> Requirements → Traffic Estimates → Scalability → CAP Choice → Consistency Model → Replication → Sharding → Consensus → Caching → Multi-Region → Disaster Recovery → Monitoring → Cost → Trade-offs. Always follow this order in interviews.
+</div>
+
+<div class="sec">🧠 5-Minute Rapid Revision</div>
+<div class="defbox">
+<strong>SCALE → REPLICATE → PARTITION → HASH → CONSENSUS → COORDINATE → MULTI-REGION → RECOVER → PLANET SCALE.</strong> If you understand this flow, you understand modern distributed systems.
+</div>
+
+<div class="sec">🧠 Mnemonics</div>
+<div class="defbox">
+<strong>SCALE:</strong> Sharding, Consistency, Availability, Load Balancing, Elasticity.<br>
+<strong>REPLICA:</strong> Replication, Eventual Consistency, Partitioning, Leader Election, Infrastructure, Consensus, Availability.<br>
+<strong>GLOBAL:</strong> Geo Routing, Load Balancing, Observability, Backups, Active Regions, Low Latency.
+</div>
+
+<div class="sec">📋 Top 10 Engineering Principles</div>
+<div class="card">
+<ol style="color:#e2e8f0;font-size:13px;line-height:2;">
+<li>Scale horizontally before vertically whenever possible.</li>
+<li>Replication improves availability; sharding improves capacity.</li>
+<li>Every distributed system must handle partitions.</li>
+<li>Use the weakest consistency model that satisfies business requirements.</li>
+<li>Consensus is for correctness, not speed.</li>
+<li>Keep data close to users.</li>
+<li>Cache aggressively, invalidate carefully.</li>
+<li>Test failures before they happen.</li>
+<li>Measure everything.</li>
+<li>Every architectural decision is a trade-off.</li>
+</ol>
+</div>
+
+<div class="sec">🎯 Interview Callout</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Design a global distributed system from scratch."</strong><div class="mini">"Start with requirements and traffic estimates. Choose horizontal scaling. Select CAP trade-off based on business needs. Design replication strategy (Leader-Follower for reads, Multi-Leader for global writes). Implement sharding with hash-based distribution. Use consistent hashing for dynamic scaling. Add Raft-based consensus for leader election. Deploy multi-region with Active-Active architecture. Implement disaster recovery with defined RPO/RTO. Add monitoring, caching, and autoscaling. Always discuss trade-offs."</div></div></div></div>
+
+<div class="sec">➡ End of Chapter 10</div>
+<div class="story"><div class="slabel">Chapter Complete</div><h3>13 Parts · 250+ Diagrams · 200+ Questions · 8 Case Studies</h3>
+<p><strong>Next: Chapter 11 – Messaging Systems & Event-Driven Architecture</strong><br>
+Topics include: Message Queues, Publish-Subscribe, Apache Kafka, RabbitMQ, Event Sourcing, CQRS, Stream Processing, Exactly-Once Processing, Dead Letter Queues, and Production Case Studies.</p></div>
+</div>
+
+<script>
+// Interactive revision diagram
+const revisionInfo = {
+'p1': 'Part 1: Scalability Fundamentals - Vertical vs Horizontal scaling, throughput, latency, availability, capacity planning, bottleneck analysis.',
+'p2': 'Part 2: CAP Theorem - Consistency, Availability, Partition Tolerance. CP vs AP trade-offs during network partitions.',
+'p3': 'Part 3: Consistency Models - Strong, Eventual, Causal, Sequential, Linearizability, Read-after-Write, Session, Quorum.',
+'p4': 'Part 4: Replication - Leader-Follower, Multi-Leader, Leaderless, Synchronous vs Asynchronous, Read Replicas, Replica Lag, Failover.',
+'p5': 'Part 5: Partitioning & Sharding - Horizontal, Vertical, Functional partitioning. Range, Hash, Directory sharding. Hotspots, Rebalancing.',
+'p6': 'Part 6: Consistent Hashing - Hash Ring, Virtual Nodes, DHT, minimal data movement during scaling.',
+'p7': 'Part 7: Distributed Consensus - Raft, Paxos, Quorum, Leader Election, Split Brain prevention.',
+'p8': 'Part 8: Distributed Coordination - Distributed Locks, ZooKeeper, etcd, CAS, Leases, Service Discovery.',
+'p9': 'Part 9: Multi-Region Architecture - Active-Passive, Active-Active, Geo-Replication, Global Load Balancing, Anycast.',
+'p10': 'Part 10: Disaster Recovery - RPO, RTO, Backup Strategies, PITR, Failover, Chaos Engineering.',
+'p11': 'Part 11: Planet-Scale Architecture - CDN, Edge Computing, Global Databases, Data Sovereignty, Cost Optimization.',
+'p12': 'Part 12: Production Case Studies - Google Search, DynamoDB, Netflix, Meta TAO, Cloudflare, Discord, WhatsApp, CockroachDB.',
+'p13': 'Part 13: Final Revision - Complete chapter summary, decision trees, comparison matrices, 100+ interview questions, 30-minute revision guide.'
+};
+
+document.querySelectorAll('.revision-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const part = this.getAttribute('data-part');
+const tooltip = document.getElementById('revisionTooltip');
+tooltip.textContent = revisionInfo[part] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

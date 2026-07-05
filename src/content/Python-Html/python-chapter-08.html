@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Functions - Definition, Parameters, Return Values & Scope | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.flow-step{fill:#1e293b;stroke:var(--accent);stroke-width:1.5;rx:6}
+.flow-arrow{stroke:#64748b;stroke-width:2;marker-end:url(#fa)}
+.flow-text{fill:#e2e8f0;font-size:12px;text-anchor:middle;font-weight:500}
+.func-node{cursor:pointer;transition:all .3s ease}
+.func-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Module 3 · Chapter 8 · Functions</div>
+<h1>Functions<br><span>Definition, Parameters, Return Values, Scope & Best Practices</span></h1>
+<p>Functions are reusable blocks of code that perform specific tasks. Instead of writing the same code repeatedly, write it once, give it a name, and reuse it whenever needed.</p>
+<div class="stats">
+<div class="stat"><div class="sn">DPCR</div><div class="sl">Memory Trick</div></div>
+<div class="stat"><div class="sn">Reusable</div><div class="sl">Code</div></div>
+<div class="stat"><div class="sn">Scope</div><div class="sl">Local/Global</div></div>
+<div class="stat"><div class="sn">return</div><div class="sl">vs print</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<!-- Learning Objectives -->
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>What functions are and why they are needed</li>
+<li>Function syntax: <code>def</code>, parameters, body, return</li>
+<li>Calling functions and the function lifecycle</li>
+<li>Parameters vs arguments</li>
+<li>Return values and <code>print()</code> vs <code>return</code></li>
+<li>Variable scope (local vs global)</li>
+<li>Docstrings for documentation</li>
+<li>Best practices and common mistakes</li>
+</ul>
+</div>
+
+<!-- Story Section -->
+<div class="sec">📖 The Story — Pizza Restaurant</div>
+<div class="story">
+<div class="slabel">Order and Execute</div>
+<h3>Customers order pizza without knowing how it's made. The kitchen handles the details. Functions work the same way.</h3>
+<p>Imagine a pizza restaurant. Customers order different pizzas. The customer doesn't care how the pizza is made—they only need to place an order. Functions work exactly like this. The caller doesn't need to know the internal implementation. A <strong>function</strong> is simply a named block of code that performs a specific task. Instead of writing the same code again and again, you write it once, give it a name, and reuse it whenever needed.</p>
+</div>
+
+<!-- Interactive Function Concepts -->
+<div class="sec">🔄 Interactive: Function Concepts (DPCR)</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each concept to learn more. Remember: <strong>DPCR</strong></p>
+<div class="fig">
+<svg viewBox="0 0 700 280" width="100%" id="funcDiagram">
+<defs>
+<marker id="fa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Define -->
+<rect class="func-node" data-concept="define" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Define</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">def function_name():</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Create the function</text>
+
+<!-- Parameters -->
+<rect class="func-node" data-concept="params" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Parameters</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">def add(a, b):</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Input values</text>
+
+<!-- Call -->
+<rect class="func-node" data-concept="call" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Call</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">greet("Alice")</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Execute the function</text>
+
+<!-- Return -->
+<rect class="func-node" data-concept="return" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Return</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">return value</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Send result back</text>
+
+<!-- Memory Trick -->
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: DPCR</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">D → Define (create the function with def)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">P → Pass Arguments (provide input values)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">C → Call Function (execute the code)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">R → Return Result (send output back)</text>
+
+<!-- Tooltip -->
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="funcTooltip">Click on each concept to learn more</text>
+</svg>
+</div>
+</div>
+
+<!-- Function Lifecycle -->
+<div class="sec">🔄 Function Lifecycle</div>
+<div class="card">
+<div class="fig">
+<svg viewBox="0 0 700 200" width="100%">
+<defs>
+<marker id="la" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<rect class="flow-step" x="50" y="20" width="150" height="40" stroke="#6366f1"/>
+<text class="flow-text" x="125" y="45" fill="#a5b4fc">Define Function</text>
+
+<line class="flow-arrow" x1="200" y1="40" x2="240" y2="40"/>
+
+<rect class="flow-step" x="250" y="20" width="150" height="40" stroke="#10b981"/>
+<text class="flow-text" x="325" y="45" fill="#6ee7b7">Call Function</text>
+
+<line class="flow-arrow" x1="400" y1="40" x2="440" y2="40"/>
+
+<rect class="flow-step" x="450" y="20" width="200" height="40" stroke="#f59e0b"/>
+<text class="flow-text" x="550" y="45" fill="#fcd34d">Execute Function Body</text>
+
+<line class="flow-arrow" x1="550" y1="60" x2="550" y2="90"/>
+
+<rect class="flow-step" x="450" y="90" width="200" height="40" stroke="#ef4444"/>
+<text class="flow-text" x="550" y="115" fill="#fca5a5">Return to Caller</text>
+
+<line class="flow-arrow" x1="450" y1="110" x2="400" y2="110"/>
+
+<rect class="flow-step" x="250" y="90" width="150" height="40" stroke="#10b981"/>
+<text class="flow-text" x="325" y="115" fill="#6ee7b7">Continue Program</text>
+
+<line class="flow-arrow" x1="250" y1="110" x2="200" y2="110"/>
+
+<rect class="flow-step" x="50" y="90" width="150" height="40" stroke="#6366f1"/>
+<text class="flow-text" x="125" y="115" fill="#a5b4fc">Use Result</text>
+</svg>
+</div>
+</div>
+
+<!-- Function Syntax -->
+<div class="sec">📝 Function Syntax</div>
+<div class="defbox">
+<strong>Every function has four parts:</strong><br><br>
+<code>def function_name(parameters):</code>  ← Definition<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;"""Docstring"""</code>  ← Documentation<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;# Function Body</code>  ← Logic<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;return value</code>  ← Return (optional)<br><br>
+<strong>Example:</strong><br>
+<code>def square(number):</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;"""Returns the square of a number."""</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;return number * number</code><br><br>
+<code>result = square(5)  # result = 25</code>
+</div>
+
+<!-- print vs return -->
+<div class="sec">📊 print() vs return</div>
+<table>
+<thead><tr><th>Aspect</th><th>print()</th><th>return</th></tr></thead>
+<tbody>
+<tr><td class="h">Purpose</td><td>Display output on screen</td><td>Send value back to caller</td></tr>
+<tr><td class="h">Reusability</td><td>Cannot reuse the output</td><td>Can store and reuse the value</td></tr>
+<tr><td class="h">Example</td><td><code>print(a + b)</code></td><td><code>return a + b</code></td></tr>
+<tr><td class="h">Usage</td><td>Debugging, user messages</td><td>Real programs, calculations</td></tr>
+</tbody>
+</table>
+
+<div class="defbox">
+<strong>Bad:</strong> <code>def add(a, b): print(a + b)</code> — can't use the result<br>
+<strong>Good:</strong> <code>def add(a, b): return a + b</code> — result can be stored: <code>result = add(5, 8)</code>
+</div>
+
+<!-- Variable Scope -->
+<div class="sec">🎯 Variable Scope</div>
+<div class="card">
+<div class="fig">
+<svg viewBox="0 0 700 180" width="100%">
+<defs>
+<marker id="sa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- Global -->
+<rect x="50" y="20" width="600" height="60" rx="6" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="45" fill="#a5b4fc" font-size="13" font-weight="700" text-anchor="middle">Global Scope</text>
+<text x="350" y="65" fill="#94a3b8" font-size="10" text-anchor="middle">message = "Hello" — Accessible everywhere in the file</text>
+
+<!-- Local -->
+<rect x="150" y="100" width="400" height="60" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+<text x="350" y="125" fill="#6ee7b7" font-size="13" font-weight="700" text-anchor="middle">Local Scope (Inside Function)</text>
+<text x="350" y="145" fill="#94a3b8" font-size="10" text-anchor="middle">name = "Alice" — Only exists inside the function</text>
+</svg>
+</div>
+</div>
+
+<div class="defbox">
+<strong>Local variables</strong> are created inside a function and cannot be accessed outside it.<br>
+<strong>Global variables</strong> are defined outside every function and are accessible everywhere.<br><br>
+<strong>Example:</strong><br>
+<code>x = 100  # Global</code><br>
+<code>def demo():</code><br>
+<code>&nbsp;&nbsp;x = 50  # Local (shadows global)</code><br>
+<code>&nbsp;&nbsp;print(x)  # 50</code><br>
+<code>demo()</code><br>
+<code>print(x)  # 100 (global unchanged)</code>
+</div>
+
+<!-- Common Mistakes -->
+<div class="sec">⚠️ Common Beginner Mistakes</div>
+<div class="card">
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Defining a function but forgetting to call it.</strong><div class="mini">✔ Defining a function does NOT execute it. You must call it: <code>greet()</code>. Nothing happens until you make the function call.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Confusing parameters and arguments.</strong><div class="mini">✔ Parameters are variables in the function definition (<code>def greet(name):</code>). Arguments are the actual values passed (<code>greet("Alice")</code>).</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using <code>print()</code> instead of <code>return</code>.</strong><div class="mini">✔ Use <code>return</code> when another part of the program needs the result. Use <code>print()</code> only for displaying output.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Trying to access local variables outside the function.</strong><div class="mini">✔ Variables created inside a function only exist while the function is running. They are destroyed when the function returns.</div></div></div>
+</div>
+
+<!-- Interview Questions -->
+<div class="sec">🎯 Interview Questions</div>
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is a function and why are functions important?"</strong><div class="mini">"A function is a reusable block of code that performs a specific task. Functions are important because they reduce code duplication, improve readability, simplify testing, improve maintainability, and encourage modular design. They are one of the fundamental building blocks of software engineering."</div></div></div>
+</div>
+
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the difference between a parameter and an argument?"</strong><div class="mini">"A <strong>parameter</strong> is a variable in the function definition that receives a value. An <strong>argument</strong> is the actual value passed to the function when it is called. For example, in <code>def greet(name):</code>, <code>name</code> is a parameter. In <code>greet('Alice')</code>, <code>'Alice'</code> is an argument."</div></div></div>
+</div>
+
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the difference between <code>print()</code> and <code>return</code>?"</strong><div class="mini">"<code>print()</code> displays a value on the screen but does not make it available for further use. <code>return</code> sends a value back to the caller, allowing it to be stored, used in calculations, or passed to other functions. Always prefer <code>return</code> when the result needs to be reused."</div></div></div>
+</div>
+
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is variable scope?"</strong><div class="mini">"Scope defines where a variable is accessible in a program. Python has local scope (variables created inside a function) and global scope (variables defined outside all functions). Local variables cannot be accessed outside their function, which helps prevent naming conflicts and unintended modifications."</div></div></div>
+</div>
+
+<!-- Chapter Summary -->
+<div class="sec">📋 Chapter Summary / Cheat Sheet</div>
+<table>
+<thead><tr><th>Concept</th><th>Description</th></tr></thead>
+<tbody>
+<tr><td class="h">Function</td><td>Reusable block of code that performs a specific task</td></tr>
+<tr><td class="h"><code>def</code></td><td>Keyword to define a function</td></tr>
+<tr><td class="h">Parameter</td><td>Variable in the function definition</td></tr>
+<tr><td class="h">Argument</td><td>Value passed during function call</td></tr>
+<tr><td class="h"><code>return</code></td><td>Sends value back to the caller</td></tr>
+<tr><td class="h">Local Variable</td><td>Exists only inside a function</td></tr>
+<tr><td class="h">Global Variable</td><td>Exists throughout the program</td></tr>
+<tr><td class="h">Docstring</td><td>Documentation for a function (<code>"""..."""</code>)</td></tr>
+<tr><td class="h">Memory Trick</td><td><strong>DPCR</strong> = Define, Pass, Call, Return</td></tr>
+</tbody>
+</table>
+
+<!-- What's Next -->
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 9: Advanced Functions</h3><p>Learn about <strong>default parameters, keyword arguments, *args, **kwargs, and argument unpacking</strong>. These features are widely used in professional Python libraries and frameworks.</p></div>
+</div>
+
+<script>
+const funcInfo = {
+'define': 'Define: Creating a function using the def keyword. def function_name(parameters): The function body is indented. Defining a function does NOT execute it—it only tells Python the function exists.',
+'params': 'Parameters: Variables listed in the function definition that receive input values. Example: def add(a, b): — a and b are parameters. When calling add(5, 3), 5 and 3 are arguments.',
+'call': 'Call: Executing a function by using its name followed by parentheses. Example: greet("Alice"). When called, Python jumps to the function, executes the body, and returns to where it was called.',
+'return': 'Return: Sends a value back to the caller. The function stops executing immediately after return. If no return is specified, the function returns None by default.'
+};
+
+document.querySelectorAll('.func-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const concept = this.getAttribute('data-concept');
+const tooltip = document.getElementById('funcTooltip');
+tooltip.textContent = funcInfo[concept] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

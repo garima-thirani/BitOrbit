@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Model Evaluation & Deployment - Metrics, Cross-Validation & Production | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.eval-node{cursor:pointer;transition:all .3s ease}
+.eval-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
+</head>
+<body>
+<div class="hero"><div class="hero-inner"><div class="badge">Module 23 · Chapter 33 · Model Evaluation</div>
+<h1>Model Evaluation & Deployment<br><span>Metrics, Cross-Validation & Production Strategies</span></h1>
+<p>Learn to evaluate model performance, validate results, and deploy machine learning models to production environments.</p>
+<div class="stats"><div class="stat"><div class="sn">MCD</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">Metrics</div><div class="sl">Measure</div></div><div class="stat"><div class="sn">Cross-Val</div><div class="sl">Validate</div></div><div class="stat"><div class="sn">Deploy</div><div class="sl">Production</div></div></div></div></div>
+<div class="wrap">
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>Model evaluation metrics: accuracy, precision, recall, F1</li>
+<li>Confusion matrix and classification report</li>
+<li>Cross-validation techniques</li>
+<li>Overfitting vs underfitting detection</li>
+<li>Model serialization (pickle, joblib)</li>
+<li>Deployment options: API, batch, streaming</li>
+<li>Model monitoring and maintenance</li>
+<li>Production best practices</li>
+</ul></div>
+<div class="sec">📖 The Story — Quality Control</div>
+<div class="story"><div class="slabel">Testing & Release</div>
+<h3>A product must pass quality checks before shipping. ML models need evaluation before deployment.</h3>
+<p>Imagine a pharmaceutical company. Before releasing a drug, it undergoes rigorous clinical trials - testing efficacy, side effects, and comparing against placebos. Only after passing these evaluations does it reach patients. ML models need the same process. <strong>Evaluation metrics</strong> measure performance (accuracy, precision). <strong>Cross-validation</strong> ensures the model generalizes. <strong>Deployment</strong> is the final release to production, but monitoring continues like post-market surveillance.</p></div>
+<div class="sec">🔄 Interactive: Evaluation & Deployment (MCD)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each concept. Remember: <strong>MCD</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="evalDiagram">
+<defs><marker id="ea" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="eval-node" data-concept="metrics" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Metrics</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Accuracy, Precision</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Measure performance</text>
+<rect class="eval-node" data-concept="crossval" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Cross-Validation</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">K-Fold</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Validate robustly</text>
+<rect class="eval-node" data-concept="deploy" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Deploy</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Production</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">API, Batch</text>
+<rect class="eval-node" data-concept="monitor" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Monitor</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Track performance</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Retrain when needed</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: MCD ("Em-See-Dee")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">M → Metrics (accuracy, precision, recall, F1)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">C → Cross-Validation (K-Fold, robust evaluation)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">D → Deploy (API, batch, streaming, serialization)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">Monitor continuously and retrain when needed</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="evalTooltip">Click on each concept to learn more</text>
+</svg></div></div>
+<div class="sec">📊 Evaluation Metrics</div>
+<table><thead><tr><th>Metric</th><th>Use Case</th><th>Formula</th></tr></thead><tbody>
+<tr><td class="h">Accuracy</td><td>Overall correctness</td><td>(TP+TN)/(TP+TN+FP+FN)</td></tr>
+<tr><td class="h">Precision</td><td>Minimize false positives</td><td>TP/(TP+FP)</td></tr>
+<tr><td class="h">Recall</td><td>Minimize false negatives</td><td>TP/(TP+FN)</td></tr>
+<tr><td class="h">F1-Score</td><td>Balance precision/recall</td><td>2*(P*R)/(P+R)</td></tr>
+</tbody></table>
+<div class="sec">🔧 Evaluation Example</div>
+<div class="defbox"><strong>Evaluating model performance:</strong><br><br>
+<code>from sklearn.metrics import (</code><br>
+<code>&nbsp;&nbsp;accuracy_score, precision_score,</code><br>
+<code>&nbsp;&nbsp;recall_score, f1_score,</code><br>
+<code>&nbsp;&nbsp;confusion_matrix, classification_report</code><br>
+<code>)</code><br>
+<code>from sklearn.model_selection import cross_val_score</code><br><br>
+<code># Basic metrics</code><br>
+<code>y_pred = model.predict(X_test)</code><br>
+<code>print(f"Accuracy: {accuracy_score(y_test, y_pred):.2f}")</code><br>
+<code>print(f"Precision: {precision_score(y_test, y_pred):.2f}")</code><br>
+<code>print(f"Recall: {recall_score(y_test, y_pred):.2f}")</code><br>
+<code>print(f"F1: {f1_score(y_test, y_pred):.2f}")</code><br><br>
+<code># Confusion matrix</code><br>
+<code>print(confusion_matrix(y_test, y_pred))</code><br><br>
+<code># Cross-validation (5-Fold)</code><br>
+<code>scores = cross_val_score(model, X, y, cv=5)</code><br>
+<code>print(f"CV Scores: {scores.mean():.2f} (+/- {scores.std():.2f})")</code></div>
+<div class="sec">🔧 Model Serialization</div>
+<div class="defbox"><strong>Saving and loading models:</strong><br><br>
+<code>import joblib</code><br><br>
+<code># Save model</code><br>
+<code>joblib.dump(model, 'model.pkl')</code><br><br>
+<code># Load model</code><br>
+<code>loaded_model = joblib.load('model.pkl')</code><br>
+<code>predictions = loaded_model.predict(X_new)</code><br><br>
+<code># Also save preprocessing objects</code><br>
+<code>joblib.dump(scaler, 'scaler.pkl')</code><br>
+<code>joblib.dump(encoder, 'encoder.pkl')</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
+<div class="card">
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using accuracy for imbalanced datasets.</strong><div class="mini">✔ For imbalanced data, use precision, recall, F1, or AUC-ROC. Accuracy is misleading when classes are imbalanced.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Not monitoring models in production.</strong><div class="mini">✔ Models degrade over time (data drift). Monitor predictions, set up alerts for performance drops, retrain periodically.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Deploying without versioning.</strong><div class="mini">✔ Version your models, data, and code. Use tools like MLflow or DVC for experiment tracking.</div></div></div>
+</div>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is cross-validation and why is it important?"</strong><div class="mini">"Cross-validation is a technique to assess model generalization. K-Fold CV splits data into K subsets, trains on K-1, validates on 1, and repeats. This provides a more robust performance estimate than a single train-test split. It helps detect overfitting and ensures the model works on different data subsets."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"When would you use precision vs recall?"</strong><div class="mini">"Precision: When false positives are costly (e.g., spam detection - don't want important emails marked as spam). Recall: When false negatives are costly (e.g., cancer detection - don't want to miss sick patients). F1-score balances both when you need a single metric."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Concept</th><th>Description</th></tr></thead><tbody>
+<tr><td class="h">Accuracy</td><td>Overall correctness</td></tr>
+<tr><td class="h">Precision</td><td>Minimize false positives</td></tr>
+<tr><td class="h">Recall</td><td>Minimize false negatives</td></tr>
+<tr><td class="h">F1-Score</td><td>Harmonic mean of P & R</td></tr>
+<tr><td class="h">Cross-Validation</td><td>K-Fold robust evaluation</td></tr>
+<tr><td class="h">joblib</td><td>Serialize models</td></tr>
+<tr><td class="h">Memory Trick</td><td><strong>MCD</strong> = Metrics, Cross-Val, Deploy</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 34: Deep Learning Introduction</h3><p>Introduction to <strong>neural networks, TensorFlow, Keras, and building your first deep learning model</strong>.</p></div>
+</div>
+<script>
+const evalInfo = {
+'metrics': 'Metrics: Quantitative measures of model performance. Accuracy (overall correctness), Precision (false positive rate), Recall (false negative rate), F1-Score (balance). Choose metrics based on business cost of errors. For imbalanced data, use F1 or AUC-ROC.',
+'crossval': 'Cross-Validation: Technique to assess model generalization. K-Fold: split data into K parts, train on K-1, validate on 1, repeat K times. Average results. More reliable than single split. Detects overfitting. Common: K=5 or K=10.',
+'deploy': 'Deployment: Making model available for use. Options: API (REST/gRPC for real-time), Batch (periodic predictions), Streaming (continuous). Serialize with joblib/pickle. Containerize with Docker. Monitor for drift.',
+'monitor': 'Monitoring: Track model performance in production. Monitor: prediction distributions, latency, error rates, data drift. Set up alerts. Retrain when performance degrades. ML is not "set and forget" - it requires ongoing maintenance.'
+};
+document.querySelectorAll('.eval-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('evalTooltip').textContent = evalInfo[this.getAttribute('data-concept')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
+</script>
+</body>
+</html>

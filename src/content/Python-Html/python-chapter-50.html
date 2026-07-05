@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 14 — NumPy | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Module 14 · Chapter 50</div>
+<h1>Module 14 — NumPy<br><span>Q1. What is Broadcasting in NumPy?</span></h1>
+<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Q1. What</div><div class="sl">is Broadcasting in NumPy?</div></div><div class="stat"><div class="sn">Q2. What</div><div class="sl">is the difference between a View and a Copy?</div></div><div class="stat"><div class="sn">Q3. What</div><div class="sl">is Boolean Indexing?</div></div><div class="stat"><div class="sn">Q4. What</div><div class="sl">is Fancy Indexing?</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">Q1. What is Broadcasting in NumPy?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Broadcasting is NumPy's mechanism for performing operations on arrays of different shapes.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Instead of copying data,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">NumPy conceptually stretches compatible dimensions,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">allowing efficient element-wise operations.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q2. What is the difference between a View and a Copy?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">A **View** shares memory with the original array.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Changes made to the view affect the original.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">A **Copy** owns separate memory,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">so changes do not affect the original array.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q3. What is Boolean Indexing?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Boolean indexing filters array elements based on a condition.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Example</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">arr[arr > 10]</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">returns only elements greater than 10.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q4. What is Fancy Indexing?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Fancy indexing selects elements using arrays or lists of indices.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Example</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">arr[[0,2,4]]</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">returns the first,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">third,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and fifth elements.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q5. What are the rules for Broadcasting?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Two dimensions are compatible if</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">They are equal, or</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">One of them is 1.</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">If neither condition is satisfied,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">NumPy raises a broadcasting error.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Concept | Purpose |<br>|----------|----------|<br>| Basic Indexing | Access single elements |<br>| Negative Indexing | Access from the end |<br>| Slicing | Access ranges |<br>| Boolean Indexing | Filter by condition |<br>| Fancy Indexing | Select using index arrays |<br>| View | Shared memory |<br>| Copy | Independent memory |<br>| Broadcasting | Automatic shape expansion |<br>| <code>copy()</code> | Create independent array |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Chapter 51 — Universal Functions**, you'll learn how NumPy performs mathematical operations efficiently using:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Universal Functions (ufuncs)</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Vectorization</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Mathematical Functions</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Statistical Functions</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Aggregation Functions</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Element-wise Operations</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These features eliminate explicit loops and are one of the main reasons NumPy is significantly faster than pure Python.</p>
+</div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

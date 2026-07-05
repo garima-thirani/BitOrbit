@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loops - while, for, range, enumerate, zip & Nested Loops | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.flow-step{fill:#1e293b;stroke:var(--accent);stroke-width:1.5;rx:6}
+.flow-arrow{stroke:#64748b;stroke-width:2;marker-end:url(#fa)}
+.flow-text{fill:#e2e8f0;font-size:12px;text-anchor:middle;font-weight:500}
+.loop-node{cursor:pointer;transition:all .3s ease}
+.loop-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Module 2 · Chapter 6 · Control Flow</div>
+<h1>Loops<br><span>while, for, range(), enumerate(), zip() & Nested Loops</span></h1>
+<p>Loops exist to perform repetitive tasks automatically. Instead of writing the same code repeatedly, learn how Python automates repetition efficiently.</p>
+<div class="stats">
+<div class="stat"><div class="sn">WFREZ</div><div class="sl">Memory Trick</div></div>
+<div class="stat"><div class="sn">while</div><div class="sl">Condition</div></div>
+<div class="stat"><div class="sn">for</div><div class="sl">Iteration</div></div>
+<div class="stat"><div class="sn">Nested</div><div class="sl">Loops</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<!-- Learning Objectives -->
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>Why loops are needed in programming</li>
+<li>The <code>while</code> loop for condition-based repetition</li>
+<li>The <code>for</code> loop for iterating over sequences</li>
+<li><code>range()</code> for generating number sequences</li>
+<li><code>enumerate()</code> for index + value iteration</li>
+<li><code>zip()</code> for combining multiple iterables</li>
+<li>Nested loops for multi-dimensional data</li>
+<li>Common loop patterns and best practices</li>
+</ul>
+</div>
+
+<!-- Story Section -->
+<div class="sec">📖 The Story — Factory Robot</div>
+<div class="story">
+<div class="slabel">Repetition Automation</div>
+<h3>Instead of giving a robot individual instructions for every box, we simply tell it: "Repeat 1000 times."</h3>
+<p>Imagine a factory robot assigned to pack boxes. Without loops, the robot would need individual instructions for every box: "Pack Box 1, Pack Box 2, Pack Box 3..." up to 1000. Instead, we simply tell it: "Repeat 1000 times." That's exactly what loops do. A <strong>loop</strong> repeatedly executes a block of code until a condition becomes false or all items have been processed.</p>
+</div>
+
+<!-- Interactive Loop Types -->
+<div class="sec">🔄 Interactive: Loop Types (WFREZ)</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each tool to learn more. Remember: <strong>WFREZ</strong> (pronounced "Wa-Freeze")</p>
+<div class="fig">
+<svg viewBox="0 0 700 280" width="100%" id="loopDiagram">
+<defs>
+<marker id="la" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- while -->
+<rect class="loop-node" data-tool="while" x="20" y="20" width="120" height="70" rx="6" fill="#6366f1"/>
+<text x="80" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">while</text>
+<text x="80" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Condition-based</text>
+<text x="80" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Unknown iterations</text>
+
+<!-- for -->
+<rect class="loop-node" data-tool="for" x="160" y="20" width="120" height="70" rx="6" fill="#10b981"/>
+<text x="220" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">for</text>
+<text x="220" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Iterate sequences</text>
+<text x="220" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Lists, strings, etc.</text>
+
+<!-- range -->
+<rect class="loop-node" data-tool="range" x="300" y="20" width="120" height="70" rx="6" fill="#f59e0b"/>
+<text x="360" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">range()</text>
+<text x="360" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Number sequences</text>
+<text x="360" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">range(5) → 0,1,2,3,4</text>
+
+<!-- enumerate -->
+<rect class="loop-node" data-tool="enumerate" x="440" y="20" width="120" height="70" rx="6" fill="#ef4444"/>
+<text x="500" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">enumerate()</text>
+<text x="500" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Index + Value</text>
+<text x="500" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">for i, v in enumerate()</text>
+
+<!-- zip -->
+<rect class="loop-node" data-tool="zip" x="580" y="20" width="100" height="70" rx="6" fill="#8b5cf6"/>
+<text x="630" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">zip()</text>
+<text x="630" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Combine lists</text>
+<text x="630" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Parallel traversal</text>
+
+<!-- Memory Trick -->
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: WFREZ ("Wa-Freeze")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">W → while (condition-based repetition)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">F → for (iterate over sequences)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">R → range() (generate number sequences)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">E → enumerate() (index + value) | Z → zip() (combine iterables)</text>
+
+<!-- Tooltip -->
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="loopTooltip">Click on each tool to learn more</text>
+</svg>
+</div>
+</div>
+
+<!-- while Loop Flowchart -->
+<div class="sec">🔄 The while Loop</div>
+<div class="card">
+<div class="fig">
+<svg viewBox="0 0 700 220" width="100%">
+<defs>
+<marker id="wa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<rect class="flow-step" x="250" y="10" width="200" height="30" stroke="#6366f1"/>
+<text class="flow-text" x="350" y="30">count = 1</text>
+
+<line class="flow-arrow" x1="350" y1="40" x2="350" y2="55"/>
+
+<polygon points="350,55 450,80 350,105 250,80" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+<text x="350" y="85" fill="#fcd34d" font-size="11" font-weight="700" text-anchor="middle">count <= 5?</text>
+
+<line x1="450" y1="80" x2="520" y2="80" stroke="#10b981" stroke-width="2" marker-end="url(#wa)"/>
+<text x="485" y="73" fill="#6ee7b7" font-size="10">True</text>
+
+<rect class="flow-step" x="520" y="60" width="150" height="40" stroke="#10b981"/>
+<text class="flow-text" x="595" y="85" fill="#6ee7b7">print(count)</text>
+
+<line x1="595" y1="100" x2="595" y2="130" stroke="#10b981" stroke-width="2"/>
+<rect class="flow-step" x="520" y="130" width="150" height="30" stroke="#10b981"/>
+<text class="flow-text" x="595" y="150" fill="#6ee7b7">count += 1</text>
+
+<line x1="520" y1="145" x2="450" y2="145" stroke="#10b981" stroke-width="2"/>
+<line x1="450" y1="145" x2="450" y2="105" stroke="#10b981" stroke-width="2" marker-end="url(#wa)"/>
+
+<line x1="250" y1="80" x2="180" y2="80" stroke="#ef4444" stroke-width="2" marker-end="url(#wa)"/>
+<text x="215" y="73" fill="#fca5a5" font-size="10">False</text>
+
+<rect class="flow-step" x="30" y="60" width="150" height="40" stroke="#ef4444"/>
+<text class="flow-text" x="105" y="85" fill="#fca5a5">Exit Loop</text>
+</svg>
+</div>
+</div>
+
+<!-- for Loop -->
+<div class="sec">🔄 The for Loop</div>
+<div class="defbox">
+<strong>for loop</strong> is used to iterate over a sequence (list, string, tuple, dictionary, set, file).<br><br>
+<strong>Syntax:</strong> <code>for variable in iterable: statement</code><br><br>
+<strong>Example:</strong><br>
+<code>fruits = ["Apple", "Banana", "Mango"]</code><br>
+<code>for fruit in fruits:</code><br>
+<code>&nbsp;&nbsp;print(fruit)</code><br><br>
+<strong>Why prefer for over while?</strong> Cleaner, shorter, less error-prone. No need to manage index variables manually.
+</div>
+
+<!-- range() Examples -->
+<div class="sec">🔢 range() Function</div>
+<table>
+<thead><tr><th>Usage</th><th>Result</th></tr></thead>
+<tbody>
+<tr><td class="h"><code>range(5)</code></td><td>0, 1, 2, 3, 4 (stop is exclusive)</td></tr>
+<tr><td class="h"><code>range(2, 8)</code></td><td>2, 3, 4, 5, 6, 7 (start, stop)</td></tr>
+<tr><td class="h"><code>range(2, 11, 2)</code></td><td>2, 4, 6, 8, 10 (start, stop, step)</td></tr>
+<tr><td class="h"><code>range(5, 0, -1)</code></td><td>5, 4, 3, 2, 1 (negative step)</td></tr>
+</tbody>
+</table>
+
+<!-- enumerate & zip -->
+<div class="sec">🔄 enumerate() & zip()</div>
+<div class="card">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<div>
+<h4 style="color:#6ee7b7;font-size:.85rem;margin-bottom:8px">enumerate() — Index + Value</h4>
+<div class="viz-box" style="font-size:.72rem">names = ["Alice", "Bob", "Charlie"]
+
+# Instead of:
+for i in range(len(names)):
+    print(i, names[i])
+
+# Pythonic way:
+for index, name in enumerate(names):
+    print(index, name)
+
+# Output: 0 Alice, 1 Bob, 2 Charlie</div>
+</div>
+<div>
+<h4 style="color:#fcd34d;font-size:.85rem;margin-bottom:8px">zip() — Combine Iterables</h4>
+<div class="viz-box" style="font-size:.72rem">names = ["Alice", "Bob"]
+marks = [90, 85]
+
+# Instead of:
+for i in range(len(names)):
+    print(names[i], marks[i])
+
+# Pythonic way:
+for name, mark in zip(names, marks):
+    print(name, mark)
+
+# Output: Alice 90, Bob 85</div>
+</div>
+</div>
+</div>
+
+<!-- Nested Loops -->
+<div class="sec">🔄 Nested Loops</div>
+<div class="defbox">
+<strong>Nested loops</strong> are loops inside other loops. The inner loop completes all its iterations for each iteration of the outer loop.<br><br>
+<strong>Example — Multiplication Table:</strong><br>
+<code>for i in range(1, 4):</code><br>
+<code>&nbsp;&nbsp;for j in range(1, 6):</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;print(i * j, end=" ")</code><br>
+<code>&nbsp;&nbsp;print()</code><br><br>
+<strong>Output:</strong><br>
+<code>1 2 3 4 5</code><br>
+<code>2 4 6 8 10</code><br>
+<code>3 6 9 12 15</code>
+</div>
+
+<!-- Common Mistakes -->
+<div class="sec">⚠️ Common Beginner Mistakes</div>
+<div class="card">
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Creating an infinite loop (forgetting to update the counter).</strong><div class="mini">✔ Always ensure the loop condition will eventually become False. In <code>while</code> loops, remember to increment your counter: <code>count += 1</code>.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using <code>range(len(list))</code> when <code>for item in list</code> is sufficient.</strong><div class="mini">✔ If you only need the values, iterate directly. Use <code>enumerate()</code> only when you also need the index.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Forgetting that <code>range(5)</code> starts at 0, not 1.</strong><div class="mini">✔ <code>range(5)</code> produces 0, 1, 2, 3, 4. Use <code>range(1, 6)</code> for 1 through 5.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Using indexes when <code>enumerate()</code> or <code>zip()</code> would be clearer.</strong><div class="mini">✔ Pythonic code prefers <code>enumerate()</code> for index+value and <code>zip()</code> for combining lists.</div></div></div>
+</div>
+
+<!-- Interview Questions -->
+<div class="sec">🎯 Interview Questions</div>
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the difference between <code>for</code> and <code>while</code>?"</strong><div class="mini">"A <code>while</code> loop continues as long as a condition is true. A <code>for</code> loop iterates over a sequence or iterable. Use <code>while</code> when the number of iterations is unknown (e.g., waiting for user input). Use <code>for</code> when iterating over a collection (e.g., processing each item in a list)."</div></div></div>
+</div>
+
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why is <code>enumerate()</code> better than <code>range(len())</code>?"</strong><div class="mini">"<code>enumerate()</code> directly returns both the index and the value, making code simpler and more readable. It's more Pythonic and less error-prone than manually managing indices with <code>range(len())</code>."</div></div></div>
+</div>
+
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the difference between <code>range(5)</code> and <code>range(1, 6)</code>?"</strong><div class="mini">"<code>range(5)</code> produces 0, 1, 2, 3, 4 (starts at 0, stops before 5). <code>range(1, 6)</code> produces 1, 2, 3, 4, 5 (starts at 1, stops before 6). The stop value is always exclusive."</div></div></div>
+</div>
+
+<!-- Chapter Summary -->
+<div class="sec">📋 Chapter Summary / Cheat Sheet</div>
+<table>
+<thead><tr><th>Tool</th><th>Purpose</th><th>Best Use</th></tr></thead>
+<tbody>
+<tr><td class="h"><code>while</code></td><td>Repeat until condition is False</td><td>Unknown iterations, user input, servers</td></tr>
+<tr><td class="h"><code>for</code></td><td>Iterate over an iterable</td><td>Processing collections</td></tr>
+<tr><td class="h"><code>range()</code></td><td>Generate number sequences</td><td>Counter loops, numeric iteration</td></tr>
+<tr><td class="h"><code>enumerate()</code></td><td>Index + Value</td><td>When both index and value are needed</td></tr>
+<tr><td class="h"><code>zip()</code></td><td>Combine multiple iterables</td><td>Parallel traversal of multiple lists</td></tr>
+<tr><td class="h">Nested Loop</td><td>Loop inside another loop</td><td>Matrices, multiplication tables</td></tr>
+</tbody>
+</table>
+
+<!-- What's Next -->
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 7: Loop Control Statements</h3><p>Learn how to control loop execution using <strong>break, continue, pass, and else with loops</strong>. These statements give you precise control over how and when loops execute.</p></div>
+</div>
+
+<script>
+const loopInfo = {
+'while': 'while: Repeats as long as a condition remains True. Best when the number of iterations is unknown. Example: while balance > 0: withdraw(). Be careful to avoid infinite loops!',
+'for': 'for: Iterates over a sequence (list, string, tuple, etc.). Cleaner and safer than while for collections. Example: for student in students: print(student).',
+'range': 'range(): Generates sequences of numbers. range(stop), range(start, stop), range(start, stop, step). The stop value is always exclusive. Example: range(5) → 0,1,2,3,4.',
+'enumerate': 'enumerate(): Returns both the index and the value from an iterable. More Pythonic than range(len()). Example: for index, name in enumerate(names): print(index, name).',
+'zip': 'zip(): Combines multiple iterables element by element. Perfect for parallel traversal. Example: for name, score in zip(names, scores): print(name, score).'
+};
+
+document.querySelectorAll('.loop-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const tool = this.getAttribute('data-tool');
+const tooltip = document.getElementById('loopTooltip');
+tooltip.textContent = loopInfo[tool] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

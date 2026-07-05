@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exception Handling - try, except, finally, raise & Custom Exceptions | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.exc-node{cursor:pointer;transition:all .3s ease}
+.exc-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
+</head>
+<body>
+<div class="hero"><div class="hero-inner"><div class="badge">Module 6 · Chapter 16 · Error Handling</div>
+<h1>Exception Handling<br><span>try, except, finally, raise & Custom Exceptions</span></h1>
+<p>Errors are inevitable in programming. Exception handling allows you to gracefully handle errors and prevent your program from crashing.</p>
+<div class="stats"><div class="stat"><div class="sn">TEFR</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">try</div><div class="sl">Attempt</div></div><div class="stat"><div class="sn">except</div><div class="sl">Catch</div></div><div class="stat"><div class="sn">finally</div><div class="sl">Always</div></div></div></div></div>
+<div class="wrap">
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>What exceptions are and why they occur</li>
+<li>Common Python exceptions</li>
+<li>Using try, except, else, and finally blocks</li>
+<li>Catching specific vs generic exceptions</li>
+<li>Raising exceptions with raise</li>
+<li>Creating custom exceptions</li>
+<li>Best practices for error handling</li>
+<li>When to use exceptions vs if-else</li>
+</ul></div>
+<div class="sec">📖 The Story — Insurance Policy</div>
+<div class="story"><div class="slabel">Protection & Recovery</div>
+<h3>An insurance policy protects you when something goes wrong. Exception handling is your program's insurance policy.</h3>
+<p>Imagine you're driving a car. You have insurance in case of accidents, a spare tire for flat tires, and a first-aid kit for emergencies. Exception handling works the same way. The <code>try</code> block is your normal driving. The <code>except</code> blocks are your insurance policies for different problems. The <code>finally</code> block is like locking your car—it always happens, regardless of what went wrong.</p></div>
+<div class="sec">🔄 Interactive: Exception Handling (TEFR)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each keyword. Remember: <strong>TEFR</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="excDiagram">
+<defs><marker id="ea" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="exc-node" data-key="try" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">try</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Attempt code</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">May raise error</text>
+<rect class="exc-node" data-key="except" x="190" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">except</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Catch error</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Handle gracefully</text>
+<rect class="exc-node" data-key="else" x="360" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">else</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">No error</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Success path</text>
+<rect class="exc-node" data-key="finally" x="530" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">finally</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Always runs</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Cleanup code</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: TEFR ("Tea-Fur")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">T → try (attempt risky code)</text>
+<text x="350" y="190" fill="#fca5a5" font-size="12" text-anchor="middle">E → except (catch specific errors)</text>
+<text x="350" y="210" fill="#6ee7b7" font-size="12" text-anchor="middle">F → finally (always executes, cleanup)</text>
+<text x="350" y="230" fill="#fcd34d" font-size="12" text-anchor="middle">R → raise (create/manually throw exceptions)</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="excTooltip">Click on each keyword to learn more</text>
+</svg></div></div>
+<div class="sec">📊 Common Exceptions</div>
+<table><thead><tr><th>Exception</th><th>When It Occurs</th><th>Example</th></tr></thead><tbody>
+<tr><td class="h"><code>ValueError</code></td><td>Wrong type of value</td><td><code>int("abc")</code></td></tr>
+<tr><td class="h"><code>TypeError</code></td><td>Wrong operation for type</td><td><code>"5" + 5</code></td></tr>
+<tr><td class="h"><code>IndexError</code></td><td>Index out of range</td><td><code>[1,2][5]</code></td></tr>
+<tr><td class="h"><code>KeyError</code></td><td>Key not in dict</td><td><code>{"a":1}["b"]</code></td></tr>
+<tr><td class="h"><code>ZeroDivisionError</code></td><td>Division by zero</td><td><code>10 / 0</code></td></tr>
+<tr><td class="h"><code>FileNotFoundError</code></td><td>File doesn't exist</td><td><code>open("missing.txt")</code></td></tr>
+<tr><td class="h"><code>AttributeError</code></td><td>Attribute not found</td><td><code>"hello".nonexistent()</code></td></tr>
+</tbody></table>
+<div class="sec">🔧 Exception Handling Example</div>
+<div class="defbox"><strong>Basic structure:</strong><br><br>
+<code>try:</code><br>
+<code>&nbsp;&nbsp;# Risky code</code><br>
+<code>&nbsp;&nbsp;result = 10 / int(input("Enter number: "))</code><br><br>
+<code>except ValueError:</code><br>
+<code>&nbsp;&nbsp;print("Please enter a valid number")</code><br><br>
+<code>except ZeroDivisionError:</code><br>
+<code>&nbsp;&nbsp;print("Cannot divide by zero")</code><br><br>
+<code>else:</code><br>
+<code>&nbsp;&nbsp;print(f"Result: {result}")</code><br><br>
+<code>finally:</code><br>
+<code>&nbsp;&nbsp;print("Cleanup code here")</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
+<div class="card">
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Catching exceptions too broadly.</strong><div class="mini">✔ Catch specific exceptions. Avoid bare <code>except:</code> which catches everything including SystemExit and KeyboardInterrupt.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using exceptions for control flow.</strong><div class="mini">✔ Exceptions are for exceptional cases, not normal program flow. Use if-else for expected conditions.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Swallowing exceptions silently.</strong><div class="mini">✔ Always log or handle exceptions properly. Empty except blocks make debugging impossible.</div></div></div>
+</div>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is exception handling?"</strong><div class="mini">"Exception handling is a mechanism to handle runtime errors gracefully. It uses try-except blocks to catch and handle exceptions, preventing the program from crashing. The finally block ensures cleanup code always runs."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the difference between except and finally?"</strong><div class="mini">"except catches and handles exceptions. finally always executes, whether an exception occurred or not. finally is used for cleanup code like closing files or database connections."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Keyword</th><th>Purpose</th></tr></thead><tbody>
+<tr><td class="h">try</td><td>Attempt risky code</td></tr>
+<tr><td class="h">except</td><td>Catch specific exceptions</td></tr>
+<tr><td class="h">else</td><td>Run if no exception</td></tr>
+<tr><td class="h">finally</td><td>Always execute (cleanup)</td></tr>
+<tr><td class="h">raise</td><td>Throw an exception</td></tr>
+<tr><td class="h">Memory Trick</td><td><strong>TEFR</strong> = Try, Except, Finally, Raise</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 17: Object-Oriented Programming (OOP)</h3><p>Learn the fundamentals of OOP — <strong>classes, objects, attributes, methods, constructors, and the self keyword</strong>.</p></div>
+</div>
+<script>
+const excInfo = {
+'try': 'try: Contains code that might raise an exception. If an exception occurs, Python stops executing the try block and jumps to the matching except block.',
+'except': 'except: Catches and handles specific exceptions. You can have multiple except blocks for different exception types. Use specific exceptions rather than bare except.',
+'else': 'else: Executes only if NO exception occurred in the try block. Use it for code that should run only when the try block succeeds.',
+'finally': 'finally: Always executes, whether an exception occurred or not. Use for cleanup code like closing files, releasing resources, or database connections.'
+};
+document.querySelectorAll('.exc-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('excTooltip').textContent = excInfo[this.getAttribute('data-key')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
+</script>
+</body>
+</html>

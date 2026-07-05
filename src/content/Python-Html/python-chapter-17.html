@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OOP - Classes, Objects, Attributes, Methods & self | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.oop-node{cursor:pointer;transition:all .3s ease}
+.oop-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
+</head>
+<body>
+<div class="hero"><div class="hero-inner"><div class="badge">Module 7 · Chapter 17 · OOP</div>
+<h1>Object-Oriented Programming<br><span>Classes, Objects, Attributes, Methods & self</span></h1>
+<p>OOP organizes code around objects that combine data and behavior. Learn to create classes, instantiate objects, and use the self keyword.</p>
+<div class="stats"><div class="stat"><div class="sn">ACSM</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">Class</div><div class="sl">Blueprint</div></div><div class="stat"><div class="sn">Object</div><div class="sl">Instance</div></div><div class="stat"><div class="sn">self</div><div class="sl">Current Object</div></div></div></div></div>
+<div class="wrap">
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>What OOP is and why it matters</li>
+<li>Classes vs Objects</li>
+<li>Attributes (class vs instance)</li>
+<li>Methods and the self parameter</li>
+<li>Constructors: __init__()</li>
+<li>Creating and using objects</li>
+<li>Benefits of OOP</li>
+<li>Common OOP terminology</li>
+</ul></div>
+<div class="sec">📖 The Story — House Blueprint</div>
+<div class="story"><div class="slabel">Template & Instances</div>
+<h3>A blueprint defines how to build houses. Each house built from that blueprint is a unique instance with its own properties.</h3>
+<p>Imagine an architect creates a blueprint for a house. The blueprint defines the structure: number of rooms, dimensions, materials. From this single blueprint, you can build many houses. Each house is unique (different address, different paint color) but follows the same design. OOP works exactly like this. A <strong>class</strong> is the blueprint. An <strong>object</strong> (instance) is the actual house built from that blueprint.</p></div>
+<div class="sec">🔄 Interactive: OOP Concepts (ACSM)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each concept. Remember: <strong>ACSM</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="oopDiagram">
+<defs><marker id="oa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="oop-node" data-concept="class" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Class</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Blueprint/Template</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">defines structure</text>
+<rect class="oop-node" data-concept="object" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Object</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Instance</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Actual entity</text>
+<rect class="oop-node" data-concept="self" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">self</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Current object</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Instance reference</text>
+<rect class="oop-node" data-concept="method" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Method</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Function in class</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">def method(self)</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: ACSM ("A-See-Em")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">A → Attributes (data/variables of the class)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">C → Class (blueprint for creating objects)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">S → self (reference to current instance)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">M → Methods (functions that operate on objects)</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="oopTooltip">Click on each concept to learn more</text>
+</svg></div></div>
+<div class="sec">📊 Class vs Object</div>
+<table><thead><tr><th>Aspect</th><th>Class</th><th>Object</th></tr></thead><tbody>
+<tr><td class="h">Definition</td><td>Blueprint/template</td><td>Instance of a class</td></tr>
+<tr><td class="h">Analogy</td><td>House blueprint</td><td>Actual house</td></tr>
+<tr><td class="h">Memory</td><td>No memory allocated</td><td>Memory allocated</td></tr>
+<tr><td class="h">Creation</td><td>Using class keyword</td><td>Using constructor</td></tr>
+<tr><td class="h">Example</td><td><code>class Car:</code></td><td><code>car1 = Car()</code></td></tr>
+</tbody></table>
+<div class="sec">🔧 Basic Class Example</div>
+<div class="defbox"><strong>Creating a simple class:</strong><br><br>
+<code>class Dog:</code><br>
+<code>&nbsp;&nbsp;# Constructor</code><br>
+<code>&nbsp;&nbsp;def __init__(self, name, breed):</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;self.name = name</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;self.breed = breed</code><br><br>
+<code>&nbsp;&nbsp;# Method</code><br>
+<code>&nbsp;&nbsp;def bark(self):</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;return f"{self.name} says woof!"</code><br><br>
+<code># Create object</code><br>
+<code>dog1 = Dog("Buddy", "Golden Retriever")</code><br>
+<code>print(dog1.bark())  # "Buddy says woof!"</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
+<div class="card">
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Forgetting <code>self</code> parameter in methods.</strong><div class="mini">✔ Every instance method must have <code>self</code> as the first parameter. Python passes the current object automatically.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Confusing class variables with instance variables.</strong><div class="mini">✔ Class variables are shared by all instances. Instance variables are unique to each object. Use <code>self.variable</code> for instance variables.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Trying to access instance variables from the class itself.</strong><div class="mini">✔ Instance variables only exist after creating an object. Access them via objects: <code>dog1.name</code>, not <code>Dog.name</code>.</div></div></div>
+</div>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is OOP?"</strong><div class="mini">"OOP (Object-Oriented Programming) is a programming paradigm that organizes code around objects. Objects combine data (attributes) and behavior (methods). It promotes code reusability, modularity, and maintainability through concepts like classes, inheritance, and encapsulation."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the difference between a class and an object?"</strong><div class="mini">"A class is a blueprint or template that defines the structure and behavior of objects. An object is an instance of a class—a concrete entity created from that blueprint. For example, 'Car' is a class, while 'my_car' is an object."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is <code>self</code> in Python?"</strong><div class="mini">"<code>self</code> is a reference to the current instance of the class. It's the first parameter of every instance method. Python automatically passes the current object as the first argument when you call a method on an object."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Concept</th><th>Description</th></tr></thead><tbody>
+<tr><td class="h">Class</td><td>Blueprint for creating objects</td></tr>
+<tr><td class="h">Object</td><td>Instance of a class</td></tr>
+<tr><td class="h">Attribute</td><td>Variable that stores data</td></tr>
+<tr><td class="h">Method</td><td>Function defined in a class</td></tr>
+<tr><td class="h">__init__</td><td>Constructor method</td></tr>
+<tr><td class="h">self</td><td>Reference to current instance</td></tr>
+<tr><td class="h">Memory Trick</td><td><strong>ACSM</strong> = Attributes, Class, self, Methods</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 18: Advanced OOP</h3><p>Dive deeper into OOP — <strong>inheritance, polymorphism, encapsulation, abstraction, and magic methods</strong>.</p></div>
+</div>
+<script>
+const oopInfo = {
+'class': 'Class: A blueprint or template for creating objects. It defines attributes (data) and methods (behavior). Example: class Dog: defines what all Dog objects will have and can do.',
+'object': 'Object: An instance of a class. Created by calling the class like a function: dog1 = Dog(). Each object has its own set of attributes and can use the class methods.',
+'self': 'self: A reference to the current instance. It must be the first parameter of every instance method. Python automatically passes the current object when you call a method: dog1.bark() becomes Dog.bark(dog1).',
+'method': 'Method: A function defined inside a class. Methods operate on objects. The first parameter is always self (the current object). Methods can access and modify object attributes.'
+};
+document.querySelectorAll('.oop-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('oopTooltip').textContent = oopInfo[this.getAttribute('data-concept')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
+</script>
+</body>
+</html>

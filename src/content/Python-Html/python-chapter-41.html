@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 11 — Concurrency & Parallelism | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Module 11 · Chapter 41</div>
+<h1>Module 11 — Concurrency & Parallelism<br><span>Q1. What is Asyncio?</span></h1>
+<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Q1. What</div><div class="sl">is Asyncio?</div></div><div class="stat"><div class="sn">Q2. What</div><div class="sl">is the Event Loop?</div></div><div class="stat"><div class="sn">Q3. What</div><div class="sl">is the difference between `async` and `await`?</div></div><div class="stat"><div class="sn">Q4. When</div><div class="sl">should you use Asyncio instead of Threads?</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">Q1. What is Asyncio?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Asyncio is Python's built-in framework for asynchronous programming.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It enables many IO-bound tasks to run concurrently using an Event Loop instead of multiple threads.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q2. What is the Event Loop?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">The Event Loop is the core of Asyncio.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It continuously checks for coroutines that are ready to run,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">executes them,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and switches to other coroutines whenever one is waiting.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q3. What is the difference between `async` and `await`?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>async</code> defines a coroutine.</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>await</code> pauses the coroutine until an awaited operation completes.</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">While waiting,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">the Event Loop executes other ready coroutines.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q4. When should you use Asyncio instead of Threads?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Use Asyncio when handling many **IO-bound** operations such as:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">HTTP requests</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Database queries</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">File operations</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">WebSockets</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It uses fewer system resources than creating thousands of threads.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q5. Can Asyncio speed up CPU-intensive programs?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">No.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Asyncio improves concurrency for waiting tasks,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">not computation.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">CPU-intensive workloads should use multiprocessing.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Concept | Purpose |<br>|----------|----------|<br>| <code>async</code> | Define a coroutine |<br>| <code>await</code> | Pause until completion |<br>| Event Loop | Schedule coroutines |<br>| Coroutine | Pause & resume function |<br>| <code>asyncio.run()</code> | Start async program |<br>| <code>create_task()</code> | Schedule coroutine |<br>| <code>asyncio.gather()</code> | Run multiple coroutines concurrently |<br>| <code>async with</code> | Async context manager |<br>| Asyncio | Best for IO-bound concurrency |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Chapter 42 — Futures & Executors**, you'll learn how Python bridges synchronous and asynchronous programming:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Future Objects</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">ThreadPoolExecutor</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">ProcessPoolExecutor</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>submit()</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>map()</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>as_completed()</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Choosing Threads vs Processes vs Asyncio</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">This chapter ties together all concurrency models and helps you choose the right one for real-world applications.</p>
+</div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

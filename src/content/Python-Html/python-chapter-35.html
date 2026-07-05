@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Deep Learning - CNNs, RNNs & Transfer Learning | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.adv-dl-node{cursor:pointer;transition:all .3s ease}
+.adv-dl-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
+</head>
+<body>
+<div class="hero"><div class="hero-inner"><div class="badge">Module 25 · Chapter 35 · Advanced Deep Learning</div>
+<h1>Advanced Deep Learning<br><span>CNNs, RNNs & Transfer Learning</span></h1>
+<p>Specialized neural network architectures for different data types. Learn CNNs for images, RNNs for sequences, and transfer learning for efficient model building.</p>
+<div class="stats"><div class="stat"><div class="sn">CRT</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">CNN</div><div class="sl">Images</div></div><div class="stat"><div class="sn">RNN</div><div class="sl">Sequences</div></div><div class="stat"><div class="sn">Transfer</div><div class="sl">Reuse</div></div></div></div></div>
+<div class="wrap">
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>Convolutional Neural Networks (CNNs) for images</li>
+<li>CNN layers: Conv2D, MaxPooling, Flatten</li>
+<li>Recurrent Neural Networks (RNNs) for sequences</li>
+<li>LSTM and GRU for long sequences</li>
+<li>Transfer learning: using pre-trained models</li>
+<li>When to use each architecture</li>
+<li>Practical applications of each type</li>
+<li>Model fine-tuning strategies</li>
+</ul></div>
+<div class="sec">📖 The Story — Specialized Tools</div>
+<div class="story"><div class="slabel">Right Tool for the Job</div>
+<h3>A carpenter uses different tools for different tasks. Deep learning uses different architectures for different data types.</h3>
+<p>Imagine a carpenter's workshop. For cutting wood, they use a saw. For drilling holes, they use a drill. For smoothing surfaces, they use sandpaper. Each tool is specialized for a specific task. Deep learning architectures are similar. <strong>CNNs</strong> are like saws - specialized for images, they scan for patterns like edges and shapes. <strong>RNNs</strong> are like tape measures - designed for sequences, they remember previous measurements. <strong>Transfer learning</strong> is like using a pre-made template - why build from scratch when you can adapt existing work?</p></div>
+<div class="sec">🔄 Interactive: Advanced DL Architectures (CRT)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each architecture. Remember: <strong>CRT</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="advDlDiagram">
+<defs><marker id="adla" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="adv-dl-node" data-arch="cnn" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">CNN</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Image processing</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Convolutions</text>
+<rect class="adv-dl-node" data-arch="rnn" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">RNN</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Sequences</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Time series</text>
+<rect class="adv-dl-node" data-arch="transfer" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Transfer Learning</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Pre-trained</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Reuse models</text>
+<rect class="adv-dl-node" data-arch="lstm" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">LSTM/GRU</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Long sequences</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Memory cells</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: CRT ("See-Arr-Tee")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">C → CNN (images, convolutions, spatial patterns)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">R → RNN (sequences, time series, text)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">T → Transfer Learning (reuse pre-trained models)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">LSTM/GRU solve RNN vanishing gradient problem</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="advDlTooltip">Click on each architecture to learn more</text>
+</svg></div></div>
+<div class="sec">📊 Architecture Comparison</div>
+<table><thead><tr><th>Architecture</th><th>Best For</th><th>Key Feature</th><th>Example</th></tr></thead><tbody>
+<tr><td class="h">CNN</td><td>Images</td><td>Convolutional layers</td><td>Image classification</td></tr>
+<tr><td class="h">RNN</td><td>Sequences</td><td>Recurrent connections</td><td>Text generation</td></tr>
+<tr><td class="h">LSTM</td><td>Long sequences</td><td>Memory cells</td><td>Machine translation</td></tr>
+<tr><td class="h">Transfer</td><td>Limited data</td><td>Pre-trained weights</td><td>Fine-tuning</td></tr>
+</tbody></table>
+<div class="sec">🔧 CNN Example</div>
+<div class="defbox"><strong>Convolutional Neural Network for images:</strong><br><br>
+<code>from tensorflow.keras import layers, models</code><br><br>
+<code># Build CNN</code><br>
+<code>model = models.Sequential([</code><br>
+<code>&nbsp;&nbsp;# Convolutional layers</code><br>
+<code>&nbsp;&nbsp;layers.Conv2D(32, (3,3), activation='relu', input_shape=(150, 150, 3)),</code><br>
+<code>&nbsp;&nbsp;layers.MaxPooling2D((2, 2)),</code><br><br>
+<code>&nbsp;&nbsp;layers.Conv2D(64, (3,3), activation='relu'),</code><br>
+<code>&nbsp;&nbsp;layers.MaxPooling2D((2, 2)),</code><br><br>
+<code>&nbsp;&nbsp;layers.Conv2D(128, (3,3), activation='relu'),</code><br>
+<code>&nbsp;&nbsp;layers.MaxPooling2D((2, 2)),</code><br><br>
+<code>&nbsp;&nbsp;# Classifier</code><br>
+<code>&nbsp;&nbsp;layers.Flatten(),</code><br>
+<code>&nbsp;&nbsp;layers.Dense(512, activation='relu'),</code><br>
+<code>&nbsp;&nbsp;layers.Dense(1, activation='sigmoid')</code><br>
+<code>])</code><br><br>
+<code>model.compile(optimizer='adam',</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;loss='binary_crossentropy',</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;metrics=['accuracy'])</code></div>
+<div class="sec">🔧 Transfer Learning Example</div>
+<div class="defbox"><strong>Using pre-trained models:</strong><br><br>
+<code>from tensorflow.keras.applications import VGG16</code><br><br>
+<code># Load pre-trained model (without top layers)</code><br>
+<code>base_model = VGG16(</code><br>
+<code>&nbsp;&nbsp;weights='imagenet',</code><br>
+<code>&nbsp;&nbsp;include_top=False,</code><br>
+<code>&nbsp;&nbsp;input_shape=(150, 150, 3)</code><br>
+<code>)</code><br><br>
+<code># Freeze base model</code><br>
+<code>base_model.trainable = False</code><br><br>
+<code># Add custom layers</code><br>
+<code>model = models.Sequential([</code><br>
+<code>&nbsp;&nbsp;base_model,</code><br>
+<code>&nbsp;&nbsp;layers.Flatten(),</code><br>
+<code>&nbsp;&nbsp;layers.Dense(256, activation='relu'),</code><br>
+<code>&nbsp;&nbsp;layers.Dropout(0.5),</code><br>
+<code>&nbsp;&nbsp;layers.Dense(1, activation='sigmoid')</code><br>
+<code>])</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
+<div class="card">
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using CNNs for non-image data.</strong><div class="mini">✔ CNNs excel at spatial data (images). For tabular data, use dense networks. For sequences, use RNNs/LSTMs.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Not freezing layers in transfer learning.</strong><div class="mini">✔ Freeze pre-trained layers initially. Only train your custom layers. Fine-tune later if needed.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Using RNNs for very long sequences without LSTM.</strong><div class="mini">✔ Vanilla RNNs suffer from vanishing gradients. Use LSTM or GRU for long sequences.</div></div></div>
+</div>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is a CNN and why is it good for images?"</strong><div class="mini">"CNN (Convolutional Neural Network) is designed for grid-like data (images). It uses convolutional layers that scan the image with filters to detect features (edges, textures, patterns). Key advantages: 1) Parameter sharing - same filter used across image, 2) Spatial hierarchy - early layers detect edges, deeper layers detect shapes, 3) Translation invariance - recognizes patterns anywhere in image."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is transfer learning and when would you use it?"</strong><div class="mini">"Transfer learning uses a pre-trained model (trained on large dataset) as a starting point for a new task. Use it when: 1) Limited training data, 2) Similar task to pre-trained model, 3) Need faster training. Example: Use VGG16 trained on ImageNet for your custom image classification. Freeze early layers (general features), replace and train final layers (task-specific)."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Architecture</th><th>Use Case</th><th>Key Layers</th></tr></thead><tbody>
+<tr><td class="h">CNN</td><td>Images, video</td><td>Conv2D, MaxPooling</td></tr>
+<tr><td class="h">RNN</td><td>Sequences, time series</td><td>SimpleRNN, LSTM, GRU</td></tr>
+<tr><td class="h">Transfer Learning</td><td>Limited data</td><td>Pre-trained base + custom head</td></tr>
+<tr><td class="h">Memory Trick</td><td colspan="2"><strong>CRT</strong> = CNN, RNN, Transfer Learning</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 36: Python Project & Portfolio</h3><p>Build a <strong>complete ML project from scratch and create a portfolio-ready project</strong>.</p></div>
+</div>
+<script>
+const advDlInfo = {
+'cnn': 'CNN (Convolutional Neural Network): Specialized for image data. Uses convolutional layers with filters to detect features (edges, textures, patterns). Pooling layers reduce dimensionality. Key advantage: parameter sharing and spatial hierarchy. Applications: image classification, object detection, face recognition.',
+'rnn': 'RNN (Recurrent Neural Network): Designed for sequential data (text, time series). Has loops allowing information to persist. Can remember previous inputs. Problem: vanishing gradients for long sequences. Use LSTM/GRU instead for long sequences. Applications: text generation, translation, speech recognition.',
+'transfer': 'Transfer Learning: Use pre-trained models trained on large datasets (e.g., ImageNet). Freeze early layers (general features), replace final layers for your task. Benefits: faster training, better performance with less data, leverages learned features. Popular models: VGG16, ResNet, BERT.',
+'lstm': 'LSTM (Long Short-Term Memory): Advanced RNN that solves vanishing gradient problem. Has memory cells that can maintain information over long sequences. Gates control information flow (input, forget, output). Better than vanilla RNN for long sequences. GRU is simplified version.'
+};
+document.querySelectorAll('.adv-dl-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('advDlTooltip').textContent = advDlInfo[this.getAttribute('data-arch')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
+</script>
+</body>
+</html>

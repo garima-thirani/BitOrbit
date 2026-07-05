@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Testing & Debugging - Unit Tests, pytest & Debugging Tools | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.test-node{cursor:pointer;transition:all .3s ease}
+.test-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
+</head>
+<body>
+<div class="hero"><div class="hero-inner"><div class="badge">Module 16 · Chapter 26 · Testing</div>
+<h1>Testing & Debugging<br><span>Unit Tests, pytest & Debugging Tools</span></h1>
+<p>Testing ensures your code works correctly. Learn to write unit tests with pytest, use debugging tools, and adopt best practices for reliable software.</p>
+<div class="stats"><div class="stat"><div class="sn">TDD</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">pytest</div><div class="sl">Framework</div></div><div class="stat"><div class="sn">Unit Test</div><div class="sl">Isolated</div></div><div class="stat"><div class="sn">Debug</div><div class="sl">Find Bugs</div></div></div></div></div>
+<div class="wrap">
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>Why testing is important</li>
+<li>Types of tests: unit, integration, functional</li>
+<li>Test-Driven Development (TDD)</li>
+<li>Using pytest framework</li>
+<li>Writing test functions and assertions</li>
+<li>Fixtures and test setup/teardown</li>
+<li>Debugging with pdb and IDE tools</li>
+<li>Code coverage and best practices</li>
+</ul></div>
+<div class="sec">📖 The Story — Safety Inspector</div>
+<div class="story"><div class="slabel">Quality Assurance</div>
+<h3>A safety inspector checks every part of a bridge before it opens. Testing checks every part of your code before it ships.</h3>
+<p>Imagine a bridge being built. Before it opens to the public, safety inspectors check every bolt, weld, and support structure. They find problems before they become disasters. Software testing works the same way. Instead of waiting for users to find bugs, you write tests that automatically check your code. <strong>Unit tests</strong> check individual components. <strong>Integration tests</strong> check how components work together. <strong>pytest</strong> is your inspection toolkit.</p></div>
+<div class="sec">🔄 Interactive: Testing Concepts (TDD)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each concept. Remember: <strong>TDD</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="testDiagram">
+<defs><marker id="ta" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="test-node" data-concept="unit" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Unit Test</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Test one function</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Isolated</text>
+<rect class="test-node" data-concept="pytest" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">pytest</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Test framework</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Simple & powerful</text>
+<rect class="test-node" data-concept="tdd" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">TDD</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Test first</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Red-Green-Refactor</text>
+<rect class="test-node" data-concept="debug" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Debug</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Find & fix bugs</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">pdb, breakpoints</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: TDD ("Tee-Dee-Dee")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">T → Test (write tests before or after code)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">D → Debug (find and fix issues)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">D → Develop (write code to pass tests)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">Cycle: Write test → Run (fail) → Write code → Run (pass)</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="testTooltip">Click on each concept to learn more</text>
+</svg></div></div>
+<div class="sec">📊 Test Types</div>
+<table><thead><tr><th>Type</th><th>Purpose</th><th>Scope</th><th>Speed</th></tr></thead><tbody>
+<tr><td class="h">Unit Test</td><td>Test single function/method</td><td>Isolated</td><td>Fast</td></tr>
+<tr><td class="h">Integration Test</td><td>Test component interaction</td><td>Multiple units</td><td>Medium</td></tr>
+<tr><td class="h">Functional Test</td><td>Test complete feature</td><td>End-to-end</td><td>Slow</td></tr>
+</tbody></table>
+<div class="sec">🔧 pytest Example</div>
+<div class="defbox"><strong>Writing tests with pytest:</strong><br><br>
+<code># test_calculator.py</code><br>
+<code>def add(a, b):</code><br>
+<code>&nbsp;&nbsp;return a + b</code><br><br>
+<code>def test_add():</code><br>
+<code>&nbsp;&nbsp;assert add(2, 3) == 5</code><br>
+<code>&nbsp;&nbsp;assert add(-1, 1) == 0</code><br>
+<code>&nbsp;&nbsp;assert add(0, 0) == 0</code><br><br>
+<code>def test_add_negative():</code><br>
+<code>&nbsp;&nbsp;assert add(-5, -3) == -8</code><br><br>
+<code># Run with: pytest test_calculator.py</code></div>
+<div class="sec">🔧 Debugging with pdb</div>
+<div class="defbox"><strong>Using Python debugger:</strong><br><br>
+<code>import pdb</code><br><br>
+<code>def buggy_function(x):</code><br>
+<code>&nbsp;&nbsp;pdb.set_trace()  # Breakpoint</code><br>
+<code>&nbsp;&nbsp;result = x / 0  # Bug here</code><br>
+<code>&nbsp;&nbsp;return result</code><br><br>
+<code># Debugger commands:</code><br>
+<code># n (next), s (step), c (continue), q (quit)</code><br>
+<code># p variable (print), l (list code)</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
+<div class="card">
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Not testing edge cases.</strong><div class="mini">✔ Test boundary conditions, empty inputs, None values, and error cases, not just happy paths.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Writing tests that are too coupled to implementation.</strong><div class="mini">✔ Test behavior, not implementation. Tests should survive refactoring.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Ignoring test failures.</strong><div class="mini">✔ Fix failing tests immediately. They indicate real problems.</div></div></div>
+</div>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is unit testing?"</strong><div class="mini">"Unit testing is the practice of testing individual functions or methods in isolation to ensure they work correctly. Each test verifies a specific behavior. Unit tests are fast, automated, and help catch bugs early. They serve as documentation and enable confident refactoring."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is Test-Driven Development (TDD)?"</strong><div class="mini">"TDD is a development approach where you write tests before writing code. The cycle: 1) Write a failing test (Red), 2) Write minimal code to pass (Green), 3) Refactor while keeping tests passing (Refactor). TDD leads to better design, higher test coverage, and more maintainable code."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Concept</th><th>Description</th></tr></thead><tbody>
+<tr><td class="h">Unit Test</td><td>Test single function in isolation</td></tr>
+<tr><td class="h">pytest</td><td>Popular testing framework</td></tr>
+<tr><td class="h">assert</td><td>Check condition is true</td></tr>
+<tr><td class="h">Fixture</td><td>Setup/teardown for tests</td></tr>
+<tr><td class="h">pdb</td><td>Python debugger</td></tr>
+<tr><td class="h">TDD</td><td>Test-first development</td></tr>
+<tr><td class="h">Memory Trick</td><td><strong>TDD</strong> = Test, Debug, Develop</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 27: Concurrency & Parallelism</h3><p>Learn about <strong>threading, multiprocessing, asyncio, and concurrent programming</strong> for better performance.</p></div>
+</div>
+<script>
+const testInfo = {
+'unit': 'Unit Test: Tests individual functions or methods in isolation. Fast, focused, and independent. Each test verifies one specific behavior. Use fixtures for setup/teardown. Mock external dependencies.',
+'pytest': 'pytest: The most popular Python testing framework. Simple syntax (just use assert). Powerful features: fixtures, parametrization, plugins. Run with: pytest. Better than unittest for most projects.',
+'tdd': 'TDD (Test-Driven Development): Write tests before code. Cycle: Red (write failing test) → Green (write minimal code to pass) → Refactor (improve code). Leads to better design and high test coverage.',
+'debug': 'Debugging: Finding and fixing bugs. Use pdb (Python debugger) with set_trace(). IDE debuggers provide visual interfaces. Print debugging is simple but less powerful. Learn to read stack traces.'
+};
+document.querySelectorAll('.test-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('testTooltip').textContent = testInfo[this.getAttribute('data-concept')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 14 — NumPy | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Module 14 · Chapter 53</div>
+<h1>Module 14 — NumPy<br><span>Q1. Why is NumPy faster than Python Lists?</span></h1>
+<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
+<div class="stats">
+<div class="stat"><div class="sn">Q1. Why</div><div class="sl">is NumPy faster than Python Lists?</div></div><div class="stat"><div class="sn">Q2. What</div><div class="sl">is Vectorization?</div></div><div class="stat"><div class="sn">Q3. What</div><div class="sl">are In-place Operations?</div></div><div class="stat"><div class="sn">Q4. Why</div><div class="sl">should you choose an appropriate `dtype`?</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<div class="sec">Q1. Why is NumPy faster than Python Lists?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">NumPy stores homogeneous data in contiguous memory,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">uses optimized C implementations,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">supports vectorization,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and benefits from CPU cache optimization.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Python Lists store references to Python objects,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">which introduces significant overhead.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q2. What is Vectorization?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Vectorization is the process of applying an operation to an entire array at once,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">instead of iterating element by element in Python.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It improves both readability and performance.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q3. What are In-place Operations?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In-place operations modify an existing array</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">without creating a new one.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Example</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">arr += 5</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">They reduce memory usage</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and improve execution speed.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q4. Why should you choose an appropriate `dtype`?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Smaller data types consume less memory</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and improve cache efficiency.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">For example,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>uint8</code> is ideal for image pixels,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">while <code>float32</code> is commonly used in deep learning.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+</div>
+<div class="sec">Q5. What tools are commonly used for performance profiling?</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Common tools include</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>timeit</code> for benchmarking small code snippets</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>cProfile</code> for application profiling</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>line_profiler</code> for line-by-line analysis</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>memory_profiler</code> for measuring memory usage</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These tools help identify performance bottlenecks before optimization.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Optimization | Benefit |<br>|--------------|----------|<br>| Vectorization | Eliminate Python loops |<br>| Broadcasting | Efficient array operations |<br>| In-place Operations | Reduce memory usage |<br>| Correct <code>dtype</code> | Lower memory consumption |<br>| Views | Avoid unnecessary copies |<br>| <code>np.sum()</code> | Faster aggregation |<br>| <code>timeit</code> | Benchmark execution time |<br>| <code>cProfile</code> | Profile application performance |<br>| <code>memory_profiler</code> | Measure memory usage |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Module 14 Complete ✅</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">You have now mastered NumPy:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">ndarray</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Array Creation</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Array Attributes</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Indexing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Slicing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Boolean Indexing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Fancy Indexing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Broadcasting</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Universal Functions (ufuncs)</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Vectorization</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Mathematical Functions</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Statistical Functions</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Linear Algebra</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Matrix Operations</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Performance Optimization</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">NumPy is the foundation of the Python scientific ecosystem. Nearly every major library—including **Pandas**, **Scikit-Learn**, **TensorFlow**, **PyTorch**, **OpenCV**, and **SciPy**—is built on top of NumPy.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Module 15 — Pandas**, you'll learn how to work with real-world datasets:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Series</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">DataFrame</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Data Cleaning</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Missing Values</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">GroupBy</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Merge & Join</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">DateTime Handling</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Window Functions</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Real-world Data Analysis</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Pandas is the most widely used library for data manipulation, analysis, and preprocessing in data science, machine learning, and business analytics.</p>
+</div>
+</div>
+
+<script>
+function checkQuiz(el, correct) {
+  const parent = el.parentElement;
+  const feedback = parent.querySelector('.quiz-feedback');
+  const opts = parent.querySelectorAll('.quiz-opt');
+  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+  feedback.classList.add('show');
+  if (correct) feedback.classList.add('correct');
+  else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Database Programming - sqlite3, psycopg2, SQLAlchemy & ORM | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.db-prog-node{cursor:pointer;transition:all .3s ease}
+.db-prog-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
+</head>
+<body>
+<div class="hero"><div class="hero-inner"><div class="badge">Module 14 · Chapter 24 · Database Programming</div>
+<h1>Python Database Programming<br><span>sqlite3, psycopg2, SQLAlchemy & ORM Concepts</span></h1>
+<p>Learn to connect Python applications to databases. From built-in sqlite3 to powerful ORMs like SQLAlchemy, master database programming in Python.</p>
+<div class="stats"><div class="stat"><div class="sn">SPOS</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">sqlite3</div><div class="sl">Built-in</div></div><div class="stat"><div class="sn">psycopg2</div><div class="sl">PostgreSQL</div></div><div class="stat"><div class="sn">ORM</div><div class="sl">SQLAlchemy</div></div></div></div></div>
+<div class="wrap">
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>Python database connectors and DB-API</li>
+<li>Using sqlite3 (built-in)</li>
+<li>Connecting to PostgreSQL with psycopg2</li>
+<li>What is an ORM and why use it</li>
+<li>SQLAlchemy basics: Engine, Session, Model</li>
+<li>CRUD operations with SQLAlchemy</li>
+<li>Connection management and best practices</li>
+<li>When to use raw SQL vs ORM</li>
+</ul></div>
+<div class="sec">📖 The Story — Universal Remote</div>
+<div class="story"><div class="slabel">One Interface, Many Devices</div>
+<h3>A universal remote controls different devices with one interface. Python database connectors work similarly - one API for different databases.</h3>
+<p>Imagine a universal remote that can control your TV, AC, and sound system. You don't need separate remotes for each device. Python's DB-API (Database API) works the same way. It provides a standard interface for different databases. Whether you're using SQLite for development, PostgreSQL for production, or MySQL for legacy systems, the basic operations (connect, execute, fetch) remain consistent. ORMs like SQLAlchemy go further - they let you work with Python objects instead of SQL queries.</p></div>
+<div class="sec">🔄 Interactive: Python Database Tools (SPOS)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each tool. Remember: <strong>SPOS</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="dbProgDiagram">
+<defs><marker id="dpa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="db-prog-node" data-tool="sqlite" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">sqlite3</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Built-in</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">File-based</text>
+<rect class="db-prog-node" data-tool="psycopg2" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">psycopg2</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">PostgreSQL</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Production</text>
+<rect class="db-prog-node" data-tool="orm" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">ORM</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Object-Relational</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Python objects</text>
+<rect class="db-prog-node" data-tool="sqlalchemy" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">SQLAlchemy</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Powerful ORM</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Flexible</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: SPOS ("Ess-Poh")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">S → sqlite3 (built-in, perfect for development)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">P → psycopg2 (PostgreSQL driver for production)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">O → ORM (Object-Relational Mapping concept)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">S → SQLAlchemy (most popular Python ORM)</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="dbProgTooltip">Click on each tool to learn more</text>
+</svg></div></div>
+<div class="sec">📊 Database Connectors Comparison</div>
+<table><thead><tr><th>Tool</th><th>Database</th><th>Type</th><th>Use Case</th></tr></thead><tbody>
+<tr><td class="h">sqlite3</td><td>SQLite</td><td>Built-in</td><td>Development, small apps</td></tr>
+<tr><td class="h">psycopg2</td><td>PostgreSQL</td><td>Driver</td><td>Production, complex queries</td></tr>
+<tr><td class="h">mysql-connector</td><td>MySQL</td><td>Driver</td><td>Legacy systems</td></tr>
+<tr><td class="h">SQLAlchemy</td><td>Multiple</td><td>ORM</td><td>Complex apps, maintainability</td></tr>
+</tbody></table>
+<div class="sec">🔧 sqlite3 Example</div>
+<div class="defbox"><strong>Using sqlite3 (built-in):</strong><br><br>
+<code>import sqlite3</code><br><br>
+<code># Connect</code><br>
+<code>conn = sqlite3.connect("app.db")</code><br>
+<code>cursor = conn.cursor()</code><br><br>
+<code># Create table</code><br>
+<code>cursor.execute("""</code><br>
+<code>&nbsp;&nbsp;CREATE TABLE IF NOT EXISTS users (</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;id INTEGER PRIMARY KEY,</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;name TEXT NOT NULL,</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;email TEXT UNIQUE</code><br>
+<code>&nbsp;&nbsp;)</code><br>
+<code>""")</code><br><br>
+<code># Insert</code><br>
+<code>cursor.execute("INSERT INTO users (name, email) VALUES (?, ?)",</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;("Alice", "alice@example.com"))</code><br>
+<code>conn.commit()</code><br><br>
+<code># Query</code><br>
+<code>cursor.execute("SELECT * FROM users")</code><br>
+<code>users = cursor.fetchall()</code><br>
+<code>print(users)</code><br><br>
+<code># Close</code><br>
+<code>conn.close()</code></div>
+<div class="sec">🔧 SQLAlchemy Example</div>
+<div class="defbox"><strong>Using SQLAlchemy ORM:</strong><br><br>
+<code>from sqlalchemy import create_engine, Column, Integer, String</code><br>
+<code>from sqlalchemy.ext.declarative import declarative_base</code><br>
+<code>from sqlalchemy.orm import sessionmaker</code><br><br>
+<code># Setup</code><br>
+<code>Base = declarative_base()</code><br>
+<code>engine = create_engine("sqlite:///app.db")</code><br>
+<code>Session = sessionmaker(bind=engine)</code><br>
+<code>session = Session()</code><br><br>
+<code># Define model</code><br>
+<code>class User(Base):</code><br>
+<code>&nbsp;&nbsp;__tablename__ = "users"</code><br>
+<code>&nbsp;&nbsp;id = Column(Integer, primary_key=True)</code><br>
+<code>&nbsp;&nbsp;name = Column(String(50))</code><br>
+<code>&nbsp;&nbsp;email = Column(String(100), unique=True)</code><br><br>
+<code># Create tables</code><br>
+<code>Base.metadata.create_all(engine)</code><br><br>
+<code># CRUD operations</code><br>
+<code>user = User(name="Alice", email="alice@example.com")</code><br>
+<code>session.add(user)</code><br>
+<code>session.commit()</code><br><br>
+<code># Query</code><br>
+<code>users = session.query(User).filter_by(name="Alice").all()</code><br>
+<code>print(users[0].email)</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
+<div class="card">
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Not using parameterized queries.</strong><div class="mini">✔ Never use string formatting for SQL queries. Use parameterized queries (?) to prevent SQL injection attacks.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Forgetting to commit transactions.</strong><div class="mini">✔ Changes are not saved until you call conn.commit(). Remember to commit after INSERT, UPDATE, DELETE.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Not closing connections.</strong><div class="mini">✔ Always close connections when done. Use context managers (with statement) for automatic cleanup.</div></div></div>
+</div>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is an ORM and why would you use one?"</strong><div class="mini">"ORM (Object-Relational Mapping) is a technique that maps database tables to Python classes and rows to objects. Benefits: write Python code instead of SQL, automatic relationship management, database portability, and reduced boilerplate. SQLAlchemy is the most popular Python ORM."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is SQL injection and how do you prevent it?"</strong><div class="mini">"SQL injection is a security vulnerability where malicious SQL code is inserted into queries. Prevent it by using parameterized queries instead of string formatting. Example: cursor.execute('SELECT * FROM users WHERE id = ?', (user_id,)) - the ? placeholder ensures proper escaping."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Tool</th><th>Purpose</th><th>Best For</th></tr></thead><tbody>
+<tr><td class="h">sqlite3</td><td>Built-in SQLite</td><td>Development, prototyping</td></tr>
+<tr><td class="h">psycopg2</td><td>PostgreSQL driver</td><td>Production PostgreSQL</td></tr>
+<tr><td class="h">SQLAlchemy</td><td>ORM + SQL toolkit</td><td>Complex applications</td></tr>
+<tr><td class="h">Parameterized Query</td><td>Prevent SQL injection</td><td>Always use this</td></tr>
+<tr><td class="h">Memory Trick</td><td colspan="2"><strong>SPOS</strong> = sqlite3, psycopg2, ORM, SQLAlchemy</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 25: Web Development with Python</h3><p>Learn to build web applications using <strong>Flask and Django</strong> - Python's most popular web frameworks.</p></div>
+</div>
+<script>
+const dbProgInfo = {
+'sqlite': 'sqlite3: Python built-in module for SQLite databases. No installation needed. Perfect for development, testing, and small applications. File-based (single .db file). Limited concurrency but very fast for single-user applications.',
+'psycopg2': 'psycopg2: PostgreSQL adapter for Python. The most popular PostgreSQL driver. Production-ready, high performance, supports advanced PostgreSQL features. Requires PostgreSQL server installation.',
+'orm': 'ORM (Object-Relational Mapping): A technique to work with databases using Python objects instead of SQL. Define classes that map to tables. ORM handles SQL generation, relationships, and migrations automatically.',
+'sqlalchemy': 'SQLAlchemy: The most powerful Python ORM. Provides both ORM (high-level) and Core (low-level SQL) approaches. Supports multiple databases (PostgreSQL, MySQL, SQLite). Industry standard for Python database programming.'
+};
+document.querySelectorAll('.db-prog-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('dbProgTooltip').textContent = dbProgInfo[this.getAttribute('data-tool')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
+</script>
+</body>
+</html>

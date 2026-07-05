@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loop Control - break, continue, pass & else with Loops | Python Interactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.flow-step{fill:#1e293b;stroke:var(--accent);stroke-width:1.5;rx:6}
+.flow-arrow{stroke:#64748b;stroke-width:2;marker-end:url(#fa)}
+.flow-text{fill:#e2e8f0;font-size:12px;text-anchor:middle;font-weight:500}
+.ctrl-node{cursor:pointer;transition:all .3s ease}
+.ctrl-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
+</head>
+<body>
+
+<div class="hero">
+<div class="hero-inner">
+<div class="badge">Module 2 · Chapter 7 · Control Flow</div>
+<h1>Loop Control Statements<br><span>break, continue, pass & else with Loops</span></h1>
+<p>Python provides three statements to control how loops behave. Instead of blindly repeating instructions, you can decide when to stop, when to skip, and when to do nothing.</p>
+<div class="stats">
+<div class="stat"><div class="sn">BCPE</div><div class="sl">Memory Trick</div></div>
+<div class="stat"><div class="sn">break</div><div class="sl">Exit Loop</div></div>
+<div class="stat"><div class="sn">continue</div><div class="sl">Skip Iteration</div></div>
+<div class="stat"><div class="sn">pass</div><div class="sl">Placeholder</div></div>
+</div>
+</div>
+</div>
+
+<div class="wrap">
+
+<!-- Learning Objectives -->
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card">
+<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>Why loop control statements are needed</li>
+<li>The <code>break</code> statement — exit the loop immediately</li>
+<li>The <code>continue</code> statement — skip current iteration</li>
+<li>The <code>pass</code> statement — placeholder that does nothing</li>
+<li><code>else</code> with loops — executes only if loop finishes normally</li>
+<li>Practical loop patterns (search, validation, retry)</li>
+<li>Common mistakes and best practices</li>
+</ul>
+</div>
+
+<!-- Story Section -->
+<div class="sec">📖 The Story — Security Guard</div>
+<div class="story">
+<div class="slabel">Controlling the Flow</div>
+<h3>A security guard checks visitors. Sometimes they stop everything (break), skip one person (continue), or leave a section for later (pass).</h3>
+<p>Imagine a security guard checking visitors. A visitor is carrying prohibited items — the guard immediately stops checking everyone (<strong>break</strong>). Another visitor forgot an ID card — the guard skips that visitor and checks the next one (<strong>continue</strong>). The manager says "We'll implement VIP checking later" — the guard leaves that section empty (<strong>pass</strong>). Python's loop control statements work exactly like this.</p>
+</div>
+
+<!-- Interactive Control Statements -->
+<div class="sec">🔄 Interactive: Loop Control (BCPE)</div>
+<div class="card">
+<p style="color:var(--tm);margin-bottom:12px;">Click on each statement to learn more. Remember: <strong>BCPE</strong> (pronounced "Bee-See-Pee")</p>
+<div class="fig">
+<svg viewBox="0 0 700 280" width="100%" id="ctrlDiagram">
+<defs>
+<marker id="ca" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<!-- break -->
+<rect class="ctrl-node" data-stmt="break" x="20" y="20" width="150" height="80" rx="6" fill="#ef4444"/>
+<text x="95" y="45" fill="white" font-size="14" font-weight="700" text-anchor="middle">break</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Exit loop immediately</text>
+<text x="95" y="82" fill="#94a3b8" font-size="9" text-anchor="middle">Stops entire loop</text>
+
+<!-- continue -->
+<rect class="ctrl-node" data-stmt="continue" x="190" y="20" width="150" height="80" rx="6" fill="#f59e0b"/>
+<text x="265" y="45" fill="white" font-size="14" font-weight="700" text-anchor="middle">continue</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Skip current iteration</text>
+<text x="265" y="82" fill="#94a3b8" font-size="9" text-anchor="middle">Loop continues</text>
+
+<!-- pass -->
+<rect class="ctrl-node" data-stmt="pass" x="360" y="20" width="150" height="80" rx="6" fill="#6366f1"/>
+<text x="435" y="45" fill="white" font-size="14" font-weight="700" text-anchor="middle">pass</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Do nothing</text>
+<text x="435" y="82" fill="#94a3b8" font-size="9" text-anchor="middle">Placeholder</text>
+
+<!-- else -->
+<rect class="ctrl-node" data-stmt="elseloop" x="530" y="20" width="150" height="80" rx="6" fill="#10b981"/>
+<text x="605" y="45" fill="white" font-size="14" font-weight="700" text-anchor="middle">else</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">After normal completion</text>
+<text x="605" y="82" fill="#94a3b8" font-size="9" text-anchor="middle">Skipped if break used</text>
+
+<!-- Memory Trick -->
+<rect x="20" y="130" width="660" height="110" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="155" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: BCPE ("Bee-See-Pee")</text>
+<text x="350" y="180" fill="#fca5a5" font-size="12" text-anchor="middle">B → break (exit loop immediately)</text>
+<text x="350" y="200" fill="#fcd34d" font-size="12" text-anchor="middle">C → continue (skip current iteration)</text>
+<text x="350" y="220" fill="#a5b4fc" font-size="12" text-anchor="middle">P → pass (placeholder, does nothing)</text>
+<text x="350" y="235" fill="#6ee7b7" font-size="12" text-anchor="middle">E → else (executes if loop finishes without break)</text>
+
+<!-- Tooltip -->
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="ctrlTooltip">Click on each statement to learn more</text>
+</svg>
+</div>
+</div>
+
+<!-- break Flowchart -->
+<div class="sec">🔄 break — Exit Loop Immediately</div>
+<div class="card">
+<div class="fig">
+<svg viewBox="0 0 700 200" width="100%">
+<defs>
+<marker id="ba" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker>
+</defs>
+
+<rect class="flow-step" x="250" y="10" width="200" height="30" stroke="#6366f1"/>
+<text class="flow-text" x="350" y="30">for number in range(1, 11):</text>
+
+<line class="flow-arrow" x1="350" y1="40" x2="350" y2="55"/>
+
+<polygon points="350,55 450,80 350,105 250,80" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+<text x="350" y="85" fill="#fcd34d" font-size="10" font-weight="700" text-anchor="middle">number == 5?</text>
+
+<line x1="450" y1="80" x2="520" y2="80" stroke="#ef4444" stroke-width="2" marker-end="url(#ba)"/>
+<text x="485" y="73" fill="#fca5a5" font-size="10">True</text>
+
+<rect class="flow-step" x="520" y="60" width="150" height="40" stroke="#ef4444"/>
+<text class="flow-text" x="595" y="85" fill="#fca5a5">break → Exit Loop</text>
+
+<line x1="250" y1="80" x2="180" y2="80" stroke="#10b981" stroke-width="2" marker-end="url(#ba)"/>
+<text x="215" y="73" fill="#6ee7b7" font-size="10">False</text>
+
+<rect class="flow-step" x="30" y="60" width="150" height="40" stroke="#10b981"/>
+<text class="flow-text" x="105" y="85" fill="#6ee7b7">print(number)</text>
+
+<line class="flow-arrow" x1="105" y1="100" x2="105" y2="130"/>
+<rect class="flow-step" x="30" y="130" width="150" height="30" stroke="#6366f1"/>
+<text class="flow-text" x="105" y="150">Next iteration</text>
+
+<line x1="180" y1="150" x2="250" y2="150" stroke="#64748b" stroke-width="2"/>
+<line x1="250" y1="150" x2="250" y2="105" stroke="#64748b" stroke-width="2" marker-end="url(#ba)"/>
+
+<!-- Output -->
+<rect x="520" y="130" width="150" height="55" rx="6" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="595" y="150" fill="#e2e8f0" font-size="11" font-weight="700" text-anchor="middle">Output</text>
+<text x="595" y="170" fill="#94a3b8" font-size="10" text-anchor="middle">1, 2, 3, 4</text>
+<text x="595" y="182" fill="#94a3b8" font-size="9" text-anchor="middle">(5 is not printed)</text>
+</svg>
+</div>
+</div>
+
+<!-- continue Example -->
+<div class="sec">🔄 continue — Skip Current Iteration</div>
+<div class="defbox">
+<strong>continue</strong> skips the current iteration and immediately moves to the next one. Unlike <code>break</code>, the loop continues executing.<br><br>
+<strong>Example:</strong><br>
+<code>for number in range(1, 8):</code><br>
+<code>&nbsp;&nbsp;if number == 5:</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;continue</code><br>
+<code>&nbsp;&nbsp;print(number)</code><br><br>
+<strong>Output:</strong> 1, 2, 3, 4, 6, 7 (only 5 is skipped)<br><br>
+<strong>Real-world use:</strong> Processing files — skip corrupted files without stopping the entire upload.
+</div>
+
+<!-- break vs continue -->
+<div class="sec">📊 break vs continue</div>
+<table>
+<thead><tr><th>Aspect</th><th>break</th><th>continue</th></tr></thead>
+<tbody>
+<tr><td class="h">Effect</td><td>Stops entire loop</td><td>Skips current iteration</td></tr>
+<tr><td class="h">Loop After</td><td>Loop ends</td><td>Loop continues</td></tr>
+<tr><td class="h">Use Case</td><td>Search found, login success</td><td>Skip invalid data, corrupted files</td></tr>
+<tr><td class="h">Visual</td><td>Emergency stop</td><td>Skip one step</td></tr>
+</tbody>
+</table>
+
+<!-- pass -->
+<div class="sec">⏸️ pass — Placeholder</div>
+<div class="defbox">
+<strong>pass</strong> is a placeholder statement that does nothing. Python doesn't allow empty blocks, so <code>pass</code> is used when syntax requires a statement but no action is needed.<br><br>
+<strong>Example:</strong><br>
+<code>def login():</code><br>
+<code>&nbsp;&nbsp;pass  # Will implement later</code><br><br>
+<strong>Real-world use:</strong> Creating the structure of a program before implementing the details. Teams often create function and class skeletons with <code>pass</code>.
+</div>
+
+<!-- else with Loops -->
+<div class="sec">🔄 else with Loops</div>
+<div class="defbox">
+<strong>else with loops</strong> is a unique Python feature. The <code>else</code> block executes <strong>only if the loop finishes normally</strong> (without hitting <code>break</code>).<br><br>
+<strong>Example — Search:</strong><br>
+<code>products = ["TV", "Laptop", "Phone"]</code><br>
+<code>search = "Tablet"</code><br>
+<code>for product in products:</code><br>
+<code>&nbsp;&nbsp;if product == search:</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;print("Found")</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;break</code><br>
+<code>else:</code><br>
+<code>&nbsp;&nbsp;print("Not Found")</code><br><br>
+<strong>Output:</strong> "Not Found" (because the loop never hit break)<br>
+<strong>Benefit:</strong> No need for extra Boolean variables to track whether an item was found!
+</div>
+
+<!-- Practical Patterns -->
+<div class="sec">🔧 Practical Loop Patterns</div>
+<div class="card">
+<div class="tag-grid">
+<div class="tag-card"><div class="tc">🔍 Search</div><div class="td">for item in items: if found: break</div></div>
+<div class="tag-card"><div class="tc">✅ Validation</div><div class="td">Skip invalid data with continue</div></div>
+<div class="tag-card"><div class="tc">🔄 Retry</div><div class="td">while attempts <= 3: if login(): break</div></div>
+<div class="tag-card"><div class="tc">🌐 Server</div><div class="td">while True: receive_request()</div></div>
+</div>
+</div>
+
+<!-- Common Mistakes -->
+<div class="sec">⚠️ Common Beginner Mistakes</div>
+<div class="card">
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Confusing <code>break</code> and <code>continue</code>.</strong><div class="mini">✔ <code>break</code> stops the entire loop. <code>continue</code> skips only the current iteration. Remember: break = emergency stop, continue = skip one step.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using <code>pass</code> instead of <code>continue</code>.</strong><div class="mini">✔ <code>pass</code> does nothing (placeholder). <code>continue</code> skips the rest of the current iteration and moves to the next one.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Expecting <code>else</code> to execute after <code>break</code>.</strong><div class="mini">✔ The <code>else</code> block runs only if the loop completes normally. If <code>break</code> is used, <code>else</code> is skipped.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Creating unnecessary Boolean variables.</strong><div class="mini">✔ Instead of <code>found = False</code> and checking it after the loop, use <code>for...else</code> which handles this elegantly.</div></div></div>
+</div>
+
+<!-- Interview Questions -->
+<div class="sec">🎯 Interview Questions</div>
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the difference between <code>break</code> and <code>continue</code>?"</strong><div class="mini">"<code>break</code> immediately exits the loop entirely. <code>continue</code> skips only the current iteration and proceeds to the next one. Use <code>break</code> when continuing the loop serves no purpose (e.g., item found in search). Use <code>continue</code> when you want to skip specific cases but continue processing others (e.g., skip corrupted files)."</div></div></div>
+</div>
+
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the purpose of <code>pass</code>?"</strong><div class="mini">"<code>pass</code> is a placeholder statement that tells Python to do nothing. It is used when syntax requires a statement but no action is needed, such as when defining a function or class skeleton that will be implemented later."</div></div></div>
+</div>
+
+<div class="card">
+<div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How does <code>else</code> work with loops?"</strong><div class="mini">"The <code>else</code> block executes only if the loop completes normally without hitting a <code>break</code> statement. This is useful for search operations—if the item is found, we break and skip the else. If the item is not found, the else block executes, indicating the item was not in the collection."</div></div></div>
+</div>
+
+<!-- Chapter Summary -->
+<div class="sec">📋 Chapter Summary / Cheat Sheet</div>
+<table>
+<thead><tr><th>Statement</th><th>Purpose</th><th>Example</th></tr></thead>
+<tbody>
+<tr><td class="h"><code>break</code></td><td>Exit the loop immediately</td><td><code>if found: break</code></td></tr>
+<tr><td class="h"><code>continue</code></td><td>Skip the current iteration</td><td><code>if invalid: continue</code></td></tr>
+<tr><td class="h"><code>pass</code></td><td>Placeholder, does nothing</td><td><code>def func(): pass</code></td></tr>
+<tr><td class="h"><code>else</code> (loop)</td><td>Executes if loop finishes without break</td><td><code>for x in y: ... else: ...</code></td></tr>
+</tbody>
+</table>
+
+<!-- Module Complete -->
+<div class="sec">✅ Module 2 Complete</div>
+<div class="story">
+<div class="slabel">Control Flow Mastered</div>
+<h3>You now understand Python Control Flow!</h3>
+<p>You have mastered: decision making with <code>if</code>/<code>elif</code>/<code>else</code>, loops with <code>while</code> and <code>for</code>, and loop control with <code>break</code>/<code>continue</code>/<code>pass</code>/<code>else</code>.</p>
+<p><strong>Next: Module 3 — Functions</strong> — Learn one of the most important concepts in programming: how to create reusable code with parameters, return values, scope, and recursion.</p>
+</div>
+</div>
+
+<script>
+const ctrlInfo = {
+'break': 'break: Immediately terminates the nearest enclosing loop. Execution continues with the first statement after the loop. Used when continuing the loop serves no purpose—like finding an item in a search or successful login.',
+'continue': 'continue: Skips the remaining statements in the current iteration and moves to the next iteration. The loop does NOT stop—only the current iteration is skipped. Used to ignore unwanted cases like corrupted files.',
+'pass': 'pass: A placeholder statement that does nothing. Python requires a statement in certain blocks, and pass satisfies that requirement without taking any action. Used for function/class skeletons during development.',
+'elseloop': 'else with loops: A unique Python feature. The else block executes only if the loop finishes normally (without break). Perfect for search operations—no need for extra Boolean variables to track whether an item was found.'
+};
+
+document.querySelectorAll('.ctrl-node').forEach(node => {
+node.addEventListener('click', function(e) {
+const stmt = this.getAttribute('data-stmt');
+const tooltip = document.getElementById('ctrlTooltip');
+tooltip.textContent = ctrlInfo[stmt] || '';
+});
+});
+
+function checkQuiz(el, correct) {
+const parent = el.parentElement;
+const feedback = parent.querySelector('.quiz-feedback');
+const opts = parent.querySelectorAll('.quiz-opt');
+opts.forEach(o => { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
+feedback.classList.add('show');
+if (correct) feedback.classList.add('correct');
+else feedback.classList.add('wrong');
+}
+</script>
+</body>
+</html>
