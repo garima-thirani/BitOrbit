@@ -3,59 +3,163 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Module 13 — Testing & Debugging | Python Interactive</title>
+<title>Debugging - pdb, Logging, Assertions & Troubleshooting | Python Interactive</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.debug-node{cursor:pointer;transition:all .3s ease}
+.debug-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
 </head>
 <body>
-
-<div class="hero">
-<div class="hero-inner">
-<div class="badge">Module 13 · Chapter 47</div>
-<h1>Module 13 — Testing & Debugging<br><span>Q1. What is Debugging?</span></h1>
-<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
-<div class="stats">
-<div class="stat"><div class="sn">Q1. What</div><div class="sl">is Debugging?</div></div><div class="stat"><div class="sn">Q2. What</div><div class="sl">is the purpose of `pdb`?</div></div><div class="stat"><div class="sn">Q3. What</div><div class="sl">is an Assertion?</div></div><div class="stat"><div class="sn">Q4. Why</div><div class="sl">is Logging preferred over `print()`?</div></div>
-</div>
-</div>
-</div>
-
+<div class="hero"><div class="hero-inner"><div class="badge">Module 13 · Chapter 47 · Debugging</div>
+<h1>Debugging & Troubleshooting<br><span>pdb, Logging, Assertions & Finding Bugs</span></h1>
+<p>Master Python debugging techniques including pdb debugger, logging, assertions, and systematic approaches to finding and fixing bugs.</p>
+<div class="stats"><div class="stat"><div class="sn">PLA</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">Print</div><div class="sl">Simple</div></div><div class="stat"><div class="sn">Logging</div><div class="sl">Professional</div></div><div class="stat"><div class="sn">Assert</div><div class="sl">Validate</div></div></div></div></div>
 <div class="wrap">
-
-<div class="sec">Q1. What is Debugging?</div>
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>What is Debugging?</li>
+<li>Types of Bugs</li>
+<li>Reading Tracebacks</li>
+<li>Print Debugging</li>
+<li>Python Debugger (pdb)</li>
+<li>Assertions</li>
+<li>Logging Fundamentals</li>
+<li>Logging Levels</li>
+<li>Logging to Files</li>
+<li>Debugging Best Practices</li>
+</ul></div>
+<div class="sec">📖 The Story — Detective</div>
+<div class="story"><div class="slabel">Investigation</div>
+<h3>A detective investigates a crime scene by collecting clues, analyzing evidence, and identifying the culprit. Debugging works the same way - systematically investigating bugs.</h3>
+<p>Imagine a detective solving a mystery. They don't immediately know who committed the crime. Instead, they collect clues, interview witnesses, analyze evidence, and piece together what happened. <strong>Debugging</strong> works exactly the same way. When your program behaves unexpectedly, you systematically investigate: read error messages, examine variable values, trace execution flow, and identify the root cause.</p></div>
+<div class="sec">🔄 Interactive: Debugging Tools (PLA)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each tool. Remember: <strong>PLA</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="debugDiagram">
+<defs><marker id="da" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="debug-node" data-tool="print" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Print</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Simple debugging</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Quick & easy</text>
+<rect class="debug-node" data-tool="logging" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Logging</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Professional</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Production-ready</text>
+<rect class="debug-node" data-tool="assert" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Assertions</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Validate assumptions</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Catch errors early</text>
+<rect class="debug-node" data-tool="pdb" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">pdb</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Interactive debugger</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Step through code</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: PLA ("Pee-El-Ay")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">P → Print (quick and simple debugging)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">L → Logging (professional, production-ready)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">A → Assertions (validate assumptions)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">For serious debugging: pdb + tracebacks</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="debugTooltip">Click on each tool to learn more</text>
+</svg></div></div>
+<div class="sec">📊 Bug Types</div>
+<table><thead><tr><th>Bug Type</th><th>Description</th><th>Example</th></tr></thead><tbody>
+<tr><td class="h">Syntax Error</td><td>Code won't run</td><td>Missing colon, typo</td></tr>
+<tr><td class="h">Runtime Error</td><td>Crashes during execution</td><td>ZeroDivisionError</td></tr>
+<tr><td class="h">Logical Error</td><td>Wrong output</td><td>Incorrect formula</td></tr>
+<tr><td class="h">Performance</td><td>Too slow</td><td>Inefficient algorithm</td></tr>
+</tbody></table>
+<div class="sec">🔧 Print Debugging Example</div>
+<div class="defbox"><strong>Simple debugging with print:</strong><br><br>
+<code>def calculate_average(numbers):</code><br>
+<code>&nbsp;&nbsp;print(f"Input: {numbers}")  # Debug</code><br>
+<code>&nbsp;&nbsp;total = sum(numbers)</code><br>
+<code>&nbsp;&nbsp;print(f"Total: {total}")  # Debug</code><br>
+<code>&nbsp;&nbsp;count = len(numbers)</code><br>
+<code>&nbsp;&nbsp;print(f"Count: {count}")  # Debug</code><br>
+<code>&nbsp;&nbsp;average = total / count</code><br>
+<code>&nbsp;&nbsp;print(f"Average: {average}")  # Debug</code><br>
+<code>&nbsp;&nbsp;return average</code><br><br>
+<code># Simple but effective for quick debugging</code></div>
+<div class="sec">🔧 pdb Debugger Example</div>
+<div class="defbox"><strong>Interactive debugging with pdb:</strong><br><br>
+<code>import pdb</code><br><br>
+<code>def buggy_function(x, y):</code><br>
+<code>&nbsp;&nbsp;pdb.set_trace()  # Breakpoint</code><br>
+<code>&nbsp;&nbsp;result = x + y</code><br>
+<code>&nbsp;&nbsp;pdb.set_trace()  # Another breakpoint</code><br>
+<code>&nbsp;&nbsp;return result * 2</code><br><br>
+<code># When execution stops at breakpoint:</code><br>
+<code># (pdb) p x       # Print variable x</code><br>
+<code># (pdb) p y       # Print variable y</code><br>
+<code># (pdb) n         # Next line</code><br>
+<code># (pdb) c         # Continue</code><br>
+<code># (pdb) q         # Quit</code></div>
+<div class="sec">🔧 Logging Example</div>
+<div class="defbox"><strong>Professional logging:</strong><br><br>
+<code>import logging</code><br><br>
+<code># Configure logging</code><br>
+<code>logging.basicConfig(</code><br>
+<code>&nbsp;&nbsp;level=logging.INFO,</code><br>
+<code>&nbsp;&nbsp;format='%(asctime)s - %(levelname)s - %(message)s',</code><br>
+<code>&nbsp;&nbsp;filename='app.log'</code><br>
+<code>)</code><br><br>
+<code>def process_data(data):</code><br>
+<code>&nbsp;&nbsp;logging.info(f"Processing {len(data)} items")</code><br>
+<code>&nbsp;&nbsp;try:</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;result = sum(data) / len(data)</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;logging.info(f"Result: {result}")</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;return result</code><br>
+<code>&nbsp;&nbsp;except Exception as e:</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;logging.error(f"Error: {e}")</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;raise</code></div>
+<div class="sec">🔧 Assertions Example</div>
+<div class="defbox"><strong>Using assertions for validation:</strong><br><br>
+<code>def divide(a, b):</code><br>
+<code>&nbsp;&nbsp;# Validate inputs</code><br>
+<code>&nbsp;&nbsp;assert isinstance(a, (int, float)), "a must be numeric"</code><br>
+<code>&nbsp;&nbsp;assert isinstance(b, (int, float)), "b must be numeric"</code><br>
+<code>&nbsp;&nbsp;assert b != 0, "Cannot divide by zero"</code><br>
+<code>&nbsp;&nbsp;</code><br>
+<code>&nbsp;&nbsp;return a / b</code><br><br>
+<code># Assertions catch programming errors early</code><br>
+<code># They can be disabled with python -O</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
 <div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Debugging is the process of identifying,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">analyzing,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and fixing bugs in a program.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It involves reproducing issues,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">inspecting program state,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and verifying that the fix works.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using print() for everything.</strong><div class="mini">✔ Use logging for production code. Print is fine for quick debugging but lacks levels, timestamps, and file output.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Not reading tracebacks carefully.</strong><div class="mini">✔ Read the last line first - it tells you the error. Then trace up to find where it happened.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using assertions for user input validation.</strong><div class="mini">✔ Assertions are for catching programmer errors, not validating user input. Use proper error handling for user input.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Debugging in production.</strong><div class="mini">✔ Use logging, not pdb, in production. pdb halts execution and shouldn't be left in code.</div></div></div>
 </div>
-<div class="sec">Q2. What is the purpose of `pdb`?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>pdb</code> is Python's built-in interactive debugger.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It allows developers to pause execution,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">inspect variables,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">step through code,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and understand program behavior line by line.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How do you debug a Python program?"</strong><div class="mini">"I follow a systematic approach: 1) Read the error message and traceback carefully. 2) Use print statements or logging to inspect variable values. 3) Use pdb for interactive debugging - set breakpoints, step through code, inspect state. 4) Check recent changes. 5) Write a minimal reproduction. 6) Fix and verify. For production, I use structured logging with different severity levels."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What's the difference between logging and print?"</strong><div class="mini">"Print is simple output to stdout. Logging provides: severity levels (DEBUG, INFO, WARNING, ERROR), timestamps, formatting, output to files, configurable verbosity, and better performance. Logging is production-ready. Print is for quick debugging. Professional applications always use logging."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Tool</th><th>Purpose</th><th>Use Case</th></tr></thead><tbody>
+<tr><td class="h">Print</th><td>Quick debugging</td><td>Development only</td></tr>
+<tr><td class="h">pdb</td><td>Interactive debugging</td><td>Complex issues</td></tr>
+<tr><td class="h">Logging</td><td>Production monitoring</td><td>Always in production</td></tr>
+<tr><td class="h">Assertions</td><td>Validate assumptions</td><td>Development checks</td></tr>
+<tr><td class="h">Traceback</td><td>Error location</td><td>Read last line first</td></tr>
+<tr><td class="h">Memory Trick</td><td colspan="2"><strong>PLA</strong> = Print, Logging, Assertions</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 48: Mocking & Code Coverage</h3><p>Learn advanced testing techniques with <strong>mocking, test doubles, and code coverage</strong> for comprehensive test suites.</p></div>
 </div>
-<div class="sec">Q3. What is an Assertion?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">An assertion verifies that a condition is true.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">If the condition evaluates to <code>False</code>,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Python raises an <code>AssertionError</code>.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Assertions are mainly used to catch programming mistakes during development.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q4. Why is Logging preferred over `print()`?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Logging supports</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Multiple severity levels</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Writing to files</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Configurable output</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Better debugging in production</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Unlike <code>print()</code>,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">logs remain available after the program finishes.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q5. What are the different Logging Levels?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Python defines five primary logging levels:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">DEBUG</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">INFO</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">WARNING</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">ERROR</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">CRITICAL</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Each level represents increasing severity.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Concept | Purpose |<br>|----------|----------|<br>| Debugging | Find and fix bugs |<br>| Traceback | Shows where an error occurred |<br>| <code>print()</code> | Simple debugging |<br>| <code>pdb</code> | Interactive debugger |<br>| <code>assert</code> | Verify assumptions |<br>| <code>logging</code> | Record application events |<br>| DEBUG | Detailed diagnostics |<br>| INFO | General events |<br>| WARNING | Potential issues |<br>| ERROR | Operation failed |<br>| CRITICAL | Severe failure |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Chapter 48 — Mocking & Code Coverage**, you'll learn advanced testing techniques:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Mock Objects</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>unittest.mock</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Mocking APIs and Databases</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Measuring Test Coverage</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Coverage Reports</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These tools are essential for testing large applications where real external systems are unavailable or expensive to use.</p>
-</div>
-</div>
-
 <script>
-function checkQuiz(el, correct) {
-  const parent = el.parentElement;
-  const feedback = parent.querySelector('.quiz-feedback');
-  const opts = parent.querySelectorAll('.quiz-opt');
-  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
-  feedback.classList.add('show');
-  if (correct) feedback.classList.add('correct');
-  else feedback.classList.add('wrong');
-}
+const debugInfo = {
+'print': 'Print: Simplest debugging tool. Add print() statements to inspect values. Fast and easy. Good for quick checks. Bad for production (no timestamps, levels, or persistence). Remove or replace with logging before committing code.',
+'logging': 'Logging: Professional logging system. Levels: DEBUG, INFO, WARNING, ERROR, CRITICAL. Timestamps, formatting, file output. Configurable at runtime. Production-ready. Use logging.info(), logging.error(), etc. Better than print for serious applications.',
+'assert': 'Assertions: Validate assumptions during development. assert condition, "message". Raises AssertionError if false. Catches programmer errors early. Can be disabled with -O flag. Not for user input validation - use proper error handling.',
+'pdb': 'pdb: Python debugger. Insert pdb.set_trace() to pause execution. Commands: n (next), s (step), c (continue), p var (print), l (list), q (quit). Interactive inspection of variables and flow. Essential for complex bugs. Remove before production.'
+};
+document.querySelectorAll('.debug-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('debugTooltip').textContent = debugInfo[this.getAttribute('data-tool')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
 </script>
 </body>
 </html>

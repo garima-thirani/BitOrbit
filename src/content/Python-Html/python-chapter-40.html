@@ -3,67 +3,156 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Module 11 — Concurrency & Parallelism | Python Interactive</title>
+<title>Multiprocessing - Process Pools, IPC & Parallel Execution | Python Interactive</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.mp-node{cursor:pointer;transition:all .3s ease}
+.mp-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
 </head>
 <body>
-
-<div class="hero">
-<div class="hero-inner">
-<div class="badge">Module 11 · Chapter 40</div>
-<h1>Module 11 — Concurrency & Parallelism<br><span>CPU-bound</span></h1>
-<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
-<div class="stats">
-<div class="stat"><div class="sn">CPU-bound</div><div class="sl"></div></div><div class="stat"><div class="sn">IO-bound</div><div class="sl"></div></div><div class="stat"><div class="sn">Q1. What</div><div class="sl">is Multiprocessing?</div></div><div class="stat"><div class="sn">Q2. Why</div><div class="sl">is Multiprocessing faster than Threading for CPU-bound tasks?</div></div>
-</div>
-</div>
-</div>
-
+<div class="hero"><div class="hero-inner"><div class="badge">Module 11 · Chapter 40 · Multiprocessing</div>
+<h1>Multiprocessing<br><span>Process Pools, IPC & Parallel Execution</span></h1>
+<p>Learn Python multiprocessing for CPU-bound tasks, process pools, inter-process communication, and bypassing the GIL for true parallelism.</p>
+<div class="stats"><div class="stat"><div class="sn">PQP</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">Process</div><div class="sl">Independent</div></div><div class="stat"><div class="sn">Queue</div><div class="sl">IPC</div></div><div class="stat"><div class="sn">Pool</div><div class="sl">Reuse</div></div></div></div></div>
 <div class="wrap">
-
-<div class="sec">CPU-bound</div>
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>Why Multiprocessing is Needed</li>
+<li>Threads vs Processes</li>
+<li>CPU-bound vs IO-bound Tasks</li>
+<li>Creating Processes</li>
+<li>Process Lifecycle</li>
+<li>Process Pool</li>
+<li>Inter-Process Communication (IPC)</li>
+<li>Queue, Pipe, Shared Memory</li>
+<li>Process Synchronization</li>
+<li>When to Use Multiprocessing</li>
+</ul></div>
+<div class="sec">📖 The Story — Bakery</div>
+<div class="story"><div class="slabel">Parallel Work</div>
+<h3>One chef making bread, cake, cookies, and pizza is slow. Four chefs working simultaneously finish much faster. This is multiprocessing.</h3>
+<p>Imagine a bakery where one chef must make bread, cake, cookies, and pizza. Even with multiple hands, one chef can only work so fast. Now imagine hiring four chefs, each making one item simultaneously. The bakery finishes much faster. <strong>Multiprocessing</strong> works the same way. Instead of using multiple threads inside one process, Python creates multiple independent processes, each with its own Python interpreter and memory space.</p></div>
+<div class="sec">📊 Multiprocessing Concepts (PQP)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Memory Trick: <strong>PQP</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%">
+<defs><marker id="mpa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Process</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Independent execution</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Separate memory</text>
+<rect x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Queue</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">IPC mechanism</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Process communication</text>
+<rect x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Pool</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Worker processes</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Reuse workers</text>
+<rect x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Bypass GIL</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">True parallelism</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">CPU-bound tasks</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: PQP ("Pee-Queue-Pee")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">P → Process (independent execution, separate memory)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">Q → Queue (IPC, communicate between processes)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">P → Pool (reuse worker processes, efficient)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">Bypass GIL for true CPU parallelism</text>
+</svg></div></div>
+<div class="sec">📊 Threads vs Processes</div>
+<table><thead><tr><th>Aspect</th><th>Threads</th><th>Processes</th></tr></thead><tbody>
+<tr><td class="h">Memory</td><td>Shared memory</td><td>Separate memory</td></tr>
+<tr><td class="h">Weight</td><td>Lightweight</td><td>Heavier</td></tr>
+<tr><td class="h">Creation</td><td>Faster</td><td>Slower</td></tr>
+<tr><td class="h">GIL Impact</td><td>Limited by GIL</td><td>Bypasses GIL</td></tr>
+<tr><td class="h">Best For</td><td>IO-bound tasks</td><td>CPU-bound tasks</td></tr>
+</tbody></table>
+<div class="sec">🔧 Creating Process Example</div>
+<div class="defbox"><strong>Basic multiprocessing example:</strong><br><br>
+<code>from multiprocessing import Process</code><br>
+<code>import time</code><br><br>
+<code>def task(name):</code><br>
+<code>&nbsp;&nbsp;print(f"{name} started")</code><br>
+<code>&nbsp;&nbsp;time.sleep(2)</code><br>
+<code>&nbsp;&nbsp;print(f"{name} finished")</code><br><br>
+<code># Create processes</code><br>
+<code>p1 = Process(target=task, args=("Process-1",))</code><br>
+<code>p2 = Process(target=task, args=("Process-2",))</code><br><br>
+<code># Start processes</code><br>
+<code>p1.start()</code><br>
+<code>p2.start()</code><br><br>
+<code># Wait for completion</code><br>
+<code>p1.join()</code><br>
+<code>p2.join()</code><br>
+<code>print("All processes completed")</code></div>
+<div class="sec">🔧 Process Pool Example</div>
+<div class="defbox"><strong>Using ProcessPool for efficient task distribution:</strong><br><br>
+<code>from multiprocessing import Pool</code><br>
+<code>import math</code><br><br>
+<code>def square(x):</code><br>
+<code>&nbsp;&nbsp;return x * x</code><br><br>
+<code># Create pool with 4 worker processes</code><br>
+<code>with Pool(4) as pool:</code><br>
+<code>&nbsp;&nbsp;# Map function to data</code><br>
+<code>&nbsp;&nbsp;results = pool.map(square, [1, 2, 3, 4, 5])</code><br><br>
+<code>print(results)</code><br>
+<code># Output: [1, 4, 9, 16, 25]</code></div>
+<div class="sec">🔧 Queue for IPC Example</div>
+<div class="defbox"><strong>Inter-process communication with Queue:</strong><br><br>
+<code>from multiprocessing import Process, Queue</code><br><br>
+<code>def producer(q):</code><br>
+<code>&nbsp;&nbsp;q.put("Hello from producer")</code><br><br>
+<code>def consumer(q):</code><br>
+<code>&nbsp;&nbsp;message = q.get()</code><br>
+<code>&nbsp;&nbsp;print(f"Received: {message}")</code><br><br>
+<code># Create queue</code><br>
+<code>q = Queue()</code><br><br>
+<code># Create processes</code><br>
+<code>p1 = Process(target=producer, args=(q,))</code><br>
+<code>p2 = Process(target=consumer, args=(q,))</code><br><br>
+<code>p1.start()</code><br>
+<code>p2.start()</code><br>
+<code>p1.join()</code><br>
+<code>p2.join()</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
 <div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br>Examples</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">Video Encoding</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Image Processing</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Scientific Simulation</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Machine Learning Training</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Use</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">Multiprocessing</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">to utilize multiple CPU cores.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using threads for CPU-intensive tasks.</strong><div class="mini">✔ Due to GIL, use multiprocessing for CPU-bound work to achieve true parallelism.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Forgetting if __name__ == "__main__" guard.</strong><div class="mini">✔ On Windows, multiprocessing requires this guard to prevent infinite process creation.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Creating too many processes.</strong><div class="mini">✔ Use Pool() to reuse worker processes instead of creating new ones for each task.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Assuming processes share variables.</strong><div class="mini">✔ Each process has separate memory. Use Queue, Pipe, or Shared Memory for communication.</div></div></div>
 </div>
-<div class="sec">IO-bound</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br>Examples</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">Downloading Files</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Reading Files</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Database Queries</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">API Calls</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Threads or Asyncio are usually better.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Multiprocessing vs Threading</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Multiprocessing | Threading |<br>|-----------------|-----------|<br>| Separate memory | Shared memory |<br>| Multiple CPU cores | Limited by GIL |<br>| Higher overhead | Lower overhead |<br>| CPU-intensive tasks | IO-intensive tasks |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Real-World Example</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Imagine a video editing application.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Each video frame is processed independently.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">Video</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Frame 1 → Process 1</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Frame 2 → Process 2</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Frame 3 → Process 3</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Frame 4 → Process 4</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">All CPU cores work simultaneously,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">dramatically reducing rendering time.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Memory Trick</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Remember</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">PQP</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><strong style="color:#e2e8f0">P</strong></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Process</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><strong style="color:#e2e8f0">Q</strong></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Queue</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><strong style="color:#e2e8f0">P</strong></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Pool</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Also remember</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">CPU</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Multiprocessing</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">----------------</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">IO</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Threads / Asyncio</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Common Beginner Mistakes</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Mistake 1</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Using threads for CPU-intensive work.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Because of the GIL,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">threads won't fully utilize multiple CPU cores.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Mistake 2</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Creating too many processes.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Process creation is expensive.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Prefer</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">Pool()</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">for many tasks.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Mistake 3</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Assuming processes share variables.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Each process has its own memory.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Use</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Queue</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Pipe</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Shared Memory</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">to exchange data.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Mistake 4</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Forgetting</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">if __name__ == "__main__":</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">When using multiprocessing,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">especially on Windows,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">the entry point should be protected.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Example</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">if __name__ == "__main__":</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">    main()</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Without this,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">child processes may repeatedly create new processes.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Interview Questions & Answers<br></p>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is multiprocessing and when should you use it?"</strong><div class="mini">"Multiprocessing creates multiple independent processes, each with its own Python interpreter and memory space. Use it for CPU-intensive tasks like image processing, machine learning, or scientific computing. It bypasses the GIL, allowing true parallel execution on multiple CPU cores."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the difference between threading and multiprocessing?"</strong><div class="mini">"Threading creates lightweight threads within a process that share memory, but is limited by the GIL for CPU-bound tasks. Multiprocessing creates separate processes with independent memory, bypassing the GIL for true parallelism. Threads are better for IO-bound tasks, processes for CPU-bound tasks."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Concept</th><th>Description</th></tr></thead><tbody>
+<tr><td class="h">Process</td><td>Independent execution unit with separate memory</td></tr>
+<tr><td class="h">Process()</td><td>Create a new process</td></tr>
+<tr><td class="h">start()</td><td>Start process execution</td></tr>
+<tr><td class="h">join()</td><td>Wait for process completion</td></tr>
+<tr><td class="h">Pool</td><td>Reuse worker processes for multiple tasks</td></tr>
+<tr><td class="h">Queue</td><td>IPC mechanism for process communication</td></tr>
+<tr><td class="h">Pipe</td><td>Two-way communication between processes</td></tr>
+<tr><td class="h">Memory Trick</td><td><strong>PQP</strong> = Process, Queue, Pool</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 41: Asyncio</h3><p>Learn Python's modern <strong>asynchronous programming</strong> with async/await, event loops, and coroutines for high-performance IO-bound applications.</p></div>
 </div>
-<div class="sec">Q1. What is Multiprocessing?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Multiprocessing is the execution of multiple independent processes simultaneously.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Each process has its own Python interpreter and memory space.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It is ideal for CPU-intensive tasks.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q2. Why is Multiprocessing faster than Threading for CPU-bound tasks?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Threads are limited by Python's Global Interpreter Lock (GIL).</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Processes bypass the GIL because each process has its own interpreter.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Therefore,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">multiple CPU cores can execute Python code simultaneously.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q3. What is the difference between a Queue and a Pipe?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><strong style="color:#e2e8f0">Queue</strong></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Supports multiple producers and consumers.</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Easier to use.</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Thread/process safe.</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><strong style="color:#e2e8f0">Pipe</strong></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Connects exactly two processes.</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Slightly lower overhead.</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Good for direct communication.</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q4. What is a Process Pool?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">A Process Pool maintains a fixed number of worker processes and reuses them for multiple tasks.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Benefits include:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Lower creation overhead</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Better CPU utilization</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Simpler task distribution</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q5. When should you use Multiprocessing?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Use multiprocessing for CPU-intensive workloads such as:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Image Processing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Machine Learning</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Scientific Computing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Data Compression</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Encryption</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">For IO-bound workloads,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">prefer Threads or Asyncio.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Concept | Purpose |<br>|----------|----------|<br>| Process | Independent execution unit |<br>| <code>Process()</code> | Create a process |<br>| <code>start()</code> | Start process |<br>| <code>join()</code> | Wait for completion |<br>| Pool | Reuse worker processes |<br>| Queue | Process communication |<br>| Pipe | Two-way communication |<br>| Shared Memory | Share data between processes |<br>| Multiprocessing | Best for CPU-bound tasks |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Chapter 41 — Asyncio**, you'll learn Python's modern asynchronous programming model:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Event Loop</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Coroutines</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>async</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>await</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Tasks</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>asyncio.gather()</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Async Generators</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Async Context Managers</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">This is the foundation of modern frameworks like **FastAPI**, **aiohttp**, and high-performance network applications.</p>
-</div>
-</div>
-
 <script>
-function checkQuiz(el, correct) {
-  const parent = el.parentElement;
-  const feedback = parent.querySelector('.quiz-feedback');
-  const opts = parent.querySelectorAll('.quiz-opt');
-  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
-  feedback.classList.add('show');
-  if (correct) feedback.classList.add('correct');
-  else feedback.classList.add('wrong');
-}
+const mpInfo = {
+'process': 'Process: Independent execution unit with its own memory space. Created using multiprocessing.Process(). Each process has its own Python interpreter, bypassing the GIL. Use start() to begin, join() to wait. Best for CPU-intensive tasks.',
+'queue': 'Queue: Inter-Process Communication (IPC) mechanism. Allows safe data exchange between processes. Process-safe, handles serialization automatically. Use queue.put() to send, queue.get() to receive. Alternative: Pipe for two-way communication.',
+'pool': 'Pool: ProcessPool maintains reusable worker processes. More efficient than creating new processes for each task. Use pool.map() for batch processing, pool.apply() for single tasks. Automatically manages worker lifecycle.',
+'gil': 'Bypass GIL: Each process has its own Python interpreter and GIL. Multiple processes can execute Python bytecode simultaneously on different CPU cores. This is why multiprocessing achieves true parallelism for CPU-bound tasks.'
+};
+document.querySelectorAll('.mp-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('mpTooltip').textContent = mpInfo[this.getAttribute('data-concept')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
 </script>
 </body>
 </html>

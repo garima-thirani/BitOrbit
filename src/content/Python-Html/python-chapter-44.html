@@ -3,59 +3,153 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Module 12 — Memory Management | Python Interactive</title>
+<title>Garbage Collection - Reference Counting, gc Module & Memory Management | Python Interactive</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.gc-node{cursor:pointer;transition:all .3s ease}
+.gc-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
 </head>
 <body>
-
-<div class="hero">
-<div class="hero-inner">
-<div class="badge">Module 12 · Chapter 44</div>
-<h1>Module 12 — Memory Management<br><span>Q1. How does Python manage memory?</span></h1>
-<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
-<div class="stats">
-<div class="stat"><div class="sn">Q1. How</div><div class="sl">does Python manage memory?</div></div><div class="stat"><div class="sn">Q2. What</div><div class="sl">is Reference Counting?</div></div><div class="stat"><div class="sn">Q3. Why</div><div class="sl">does Python need a Garbage Collector if it already has Reference Counting?</div></div><div class="stat"><div class="sn">Q4. What</div><div class="sl">is the `gc` module?</div></div>
-</div>
-</div>
-</div>
-
+<div class="hero"><div class="hero-inner"><div class="badge">Module 12 · Chapter 44 · Garbage Collection</div>
+<h1>Garbage Collection<br><span>Reference Counting, gc Module & Memory Management</span></h1>
+<p>Learn how Python automatically manages memory through reference counting and garbage collection, handling circular references and optimizing memory usage.</p>
+<div class="stats"><div class="stat"><div class="sn">RCG</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">Reference</div><div class="sl">Count</div></div><div class="stat"><div class="sn">Circular</div><div class="sl">References</div></div><div class="stat"><div class="sn">GC</div><div class="sl">Cleanup</div></div></div></div></div>
 <div class="wrap">
-
-<div class="sec">Q1. How does Python manage memory?</div>
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>Why Garbage Collection is Needed</li>
+<li>What is Garbage?</li>
+<li>Reference Counting</li>
+<li>How Reference Counting Works</li>
+<li>Circular References Problem</li>
+<li>Python Garbage Collector</li>
+<li>The gc Module</li>
+<li>Manual Garbage Collection</li>
+<li>Weak References</li>
+<li>Memory Management Best Practices</li>
+</ul></div>
+<div class="sec">📖 The Story — Library Books</div>
+<div class="story"><div class="slabel">Return Books</div>
+<h3>A library lends books, tracks borrowers, and re-shelves returned books. Python's garbage collector works like a librarian, reclaiming memory from unused objects.</h3>
+<p>Imagine a library where books are borrowed and returned. When someone loses interest in a book and returns it, the librarian puts it back on the shelf for others to use. Without this system, the library would run out of space. Python's <strong>Garbage Collector</strong> works the same way. When objects are no longer needed, it automatically frees their memory so it can be reused.</p></div>
+<div class="sec">🔄 Interactive: Garbage Collection (RCG)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each concept. Remember: <strong>RCG</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="gcDiagram">
+<defs><marker id="ga" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="gc-node" data-concept="refcount" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Reference Count</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Track references</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Count = 0 → delete</text>
+<rect class="gc-node" data-concept="circular" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Circular Ref</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">A → B → A</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Memory leak risk</text>
+<rect class="gc-node" data-concept="garbage" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Garbage</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Unreachable</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Free memory</text>
+<rect class="gc-node" data-concept="gcm" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">gc Module</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Control GC</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Manual cleanup</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: RCG ("Arr-See-Jee")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">R → Reference Counting (primary mechanism)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">C → Circular References (GC handles these)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">G → Garbage Collector (cyclic GC)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">Python automatically manages memory</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="gcTooltip">Click on each concept to learn more</text>
+</svg></div></div>
+<div class="sec">📊 Memory Management</div>
+<table><thead><tr><th>Mechanism</th><th>Purpose</th><th>Handles</th></tr></thead><tbody>
+<tr><td class="h">Reference Counting</td><td>Primary method</td><td>Most objects</td></tr>
+<tr><td class="h">Garbage Collector</td><td>Cyclic GC</td><td>Circular references</td></tr>
+<tr><td class="h">Memory Pool</td><td>Small objects</td><td>Efficient allocation</td></tr>
+</tbody></table>
+<div class="sec">🔧 Reference Counting Example</div>
+<div class="defbox"><strong>Understanding reference counting:</strong><br><br>
+<code>import sys</code><br><br>
+<code># Create object</code><br>
+<code>x = [1, 2, 3]</code><br>
+<code>print(sys.getrefcount(x))  # 2 (x + getrefcount)</code><br><br>
+<code># Add reference</code><br>
+<code>y = x</code><br>
+<code>print(sys.getrefcount(x))  # 3</code><br><br>
+<code># Remove reference</code><br>
+<code>y = None</code><br>
+<code>print(sys.getrefcount(x))  # 2</code><br><br>
+<code># When count reaches 0, object is deleted</code><br>
+<code>x = None</code><br>
+<code># Object is now eligible for GC</code></div>
+<div class="sec">🔧 Circular Reference Example</div>
+<div class="defbox"><strong>Problem of circular references:</strong><br><br>
+<code>class Node:</code><br>
+<code>&nbsp;&nbsp;def __init__(self, name):</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;self.name = name</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;self.ref = None</code><br><br>
+<code># Create circular reference</code><br>
+<code>a = Node("A")</code><br>
+<code>b = Node("B")</code><br>
+<code>a.ref = b</code><br>
+<code>b.ref = a  # Circular!</code><br><br>
+<code># Remove external references</code><br>
+<code>a = None</code><br>
+<code>b = None</code><br><br>
+<code># Objects still exist due to circular ref</code><br>
+<code># Garbage Collector will clean them up</code></div>
+<div class="sec">🔧 Using gc Module</div>
+<div class="defbox"><strong>Controlling garbage collection:</strong><br><br>
+<code>import gc</code><br><br>
+<code># Check if GC is enabled</code><br>
+<code>print(gc.isenabled())  # True</code><br><br>
+<code># Disable GC</code><br>
+<code>gc.disable()</code><br><br>
+<code># Enable GC</code><br>
+<code>gc.enable()</code><br><br>
+<code># Manually trigger GC</code><br>
+<code>collected = gc.collect()</code><br>
+<code>print(f"Collected {collected} objects")</code><br><br>
+<code># Get GC stats</code><br>
+<code>print(gc.get_stats())</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
 <div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Python primarily uses **reference counting**.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">When an object's reference count becomes zero,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">its memory is immediately reclaimed.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">To handle objects involved in circular references,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Python also uses a cyclic **Garbage Collector**.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Thinking GC collects everything immediately.</strong><div class="mini">✔ Reference counting deletes most objects immediately. GC only handles circular references periodically.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Creating unnecessary circular references.</strong><div class="mini">✔ Be careful with mutual references. Use weakref when appropriate.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Calling gc.collect() too frequently.</strong><div class="mini">✔ Let Python manage GC automatically. Manual collection is rarely needed.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Confusing del with immediate deletion.</strong><div class="mini">✔ del removes a reference, not necessarily the object. Object is deleted only when reference count reaches 0.</div></div></div>
 </div>
-<div class="sec">Q2. What is Reference Counting?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Reference counting tracks how many variables reference an object.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Each new reference increases the count,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and removing a reference decreases it.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">When the count reaches zero,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">the object is destroyed.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How does Python manage memory?"</strong><div class="mini">"Python uses reference counting as the primary mechanism. Each object has a count of references to it. When the count reaches zero, the object is immediately deleted. For circular references, Python has a cyclic garbage collector that runs periodically. The gc module allows control over this process."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What are circular references and how does Python handle them?"</strong><div class="mini">"Circular references occur when two or more objects reference each other, creating a cycle. Reference counting alone can't delete them because their counts never reach zero. Python's cyclic garbage collector identifies and removes these unreachable cycles. You can also use weak references to avoid circular references."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Concept</th><th>Description</th></tr></thead><tbody>
+<tr><td class="h">Reference Counting</td><td>Tracks object references, deletes when count = 0</td></tr>
+<tr><td class="h">Circular Reference</td><td>Objects referencing each other</td></tr>
+<tr><td class="h">Garbage Collector</td><td>Handles circular references</td></tr>
+<tr><td class="h">gc.collect()</td><td>Manually trigger garbage collection</td></tr>
+<tr><td class="h">gc.disable()</td><td>Disable automatic GC</td></tr>
+<tr><td class="h">weakref</td><td>Reference without increasing count</td></tr>
+<tr><td class="h">Memory Trick</td><td><strong>RCG</strong> = Reference Counting, Circular refs, Garbage Collector</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 45: Memory Optimization</h3><p>Learn practical techniques for <strong>memory-efficient Python programming</strong>, including copy vs deep copy, profiling, and optimization strategies.</p></div>
 </div>
-<div class="sec">Q3. Why does Python need a Garbage Collector if it already has Reference Counting?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Reference counting cannot detect circular references.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">If two or more objects reference each other,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">their reference counts never become zero.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">The Garbage Collector identifies and removes these unreachable cycles.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q4. What is the `gc` module?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">The <code>gc</code> module provides functions to inspect and control Python's cyclic garbage collector.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Common functions include</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>gc.collect()</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>gc.enable()</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>gc.disable()</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>gc.isenabled()</code></li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q5. What is the difference between `del` and Garbage Collection?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>del</code></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">removes a reference (such as a variable).</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Garbage Collection removes the actual object,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">but only when it is no longer reachable.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Deleting a variable does **not** guarantee the object is immediately destroyed if other references still exist.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Concept | Purpose |<br>|----------|----------|<br>| Garbage | Unreachable object |<br>| Reference Count | Number of references to an object |<br>| Count = 0 | Object immediately destroyed |<br>| Circular Reference | Objects referencing each other |<br>| Garbage Collector | Removes unreachable cycles |<br>| <code>gc.collect()</code> | Run garbage collection manually |<br>| <code>gc.enable()</code> | Enable GC |<br>| <code>gc.disable()</code> | Disable GC |<br>| <code>del</code> | Remove a reference, not necessarily the object |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Chapter 45 — Memory Optimization**, you'll learn practical techniques for writing memory-efficient Python programs:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Shallow Copy vs Deep Copy</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Memory Profiling</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Object Size Analysis</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Efficient Data Structures</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Optimization Techniques</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These concepts are especially important for handling large datasets, high-performance applications, and production systems.</p>
-</div>
-</div>
-
 <script>
-function checkQuiz(el, correct) {
-  const parent = el.parentElement;
-  const feedback = parent.querySelector('.quiz-feedback');
-  const opts = parent.querySelectorAll('.quiz-opt');
-  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
-  feedback.classList.add('show');
-  if (correct) feedback.classList.add('correct');
-  else feedback.classList.add('wrong');
-}
+const gcInfo = {
+'refcount': 'Reference Counting: Primary memory management mechanism. Each object has a reference count. When count reaches 0, object is immediately deleted. Fast and efficient for most cases. sys.getrefcount() shows current count. Incremented on assignment, decremented on deletion.',
+'circular': 'Circular References: When objects reference each other (A→B→A), reference counting fails because counts never reach 0. Python\'s cyclic GC detects and collects these. Common in data structures like trees, graphs. Use weakref to prevent.',
+'garbage': 'Garbage: Objects that are unreachable (no references from program). Eligible for collection. Reference counting deletes most immediately. Cyclic GC handles circular refs. Memory is reclaimed and reused.',
+'gcm': 'GC Module: Control garbage collection. gc.collect() forces collection. gc.disable()/enable() control automatic GC. gc.get_stats() shows statistics. Usually let Python manage automatically. Manual control for special cases.'
+};
+document.querySelectorAll('.gc-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('gcTooltip').textContent = gcInfo[this.getAttribute('data-concept')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
 </script>
 </body>
 </html>

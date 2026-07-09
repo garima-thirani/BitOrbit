@@ -3,59 +3,163 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Module 14 — NumPy | Python Interactive</title>
+<title>NumPy Linear Algebra - Matrix Operations, Dot Product & linalg | Python Interactive</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.la-node{cursor:pointer;transition:all .3s ease}
+.la-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
 </head>
 <body>
-
-<div class="hero">
-<div class="hero-inner">
-<div class="badge">Module 14 · Chapter 52</div>
-<h1>Module 14 — NumPy<br><span>Q1. What is the difference between Element-wise Multiplication and Matrix Multiplication?</span></h1>
-<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
-<div class="stats">
-<div class="stat"><div class="sn">Q1. What</div><div class="sl">is the difference between Element-wise Multiplication and Matrix Multiplication?</div></div><div class="stat"><div class="sn">Q2. What</div><div class="sl">is the Dot Product?</div></div><div class="stat"><div class="sn">Q3. What</div><div class="sl">is a Transpose?</div></div><div class="stat"><div class="sn">Q4. What</div><div class="sl">is the purpose of a Determinant?</div></div>
-</div>
-</div>
-</div>
-
+<div class="hero"><div class="hero-inner"><div class="badge">Module 14 · Chapter 52 · Linear Algebra</div>
+<h1>NumPy Linear Algebra<br><span>Matrix Operations, Dot Product & linalg Module</span></h1>
+<p>Master NumPy's linear algebra capabilities including matrix multiplication, dot products, transposition, and solving linear systems.</p>
+<div class="stats"><div class="stat"><div class="sn">MDTIDE</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">Matrix</div><div class="sl">2D Arrays</div></div><div class="stat"><div class="sn">Dot</div><div class="sl">Product</div></div><div class="stat"><div class="sn">Transpose</div><div class="sl">Flip</div></div></div></div></div>
 <div class="wrap">
-
-<div class="sec">Q1. What is the difference between Element-wise Multiplication and Matrix Multiplication?</div>
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>What is Linear Algebra?</li>
+<li>Scalars, Vectors, Matrices, Tensors</li>
+<li>Matrix Multiplication (@ operator)</li>
+<li>Dot Product</li>
+<li>Transpose (.T)</li>
+<li>Identity Matrix (np.eye)</li>
+<li>Determinant (np.linalg.det)</li>
+<li>Inverse (np.linalg.inv)</li>
+<li>Solving Linear Systems (np.linalg.solve)</li>
+<li>Eigenvalues & Eigenvectors</li>
+</ul></div>
+<div class="sec">📖 The Story — GPS Navigation</div>
+<div class="story"><div class="slabel">Mathematical Foundation</div>
+<h3>GPS calculates your position using matrices. Machine learning, computer graphics, and robotics all rely on linear algebra. NumPy's linalg module makes it accessible.</h3>
+<p>Imagine using GPS navigation. Your current location is a point (x, y), and you move in a direction. GPS calculates your new position using <strong>matrices</strong>. Linear algebra is the mathematical language behind: GPS navigation, machine learning, computer graphics, robotics, and quantum computing. NumPy's <strong>linalg module</strong> provides optimized implementations of these operations.</p></div>
+<div class="sec">🔄 Interactive: Linear Algebra (MDTIDE)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each operation. Remember: <strong>MDTIDE</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="laDiagram">
+<defs><marker id="laa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="la-node" data-op="matrix" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Matrix Mult</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">@ operator</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">A @ B</text>
+<rect class="la-node" data-op="dot" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Dot Product</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">np.dot()</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Similarity</text>
+<rect class="la-node" data-op="transpose" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Transpose</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">.T attribute</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Swap rows/cols</text>
+<rect class="la-node" data-op="inverse" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Inverse</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">np.linalg.inv</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">A^-1</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: MDTIDE ("Em-Dee-Tie-Dee-Ee")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">M → Matrix Multiplication (@ operator)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">D → Dot Product (vector similarity)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">T → Transpose (swap rows and columns)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">I → Inverse, D → Determinant, E → Eigenvalues</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="laTooltip">Click on each operation to learn more</text>
+</svg></div></div>
+<div class="sec">📊 Linear Algebra Operations</div>
+<table><thead><tr><th>Operation</th><th>Syntax</th><th>Purpose</th></tr></thead><tbody>
+<tr><td class="h">Matrix Mult</td><td>A @ B or np.matmul(A, B)</td><td>Matrix multiplication</td></tr>
+<tr><td class="h">Dot Product</td><td>np.dot(A, B)</td><td>Vector/matrix dot product</td></tr>
+<tr><td class="h">Transpose</td><td>A.T</td><td>Swap rows and columns</td></tr>
+<tr><td class="h">Determinant</td><td>np.linalg.det(A)</td><td>Matrix determinant</td></tr>
+<tr><td class="h">Inverse</td><td>np.linalg.inv(A)</td><td>Matrix inverse</td></tr>
+<tr><td class="h">Solve</td><td>np.linalg.solve(A, b)</td><td>Solve Ax = b</td></tr>
+<tr><td class="h">Eigenvalues</td><td>np.linalg.eig(A)</td><td>Eigen decomposition</td></tr>
+</tbody></table>
+<div class="sec">🔧 Matrix Operations Example</div>
+<div class="defbox"><strong>Basic linear algebra operations:</strong><br><br>
+<code>import numpy as np</code><br><br>
+<code># Create matrices</code><br>
+<code>A = np.array([[1, 2], [3, 4]])</code><br>
+<code>B = np.array([[5, 6], [7, 8]])</code><br><br>
+<code># Matrix multiplication</code><br>
+<code>C = A @ B</code><br>
+<code>print(C) &nbsp;# [[19 22] [43 50]]</code><br><br>
+<code># Element-wise multiplication</code><br>
+<code>D = A * B</code><br>
+<code>print(D) # [[5 12] [21 32]]</code><br><br>
+<code># Transpose</code><br>
+<code>print(A.T) # [[1 3] [2 4]]</code></div>
+<div class="sec">🔧 Dot Product Example</div>
+<div class="defbox"><strong>Understanding dot products:</strong><br><br>
+<code>import numpy as np</code><br><br>
+<code># Vector dot product</code><br>
+<code>a = np.array([1, 2, 3])</code><br>
+<code>b = np.array([4, 5, 6])</code><br>
+<code>result = np.dot(a, b)</code><br>
+<code>print(result) &nbsp;# 32 (1*4 + 2*5 + 3*6)</code><br><br>
+<code># Matrix multiplication with dot</code><br>
+<code>A = np.array([[1, 2], [3, 4]])</code><br>
+<code>B = np.array([[5, 6], [7, 8]])</code><br>
+<code>C = np.dot(A, B)</code><br>
+<code>print(C) &nbsp;# [[19 22] [43 50]]</code></div>
+<div class="sec">🔧 Advanced Operations Example</div>
+<div class="defbox"><strong>Determinant, inverse, and solving systems:</strong><br><br>
+<code>import numpy as np</code><br><br>
+<code>A = np.array([[3, 1], [1, 2]])</code><br><br>
+<code># Determinant</code><br>
+<code>det = np.linalg.det(A)</code><br>
+<code>print(f"Determinant: {det}") # 5.0</code><br><br>
+<code># Inverse</code><br>
+<code>inv = np.linalg.inv(A)</code><br>
+<code>print(f"Inverse:\n{inv}")</code><br><br>
+<code># Solve Ax = b</code><br>
+<code>b = np.array([9, 8])</code><br>
+<code>x = np.linalg.solve(A, b)</code><br>
+<code>print(f"Solution: {x}") # [2. 3.]</code></div>
+<div class="sec">🔧 Eigenvalues Example</div>
+<div class="defbox"><strong>Finding eigenvalues and eigenvectors:</strong><br><br>
+<code>import numpy as np</code><br><br>
+<code>A = np.array([[4, -2], [1, 1]])</code><br><br>
+<code># Compute eigenvalues and eigenvectors</code><br>
+<code>eigenvalues, eigenvectors = np.linalg.eig(A)</code><br><br>
+<code>print("Eigenvalues:", eigenvalues)</code><br>
+<code>print("Eigenvectors:\n", eigenvectors)</code><br><br>
+<code># Used in PCA, image compression, etc.</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
 <div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Element-wise multiplication (<code>*</code>) multiplies corresponding elements independently.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Matrix multiplication (<code>@</code> or <code>np.matmul()</code>) follows the rules of linear algebra,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">where rows of the first matrix are multiplied with columns of the second matrix.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Confusing * with @ for matrix multiplication.</strong><div class="mini">✔ Use @ or np.matmul() for matrix multiplication. * does element-wise multiplication.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Trying to invert a singular matrix.</strong><div class="mini">✔ Check determinant first. If det(A) = 0, matrix has no inverse.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using matrix inversion to solve systems.</strong><div class="mini">✔ Use np.linalg.solve() - it's faster and more numerically stable than computing inverse.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Ignoring matrix dimensions.</strong><div class="mini">✔ For A @ B, columns of A must equal rows of B. Check shapes before multiplying.</div></div></div>
 </div>
-<div class="sec">Q2. What is the Dot Product?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">The dot product multiplies corresponding elements of two vectors</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and sums the results.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It is commonly used to measure similarity,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">especially in Machine Learning,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Information Retrieval,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and Recommendation Systems.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What's the difference between * and @ in NumPy?"</strong><div class="mini">"* performs element-wise multiplication - each element is multiplied independently. @ performs matrix multiplication following linear algebra rules - rows of first matrix are multiplied with columns of second. For matrices A (m×n) and B (n×p), A @ B produces (m×p) result. Use @ for neural networks, graphics, and any linear algebra."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"When would you use np.linalg.solve() vs np.linalg.inv()?"</strong><div class="mini">"Always prefer np.linalg.solve() for solving linear systems Ax = b. It's faster, more numerically stable, and avoids explicitly computing the inverse. Matrix inversion is rarely needed in practice. solve() uses optimized algorithms like LU decomposition. Only compute inverse if you specifically need the inverse matrix for other purposes."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Operation</th><th>Syntax</th><th>Use Case</th></tr></thead><tbody>
+<tr><td class="h">Matrix Mult</th><td>A @ B</td><td>Linear algebra multiplication</td></tr>
+<tr><td class="h">Dot Product</td><td>np.dot(A, B)</td><td>Vector similarity</td></tr>
+<tr><td class="h">Transpose</td><td>A.T</td><td>Swap dimensions</td></tr>
+<tr><td class="h">Determinant</td><td>np.linalg.det(A)</td><td>Check invertibility</td></tr>
+<tr><td class="h">Inverse</th><td>np.linalg.inv(A)</td><td>Matrix inverse</td></tr>
+<tr><td class="h">Solve</th><td>np.linalg.solve(A, b)</td><td>Linear system</td></tr>
+<tr><td class="h">Eigenvalues</th><td>np.linalg.eig(A)</td><td>PCA, compression</td></tr>
+<tr><td class="h">Memory Trick</th><td colspan="2"><strong>MDTIDE</strong> = Matrix Mult, Dot, Transpose, Inverse, Determinant, Eigenvalues</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 53: Performance Optimization</h3><p>Learn <strong>NumPy performance optimization, vectorization, and best practices</strong> for high-performance numerical computing.</p></div>
 </div>
-<div class="sec">Q3. What is a Transpose?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">The transpose of a matrix swaps its rows and columns.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In NumPy,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">it is obtained using</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">A.T</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q4. What is the purpose of a Determinant?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">The determinant indicates whether a matrix is invertible.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">If the determinant is zero,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">the matrix is singular and cannot be inverted.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q5. Why is Linear Algebra important in Machine Learning?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Machine Learning algorithms represent datasets,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">model parameters,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and computations as vectors and matrices.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Operations such as matrix multiplication,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">dot products,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and eigenvalue decomposition are fundamental to algorithms like</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Linear Regression</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">PCA</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Neural Networks</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Support Vector Machines</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Function | Purpose |<br>|----------|----------|<br>| <code>@</code> | Matrix Multiplication |<br>| <code>np.matmul()</code> | Matrix Multiplication |<br>| <code>np.dot()</code> | Dot Product |<br>| <code>A.T</code> | Transpose |<br>| <code>np.eye()</code> | Identity Matrix |<br>| <code>np.linalg.det()</code> | Determinant |<br>| <code>np.linalg.inv()</code> | Matrix Inverse |<br>| <code>np.linalg.solve()</code> | Solve Linear Equations |<br>| <code>np.linalg.eig()</code> | Eigenvalues & Eigenvectors |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Chapter 53 — Performance Optimization**, you'll learn why NumPy is one of the fastest numerical computing libraries in Python:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Vectorization</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Memory Efficiency</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Broadcasting Optimization</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Avoiding Python Loops</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Profiling NumPy Code</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Performance Best Practices</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These optimization techniques are essential for working with large datasets and high-performance AI/ML applications.</p>
-</div>
-</div>
-
 <script>
-function checkQuiz(el, correct) {
-  const parent = el.parentElement;
-  const feedback = parent.querySelector('.quiz-feedback');
-  const opts = parent.querySelectorAll('.quiz-opt');
-  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
-  feedback.classList.add('show');
-  if (correct) feedback.classList.add('correct');
-  else feedback.classList.add('wrong');
-}
+const laInfo = {
+'matrix': 'Matrix Multiplication: Use @ operator or np.matmul(). For A(m×n) @ B(n×p) = C(m×p). Much faster than nested loops. Essential for neural networks, 3D graphics, and scientific computing. Different from element-wise *.',
+'dot': 'Dot Product: np.dot() computes sum of element-wise products. For vectors: measures similarity (cosine similarity in ML). For matrices: same as matrix multiplication. Used in recommendation systems, search engines, neural networks.',
+'transpose': 'Transpose: A.T swaps rows and columns. Shape (m,n) becomes (n,m). Visually flips matrix over diagonal. Used in matrix operations, data reshaping. Fast O(1) operation - returns view, not copy.',
+'inverse': 'Inverse: np.linalg.inv() computes A^-1 such that A @ A^-1 = Identity. Only for square, non-singular matrices. Expensive O(n³). Rarely needed - use solve() instead. Check det(A) != 0 before inverting.'
+};
+document.querySelectorAll('.la-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('laTooltip').textContent = laInfo[this.getAttribute('data-op')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
 </script>
 </body>
 </html>

@@ -3,59 +3,155 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Module 14 — NumPy | Python Interactive</title>
+<title>NumPy ndarray - Arrays, Vectorization & Numerical Computing | Python Interactive</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.np-node{cursor:pointer;transition:all .3s ease}
+.np-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
 </head>
 <body>
-
-<div class="hero">
-<div class="hero-inner">
-<div class="badge">Module 14 · Chapter 49</div>
-<h1>Module 14 — NumPy<br><span>Q1. What is an ndarray?</span></h1>
-<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
-<div class="stats">
-<div class="stat"><div class="sn">Q1. What</div><div class="sl">is an ndarray?</div></div><div class="stat"><div class="sn">Q2. Why</div><div class="sl">is NumPy faster than Python Lists?</div></div><div class="stat"><div class="sn">Q3. What</div><div class="sl">is the difference between `shape` and `size`?</div></div><div class="stat"><div class="sn">Q4. What</div><div class="sl">does `dtype` represent?</div></div>
-</div>
-</div>
-</div>
-
+<div class="hero"><div class="hero-inner"><div class="badge">Module 14 · Chapter 49 · NumPy ndarray</div>
+<h1>NumPy Fundamentals<br><span>ndarray, Arrays & Vectorization</span></h1>
+<p>Master NumPy arrays, the foundation of Python data science. Learn ndarray creation, attributes, and why NumPy is essential for numerical computing.</p>
+<div class="stats"><div class="stat"><div class="sn">SSDN</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">Shape</div><div class="sl">Dimensions</div></div><div class="stat"><div class="sn">Size</div><div class="sl">Elements</div></div><div class="stat"><div class="sn">Dtype</div><div class="sl">Data Type</div></div></div></div></div>
 <div class="wrap">
-
-<div class="sec">Q1. What is an ndarray?</div>
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>Why NumPy is Essential</li>
+<li>What is an ndarray?</li>
+<li>Creating Arrays</li>
+<li>Array Dimensions (0D, 1D, 2D, 3D)</li>
+<li>Shape, Size, ndim, dtype</li>
+<li>Special Arrays (zeros, ones, eye, arange, linspace)</li>
+<li>Lists vs NumPy Arrays</li>
+<li>Memory Layout</li>
+<li>Performance Benefits</li>
+</ul></div>
+<div class="sec">📖 The Story — Warehouse Organization</div>
+<div class="story"><div class="slabel">Efficient Storage</div>
+<h3>A warehouse with neatly organized shelves is faster to navigate than scattered boxes. NumPy organizes data like a warehouse - structured, fast, and efficient.</h3>
+<p>Imagine two warehouses. Warehouse A has boxes scattered randomly everywhere. Finding a specific box takes forever. Warehouse B has boxes neatly arranged on labeled shelves in rows and columns. Finding any box is instant. <strong>NumPy arrays</strong> are like Warehouse B. Instead of Python lists (scattered boxes), NumPy stores numbers in contiguous, organized memory (neat shelves), making operations incredibly fast.</p></div>
+<div class="sec">🔄 Interactive: NumPy Concepts (SSDN)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each attribute. Remember: <strong>SSDN</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="npDiagram">
+<defs><marker id="na" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="np-node" data-attr="shape" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Shape</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Dimensions</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">(rows, cols)</text>
+<rect class="np-node" data-attr="size" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Size</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Total elements</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Count</text>
+<rect class="np-node" data-attr="dtype" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">dtype</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Data type</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">int64, float32</text>
+<rect class="np-node" data-attr="ndim" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">ndim</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Number of dims</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">1D, 2D, 3D</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: SSDN ("Ess-Ess-Dee-En")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">S → Shape (dimensions of array)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">S → Size (total number of elements)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">D → dtype (data type of elements)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">N → ndim (number of dimensions)</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="npTooltip">Click on each attribute to learn more</text>
+</svg></div></div>
+<div class="sec">📊 Array Dimensions</div>
+<table><thead><tr><th>Dimension</th><th>Name</th><th>Example</th><th>Shape</th></tr></thead><tbody>
+<tr><td class="h">0D</td><td>Scalar</td><td>42</td><td>()</td></tr>
+<tr><td class="h">1D</td><td>Vector</td><td>[1, 2, 3]</td><td>(3,)</td></tr>
+<tr><td class="h">2D</td><td>Matrix</td><td>[[1, 2], [3, 4]]</td><td>(2, 2)</td></tr>
+<tr><td class="h">3D</td><td>Tensor</td><td>[[[1, 2], [3, 4]]]</td><td>(1, 2, 2)</td></tr>
+</tbody></table>
+<div class="sec">🔧 Creating Arrays Example</div>
+<div class="defbox"><strong>Different ways to create NumPy arrays:</strong><br><br>
+<code>import numpy as np</code><br><br>
+<code># From list</code><br>
+<code>arr1 = np.array([1, 2, 3, 4, 5])</code><br><br>
+<code># 2D array</code><br>
+<code>arr2 = np.array([[1, 2, 3], [4, 5, 6]])</code><br><br>
+<code># Special arrays</code><br>
+<code>zeros = np.zeros((3, 3))  # 3x3 zeros</code><br>
+<code>ones = np.ones((2, 4)) &nbsp;&nbsp;# 2x4 ones</code><br>
+<code>eye = np.eye(3) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;# Identity matrix</code><br>
+<code>arange = np.arange(0, 10, 2) &nbsp;# [0, 2, 4, 6, 8]</code><br>
+<code>linspace = np.linspace(0, 1, 5) # 5 evenly spaced</code><br>
+<code>random = np.random.rand(3, 3) &nbsp;# Random 3x3</code></div>
+<div class="sec">🔧 Array Attributes Example</div>
+<div class="defbox"><strong>Understanding array properties:</strong><br><br>
+<code>import numpy as np</code><br><br>
+<code>arr = np.array([[1, 2, 3], [4, 5, 6]])</code><br><br>
+<code># Array attributes</code><br>
+<code>print(arr.shape) &nbsp;&nbsp;# (2, 3) - 2 rows, 3 cols</code><br>
+<code>print(arr.ndim) &nbsp;&nbsp;&nbsp;# 2 - 2 dimensions</code><br>
+<code>print(arr.size) &nbsp;&nbsp;&nbsp;# 6 - total elements</code><br>
+<code>print(arr.dtype) &nbsp;&nbsp;# int64 - data type</code></div>
+<div class="sec">🔧 Lists vs NumPy Arrays</div>
+<div class="defbox"><strong>Why NumPy is faster:</strong><br><br>
+<code>import numpy as np</code><br>
+<code>import time</code><br><br>
+<code># Python list</code><br>
+<code>list1 = list(range(1000000))</code><br>
+<code>list2 = list(range(1000000))</code><br><br>
+<code># NumPy arrays</code><br>
+<code>arr1 = np.arange(1000000)</code><br>
+<code>arr2 = np.arange(1000000)</code><br><br>
+<code># List multiplication (slow)</code><br>
+<code>start = time.time()</code><br>
+<code>result_list = [a * b for a, b in zip(list1, list2)]</code><br>
+<code>print(f"List: {time.time() - start:.4f}s")</code><br><br>
+<code># NumPy multiplication (fast)</code><br>
+<code>start = time.time()</code><br>
+<code>result_arr = arr1 * arr2</code><br>
+<code>print(f"NumPy: {time.time() - start:.4f}s")</code><br><br>
+<code># NumPy is 10-100x faster!</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
 <div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">An <code>ndarray</code> (N-dimensional array) is NumPy's core data structure.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It stores homogeneous data in contiguous memory,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">allowing fast numerical computations and efficient memory usage.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using Python lists for numerical computing.</strong><div class="mini">✔ Use NumPy arrays for numerical operations. They're faster and more memory-efficient.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Confusing shape and size.</strong><div class="mini">✔ Shape is (rows, cols). Size is total elements (rows × cols).</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Not specifying dtype when needed.</strong><div class="mini">✔ Specify dtype for memory efficiency: np.array([1,2,3], dtype=np.int32)</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Creating arrays with mixed types.</strong><div class="mini">✔ NumPy arrays work best with homogeneous data. Mixed types slow everything down.</div></div></div>
 </div>
-<div class="sec">Q2. Why is NumPy faster than Python Lists?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">NumPy arrays store elements of the same type in contiguous memory.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">This reduces memory overhead,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">improves CPU cache efficiency,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and enables vectorized operations implemented in optimized C code.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is NumPy and why is it important?"</strong><div class="mini">"NumPy (Numerical Python) is the foundation of Python's data science ecosystem. It provides the ndarray object for efficient storage and operations on homogeneous data. NumPy is important because: 1) It's much faster than Python lists for numerical operations (implemented in C), 2) It uses less memory with contiguous storage, 3) It provides vectorized operations eliminating loops, 4) It's the foundation for Pandas, Scikit-learn, TensorFlow, and PyTorch."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What's the difference between a Python list and a NumPy array?"</strong><div class="mini">"Python lists store references to objects anywhere in memory, support mixed types, and are slower for numerical operations. NumPy arrays store homogeneous data in contiguous memory, enabling vectorized operations, better CPU cache utilization, and significantly faster performance. NumPy arrays also provide shape/size attributes and support for advanced indexing and broadcasting."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Concept</th><th>Description</th></tr></thead><tbody>
+<tr><td class="h">ndarray</th><td>N-dimensional array object</td></tr>
+<tr><td class="h">np.array()</th><td>Create array from list</td></tr>
+<tr><td class="h">np.zeros()</td><td>Array of zeros</td></tr>
+<tr><td class="h">np.ones()</td><td>Array of ones</td></tr>
+<tr><td class="h">np.eye()</td><td>Identity matrix</td></tr>
+<tr><td class="h">np.arange()</td><td>Range with step</td></tr>
+<tr><td class="h">np.linspace()</td><td>Evenly spaced values</td></tr>
+<tr><td class="h">shape</td><td>Array dimensions</td></tr>
+<tr><td class="h">size</td><td>Total elements</td></tr>
+<tr><td class="h">dtype</td><td>Data type</td></tr>
+<tr><td class="h">ndim</td><td>Number of dimensions</td></tr>
+<tr><td class="h">Memory Trick</th><td><strong>SSDN</strong> = Shape, Size, Dtype, Ndim</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 50: Indexing & Broadcasting</h3><p>Master <strong>array indexing, slicing, boolean indexing, and broadcasting</strong> for powerful data manipulation.</p></div>
 </div>
-<div class="sec">Q3. What is the difference between `shape` and `size`?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>shape</code> returns the dimensions of an array.</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>size</code> returns the total number of elements.</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Example</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">arr = np.array([[1,2],[3,4]])</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">arr.shape</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># (2,2)</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">arr.size</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># 4</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q4. What does `dtype` represent?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>dtype</code> specifies the data type of elements stored in the array,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">such as</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>int32</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>int64</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>float64</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>bool</code></li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">All elements in an ndarray share the same data type.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q5. What is the difference between `arange()` and `linspace()`?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>arange()</code></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">creates values using a fixed step size.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Example</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">np.arange(0,10,2)</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># [0 2 4 6 8]</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>linspace()</code></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">creates a specified number of equally spaced values.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Example</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">np.linspace(0,1,5)</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># [0.00 0.25 0.50 0.75 1.00]</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Concept | Purpose |<br>|----------|----------|<br>| <code>ndarray</code> | Core NumPy data structure |<br>| <code>np.array()</code> | Create an array |<br>| <code>shape</code> | Dimensions |<br>| <code>size</code> | Total elements |<br>| <code>ndim</code> | Number of dimensions |<br>| <code>dtype</code> | Data type of elements |<br>| <code>np.zeros()</code> | Array of zeros |<br>| <code>np.ones()</code> | Array of ones |<br>| <code>np.eye()</code> | Identity matrix |<br>| <code>np.arange()</code> | Sequence with step size |<br>| <code>np.linspace()</code> | Equally spaced values |<br>| <code>np.random.rand()</code> | Random numbers |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Chapter 50 — Indexing & Broadcasting**, you'll learn the two most powerful NumPy concepts:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Array Indexing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Slicing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Boolean Indexing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Fancy Indexing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Broadcasting Rules</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Vectorized Operations</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These concepts are the key to writing concise, high-performance numerical code and are used extensively in data science and machine learning.</p>
-</div>
-</div>
-
 <script>
-function checkQuiz(el, correct) {
-  const parent = el.parentElement;
-  const feedback = parent.querySelector('.quiz-feedback');
-  const opts = parent.querySelectorAll('.quiz-opt');
-  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
-  feedback.classList.add('show');
-  if (correct) feedback.classList.add('correct');
-  else feedback.classList.add('wrong');
-}
+const npInfo = {
+'shape': 'Shape: Tuple describing array dimensions. For 2D array: (rows, cols). For 3D: (depth, rows, cols). Use arr.shape to get, arr.reshape() to change. Critical for understanding data structure.',
+'size': 'Size: Total number of elements in array. Calculated as product of all dimensions. For shape (2, 3, 4), size is 24. Use arr.size to get. Different from shape - shape is dimensions, size is count.',
+'dtype': 'dtype: Data type of array elements. Common types: int8/16/32/64, float32/64, bool, str. All elements must be same type. Use arr.dtype to check, dtype parameter to specify. Affects memory and performance.',
+'ndim': 'ndim: Number of array dimensions. 1D array (vector): ndim=1. 2D (matrix): ndim=2. 3D (tensor): ndim=3. Use arr.ndim to check. Higher dimensions for complex data like images (height, width, channels).'
+};
+document.querySelectorAll('.np-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('npTooltip').textContent = npInfo[this.getAttribute('data-attr')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
 </script>
 </body>
 </html>

@@ -3,59 +3,154 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Module 13 — Testing & Debugging | Python Interactive</title>
+<title>Mocking & Code Coverage - unittest.mock, Mock Objects & Testing | Python Interactive</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.mock-node{cursor:pointer;transition:all .3s ease}
+.mock-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
 </head>
 <body>
-
-<div class="hero">
-<div class="hero-inner">
-<div class="badge">Module 13 · Chapter 48</div>
-<h1>Module 13 — Testing & Debugging<br><span>Q1. What is Mocking?</span></h1>
-<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
-<div class="stats">
-<div class="stat"><div class="sn">Q1. What</div><div class="sl">is Mocking?</div></div><div class="stat"><div class="sn">Q2. What</div><div class="sl">is `patch()` used for?</div></div><div class="stat"><div class="sn">Q3. What</div><div class="sl">is the difference between `Mock` and `MagicMock`?</div></div><div class="stat"><div class="sn">Q4. What</div><div class="sl">is Code Coverage?</div></div>
-</div>
-</div>
-</div>
-
+<div class="hero"><div class="hero-inner"><div class="badge">Module 13 · Chapter 48 · Mocking & Coverage</div>
+<h1>Mocking & Code Coverage<br><span>Mock Objects, unittest.mock & Test Coverage</span></h1>
+<p>Master advanced testing techniques including mocking, test doubles, patch decorators, and measuring code coverage for comprehensive test suites.</p>
+<div class="stats"><div class="stat"><div class="sn">MPC</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">Mock</div><div class="sl">Fake</div></div><div class="stat"><div class="sn">Patch</div><div class="sl">Replace</div></div><div class="stat"><div class="sn">Coverage</div><div class="sl">Measure</div></div></div></div></div>
 <div class="wrap">
-
-<div class="sec">Q1. What is Mocking?</div>
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>Why Mocking is Needed</li>
+<li>What are Mock Objects?</li>
+<li>unittest.mock Module</li>
+<li>Mock and MagicMock</li>
+<li>patch() Decorator</li>
+<li>Mocking APIs and Databases</li>
+<li>Code Coverage</li>
+<li>Measuring Test Coverage</li>
+<li>Coverage Reports</li>
+<li>Best Practices</li>
+</ul></div>
+<div class="sec">📖 The Story — Flight Simulator</div>
+<div class="story"><div class="slabel">Safe Practice</div>
+<h3>Pilots train in flight simulators before flying real planes. Mock objects are the software equivalent - fake implementations for safe testing.</h3>
+<p>Imagine a pilot learning to fly. They don't start with a plane full of passengers. Instead, they train in a <strong>flight simulator</strong> that behaves like a real plane but without risks. If they make a mistake, nobody gets hurt. <strong>Mocking</strong> works the same way in testing. Instead of calling real APIs, databases, or external services (which are slow, expensive, or risky), we use fake objects that behave like the real thing but are completely under our control.</p></div>
+<div class="sec">🔄 Interactive: Mocking Concepts (MPC)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each concept. Remember: <strong>MPC</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="mockDiagram">
+<defs><marker id="mka" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="mock-node" data-concept="mock" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Mock</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Fake object</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Replaces real</text>
+<rect class="mock-node" data-concept="patch" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Patch</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Replace temporarily</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Context manager</text>
+<rect class="mock-node" data-concept="coverage" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Coverage</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Test measurement</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">% of code tested</text>
+<rect class="mock-node" data-concept="assert" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Assert Calls</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Verify interactions</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Check behavior</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: MPC ("Em-Pee-See")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">M → Mock (fake objects for testing)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">P → Patch (temporarily replace real objects)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">C → Coverage (measure how much code is tested)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">Isolate code under test from dependencies</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="mockTooltip">Click on each concept to learn more</text>
+</svg></div></div>
+<div class="sec">📊 Mock Types</div>
+<table><thead><tr><th>Type</th><th>Purpose</th><th>Use Case</th></tr></thead><tbody>
+<tr><td class="h">Mock</td><td>Basic fake object</td><td>General purpose</td></tr>
+<tr><td class="h">MagicMock</td><td>Auto magic methods</td><td>Complex objects</td></tr>
+<tr><td class="h">patch()</td><td>Temporary replacement</td><td>Decorators/context</td></tr>
+<tr><td class="h">mock_open</td><td>Fake file operations</td><td>File I/O testing</td></tr>
+</tbody></table>
+<div class="sec">🔧 Basic Mock Example</div>
+<div class="defbox"><strong>Creating and using mocks:</strong><br><br>
+<code>from unittest.mock import Mock, MagicMock</code><br><br>
+<code># Create a mock object</code><br>
+<code>mock_db = Mock()</code><br><br>
+<code># Configure return values</code><br>
+<code>mock_db.get_user.return_value = {"id": 1, "name": "Alice"}</code><br><br>
+<code># Use the mock</code><br>
+<code>user = mock_db.get_user(1)</code><br>
+<code>print(user)  # {"id": 1, "name": "Alice"}</code><br><br>
+<code># Verify it was called</code><br>
+<code>mock_db.get_user.assert_called_once_with(1)</code></div>
+<div class="sec">🔧 patch() Example</div>
+<div class="defbox"><strong>Using patch to replace dependencies:</strong><br><br>
+<code>from unittest.mock import patch</code><br>
+<code>import requests</code><br><br>
+<code># Function that uses requests</code><br>
+<code>def fetch_data(url):</code><br>
+<code>&nbsp;&nbsp;response = requests.get(url)</code><br>
+<code>&nbsp;&nbsp;return response.json()</code><br><br>
+<code># Test with mocked requests</code><br>
+<code>@patch('requests.get')</code><br>
+<code>def test_fetch_data(mock_get):</code><br>
+<code>&nbsp;&nbsp;# Configure mock</code><br>
+<code>&nbsp;&nbsp;mock_get.return_value.json.return_value = {"key": "value"}</code><br>
+<code>&nbsp;&nbsp;</code><br>
+<code>&nbsp;&nbsp;# Call function</code><br>
+<code>&nbsp;&nbsp;result = fetch_data("http://example.com")</code><br>
+<code>&nbsp;&nbsp;</code><br>
+<code>&nbsp;&nbsp;# Verify</code><br>
+<code>&nbsp;&nbsp;assert result == {"key": "value"}</code><br>
+<code>&nbsp;&nbsp;mock_get.assert_called_once()</code></div>
+<div class="sec">🔧 Code Coverage Example</div>
+<div class="defbox"><strong>Measuring test coverage:</strong><br><br>
+<code># Install: pip install coverage</code><br><br>
+<code># Run tests with coverage</code><br>
+<code># $ coverage run -m pytest</code><br><br>
+<code># Generate report</code><br>
+<code># $ coverage report</code><br><br>
+<code># HTML report</code><br>
+<code># $ coverage html</code><br><br>
+<code># Example output:</code><br>
+<code># Name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Stmts   Miss  Cover</code><br>
+<code># ----------------------------------------</code><br>
+<code># mymodule.py &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 100 &nbsp;&nbsp;&nbsp; 5 &nbsp;&nbsp; 95%</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
 <div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Mocking is the practice of replacing real objects or external dependencies with fake objects during testing.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">This allows tests to run quickly,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">safely,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and independently of services such as databases,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">APIs,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">or email servers.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Mocking everything.</strong><div class="mini">✔ Only mock external dependencies. Don't mock the code you're testing.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Testing implementation instead of behavior.</strong><div class="mini">✔ Test what the code does, not how it does it. Focus on inputs and outputs.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Chasing 100% coverage.</strong><div class="mini">✔ Coverage measures quantity, not quality. 80% of critical paths is better than 100% of trivial code.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Not testing edge cases.</strong><div class="mini">✔ Mocks should simulate both success and failure scenarios.</div></div></div>
 </div>
-<div class="sec">Q2. What is `patch()` used for?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>patch()</code> temporarily replaces an object,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">function,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">or method with a mock during a test.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Once the test finishes,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">the original object is automatically restored.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is mocking and when should you use it?"</strong><div class="mini">"Mocking replaces real objects with fake implementations during testing. Use it when: 1) Testing code that depends on external services (APIs, databases), 2) You need to simulate error conditions, 3) Tests would be slow or expensive with real dependencies, 4) You want to isolate the code being tested. Mocking makes tests fast, deterministic, and independent."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is code coverage and is 100% coverage necessary?"</strong><div class="mini">"Code coverage measures the percentage of your code executed during tests. While 100% coverage sounds ideal, it's not always necessary or cost-effective. Focus on covering critical paths, edge cases, and business logic. 80-90% coverage of important code is often sufficient. Quality of tests matters more than quantity."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Concept</th><th>Description</th></tr></thead><tbody>
+<tr><td class="h">Mock</td><td>Fake object for testing</td></tr>
+<tr><td class="h">MagicMock</td><td>Mock with magic methods</td></tr>
+<tr><td class="h">patch()</td><td>Temporarily replace objects</td></tr>
+<tr><td class="h">return_value</td><td>Configure mock responses</td></tr>
+<tr><td class="h">assert_called_*</td><td>Verify mock interactions</td></tr>
+<tr><td class="h">Coverage</td><td>Measure test completeness</td></tr>
+<tr><td class="h">Memory Trick</td><td><strong>MPC</strong> = Mock, Patch, Coverage</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 49: NumPy - ndarray</h3><p>Begin your data science journey with <strong>NumPy arrays, vectorization, and numerical computing</strong>.</p></div>
 </div>
-<div class="sec">Q3. What is the difference between `Mock` and `MagicMock`?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>Mock</code></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">provides basic mocking functionality.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>MagicMock</code></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">extends <code>Mock</code> by automatically supporting Python's magic methods,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">such as</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">__len__()</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">__iter__()</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">__getitem__()</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">making it useful for mocking container-like objects.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q4. What is Code Coverage?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Code Coverage measures how much of the application's code is executed while running tests.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It helps identify untested areas,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">but it does **not** guarantee the absence of bugs.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q5. Why should APIs and Databases be mocked?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Mocking external systems makes unit tests</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Faster</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Deterministic</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Independent of network or database availability</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Safer, since no real data is modified</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It allows developers to focus on testing application logic.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Concept | Purpose |<br>|----------|----------|<br>| Mock | Fake object used during testing |<br>| MagicMock | Mock with built-in support for magic methods |<br>| <code>patch()</code> | Temporarily replace an object |<br>| <code>mock_open()</code> | Mock file operations |<br>| <code>assert_called_once()</code> | Verify method invocation |<br>| Code Coverage | Percentage of executed code |<br>| <code>coverage.py</code> | Measure test coverage |<br>| HTML Report | Visual coverage analysis |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Module 13 Complete ✅</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">You have now mastered Testing & Debugging:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Unit Testing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>unittest</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>pytest</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Assertions</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Test Fixtures</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Debugging</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>pdb</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Logging</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Mocking</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>Mock</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>MagicMock</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>patch()</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Code Coverage</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Coverage Reports</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These skills are essential for writing reliable, maintainable, and production-ready Python applications. They are also widely tested in Python developer interviews and are standard practices in professional software engineering.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Module 14 — NumPy**, you'll begin scientific computing with Python by learning:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>ndarray</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Array Creation</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Indexing & Slicing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Broadcasting</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Universal Functions</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Linear Algebra</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Performance Optimization</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">NumPy is the foundation of the entire Python data science, machine learning, and AI ecosystem.</p>
-</div>
-</div>
-
 <script>
-function checkQuiz(el, correct) {
-  const parent = el.parentElement;
-  const feedback = parent.querySelector('.quiz-feedback');
-  const opts = parent.querySelectorAll('.quiz-opt');
-  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
-  feedback.classList.add('show');
-  if (correct) feedback.classList.add('correct');
-  else feedback.classList.add('wrong');
-}
+const mockInfo = {
+'mock': 'Mock: Fake object that replaces real dependencies. Created with Mock(). Configure return values, side effects, and assertions. Use mock.assert_called_with() to verify interactions. MagicMock extends Mock with magic methods.',
+'patch': 'Patch: Temporarily replace objects during testing. Use as decorator @patch or context manager with patch(). Target can be module path like "requests.get". Automatically restores original after test.',
+'coverage': 'Coverage: Measures percentage of code executed by tests. Install coverage package. Run: coverage run -m pytest. Report: coverage report. HTML: coverage html. Aim for 80-90% of critical code, not necessarily 100%.',
+'assert': 'Assert Calls: Verify mocks were called correctly. assert_called_once(), assert_called_with(args), assert_not_called(). Check call count, arguments, and order. Ensures code interacts with dependencies as expected.'
+};
+document.querySelectorAll('.mock-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('mockTooltip').textContent = mockInfo[this.getAttribute('data-concept')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
 </script>
 </body>
 </html>

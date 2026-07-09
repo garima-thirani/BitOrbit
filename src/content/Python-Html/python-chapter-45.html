@@ -3,71 +3,158 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Module 12 — Memory Management | Python Interactive</title>
+<title>Memory Optimization - Copy, Deep Copy, Profiling & Efficient Python | Python Interactive</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.opt-node{cursor:pointer;transition:all .3s ease}
+.opt-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
 </head>
 <body>
-
-<div class="hero">
-<div class="hero-inner">
-<div class="badge">Module 12 · Chapter 45</div>
-<h1>Module 12 — Memory Management<br><span>Assignment</span></h1>
-<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
-<div class="stats">
-<div class="stat"><div class="sn">Assignment</div><div class="sl"></div></div><div class="stat"><div class="sn">Shallow Copy</div><div class="sl"></div></div><div class="stat"><div class="sn">Deep Copy</div><div class="sl"></div></div><div class="stat"><div class="sn">Q1. What</div><div class="sl">is the difference between Assignment, Shallow Copy, and Deep Copy?</div></div>
-</div>
-</div>
-</div>
-
+<div class="hero"><div class="hero-inner"><div class="badge">Module 12 · Chapter 45 · Memory Optimization</div>
+<h1>Memory Optimization<br><span>Copy vs Deep Copy, Profiling & Efficient Python</span></h1>
+<p>Learn memory optimization techniques including shallow vs deep copy, memory profiling, and strategies for writing memory-efficient Python code.</p>
+<div class="stats"><div class="stat"><div class="sn">ASD</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">Assignment</div><div class="sl">Reference</div></div><div class="stat"><div class="sn">Shallow</div><div class="sl">Copy</div></div><div class="stat"><div class="sn">Deep</div><div class="sl">Copy</div></div></div></div></div>
 <div class="wrap">
-
-<div class="sec">Assignment</div>
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>Why Memory Optimization Matters</li>
+<li>Assignment vs Copy</li>
+<li>Shallow Copy</li>
+<li>Deep Copy</li>
+<li>When to Use Each</li>
+<li>Memory Profiling</li>
+<li>sys.getsizeof()</li>
+<li>tracemalloc</li>
+<li>Memory-Efficient Coding Practices</li>
+<li>Common Pitfalls</li>
+</ul></div>
+<div class="sec">📖 The Story — Photocopy</div>
+<div class="story"><div class="slabel">Copying Books</div>
+<h3>You can share a book, photocopy just the cover, or photocopy the entire book. Python copying works the same way - assignment, shallow copy, and deep copy.</h3>
+<p>Imagine you have a book. You have three options: 1) Let a friend borrow the same book (assignment), 2) Photocopy only the cover (shallow copy), or 3) Photocopy the entire book (deep copy). Python objects work similarly. <strong>Assignment</strong> creates another reference to the same object. <strong>Shallow copy</strong> creates a new outer object but shares nested objects. <strong>Deep copy</strong> duplicates everything recursively.</p></div>
+<div class="sec">🔄 Interactive: Copy Types (ASD)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each type. Remember: <strong>ASD</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="optDiagram">
+<defs><marker id="oa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="opt-node" data-type="assignment" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Assignment</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Same object</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">b = a</text>
+<rect class="opt-node" data-type="shallow" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Shallow Copy</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">New outer</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Shared inner</text>
+<rect class="opt-node" data-type="deep" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Deep Copy</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Everything new</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Independent</text>
+<rect class="opt-node" data-type="profiling" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Profiling</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Measure memory</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Find leaks</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: ASD ("Ay-See-Dee")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">A → Assignment (same object, new reference)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">S → Shallow Copy (new outer, shared inner)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">D → Deep Copy (everything independent)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">Profile before optimizing</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="optTooltip">Click on each type to learn more</text>
+</svg></div></div>
+<div class="sec">📊 Copy Types Comparison</div>
+<table><thead><tr><th>Aspect</th><th>Assignment</th><th>Shallow Copy</th><th>Deep Copy</th></tr></thead><tbody>
+<tr><td class="h">New Object</td><td>No</td><td>Outer only</td><td>Yes (all levels)</td></tr>
+<tr><td class="h">Memory</td><td>Shared</td><td>Partial</td><td>Independent</td></tr>
+<tr><td class="h">Speed</td><td>Fastest</td><td>Fast</td><td>Slower</td></tr>
+<tr><td class="h">Use Case</td><td>Sharing</td><td>Partial copy</td><td>Full independence</td></tr>
+</tbody></table>
+<div class="sec">🔧 Assignment vs Copy Example</div>
+<div class="defbox"><strong>Understanding the differences:</strong><br><br>
+<code>import copy</code><br><br>
+<code># Assignment - same object</code><br>
+<code>list1 = [1, 2, 3]</code><br>
+<code>list2 = list1  # Same reference</code><br>
+<code>list2.append(4)</code><br>
+<code>print(list1)  # [1, 2, 3, 4] - changed!</code><br><br>
+<code># Shallow Copy - new outer, shared inner</code><br>
+<code>list3 = [1, 2, [3, 4]]</code><br>
+<code>list4 = copy.copy(list3)</code><br>
+<code>list4[2].append(5)  # Modifies shared inner</code><br>
+<code>print(list3)  # [1, 2, [3, 4, 5]] - changed!</code><br><br>
+<code># Deep Copy - everything independent</code><br>
+<code>list5 = [1, 2, [3, 4]]</code><br>
+<code>list6 = copy.deepcopy(list5)</code><br>
+<code>list6[2].append(5)  # Only changes list6</code><br>
+<code>print(list5)  # [1, 2, [3, 4]] - unchanged!</code></div>
+<div class="sec">🔧 Memory Profiling Example</div>
+<div class="defbox"><strong>Measuring memory usage:</strong><br><br>
+<code>import sys</code><br>
+<code>import tracemalloc</code><br><br>
+<code># Get size of single object</code><br>
+<code>list1 = [1, 2, 3, 4, 5]</code><br>
+<code>print(sys.getsizeof(list1))  # bytes</code><br><br>
+<code># Track memory allocations</code><br>
+<code>tracemalloc.start()</code><br><br>
+<code># Your code here</code><br>
+<code>data = [i for i in range(10000)]</code><br><br>
+<code># Get memory stats</code><br>
+<code>snapshot = tracemalloc.take_snapshot()</code><br>
+<code>for stat in snapshot.statistics('lineno')[:5]:</code><br>
+<code>&nbsp;&nbsp;print(stat)</code><br><br>
+<code>tracemalloc.stop()</code></div>
+<div class="sec">🔧 Memory-Efficient Patterns</div>
+<div class="defbox"><strong>Writing memory-efficient code:</strong><br><br>
+<code># Use generators instead of lists</code><br>
+<code># Bad: Creates entire list in memory</code><br>
+<code>squares = [x*x for x in range(1000000)]</code><br><br>
+<code># Good: Generates one at a time</code><br>
+<code>squares = (x*x for x in range(1000000))</code><br><br>
+<code># Use __slots__ for classes</code><br>
+<code>class Point:</code><br>
+<code>&nbsp;&nbsp;__slots__ = ['x', 'y']  # No __dict__</code><br>
+<code>&nbsp;&nbsp;def __init__(self, x, y):</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;self.x = x</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;self.y = y</code><br><br>
+<code># Saves memory when creating many objects</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
 <div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br>Use when</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">Sharing</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">is</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Desired</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using deep copy when shallow copy suffices.</strong><div class="mini">✔ Deep copy is slower and uses more memory. Use it only when you need complete independence.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Not profiling before optimizing.</strong><div class="mini">✔ Measure memory usage first with tracemalloc or memory_profiler. Optimize based on data, not guesses.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Creating large intermediate lists.</strong><div class="mini">✔ Use generators or iterators for large datasets. They produce values on-demand, saving memory.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Ignoring object overhead.</strong><div class="mini">✔ Small objects add up. Use __slots__ for classes with many instances. Choose appropriate data structures.</div></div></div>
 </div>
-<div class="sec">Shallow Copy</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br>Use when</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">Nested Objects</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Need NOT</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Be Copied</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What's the difference between shallow copy and deep copy?"</strong><div class="mini">"Shallow copy creates a new outer object but shares references to nested objects with the original. Deep copy creates a completely independent copy of the entire object graph. Modifying nested objects in a shallow copy affects the original, but deep copy is fully independent. Use copy.copy() for shallow, copy.deepcopy() for deep."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How do you profile memory usage in Python?"</strong><div class="mini">"Python offers several tools: sys.getsizeof() for individual objects, tracemalloc (built-in) for tracking allocations over time, and memory_profiler for line-by-line analysis. For production, use objgraph to find object leaks. Always profile before optimizing to identify actual bottlenecks."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Concept</th><th>Description</th></tr></thead><tbody>
+<tr><td class="h">Assignment</td><td>b = a (same object)</td></tr>
+<tr><td class="h">Shallow Copy</td><td>copy.copy() (new outer, shared inner)</td></tr>
+<tr><td class="h">Deep Copy</td><td>copy.deepcopy() (everything new)</td></tr>
+<tr><td class="h">sys.getsizeof()</td><td>Size of single object</td></tr>
+<tr><td class="h">tracemalloc</td><td>Track memory allocations</td></tr>
+<tr><td class="h">Generator</td><td>Memory-efficient iteration</td></tr>
+<tr><td class="h">__slots__</td><td>Reduce object memory</td></tr>
+<tr><td class="h">Memory Trick</td><td><strong>ASD</strong> = Assignment, Shallow, Deep</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 46: Testing</h3><p>Master Python testing with <strong>unittest, pytest, assertions, and test fixtures</strong> for production-quality code.</p></div>
 </div>
-<div class="sec">Deep Copy</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br>Use when</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">Complete Independence</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">is Required</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Measuring Memory</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Python provides</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">sys.getsizeof()</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Example</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">import sys</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">numbers = [1,2,3]</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">print(</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">sys.getsizeof(numbers)</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">)</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Output</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">88</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">(Size depends on Python version.)</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Important Note</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>sys.getsizeof()</code></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">only measures</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">the outer object.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It does **not**</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">include the memory used by nested objects.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Memory Profiling</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Memory profiling helps answer questions like</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">Which Object</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Uses</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Most Memory?</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Useful tools include</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">memory_profiler</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">tracemalloc</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">objgraph</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These are commonly used in production debugging.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># tracemalloc</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Python provides a built-in module.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">import tracemalloc</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">tracemalloc.start()</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It tracks memory allocations.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Useful for finding memory leaks.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Memory-Efficient Coding</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Instead of</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">numbers = []</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">for i in range(1000000):</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">    numbers.append(i)</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Use</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">numbers = range(1000000)</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">or generators whenever possible.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Lazy evaluation saves memory.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Use Generators</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Instead of</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">[x*x for x in range(1000000)]</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Use</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">(x*x for x in range(1000000))</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Lists store everything.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Generators produce values one at a time.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Use Appropriate Data Structures</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Choose the right collection.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">Need Fast Lookup</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Set</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">----------------</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Need Key-Value</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Dictionary</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">----------------</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Need Ordered Data</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">List</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Good choices reduce both memory usage and execution time.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># __slots__ Revisited</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Earlier,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">you learned</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">__slots__</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Instead of</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">Object</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Dictionary</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Attributes</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Python stores</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">Fixed Attributes</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">saving memory for millions of objects.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Avoid Unnecessary Copies</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Bad</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">new_list = old_list[:]</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">when</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">sharing</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">is sufficient.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Every unnecessary copy consumes memory.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Real-World Example</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Imagine an image processing application.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">Original Image</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Deep Copy</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Edit Image</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Original Safe</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Whereas</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">Assignment</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Edit</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Original Also Changes</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Choosing the wrong copy type can introduce subtle bugs.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Memory Optimization Checklist</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">✓ Use Generators</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">✓ Avoid Large Temporary Lists</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">✓ Choose Correct Data Structures</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">✓ Use __slots__</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">✓ Avoid Unnecessary Copies</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">✓ Profile Before Optimizing</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Memory Trick</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Remember</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">ASD</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><strong style="color:#e2e8f0">A</strong></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Assignment</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><strong style="color:#e2e8f0">S</strong></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Shallow Copy</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><strong style="color:#e2e8f0">D</strong></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Deep Copy</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">And remember</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">Same</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Outer</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Everything</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Assignment → Same Object</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Shallow → New Outer Object</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Deep → Everything New</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Common Beginner Mistakes</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Mistake 1</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Assuming</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">b = a</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">creates a copy.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It only creates another reference.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Mistake 2</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Using shallow copy for nested objects.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Nested mutable objects remain shared,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">which can lead to unexpected modifications.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Mistake 3</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Using deep copy everywhere.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Deep copying large object graphs is expensive in both time and memory.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Only use it when complete independence is required.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Mistake 4</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Optimizing without measuring.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Always profile memory before making optimizations.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Premature optimization often complicates code without meaningful benefits.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Interview Questions & Answers<br></p>
-</div>
-<div class="sec">Q1. What is the difference between Assignment, Shallow Copy, and Deep Copy?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><strong style="color:#e2e8f0">Assignment</strong></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">creates another reference to the same object.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><strong style="color:#e2e8f0">Shallow Copy</strong></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">creates a new outer object,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">but nested objects are shared.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><strong style="color:#e2e8f0">Deep Copy</strong></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">creates completely independent copies of the object and all nested objects.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q2. When should you use Deep Copy?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Use deep copy when nested mutable objects must be completely independent,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">such as when modifying complex data structures without affecting the original.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q3. What does `sys.getsizeof()` do?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It returns the memory size of an object in bytes.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">However,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">it measures only the object itself,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">not the memory consumed by nested objects.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q4. How can you optimize memory usage in Python?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Common techniques include:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Using generators instead of large lists</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Choosing appropriate data structures</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Avoiding unnecessary copies</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Using <code>__slots__</code> for many objects</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Profiling memory usage before optimizing</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q5. What tools can be used for memory profiling?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Popular tools include:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>tracemalloc</code> (built into Python)</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>memory_profiler</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>objgraph</code></li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These tools help identify memory leaks and large allocations.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Concept | Meaning |<br>|----------|----------|<br>| Assignment | New reference to same object |<br>| Shallow Copy | New outer object, shared inner objects |<br>| Deep Copy | Complete independent copy |<br>| <code>copy.copy()</code> | Shallow copy |<br>| <code>copy.deepcopy()</code> | Deep copy |<br>| <code>sys.getsizeof()</code> | Size of an object |<br>| <code>tracemalloc</code> | Track memory allocations |<br>| Generators | Memory-efficient iteration |<br>| <code>__slots__</code> | Reduce object memory usage |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Module 12 Complete ✅</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">You have now mastered Python Memory Management:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Python Memory Model</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Stack vs Heap</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">References</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Object Identity</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Mutable vs Immutable Objects</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Reference Counting</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Garbage Collection</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Circular References</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>gc</code> Module</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Assignment vs Copy</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Shallow Copy</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Deep Copy</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Memory Profiling</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Memory Optimization Techniques</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These concepts are essential for writing efficient Python programs, debugging memory-related issues, and succeeding in advanced Python interviews.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Module 13 — Testing & Debugging**, you'll learn how professional Python developers ensure software quality:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Unit Testing with <code>unittest</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Testing with <code>pytest</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Debugging using <code>pdb</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Assertions</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Logging</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Mocking</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Code Coverage</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Testing is a fundamental skill for production software development and is widely used in industry.</p>
-</div>
-</div>
-
 <script>
-function checkQuiz(el, correct) {
-  const parent = el.parentElement;
-  const feedback = parent.querySelector('.quiz-feedback');
-  const opts = parent.querySelectorAll('.quiz-opt');
-  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
-  feedback.classList.add('show');
-  if (correct) feedback.classList.add('correct');
-  else feedback.classList.add('wrong');
-}
+const optInfo = {
+'assignment': 'Assignment: Creates a new reference to the same object. Both variables point to identical memory. Fastest option. Changes through one variable affect the other. Use when sharing is desired.',
+'shallow': 'Shallow Copy: Creates new outer object but nested objects are shared. Uses copy.copy(). Medium speed. Changes to nested objects affect both original and copy. Use when top-level independence is needed.',
+'deep': 'Deep Copy: Recursively copies entire object graph. Uses copy.deepcopy(). Slowest but most independent. Changes to any level don\'t affect original. Use when complete independence is required.',
+'profiling': 'Profiling: Measure memory to find issues. sys.getsizeof() for object size. tracemalloc for allocation tracking. memory_profiler for line-by-line analysis. Always profile before optimizing.'
+};
+document.querySelectorAll('.opt-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('optTooltip').textContent = optInfo[this.getAttribute('data-type')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
 </script>
 </body>
 </html>

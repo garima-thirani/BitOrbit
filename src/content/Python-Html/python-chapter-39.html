@@ -3,67 +3,143 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Module 11 — Concurrency & Parallelism | Python Interactive</title>
+<title>Threads - Concurrency, GIL, Synchronization & Threading | Python Interactive</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.thread-node{cursor:pointer;transition:all .3s ease}
+.thread-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
 </head>
 <body>
-
-<div class="hero">
-<div class="hero-inner">
-<div class="badge">Module 11 · Chapter 39</div>
-<h1>Module 11 — Concurrency & Parallelism<br><span>CPU-bound</span></h1>
-<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
-<div class="stats">
-<div class="stat"><div class="sn">CPU-bound</div><div class="sl"></div></div><div class="stat"><div class="sn">IO-bound</div><div class="sl"></div></div><div class="stat"><div class="sn">Q1. What</div><div class="sl">is the difference between a Process and a Thread?</div></div><div class="stat"><div class="sn">Q2. What</div><div class="sl">is the Global Interpreter Lock (GIL)?</div></div>
-</div>
-</div>
-</div>
-
+<div class="hero"><div class="hero-inner"><div class="badge">Module 11 · Chapter 39 · Threads</div>
+<h1>Threads & Concurrency<br><span>Threading, GIL, Synchronization & Lock Mechanisms</span></h1>
+<p>Learn Python threading fundamentals, the Global Interpreter Lock (GIL), thread synchronization, and when to use threads for concurrent programming.</p>
+<div class="stats"><div class="stat"><div class="sn">TLS</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">Thread</div><div class="sl">Execution</div></div><div class="stat"><div class="sn">Lock</div><div class="sl">Sync</div></div><div class="stat"><div class="sn">GIL</div><div class="sl">Limitation</div></div></div></div></div>
 <div class="wrap">
-
-<div class="sec">CPU-bound</div>
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>Why Concurrency is Needed</li>
+<li>Process vs Thread</li>
+<li>What is a Thread?</li>
+<li>Creating Threads</li>
+<li>Thread Lifecycle</li>
+<li>Main Thread</li>
+<li>Joining Threads</li>
+<li>Thread Synchronization (Lock, RLock, Semaphore)</li>
+<li>Deadlocks</li>
+<li>Global Interpreter Lock (GIL)</li>
+<li>CPU-bound vs IO-bound</li>
+</ul></div>
+<div class="sec">📖 The Story — Restaurant Kitchen</div>
+<div class="story"><div class="slabel">Multiple Tasks</div>
+<h3>One chef doing all tasks is slow. Multiple chefs working simultaneously get things done faster. This is concurrency.</h3>
+<p>Imagine a restaurant where one chef must cook, wash dishes, pack orders, and answer phones. Customers wait forever. Now imagine four chefs, each handling one task simultaneously. Everything happens in parallel. Programs face the same problem. <strong>Concurrency</strong> allows a program to perform multiple tasks at the same time, keeping applications responsive.</p></div>
+<div class="sec">📊 Threading Concepts (TLS)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Memory Trick: <strong>TLS</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%">
+<defs><marker id="ta" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Thread</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Smallest execution unit</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Lightweight</text>
+<rect x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Lock</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Synchronization</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Mutual exclusion</text>
+<rect x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">GIL</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Global Interpreter Lock</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">One thread at a time</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: TLS ("Tee-El-Ess")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">T → Thread (lightweight execution unit, shares memory)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">L → Lock (synchronization, mutual exclusion)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">S → Semaphore (limit concurrent access)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">GIL limits threading for CPU-bound tasks in CPython</text>
+</svg></div></div>
+<div class="sec">📊 Process vs Thread</div>
+<table><thead><tr><th>Aspect</th><th>Process</th><th>Thread</th></tr></thead><tbody>
+<tr><td class="h">Memory</td><td>Separate memory space</td><td>Shared memory</td></tr>
+<tr><td class="h">Weight</td><td>Heavy</td><td>Lightweight</td></tr>
+<tr><td class="h">Creation</td><td>Slower</td><td>Faster</td></tr>
+<tr><td class="h">Communication</td><td>IPC needed</td><td>Direct (shared memory)</td></tr>
+<tr><td class="h">Best For</td><td>CPU-bound tasks</td><td>IO-bound tasks</td></tr>
+</tbody></table>
+<div class="sec">🔧 Creating Threads Example</div>
+<div class="defbox"><strong>Basic threading example:</strong><br><br>
+<code>import threading</code><br>
+<code>import time</code><br><br>
+<code>def task(name):</code><br>
+<code>&nbsp;&nbsp;print(f"{name} started")</code><br>
+<code>&nbsp;&nbsp;time.sleep(2)</code><br>
+<code>&nbsp;&nbsp;print(f"{name} finished")</code><br><br>
+<code># Create threads</code><br>
+<code>t1 = threading.Thread(target=task, args=("Thread-1",))</code><br>
+<code>t2 = threading.Thread(target=task, args=("Thread-2",))</code><br><br>
+<code># Start threads</code><br>
+<code>t1.start()</code><br>
+<code>t2.start()</code><br><br>
+<code># Wait for completion</code><br>
+<code>t1.join()</code><br>
+<code>t2.join()</code><br>
+<code>print("All threads completed")</code></div>
+<div class="sec">🔧 Lock Example</div>
+<div class="defbox"><strong>Thread synchronization with Lock:</strong><br><br>
+<code>import threading</code><br><br>
+<code>balance = 100</code><br>
+<code>lock = threading.Lock()</code><br><br>
+<code>def withdraw(amount):</code><br>
+<code>&nbsp;&nbsp;global balance</code><br>
+<code>&nbsp;&nbsp;with lock:</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;if balance >= amount:</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;balance -= amount</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print(f"Withdrew {amount}, balance: {balance}")</code><br><br>
+<code># Create threads</code><br>
+<code>t1 = threading.Thread(target=withdraw, args=(30,))</code><br>
+<code>t2 = threading.Thread(target=withdraw, args=(40,))</code><br>
+<code>t1.start()</code><br>
+<code>t2.start()</code><br>
+<code>t1.join()</code><br>
+<code>t2.join()</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
 <div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br>Examples</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">Image Processing</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Machine Learning</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Encryption</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Large Calculations</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Threads perform poorly due to the GIL.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Prefer</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">Multiprocessing</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Calling thread.run() instead of thread.start().</strong><div class="mini">✔ run() executes in current thread. start() creates a new thread.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Forgetting to call join().</strong><div class="mini">✔ The main thread may finish before worker threads. Use join() to wait.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Not protecting shared data with locks.</strong><div class="mini">✔ Use locks when multiple threads modify shared state to prevent race conditions.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Using threads for CPU-intensive tasks.</strong><div class="mini">✔ Due to GIL, threads don't speed up CPU-bound work. Use multiprocessing instead.</div></div></div>
 </div>
-<div class="sec">IO-bound</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br>Examples</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">Downloading Files</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Reading Files</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Database Queries</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">API Calls</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Threads work very well because much of the time is spent waiting for external resources.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Real-World Example</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Imagine a web server.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">For each incoming request,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">it creates a worker thread.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">User 1</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Thread 1</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">----------------</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">User 2</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Thread 2</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">----------------</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">User 3</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Thread 3</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">While one request waits for a database,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">another thread processes a different request.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Memory Trick</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Remember</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">TLS</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><strong style="color:#e2e8f0">T</strong></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Thread</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><strong style="color:#e2e8f0">L</strong></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Lock</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><strong style="color:#e2e8f0">S</strong></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Semaphore</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">And remember</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">CPU</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Multiprocessing</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">----------------</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">IO</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">↓</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Threads</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Common Beginner Mistakes</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Mistake 1</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Calling</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">thread.run()</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">instead of</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">thread.start()</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>run()</code> executes normally.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>start()</code> creates a new thread.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Mistake 2</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Forgetting</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">join()</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">The main thread may finish before worker threads.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Mistake 3</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Ignoring shared data.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Whenever multiple threads modify shared state,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">protect it using a lock.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Mistake 4</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Thinking threads speed up CPU-intensive tasks.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Because of the GIL,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">threads are mainly beneficial for IO-bound workloads.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Use multiprocessing for CPU-heavy tasks.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Interview Questions & Answers<br></p>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the difference between a Process and a Thread?"</strong><div class="mini">"A Process is an independent program with its own memory space. A Thread is a lightweight execution unit inside a process that shares memory with other threads. Threads are faster to create and communicate, but processes provide better isolation and can run on multiple CPU cores."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the GIL and how does it affect threading?"</strong><div class="mini">"The Global Interpreter Lock (GIL) is a mutex in CPython that allows only one thread to execute Python bytecode at a time. This means threading doesn't provide true parallelism for CPU-bound tasks. However, threads are still useful for IO-bound tasks where the GIL is released during waiting."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Concept</th><th>Description</th></tr></thead><tbody>
+<tr><td class="h">Thread</td><td>Lightweight execution unit</td></tr>
+<tr><td class="h">start()</td><td>Start a new thread</td></tr>
+<tr><td class="h">join()</td><td>Wait for thread completion</td></tr>
+<tr><td class="h">Lock</td><td>Mutual exclusion primitive</td></tr>
+<tr><td class="h">RLock</td><td>Reentrant lock (same thread can re-acquire)</td></tr>
+<tr><td class="h">Semaphore</td><td>Limit concurrent access</td></tr>
+<tr><td class="h">GIL</td><td>One thread executes Python bytecode at a time</td></tr>
+<tr><td class="h">Memory Trick</td><td><strong>TLS</strong> = Thread, Lock, Semaphore</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 40: Multiprocessing</h3><p>Learn how Python bypasses the GIL using <strong>multiple processes</strong> for true parallel execution and CPU-bound tasks.</p></div>
 </div>
-<div class="sec">Q1. What is the difference between a Process and a Thread?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">A **Process** is an independent program with its own memory.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">A **Thread** is a lightweight execution unit inside a process that shares memory with other threads in the same process.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q2. What is the Global Interpreter Lock (GIL)?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">The GIL is a mutex in CPython that allows only one thread to execute Python bytecode at a time.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It simplifies memory management but limits parallel execution of CPU-bound Python code.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q3. What is a Race Condition?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">A race condition occurs when multiple threads access and modify shared data simultaneously, leading to unpredictable results.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Locks are commonly used to prevent race conditions.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q4. What is the difference between Lock and RLock?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">A **Lock** can be acquired only once by a thread.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">An **RLock (Reentrant Lock)** allows the same thread to acquire the lock multiple times before releasing it.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q5. When should you use Threads?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Threads are ideal for **IO-bound** tasks such as:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">File operations</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Network requests</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Database queries</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">API calls</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">For CPU-intensive work,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">prefer multiprocessing.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Concept | Purpose |<br>|----------|----------|<br>| Process | Independent program |<br>| Thread | Lightweight execution unit |<br>| <code>start()</code> | Start a new thread |<br>| <code>join()</code> | Wait for thread completion |<br>| Lock | Mutual exclusion |<br>| RLock | Reentrant lock |<br>| Semaphore | Limit concurrent access |<br>| Race Condition | Unsafe shared access |<br>| GIL | One thread executes Python bytecode at a time |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Chapter 40 — Multiprocessing**, you'll learn how Python bypasses the GIL by running multiple processes:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Process Creation</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Process Pools</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Queues</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Pipes</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Shared Memory</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">CPU-bound Parallelism</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">This chapter explains how Python fully utilizes multi-core processors for computationally intensive tasks.</p>
-</div>
-</div>
-
+<script src="tooltip-fix.js"></script>
 <script>
-function checkQuiz(el, correct) {
-  const parent = el.parentElement;
-  const feedback = parent.querySelector('.quiz-feedback');
-  const opts = parent.querySelectorAll('.quiz-opt');
-  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
-  feedback.classList.add('show');
-  if (correct) feedback.classList.add('correct');
-  else feedback.classList.add('wrong');
-}
+const threadInfo = {
+'thread': 'Thread: Smallest unit of execution inside a process. Threads share memory and resources. Created using threading.Thread(). Use start() to begin execution, join() to wait for completion. Lightweight compared to processes.',
+'lock': 'Lock: Synchronization primitive for mutual exclusion. Only one thread can acquire a lock at a time. Use with statement: with lock:. Prevents race conditions when multiple threads access shared data.',
+'gil': 'GIL (Global Interpreter Lock): Mutex allowing only one thread to execute Python bytecode at a time in CPython. Simplifies memory management but limits parallel execution. Threads still help for IO-bound tasks where GIL is released during waiting.',
+'race': 'Race Condition: Occurs when multiple threads access and modify shared data simultaneously, leading to unpredictable results. Prevent using locks, semaphores, or other synchronization primitives.'
+};
+document.querySelectorAll('.thread-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('threadTooltip').textContent = threadInfo[this.getAttribute('data-concept')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
 </script>
 </body>
 </html>

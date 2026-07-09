@@ -3,59 +3,173 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Module 14 — NumPy | Python Interactive</title>
+<title>NumPy Performance Optimization - Vectorization, Memory & Best Practices | Python Interactive</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.perf-node{cursor:pointer;transition:all .3s ease}
+.perf-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
 </head>
 <body>
-
-<div class="hero">
-<div class="hero-inner">
-<div class="badge">Module 14 · Chapter 53</div>
-<h1>Module 14 — NumPy<br><span>Q1. Why is NumPy faster than Python Lists?</span></h1>
-<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
-<div class="stats">
-<div class="stat"><div class="sn">Q1. Why</div><div class="sl">is NumPy faster than Python Lists?</div></div><div class="stat"><div class="sn">Q2. What</div><div class="sl">is Vectorization?</div></div><div class="stat"><div class="sn">Q3. What</div><div class="sl">are In-place Operations?</div></div><div class="stat"><div class="sn">Q4. Why</div><div class="sl">should you choose an appropriate `dtype`?</div></div>
-</div>
-</div>
-</div>
-
+<div class="hero"><div class="hero-inner"><div class="badge">Module 14 · Chapter 53 · Performance</div>
+<h1>NumPy Performance Optimization<br><span>Vectorization, Memory Efficiency & Best Practices</span></h1>
+<p>Master NumPy performance optimization techniques including vectorization, broadcasting, memory efficiency, and profiling for high-performance numerical computing.</p>
+<div class="stats"><div class="stat"><div class="sn">VIBD</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">Vectorize</div><div class="sl">No Loops</div></div><div class="stat"><div class="sn">In-place</div><div class="sl">Save Memory</div></div><div class="stat"><div class="sn">Broadcast</div><div class="sl">Efficient</div></div></div></div></div>
 <div class="wrap">
-
-<div class="sec">Q1. Why is NumPy faster than Python Lists?</div>
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>Why NumPy is Fast</li>
+<li>Vectorization Benefits</li>
+<li>Avoiding Python Loops</li>
+<li>Broadcasting for Efficiency</li>
+<li>Memory-Efficient Data Types</li>
+<li>In-place Operations</li>
+<li>Views vs Copies</li>
+<li>Memory Layout (C vs F order)</li>
+<li>Profiling NumPy Code</li>
+<li>Performance Best Practices</li>
+</ul></div>
+<div class="sec">📖 The Story — Highway vs Village Road</div>
+<div class="story"><div class="slabel">Speed Difference</div>
+<h3>Traveling 100km on a village road with traffic vs on an express highway. Same distance, completely different speed. NumPy vs Python loops is similar.</h3>
+<p>Imagine traveling 100 kilometers. On a village road, you face traffic lights, speed bumps, and narrow lanes - maybe you average 20 km/h. On an express highway, you maintain 100 km/h with no interruptions. <strong>NumPy arrays</strong> are like highways. Python lists are like village roads. Both store data, but NumPy's contiguous memory and optimized C operations make it 10-100x faster for numerical computing.</p></div>
+<div class="sec">🔄 Interactive: Performance (VIBD)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each technique. Remember: <strong>VIBD</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="perfDiagram">
+<defs><marker id="pa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="perf-node" data-tech="vectorize" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Vectorize</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">No Python loops</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">10-100x faster</text>
+<rect class="perf-node" data-tech="inplace" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">In-place</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Modify existing</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Save memory</text>
+<rect class="perf-node" data-tech="broadcast" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Broadcast</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Auto expansion</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">No copies</text>
+<rect class="perf-node" data-tech="dtype" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Data Type</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Right dtype</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Save memory</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: VIBD ("Vib-dee")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">V → Vectorize (use ufuncs, not loops)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">I → In-place operations (arr += 1)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">B → Broadcast (avoid unnecessary copies)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">D → Data types (choose smallest sufficient)</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="perfTooltip">Click on each technique to learn more</text>
+</svg></div></div>
+<div class="sec">📊 Performance Techniques</div>
+<table><thead><tr><th>Technique</th><th>Benefit</th><th>Example</th></tr></thead><tbody>
+<tr><td class="h">Vectorization</td><td>10-100x faster</td><td>arr * 2 vs loop</td></tr>
+<tr><td class="h">Broadcasting</td><td>No copies</td><td>arr + scalar</td></tr>
+<tr><td class="h">In-place ops</td><td>Save memory</td><td>arr += 1</td></tr>
+<tr><td class="h">Right dtype</td><td>Less memory</td><td>int32 vs int64</td></tr>
+<tr><td class="h">Views</td><td>No duplication</td><td>arr[1:5]</td></tr>
+</tbody></table>
+<div class="sec">🔧 Vectorization Example</div>
+<div class="defbox"><strong>Vectorization vs loops:</strong><br><br>
+<code>import numpy as np</code><br>
+<code>import time</code><br><br>
+<code>arr = np.arange(1000000)</code><br><br>
+<code># Slow: Python loop</code><br>
+<code>start = time.time()</code><br>
+<code>result = []</code><br>
+<code>for x in arr:</code><br>
+<code>&nbsp;&nbsp;result.append(x * 2)</code><br>
+<code>print(f"Loop: {time.time() - start:.4f}s")</code><br><br>
+<code># Fast: Vectorized</code><br>
+<code>start = time.time()</code><br>
+<code>result = arr * 2</code><br>
+<code>print(f"Vectorized: {time.time() - start:.4f}s")</code><br><br>
+<code># Vectorized is 50-100x faster!</code></div>
+<div class="sec">🔧 In-place Operations Example</div>
+<div class="defbox"><strong>Memory-efficient in-place operations:</strong><br><br>
+<code>import numpy as np</code><br><br>
+<code>arr = np.array([1, 2, 3, 4, 5])</code><br><br>
+<code># Creates new array (wastes memory)</code><br>
+<code>arr = arr + 5</code><br><br>
+<code># Modifies in-place (efficient)</code><br>
+<code>arr += 5 &nbsp;# Same as arr = arr + 5 but no copy</code><br>
+<code>arr *= 2</code><br>
+<code>arr -= 1</code><br><br>
+<code># In-place operations:</code><br>
+<code># +=, -=, *=, /=, //=, %=</code></div>
+<div class="sec">🔧 Memory-Efficient Data Types Example</div>
+<div class="defbox"><strong>Choosing the right dtype:</strong><br><br>
+<code>import numpy as np</code><br><br>
+<code># Default int64 (8 bytes each)</code><br>
+<code>arr1 = np.array([1, 2, 3], dtype=np.int64)</code><br>
+<code>print(arr1.itemsize) &nbsp;# 8 bytes</code><br><br>
+<code># int32 (4 bytes each) - 50% memory savings</code><br>
+<code>arr2 = np.array([1, 2, 3], dtype=np.int32)</code><br>
+<code>print(arr2.itemsize) &nbsp;# 4 bytes</code><br><br>
+<code># uint8 (1 byte) for 0-255 values</code><br>
+<code>arr3 = np.array([100, 150, 200], dtype=np.uint8)</code><br>
+<code>print(arr3.itemsize) &nbsp;# 1 byte - 87.5% savings!</code><br><br>
+<code># Common dtypes:</code><br>
+<code># int8/16/32/64, uint8/16/32/64</code><br>
+<code># float32/64, bool</code></div>
+<div class="sec">🔧 Profiling Example</div>
+<div class="defbox"><strong>Measuring performance:</strong><br><br>
+<code>import numpy as np</code><br>
+<code>import timeit</code><br><br>
+<code># Time different approaches</code><br>
+<code>loop_time = timeit.timeit(</code><br>
+<code>&nbsp;&nbsp;'result = [x*2 for x in range(1000)]',</code><br>
+<code>&nbsp;&nbsp;number=1000</code><br>
+<code>)</code><br><br>
+<code>numpy_time = timeit.timeit(</code><br>
+<code>&nbsp;&nbsp;'arr = np.arange(1000); result = arr * 2',</code><br>
+<code>&nbsp;&nbsp;setup='import numpy as np',</code><br>
+<code>&nbsp;&nbsp;number=1000</code><br>
+<code>)</code><br><br>
+<code>print(f"Loop: {loop_time:.4f}s")</code><br>
+<code>print(f"NumPy: {numpy_time:.4f}s")</code><br>
+<code>print(f"Speedup: {loop_time/numpy_time:.1f}x")</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
 <div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">NumPy stores homogeneous data in contiguous memory,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">uses optimized C implementations,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">supports vectorization,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and benefits from CPU cache optimization.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Python Lists store references to Python objects,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">which introduces significant overhead.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using Python loops with NumPy arrays.</strong><div class="mini">✔ Always use vectorized operations. They're 10-100x faster than loops.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Creating unnecessary copies.</strong><div class="mini">✔ Use views when possible. Use in-place operations to save memory.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using default int64/float64 everywhere.</strong><div class="mini">✔ Choose smallest dtype that fits your data. Saves memory and improves cache efficiency.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Optimizing without profiling.</strong><div class="mini">✔ Measure first with timeit or profiler. Optimize actual bottlenecks, not guessed ones.</div></div></div>
 </div>
-<div class="sec">Q2. What is Vectorization?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Vectorization is the process of applying an operation to an entire array at once,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">instead of iterating element by element in Python.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It improves both readability and performance.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"Why is NumPy faster than Python lists?"</strong><div class="mini">"NumPy is faster because: 1) Contiguous memory layout - better CPU cache utilization, 2) Optimized C implementation - no Python interpreter overhead, 3) Vectorization - operations on entire arrays at once, 4) SIMD instructions - CPU-level parallelism, 5) Specialized algorithms - optimized for numerical operations. Python lists store references to scattered objects with type checking overhead."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"How do you optimize NumPy code?"</strong><div class="mini">"I follow these principles: 1) Vectorize everything - avoid Python loops, use ufuncs, 2) Use broadcasting instead of manual tiling, 3) Choose appropriate dtypes to save memory, 4) Use in-place operations when possible, 5) Prefer views over copies, 6) Profile with timeit before optimizing. The biggest gains come from eliminating loops and using vectorized operations."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Technique</th><th>Benefit</th><th>Example</th></tr></thead><tbody>
+<tr><td class="h">Vectorization</th><td>10-100x faster</td><td>arr * 2</td></tr>
+<tr><td class="h">Broadcasting</th><td>No copies</td><td>arr + 5</td></tr>
+<tr><td class="h">In-place ops</th><td>Save memory</td><td>arr += 1</td></tr>
+<tr><td class="h">Right dtype</th><td>Less memory</td><td>dtype=np.int32</td></tr>
+<tr><td class="h">Views</th><td>No duplication</td><td>arr[1:5]</td></tr>
+<tr><td class="h">Profiling</th><td>Find bottlenecks</td><td>timeit, cProfile</td></tr>
+<tr><td class="h">Memory Trick</th><td colspan="2"><strong>VIBD</strong> = Vectorize, In-place, Broadcast, Data types</td></tr>
+</tbody></table>
+<div class="sec">➡ Module 14 Complete!</div>
+<div class="story"><div class="slabel">Congratulations!</div><h3>You've mastered NumPy - the foundation of Python data science!</h3>
+<p>You've learned: ndarray creation and attributes, indexing and slicing, boolean and fancy indexing, broadcasting, universal functions (ufuncs), vectorization, mathematical and statistical operations, linear algebra with linalg, and performance optimization. NumPy is the foundation for <strong>Pandas, Scikit-learn, TensorFlow, and PyTorch</strong>. These skills are essential for data science, machine learning, and scientific computing.</p></div>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Module 15: Pandas</h3><p>Learn <strong>data manipulation and analysis</strong> with Pandas DataFrames and Series - the tool for working with real-world datasets.</p></div>
 </div>
-<div class="sec">Q3. What are In-place Operations?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In-place operations modify an existing array</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">without creating a new one.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Example</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><div class="viz-box">arr += 5</div></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">They reduce memory usage</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and improve execution speed.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q4. Why should you choose an appropriate `dtype`?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Smaller data types consume less memory</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and improve cache efficiency.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">For example,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>uint8</code> is ideal for image pixels,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">while <code>float32</code> is commonly used in deep learning.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q5. What tools are commonly used for performance profiling?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Common tools include</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>timeit</code> for benchmarking small code snippets</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>cProfile</code> for application profiling</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>line_profiler</code> for line-by-line analysis</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>memory_profiler</code> for measuring memory usage</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These tools help identify performance bottlenecks before optimization.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Optimization | Benefit |<br>|--------------|----------|<br>| Vectorization | Eliminate Python loops |<br>| Broadcasting | Efficient array operations |<br>| In-place Operations | Reduce memory usage |<br>| Correct <code>dtype</code> | Lower memory consumption |<br>| Views | Avoid unnecessary copies |<br>| <code>np.sum()</code> | Faster aggregation |<br>| <code>timeit</code> | Benchmark execution time |<br>| <code>cProfile</code> | Profile application performance |<br>| <code>memory_profiler</code> | Measure memory usage |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Module 14 Complete ✅</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">You have now mastered NumPy:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">ndarray</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Array Creation</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Array Attributes</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Indexing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Slicing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Boolean Indexing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Fancy Indexing</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Broadcasting</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Universal Functions (ufuncs)</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Vectorization</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Mathematical Functions</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Statistical Functions</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Linear Algebra</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Matrix Operations</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Performance Optimization</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">NumPy is the foundation of the Python scientific ecosystem. Nearly every major library—including **Pandas**, **Scikit-Learn**, **TensorFlow**, **PyTorch**, **OpenCV**, and **SciPy**—is built on top of NumPy.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Module 15 — Pandas**, you'll learn how to work with real-world datasets:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Series</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">DataFrame</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Data Cleaning</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Missing Values</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">GroupBy</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Merge & Join</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">DateTime Handling</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Window Functions</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Real-world Data Analysis</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Pandas is the most widely used library for data manipulation, analysis, and preprocessing in data science, machine learning, and business analytics.</p>
-</div>
-</div>
-
 <script>
-function checkQuiz(el, correct) {
-  const parent = el.parentElement;
-  const feedback = parent.querySelector('.quiz-feedback');
-  const opts = parent.querySelectorAll('.quiz-opt');
-  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
-  feedback.classList.add('show');
-  if (correct) feedback.classList.add('correct');
-  else feedback.classList.add('wrong');
-}
+const perfInfo = {
+'vectorize': 'Vectorization: Use ufuncs instead of Python loops. arr * 2 instead of for loop. 10-100x faster. NumPy operations use optimized C code. This is the #1 performance rule. Always vectorize when possible.',
+'inplace': 'In-place: Modify existing array without creating copy. arr += 1 instead of arr = arr + 1. Saves memory and faster. Available for: +=, -=, *=, /=, //=, %=. Be careful - modifies original array.',
+'broadcast': 'Broadcasting: NumPy stretches smaller arrays automatically. No manual tiling needed. arr + 5 adds 5 to all elements. More efficient than creating full-sized arrays. Rules: dimensions equal or one is 1.',
+'dtype': 'Data Types: Choose smallest sufficient dtype. int32 vs int64 halves memory. uint8 for 0-255 values uses 1 byte. float32 vs float64 halves memory. Impacts memory usage and cache efficiency. Check with arr.dtype, set with dtype parameter.'
+};
+document.querySelectorAll('.perf-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('perfTooltip').textContent = perfInfo[this.getAttribute('data-tech')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
 </script>
 </body>
 </html>

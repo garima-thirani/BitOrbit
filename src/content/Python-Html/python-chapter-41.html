@@ -3,59 +3,157 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Module 11 — Concurrency & Parallelism | Python Interactive</title>
+<title>Asyncio - Async/Await, Event Loop & Coroutines | Python Interactive</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.async-node{cursor:pointer;transition:all .3s ease}
+.async-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
 </head>
 <body>
-
-<div class="hero">
-<div class="hero-inner">
-<div class="badge">Module 11 · Chapter 41</div>
-<h1>Module 11 — Concurrency & Parallelism<br><span>Q1. What is Asyncio?</span></h1>
-<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
-<div class="stats">
-<div class="stat"><div class="sn">Q1. What</div><div class="sl">is Asyncio?</div></div><div class="stat"><div class="sn">Q2. What</div><div class="sl">is the Event Loop?</div></div><div class="stat"><div class="sn">Q3. What</div><div class="sl">is the difference between `async` and `await`?</div></div><div class="stat"><div class="sn">Q4. When</div><div class="sl">should you use Asyncio instead of Threads?</div></div>
-</div>
-</div>
-</div>
-
+<div class="hero"><div class="hero-inner"><div class="badge">Module 11 · Chapter 41 · Asyncio</div>
+<h1>Asyncio & Async Programming<br><span>Event Loop, Coroutines, Async/Await</span></h1>
+<p>Master Python's asynchronous programming with asyncio, event loops, coroutines, and async/await for high-performance IO-bound applications.</p>
+<div class="stats"><div class="stat"><div class="sn">CAE</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">Coroutine</div><div class="sl">Async function</div></div><div class="stat"><div class="sn">Await</div><div class="sl">Pause</div></div><div class="stat"><div class="sn">Event Loop</div><div class="sl">Scheduler</div></div></div></div></div>
 <div class="wrap">
-
-<div class="sec">Q1. What is Asyncio?</div>
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>Why Async Programming?</li>
+<li>Synchronous vs Concurrent vs Asynchronous</li>
+<li>What is Asyncio?</li>
+<li>Event Loop</li>
+<li>Coroutines (async/await)</li>
+<li>Tasks</li>
+<li>asyncio.gather()</li>
+<li>Async Generators</li>
+<li>Async Context Managers</li>
+<li>When to Use Asyncio</li>
+</ul></div>
+<div class="sec">📖 The Story — Pizza Shop</div>
+<div class="story"><div class="slabel">Efficient Waiting</div>
+<h3>One pizza takes 10 minutes. Three customers waiting sequentially takes 30 minutes. Starting all pizzas together and waiting simultaneously takes ~10 minutes. This is async programming.</h3>
+<p>Imagine a pizza shop where one pizza takes 10 minutes. Three customers arrive. In synchronous execution, each pizza is made sequentially: 10 + 10 + 10 = 30 minutes. In asynchronous execution, all three pizzas start simultaneously and finish together in about 10 minutes. <strong>Asynchronous programming</strong> works the same way. Instead of waiting idly, your program performs other useful work while waiting for IO operations to complete.</p></div>
+<div class="sec">📊 Asyncio Concepts (CAE)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Memory Trick: <strong>CAE</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%">
+<defs><marker id="aa" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Coroutine</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">async def function</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Pause & resume</text>
+<rect x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">await</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Pause execution</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Wait for result</text>
+<rect x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Event Loop</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Schedules coroutines</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Runs tasks</text>
+<rect x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Task</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Scheduled coroutine</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Managed by loop</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: CAE ("See-Ay-Ee")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">C → Coroutine (async def, pause & resume)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">A → Await (pause until operation completes)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">E → Event Loop (schedules and runs coroutines)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">Single-threaded concurrency for IO-bound tasks</text>
+</svg></div></div>
+<div class="sec">📊 Synchronous vs Asynchronous</div>
+<table><thead><tr><th>Aspect</th><th>Synchronous</th><th>Asynchronous</th></tr></thead><tbody>
+<tr><td class="h">Execution</td><td>One task at a time</td><td>Multiple tasks concurrently</td></tr>
+<tr><td class="h">Waiting</td><td>Blocks execution</td><td>Non-blocking</td></tr>
+<tr><td class="h">Threads</td><td>Can use multiple threads</td><td>Usually single-threaded</td></tr>
+<tr><td class="h">Best For</td><td>Simple scripts</td><td>IO-bound applications</td></tr>
+</tbody></table>
+<div class="sec">🔧 Basic Asyncio Example</div>
+<div class="defbox"><strong>Your first async program:</strong><br><br>
+<code>import asyncio</code><br><br>
+<code># Define a coroutine</code><br>
+<code>async def greet(name):</code><br>
+<code>&nbsp;&nbsp;print(f"Hello {name}")</code><br>
+<code>&nbsp;&nbsp;await asyncio.sleep(1)  # Non-blocking sleep</code><br>
+<code>&nbsp;&nbsp;print(f"Goodbye {name}")</code><br><br>
+<code># Run the coroutine</code><br>
+<code>async def main():</code><br>
+<code>&nbsp;&nbsp;await greet("Alice")</code><br>
+<code>&nbsp;&nbsp;await greet("Bob")</code><br><br>
+<code>asyncio.run(main())</code></div>
+<div class="sec">🔧 Multiple Coroutines Example</div>
+<div class="defbox"><strong>Running multiple coroutines concurrently:</strong><br><br>
+<code>import asyncio</code><br><br>
+<code>async def task(name, delay):</code><br>
+<code>&nbsp;&nbsp;print(f"{name} started")</code><br>
+<code>&nbsp;&nbsp;await asyncio.sleep(delay)</code><br>
+<code>&nbsp;&nbsp;print(f"{name} finished")</code><br>
+<code>&nbsp;&nbsp;return f"Result from {name}"</code><br><br>
+<code>async def main():</code><br>
+<code>&nbsp;&nbsp;# Run tasks concurrently</code><br>
+<code>&nbsp;&nbsp;results = await asyncio.gather(</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;task("A", 2),</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;task("B", 1),</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;task("C", 3)</code><br>
+<code>&nbsp;&nbsp;)</code><br>
+<code>&nbsp;&nbsp;print(results)</code><br><br>
+<code>asyncio.run(main())</code><br>
+<code># Total time: ~3 seconds (not 6)</code></div>
+<div class="sec">🔧 Async with Example</div>
+<div class="defbox"><strong>Async context manager:</strong><br><br>
+<code>import asyncio</code><br><br>
+<code>class AsyncDatabase:</code><br>
+<code>&nbsp;&nbsp;async def __aenter__(self):</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;print("Connecting to database")</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;await asyncio.sleep(0.5)</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;return self</code><br><br>
+<code>&nbsp;&nbsp;async def __aexit__(self, exc_type, exc_val, exc_tb):</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;print("Closing connection")</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;await asyncio.sleep(0.5)</code><br><br>
+<code>&nbsp;&nbsp;async def query(self):</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;print("Executing query")</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;await asyncio.sleep(1)</code><br><br>
+<code>async def main():</code><br>
+<code>&nbsp;&nbsp;async with AsyncDatabase() as db:</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;await db.query()</code><br><br>
+<code>asyncio.run(main())</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
 <div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Asyncio is Python's built-in framework for asynchronous programming.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It enables many IO-bound tasks to run concurrently using an Event Loop instead of multiple threads.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using time.sleep() in async code.</strong><div class="mini">✔ Use await asyncio.sleep(). time.sleep() blocks the event loop.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Forgetting to await async functions.</strong><div class="mini">✔ Always use await when calling async functions. Missing await returns a coroutine object without executing it.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Using asyncio for CPU-intensive tasks.</strong><div class="mini">✔ Asyncio is for IO-bound tasks. For CPU-bound work, use multiprocessing.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Thinking asyncio creates multiple threads.</strong><div class="mini">✔ Asyncio runs in a single thread. Concurrency comes from cooperative multitasking, not parallelism.</div></div></div>
 </div>
-<div class="sec">Q2. What is the Event Loop?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">The Event Loop is the core of Asyncio.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It continuously checks for coroutines that are ready to run,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">executes them,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and switches to other coroutines whenever one is waiting.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is asyncio and when would you use it?"</strong><div class="mini">"Asyncio is Python's framework for asynchronous programming. It uses an event loop to manage coroutines, allowing many IO-bound operations to run concurrently in a single thread. Use it for network servers, APIs, web scrapers, or any application with many concurrent IO operations. It's more efficient than threading for thousands of connections."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is the difference between threading and asyncio?"</strong><div class="mini">"Threading uses OS scheduler to switch between threads, limited by GIL for CPU-bound tasks. Asyncio uses cooperative multitasking in a single thread with an event loop. Asyncio has less overhead than threads, making it better for thousands of concurrent IO operations. Threads are better when you need to run blocking code."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Concept</th><th>Description</th></tr></thead><tbody>
+<tr><td class="h">async def</td><td>Define a coroutine</td></tr>
+<tr><td class="h">await</td><td>Pause until operation completes</td></tr>
+<tr><td class="h">asyncio.run()</td><td>Start async program</td></tr>
+<tr><td class="h">asyncio.gather()</td><td>Run multiple coroutines concurrently</td></tr>
+<tr><td class="h">asyncio.create_task()</td><td>Schedule coroutine as task</td></tr>
+<tr><td class="h">async with</td><td>Async context manager</td></tr>
+<tr><td class="h">async for</td><td>Async iteration</td></tr>
+<tr><td class="h">Memory Trick</td><td><strong>CAE</strong> = Coroutine, Await, Event Loop</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 42: Futures & Executors</h3><p>Learn about <strong>Future objects, ThreadPoolExecutor, ProcessPoolExecutor</strong> and how to choose between threads, processes, and asyncio.</p></div>
 </div>
-<div class="sec">Q3. What is the difference between `async` and `await`?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>async</code> defines a coroutine.</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>await</code> pauses the coroutine until an awaited operation completes.</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">While waiting,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">the Event Loop executes other ready coroutines.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q4. When should you use Asyncio instead of Threads?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Use Asyncio when handling many **IO-bound** operations such as:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">HTTP requests</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Database queries</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">File operations</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">WebSockets</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">It uses fewer system resources than creating thousands of threads.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q5. Can Asyncio speed up CPU-intensive programs?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">No.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Asyncio improves concurrency for waiting tasks,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">not computation.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">CPU-intensive workloads should use multiprocessing.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Concept | Purpose |<br>|----------|----------|<br>| <code>async</code> | Define a coroutine |<br>| <code>await</code> | Pause until completion |<br>| Event Loop | Schedule coroutines |<br>| Coroutine | Pause & resume function |<br>| <code>asyncio.run()</code> | Start async program |<br>| <code>create_task()</code> | Schedule coroutine |<br>| <code>asyncio.gather()</code> | Run multiple coroutines concurrently |<br>| <code>async with</code> | Async context manager |<br>| Asyncio | Best for IO-bound concurrency |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Chapter 42 — Futures & Executors**, you'll learn how Python bridges synchronous and asynchronous programming:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Future Objects</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">ThreadPoolExecutor</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">ProcessPoolExecutor</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>submit()</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>map()</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>as_completed()</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Choosing Threads vs Processes vs Asyncio</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">This chapter ties together all concurrency models and helps you choose the right one for real-world applications.</p>
-</div>
-</div>
-
 <script>
-function checkQuiz(el, correct) {
-  const parent = el.parentElement;
-  const feedback = parent.querySelector('.quiz-feedback');
-  const opts = parent.querySelectorAll('.quiz-opt');
-  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
-  feedback.classList.add('show');
-  if (correct) feedback.classList.add('correct');
-  else feedback.classList.add('wrong');
-}
+const asyncInfo = {
+'coroutine': 'Coroutine: Function defined with async def. Can pause and resume execution. Returns coroutine object when called. Must be awaited or scheduled as task. The building block of async programming.',
+'await': 'Await: Keyword that pauses coroutine execution until awaited operation completes. While paused, event loop runs other coroutines. Only use inside async functions. Transfers control back to event loop.',
+'eventloop': 'Event Loop: Core of asyncio. Manages and schedules coroutines. Runs ready tasks, switches when tasks await. Single-threaded with cooperative multitasking. Created automatically by asyncio.run().',
+'task': 'Task: Coroutine scheduled to run on event loop. Created with asyncio.create_task(). Allows concurrent execution. Event loop manages task lifecycle. Use gather() to run multiple tasks and collect results.'
+};
+document.querySelectorAll('.async-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('asyncTooltip').textContent = asyncInfo[this.getAttribute('data-concept')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
 </script>
 </body>
 </html>

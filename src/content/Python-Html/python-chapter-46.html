@@ -3,59 +3,156 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Module 13 — Testing & Debugging | Python Interactive</title>
+<title>Testing - Unit Testing, pytest, Assertions & Test Fixtures | Python Interactive</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="py-styles.css">
+<style>
+.viz-box{font-family:'Fira Code','Courier New',monospace;font-size:.82rem;color:#a5f3fc;background:#061622;border:1px solid rgba(6,182,212,.3);padding:16px 18px;border-radius:10px;line-height:1.9;white-space:pre;overflow-x:auto;margin:16px 0;}
+.test-node{cursor:pointer;transition:all .3s ease}
+.test-node:hover{filter:brightness(1.2);transform:scale(1.05)}
+</style>
 </head>
 <body>
-
-<div class="hero">
-<div class="hero-inner">
-<div class="badge">Module 13 · Chapter 46</div>
-<h1>Module 13 — Testing & Debugging<br><span>Q1. What is Unit Testing?</span></h1>
-<p>Interactive Python learning with code examples, visualizations, and interview preparation.</p>
-<div class="stats">
-<div class="stat"><div class="sn">Q1. What</div><div class="sl">is Unit Testing?</div></div><div class="stat"><div class="sn">Q2. What</div><div class="sl">is the difference between `unittest` and `pytest`?</div></div><div class="stat"><div class="sn">Q3. What</div><div class="sl">is an Assertion?</div></div><div class="stat"><div class="sn">Q4. What</div><div class="sl">are `setUp()` and `tearDown()`?</div></div>
-</div>
-</div>
-</div>
-
+<div class="hero"><div class="hero-inner"><div class="badge">Module 13 · Chapter 46 · Testing</div>
+<h1>Testing & Quality Assurance<br><span>Unit Testing, pytest, Assertions & Test Fixtures</span></h1>
+<p>Master Python testing fundamentals including unittest, pytest, assertions, test fixtures, and best practices for production-quality code.</p>
+<div class="stats"><div class="stat"><div class="sn">AAA</div><div class="sl">Memory Trick</div></div><div class="stat"><div class="sn">Arrange</div><div class="sl">Setup</div></div><div class="stat"><div class="sn">Act</div><div class="sl">Execute</div></div><div class="stat"><div class="sn">Assert</div><div class="sl">Verify</div></div></div></div></div>
 <div class="wrap">
-
-<div class="sec">Q1. What is Unit Testing?</div>
+<div class="sec">🎯 Learning Objectives</div>
+<div class="card"><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">By the end of this chapter, you will understand:</p>
+<ul style="color:var(--text2);font-size:.9rem;line-height:2;margin:8px 0 8px 20px">
+<li>Why Testing Matters</li>
+<li>Types of Testing</li>
+<li>Unit Testing Fundamentals</li>
+<li>The unittest Module</li>
+<li>pytest Framework</li>
+<li>Assertions</li>
+<li>Test Fixtures (setUp/tearDown)</li>
+<li>Parametrized Tests</li>
+<li>Test Discovery</li>
+<li>Best Practices</li>
+</ul></div>
+<div class="sec">📖 The Story — Factory Quality Control</div>
+<div class="story"><div class="slabel">Quality Check</div>
+<h3>A factory tests every product before shipping. Software should be tested too - every function, every edge case, every scenario.</h3>
+<p>Imagine a factory manufacturing light bulbs. Each bulb undergoes rigorous testing: does it turn on? Does it last 1000 hours? Does it handle voltage fluctuations? Only after passing all tests does it reach customers. Software development works the same way. <strong>Testing</strong> verifies that your code works correctly, catches bugs early, and ensures changes don't break existing functionality.</p></div>
+<div class="sec">🔄 Interactive: Testing Concepts (AAA)</div>
+<div class="card"><p style="color:var(--tm);margin-bottom:12px;">Click on each phase. Remember: <strong>AAA</strong></p>
+<div class="fig"><svg viewBox="0 0 700 280" width="100%" id="testDiagram">
+<defs><marker id="ta" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10" fill="#64748b"/></marker></defs>
+<rect class="test-node" data-phase="arrange" x="20" y="20" width="150" height="70" rx="6" fill="#6366f1"/>
+<text x="95" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Arrange</text>
+<text x="95" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Setup test data</text>
+<text x="95" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Prepare inputs</text>
+<rect class="test-node" data-phase="act" x="190" y="20" width="150" height="70" rx="6" fill="#10b981"/>
+<text x="265" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Act</text>
+<text x="265" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Execute function</text>
+<text x="265" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Call code</text>
+<rect class="test-node" data-phase="assert" x="360" y="20" width="150" height="70" rx="6" fill="#f59e0b"/>
+<text x="435" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Assert</text>
+<text x="435" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Verify results</text>
+<text x="435" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Check output</text>
+<rect class="test-node" data-phase="fixture" x="530" y="20" width="150" height="70" rx="6" fill="#ef4444"/>
+<text x="605" y="45" fill="white" font-size="13" font-weight="700" text-anchor="middle">Fixtures</text>
+<text x="605" y="65" fill="#cbd5e1" font-size="10" text-anchor="middle">Setup/teardown</text>
+<text x="605" y="80" fill="#94a3b8" font-size="9" text-anchor="middle">Reusable setup</text>
+<rect x="20" y="120" width="660" height="120" rx="8" fill="#1e293b" stroke="#6366f1" stroke-width="2"/>
+<text x="350" y="145" fill="#e2e8f0" font-size="14" font-weight="700" text-anchor="middle">Memory Trick: AAA ("Ay-Ay-Ay")</text>
+<text x="350" y="170" fill="#a5b4fc" font-size="12" text-anchor="middle">A → Arrange (setup test data and prerequisites)</text>
+<text x="350" y="190" fill="#6ee7b7" font-size="12" text-anchor="middle">A → Act (execute the function being tested)</text>
+<text x="350" y="210" fill="#fcd34d" font-size="12" text-anchor="middle">A → Assert (verify the result matches expectation)</text>
+<text x="350" y="230" fill="#fca5a5" font-size="12" text-anchor="middle">Every test follows this three-step pattern</text>
+<rect x="20" y="255" width="660" height="20" rx="4" fill="#1e293b" stroke="#6366f1" stroke-width="1"/>
+<text x="350" y="269" fill="#e2e8f0" font-size="10" text-anchor="middle" id="testTooltip">Click on each phase to learn more</text>
+</svg></div></div>
+<div class="sec">📊 unittest vs pytest</div>
+<table><thead><tr><th>Aspect</th><th>unittest</th><th>pytest</th></tr></thead><tbody>
+<tr><td class="h">Type</td><td>Built-in</td><td>Third-party</td></tr>
+<tr><td class="h">Syntax</td><td>Class-based</td><td>Function-based</td></tr>
+<tr><td class="h">Boilerplate</td><td>More</td><td>Less</td></tr>
+<tr><td class="h">Fixtures</td><td>setUp/tearDown</td><td>@fixture decorator</td></tr>
+<tr><td class="h">Discovery</td><td>Manual</td><td>Automatic</td></tr>
+<tr><td class="h">Best For</td><td>Enterprise</td><td>Modern projects</td></tr>
+</tbody></table>
+<div class="sec">🔧 unittest Example</div>
+<div class="defbox"><strong>Testing with unittest:</strong><br><br>
+<code>import unittest</code><br><br>
+<code>def add(a, b):</code><br>
+<code>&nbsp;&nbsp;return a + b</code><br><br>
+<code>class TestMath(unittest.TestCase):</code><br><br>
+<code>&nbsp;&nbsp;def test_add(self):</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;self.assertEqual(add(2, 3), 5)</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;self.assertEqual(add(-1, 1), 0)</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;self.assertEqual(add(0, 0), 0)</code><br><br>
+<code>&nbsp;&nbsp;def test_negative(self):</code><br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;self.assertEqual(add(-5, -3), -8)</code><br><br>
+<code>if __name__ == '__main__':</code><br>
+<code>&nbsp;&nbsp;unittest.main()</code></div>
+<div class="sec">🔧 pytest Example</div>
+<div class="defbox"><strong>Testing with pytest (simpler):</strong><br><br>
+<code>def add(a, b):</code><br>
+<code>&nbsp;&nbsp;return a + b</code><br><br>
+<code># Simple test function</code><br>
+<code>def test_add():</code><br>
+<code>&nbsp;&nbsp;assert add(2, 3) == 5</code><br>
+<code>&nbsp;&nbsp;assert add(-1, 1) == 0</code><br>
+<code>&nbsp;&nbsp;assert add(0, 0) == 0</code><br><br>
+<code># Parametrized test</code><br>
+<code>@pytest.mark.parametrize("a,b,expected", [</code><br>
+<code>&nbsp;&nbsp;(2, 3, 5),</code><br>
+<code>&nbsp;&nbsp;(-1, 1, 0),</code><br>
+<code>&nbsp;&nbsp;(0, 0, 0)</code><br>
+<code>])</code><br>
+<code>def test_add_parametrized(a, b, expected):</code><br>
+<code>&nbsp;&nbsp;assert add(a, b) == expected</code></div>
+<div class="sec">🔧 Test Fixtures Example</div>
+<div class="defbox"><strong>Using fixtures for setup/teardown:</strong><br><br>
+<code>import pytest</code><br><br>
+<code># Fixture runs before each test</code><br>
+<code>@pytest.fixture</code><br>
+<code>def sample_data():</code><br>
+<code>&nbsp;&nbsp;data = [1, 2, 3, 4, 5]</code><br>
+<code>&nbsp;&nbsp;print("\nSetup: Creating test data")</code><br>
+<code>&nbsp;&nbsp;yield data  # Provide data to test</code><br>
+<code>&nbsp;&nbsp;print("\nTeardown: Cleaning up")</code><br><br>
+<code>def test_sum(sample_data):</code><br>
+<code>&nbsp;&nbsp;assert sum(sample_data) == 15</code><br><br>
+<code>def test_length(sample_data):</code><br>
+<code>&nbsp;&nbsp;assert len(sample_data) == 5</code></div>
+<div class="sec">⚠️ Common Mistakes</div>
 <div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Unit testing verifies the correctness of the smallest testable units of code,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">typically individual functions or methods.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Testing only the happy path.</strong><div class="mini">✔ Test edge cases, invalid inputs, and error conditions too.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Writing tests that depend on each other.</strong><div class="mini">✔ Each test should be independent and run in any order.</div></div></div>
+<div class="ts" style="margin-bottom:12px"><div class="sn2">❌</div><div class="sc"><strong>Not running tests automatically.</strong><div class="mini">✔ Integrate testing into your development workflow and CI/CD pipeline.</div></div></div>
+<div class="ts"><div class="sn2">❌</div><div class="sc"><strong>Ignoring test failures.</strong><div class="mini">✔ Fix failing tests immediately. Don't let them accumulate.</div></div></div>
 </div>
-<div class="sec">Q2. What is the difference between `unittest` and `pytest`?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>unittest</code> is Python's built-in testing framework and follows a class-based approach.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>pytest</code> is a third-party framework with simpler syntax,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">automatic test discovery,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and advanced features such as fixtures and parameterized testing.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
+<div class="sec">🎯 Interview Questions</div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What is unit testing and why is it important?"</strong><div class="mini">"Unit testing verifies individual functions or methods work correctly in isolation. It's important because it catches bugs early, enables confident refactoring, serves as documentation, and prevents regressions. Good unit tests are fast, isolated, repeatable, and cover both normal cases and edge cases."</div></div></div></div>
+<div class="card"><div class="ts"><div class="sn2">Q</div><div class="sc"><strong>"What's the difference between unittest and pytest?"</strong><div class="mini">"unittest is Python's built-in testing framework with class-based tests and more boilerplate. pytest is a third-party framework with simpler function-based tests, automatic test discovery, better fixtures, and powerful features like parametrization. pytest is generally preferred for new projects due to its simplicity and features."</div></div></div></div>
+<div class="sec">📋 Cheat Sheet</div>
+<table><thead><tr><th>Concept</th><th>Description</th></tr></thead><tbody>
+<tr><td class="h">Unit Testing</th><td>Test individual functions/methods</td></tr>
+<tr><td class="h">unittest</th><td>Built-in testing framework</td></tr>
+<tr><td class="h">pytest</th><td>Modern testing framework</td></tr>
+<tr><td class="h">Assertions</td><td>Verify expected vs actual</td></tr>
+<tr><td class="h">Fixtures</td><td>Setup/teardown for tests</td></tr>
+<tr><td class="h">Parametrize</td><td>Test multiple inputs</td></tr>
+<tr><td class="h">Memory Trick</th><td><strong>AAA</strong> = Arrange, Act, Assert</td></tr>
+</tbody></table>
+<div class="sec">➡ What's Next</div>
+<div class="story"><div class="slabel">Coming Up</div><h3>Chapter 47: Debugging</h3><p>Learn debugging techniques with <strong>pdb, logging, and troubleshooting</strong> to find and fix bugs efficiently.</p></div>
 </div>
-<div class="sec">Q3. What is an Assertion?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">An assertion checks whether the actual output matches the expected output.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">If they differ,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">the test fails.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q4. What are `setUp()` and `tearDown()`?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>setUp()</code> runs before every test and prepares the test environment.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><code>tearDown()</code> runs after every test and cleans up resources.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---<br></p>
-</div>
-<div class="sec">Q5. Why is Testing important?</div>
-<div class="card">
-<p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><br><h4 style="color:#e2e8f0;font-size:1rem;margin:16px 0 8px">Answer</h4></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">Testing improves software quality by detecting bugs early,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">preventing regressions,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">making refactoring safer,</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">and increasing confidence that the code behaves correctly.</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># Chapter Summary / Cheat Sheet</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">| Concept | Purpose |<br>|----------|----------|<br>| Unit Testing | Test individual functions |<br>| <code>unittest</code> | Built-in testing framework |<br>| <code>pytest</code> | Modern testing framework |<br>| Assertion | Compare expected vs actual |<br>| <code>setUp()</code> | Prepare test environment |<br>| <code>tearDown()</code> | Cleanup after tests |<br>| <code>assertRaises()</code> | Verify exceptions |<br>| Parametrized Tests | Test multiple inputs efficiently |</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">---</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"># What's Next?</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">In **Chapter 47 — Debugging**, you'll learn how to find and fix bugs using:</p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0"><li style="color:var(--text2);font-size:.85rem;margin:4px 0"><code>pdb</code></li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Assertions</li><br><li style="color:var(--text2);font-size:.85rem;margin:4px 0">Logging</li></p><p style="color:var(--text2);font-size:.9rem;line-height:1.8;margin:8px 0">These tools help you diagnose problems quickly and are indispensable in real-world software development.</p>
-</div>
-</div>
-
 <script>
-function checkQuiz(el, correct) {
-  const parent = el.parentElement;
-  const feedback = parent.querySelector('.quiz-feedback');
-  const opts = parent.querySelectorAll('.quiz-opt');
-  opts.forEach(function(o) { o.style.pointerEvents = 'none'; if (o === el && correct) o.classList.add('correct'); else if (o === el && !correct) o.classList.add('wrong'); else if (correct && o !== el) o.classList.add('correct'); });
-  feedback.classList.add('show');
-  if (correct) feedback.classList.add('correct');
-  else feedback.classList.add('wrong');
-}
+const testInfo = {
+'arrange': 'Arrange: Setup phase of testing. Prepare test data, create objects, set up prerequisites. Make everything ready for the actual test execution. Good arrangement makes tests reliable and repeatable.',
+'act': 'Act: Execute the function or method being tested. Call the actual code with the prepared inputs. This is where the real action happens. Keep this step simple and focused.',
+'assert': 'Assert: Verify the result matches expectations. Use assertions to check if output is correct. If assertion fails, test fails. Clear assertions make debugging easier.',
+'fixture': 'Fixtures: Reusable setup/teardown code. Runs before/after tests automatically. Use for common setup like database connections, test data, or temporary files. Saves duplication and ensures consistency.'
+};
+document.querySelectorAll('.test-node').forEach(n => { n.addEventListener('click', function(e) { document.getElementById('testTooltip').textContent = testInfo[this.getAttribute('data-phase')] || ''; }); });
+function checkQuiz(el, c) { const p=el.parentElement,f=p.querySelector('.quiz-feedback'),o=p.querySelectorAll('.quiz-opt'); o.forEach(x=>{x.style.pointerEvents='none';if(x===el&&c)x.classList.add('correct');else if(x===el&&!c)x.classList.add('wrong');else if(c&&x!==el)x.classList.add('correct');});f.classList.add('show');f.classList.add(c?'correct':'wrong'); }
 </script>
 </body>
 </html>
